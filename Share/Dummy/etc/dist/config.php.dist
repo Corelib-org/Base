@@ -1,0 +1,14 @@
+<?php
+/*
+ *	Setup Path to corelib
+ */
+if(!defined('CORELIB')){
+	define('CORELIB', '/path/to/corelib/');
+}
+include_once(CORELIB.'/Base/Base.php');
+
+$base = Base::getInstance();
+$base->addClassPath('lib/');
+
+define('SOFTWARE_VERSION', 'Base Dummy v1.0');
+?>

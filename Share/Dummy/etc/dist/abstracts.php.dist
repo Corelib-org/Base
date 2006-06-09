@@ -1,0 +1,34 @@
+<?php
+/* 
+ * Setup Language 
+ */
+/* UNCOMMENT TO ADD LANGUAGE SUPPORT
+$language = Language::getInstance();
+$language->setLanguageMap(array('en','da'));
+$language->setLanguageFileBase('rescources/language/');
+
+if(isset($_GET['lang'])){
+	$language->setLanguage($_GET['lang']);
+}
+*/
+
+/*
+ *	Setup event Handler (developer only)
+ */
+/* UNCOMMENT TO ADD USER AUTHORIZATION FEATURES
+$eventHandler = EventHandler::getInstance();
+$eventHandler->registerObserver(new UsersAuthorizationConfirmEvent());
+$eventHandler->registerObserver(new UsersAuthorizationStoreEvent());
+$eventHandler->registerObserver(new UsersAuthorizationPutSettingsXML());
+*/
+
+/*
+ *	Setup Basic Factory settings (developer only)
+ */
+$pageFactory = PageFactory::getInstance();
+$pageFactory->setXSLCore('xsl/base/core.xsl');
+$pageFactory->setRewriteEngine(true);
+$pageFactory->setRedirectBase(REDIRECT_URL);
+
+// $pageFactory->setMessageFile('rescources/language/'.$language->getLanguage().'/message_reference.xml');
+?>

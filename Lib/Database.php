@@ -153,6 +153,12 @@ abstract class DatabaseDAO {
 	final protected function masterQuery(Query $query){
 		return $this->database->masterQuery($query);	
 	}
+	/**
+	 * Enter description here...
+	 *
+	 * @param Query $query
+	 * @return Query
+	 */	
 	final protected function slaveQuery(Query $query){
 		return $this->database->slaveQuery($query);	
 	}

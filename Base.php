@@ -67,11 +67,11 @@
 /**
  *	Define Base Development Runlevel Constant
  */
-define('BASE_RUNLEVEL_DEVEL', 1);
+define('BASE_RUNLEVEL_DEVEL', 2);
 /**
  *	Define Base Production Runlevel Constant
  */
-define('BASE_RUNLEVEL_PROD', 2);
+define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
@@ -108,14 +108,6 @@ if(!defined('CURRENT_WORKING_DIR')){
 	define('CURRENT_WORKING_DIR', getcwd().'/');
 }
 
-if(!defined('BASE_RUNLEVEL')){
-	/**
-	 *	Current Runlevel
-	 * 
-	 * 	This constant holds the current runlevel
-	 */
-	define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
-}
 
 //*****************************************************************//
 //******************* Load Base Support Files *********************//
@@ -215,6 +207,14 @@ class Base implements Singleton {
 			echo 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n";
 		} else {
 			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
+		}
+		if(!defined('BASE_RUNLEVEL')){
+			/**
+			 *	Current Runlevel
+			 * 
+			 * 	This constant holds the current runlevel
+			 */
+			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 		}
 		if(!defined('BASE_CLASS_CACHE_FILE')){
 			/**

@@ -53,6 +53,7 @@ class BaseException extends Exception {
 
 	function __toString(){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+			var_dump(BASE_RUNLEVEL);
 			if(php_sapi_name() == 'cli'){
 				return $this->WriteToLog(true);
 			} else {

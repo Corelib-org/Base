@@ -92,10 +92,10 @@ class MySQLiQuery extends Query {
 	}
 	
 	public function getNumRows(){
-		if(!isset($this->result->num_rows)){
+		if(isset($this->result->num_rows)){
 			return $this->result->num_rows;
 		} else {
-			return false;
+			return 0;
 		}
 	}
 	

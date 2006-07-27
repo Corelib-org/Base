@@ -92,6 +92,13 @@ class MySQLiQuery extends Query {
 	}
 	
 	public function getNumRows(){
+		try {
+			if(!isset($this->result->num_rows)){
+				throw new BaseException('property num rows not set'."\n".print_r($this->result, true));
+			}
+		} catch (Exception $e){
+			echo $e;
+		}
 		return $this->result->num_rows;
 	}
 	

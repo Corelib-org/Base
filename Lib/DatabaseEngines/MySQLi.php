@@ -98,6 +98,7 @@ class MySQLiQuery extends Query {
 			}
 		} catch (Exception $e){
 			echo $e;
+			exit;
 		}
 		return $this->result->num_rows;
 	}

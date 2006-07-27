@@ -92,11 +92,7 @@ class MySQLiQuery extends Query {
 	}
 	
 	public function getNumRows(){
-		if(isset($this->result->num_rows)){
-			return $this->result->num_rows;
-		} else {
-			return 0;
-		}
+		return $this->result->num_rows;
 	}
 	
 	public function getInsertID(){

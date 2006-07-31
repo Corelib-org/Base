@@ -23,7 +23,6 @@ class MySQLiEngine implements DatabaseEngine {
 	
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
-		
 	}
 	
 	public function query(Query $query){
@@ -82,6 +81,7 @@ class MySQLiQuery extends Query {
 	}
 	
 	public function execute(){
+		var_dump($this->instance);
 		$this->result = $this->instance->query($this->getQuery());
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;

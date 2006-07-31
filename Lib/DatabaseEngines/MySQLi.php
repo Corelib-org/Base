@@ -6,15 +6,17 @@ class MySQLiEngine implements DatabaseEngine {
 	private $password = null;
 	private $database = null;
 	private $pid = null;
+	private $reconnect = false;
 
 	const PREFIX = 'MySQLi';
 	
-	public function __construct($hostname, $username, $password, $database){
+	public function __construct($hostname, $username, $password, $database, $reconnect=false){
 		$this->hostname = $hostname;
 		$this->username = $username;
 		$this->password = $password;
 		$this->database = $database;
 		$this->pid = posix_getpid();
+		$this->reconnect = $reconnect;;
 //		$this->_connect();
 /*		$this->query(new MySQLiQuery('SET character_set_client = x'));
 		$this->query(new MySQLiQuery('SET character_set_results = x'));
@@ -23,6 +25,12 @@ class MySQLiEngine implements DatabaseEngine {
 	
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+		var_dump($this->connection->errno);
+		if($this->connection->errno === 0){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public function query(Query $query){
@@ -37,21 +45,25 @@ class MySQLiEngine implements DatabaseEngine {
 			$this->_connect();
 		}
 		$query->setInstance($this->connection);
+		if($this->reconnect){
 		while(true){
 			$query->execute();
 			switch ($query->getErrno()){
 				case 2013 || 2006 || 2002 || 2003:
 					sleep(5);
-					echo 'Attempting to reconnect'."\n\n";
-					$this->_connect();
-					$query->setInstance($this->connection);
-					echo 'CONNECTION ATTEMPT';var_dump($this->instance->error);
-					echo 'GOT ERROR'.$query->getErrno();
+					echo 'Lost Connection to MySQL, Attempting to reconnect..'."\n";
+					if($this->_connect()){
+						echo 'Connection to MySQL, was reestablished.'."\n\n";
+						$query->setInstance($this->connection);
+					}
 					break;
 				default:
 					return true;
 					break;
 			}
+		}
+		} else {
+			$query->execute();
 		}
 	}
 	
@@ -83,7 +95,6 @@ class MySQLiQuery extends Query {
 	}
 	
 	public function execute(){
-		var_dump($this->instance);
 		$this->result = $this->instance->query($this->getQuery());
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;

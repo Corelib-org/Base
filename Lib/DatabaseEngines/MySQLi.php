@@ -45,7 +45,8 @@ class MySQLiEngine implements DatabaseEngine {
 					$this->_connect();
 					break;
 				default:
-					break 2;
+					return true;
+					break;
 			}
 		}
 	}

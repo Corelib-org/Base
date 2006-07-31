@@ -25,7 +25,6 @@ class MySQLiEngine implements DatabaseEngine {
 	
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
-		var_dump($this->connection->errno);
 		if($this->connection->errno === 0){
 			return true;
 		} else {
@@ -50,10 +49,8 @@ class MySQLiEngine implements DatabaseEngine {
 			$query->execute();
 			switch ($query->getErrno()){
 				case 2013 || 2006 || 2002 || 2003:
-					sleep(5);
-					echo 'Lost Connection to MySQL, Attempting to reconnect..'."\n";
+					sleep(1);
 					if($this->_connect()){
-						echo 'Connection to MySQL, was reestablished.'."\n\n";
 						$query->setInstance($this->connection);
 					}
 					break;

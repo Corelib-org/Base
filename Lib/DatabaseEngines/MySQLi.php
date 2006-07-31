@@ -41,7 +41,7 @@ class MySQLiEngine implements DatabaseEngine {
 		while(true){
 			$query->execute();
 			switch ($query->getErrno()){
-				case 2013:
+				case 2013 || 2006:
 					$this->_connect();
 					break;
 				default:

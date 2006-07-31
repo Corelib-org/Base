@@ -45,6 +45,8 @@ class MySQLiEngine implements DatabaseEngine {
 					echo 'Attempting to reconnect'."\n\n";
 					$this->_connect();
 					$query->setInstance($this->connection);
+					echo 'CONNECTION ATTEMPT';var_dump($this->instance->error);
+					echo 'GOT ERROR'.$query->getErrno();
 					break;
 				default:
 					return true;

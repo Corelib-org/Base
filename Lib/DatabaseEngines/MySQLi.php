@@ -48,6 +48,8 @@ class MySQLiEngine implements DatabaseEngine {
 					return true;
 					break;
 			}
+			sleep(5);
+			echo 'Attempting to reconnect'."\n\n";
 		}
 	}
 	

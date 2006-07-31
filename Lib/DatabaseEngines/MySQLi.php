@@ -41,7 +41,7 @@ class MySQLiEngine implements DatabaseEngine {
 		while(true){
 			$query->execute();
 			switch ($query->getErrno()){
-				case 2013 || 2006:
+				case 2013 || 2006 || 2002 || 2003:
 					sleep(5);
 					echo 'Attempting to reconnect'."\n\n";
 					$this->_connect();

@@ -38,7 +38,16 @@ class MySQLiEngine implements DatabaseEngine {
 			$this->_connect();
 		}
 		$query->setInstance($this->connection);
-		$query->execute();
+		while(true){
+			$query->execute();
+			switch ($query->getErrno()){
+				case 2013:
+					$this->_connect();
+					break;
+				default:
+					break 2;
+			}
+		}
 	}
 	
 	public function getPrefix(){

@@ -65,7 +65,6 @@ class Database implements Singleton {
 	}
 	
 	private function error(Query $query){
-		echo 'MY_ERROR: '.var_dump($query->getErrno());
 		try {
 			if($query->getErrno()){
 				throw new BaseException($query->getError(), $query->getErrno());

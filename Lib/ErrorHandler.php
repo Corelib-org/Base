@@ -65,7 +65,7 @@ class BaseException extends Exception {
 	}
 
 	function htmlError(){
-		$return = str_replace('!ERROR_NAME!', ($this->myGetCode()), self::$template_desc);
+		$return = str_replace('!ERROR_NAME!', ($this->getCode().': '.$this->myGetCode()), self::$template_desc);
 		$return = str_replace('!ERROR_DESC!', $this->getMessage(), $return);
 		$return = str_replace('!ERROR_FILE!', $this->getFile(), $return);
 		$return = str_replace('!ERROR_LINE!', $this->getLine(), $return);

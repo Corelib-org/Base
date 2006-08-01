@@ -26,8 +26,10 @@ class MySQLiEngine implements DatabaseEngine {
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
+			echo 'SOMETHING GOOD HAS HAPPENED';
 			return true;
 		} else {
+			echo 'SOMETHING VERY BAD HAS HAPPENED';
 			return false;
 		}
 	}
@@ -48,7 +50,6 @@ class MySQLiEngine implements DatabaseEngine {
 			while(true){
 				$query->execute();
 				if($query->getErrno() >= 2000){
-					$this->connection->close();
 					sleep(1);
 					if($this->_connect()){
 						$query->setInstance($this->connection);

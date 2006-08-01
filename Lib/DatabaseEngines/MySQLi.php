@@ -45,20 +45,18 @@ class MySQLiEngine implements DatabaseEngine {
 		}
 		$query->setInstance($this->connection);
 		if($this->reconnect){
-		while(true){
-			$query->execute();
-			switch ($query->getErrno()){
-				case 2013 || 2006 || 2002 || 2003:
+			while(true){
+				$query->execute();
+				if($query->getErrno() >= 2000){
+					$this->connection->close();
 					sleep(1);
 					if($this->_connect()){
 						$query->setInstance($this->connection);
 					}
-					break;
-				default:
+				} else {
 					return true;
-					break;
+				}
 			}
-		}
 		} else {
 			$query->execute();
 		}

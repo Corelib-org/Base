@@ -17,19 +17,13 @@ class MySQLiEngine implements DatabaseEngine {
 		$this->database = $database;
 		$this->pid = posix_getpid();
 		$this->reconnect = $reconnect;;
-//		$this->_connect();
-/*		$this->query(new MySQLiQuery('SET character_set_client = x'));
-		$this->query(new MySQLiQuery('SET character_set_results = x'));
-		$this->query(new MySQLiQuery('SET collation_connection = @@collation_database')); */
 	}
 	
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
-			echo 'SOMETHING GOOD HAS HAPPENED';
 			return true;
 		} else {
-			echo 'SOMETHING VERY BAD HAS HAPPENED';
 			return false;
 		}
 	}

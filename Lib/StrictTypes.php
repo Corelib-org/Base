@@ -27,6 +27,51 @@ class StrictTypes {
 			return true;
 		}
 	}
+	static public function isFloat($subject){
+		if(!is_integer($subject)){
+			throw new StrictTypeFloatException($subject);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	static public function isArray($subject){
+		if(!is_array($subject)){
+			throw new StrictTypeArrayException($subject);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	static public function isBoolean($subject){
+		if(!is_bool($subject)){
+			throw new StrictTypeBooleanException($subject);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	static public function isRescource($subject){
+		if(!is_resource($subject)){
+			throw new StrictTypeRescourceException($subject);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	static public function toString($subject){
+		return (string) $subject;
+	}
+	static public function toBoolean($subject){
+		return (boolean) $subject;
+	}
+	static public function toInteger($subject){
+		return (integer) $subject;
+	}
+	static public function toFloat($subject){
+		return (float) $subject;
+	}
 }
 
 class StrictTypeException extends BaseException {
@@ -47,6 +92,30 @@ class StrictTypeStringException extends StrictTypeException {
 class StrictTypeIntegerException extends StrictTypeException {
 	public function __construct($subject){
 		$description = 'Paramemeter is not of type integer.';
+		parent::__construct($description.' '.$this->getTypeData($subject), E_USER_WARNING);
+	}
+}
+class StrictTypeFloatException extends StrictTypeException {
+	public function __construct($subject){
+		$description = 'Paramemeter is not of type float.';
+		parent::__construct($description.' '.$this->getTypeData($subject), E_USER_WARNING);
+	}
+}
+class StrictTypeArrayException extends StrictTypeException {
+	public function __construct($subject){
+		$description = 'Paramemeter is not of type Array.';
+		parent::__construct($description.' '.$this->getTypeData($subject), E_USER_WARNING);
+	}
+}
+class StrictTypeBooleanException extends StrictTypeException {
+	public function __construct($subject){
+		$description = 'Paramemeter is not of type boolean.';
+		parent::__construct($description.' '.$this->getTypeData($subject), E_USER_WARNING);
+	}
+}
+class StrictTypeRescourceException extends StrictTypeException {
+	public function __construct($subject){
+		$description = 'Paramemeter is not of type rescource.';
 		parent::__construct($description.' '.$this->getTypeData($subject), E_USER_WARNING);
 	}
 }

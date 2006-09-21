@@ -18,16 +18,6 @@ class MySQLiEngine implements DatabaseEngine {
 		$this->pid = posix_getpid();
 		$this->reconnect = $reconnect;;
 	}
-	
-	private function _connect(){
-		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
-		if($this->connection->errno === 0){
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
 	public function query(Query $query){
 		try {
 			if(!$query instanceof MySQLiQuery){
@@ -56,11 +46,9 @@ class MySQLiEngine implements DatabaseEngine {
 			$query->execute();
 		}
 	}
-	
 	public function getPrefix(){
 		return self::PREFIX;
 	}
-	
 	public function startTransaction(){
 		$this->query(new MySQLiQuery('START TRANSACTION'));
 	}
@@ -69,6 +57,14 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	public function rollback(){
 		$this->query(new MySQLiQuery('ROLLBACK'));
+	}
+	private function _connect(){
+		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+		if($this->connection->errno === 0){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 }
@@ -83,42 +79,33 @@ class MySQLiQuery extends Query {
 	public function __construct($query, $limit=null, $limitOffset=null, $order=null, $orderType=null, $count=null){
 		parent::__construct($query, $limit, $limitOffset, $order, $orderType, $count);
 	}
-	
 	public function execute(){
 		$this->result = $this->instance->query($this->getQuery());
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;
 		$this->insertid = $this->instance->insert_id;	
 	}
-	
 	public function setInstance($instance){
 		$this->instance = $instance;
 	}
-	
 	public function getQuery(){
 		return $this->query;
 	}
-	
 	public function getError(){
 		return $this->error."\n<br/><br/>".$this->query;
 	}
-	
 	public function getErrno(){
 		return $this->errno;
 	}
-	
 	public function getNumRows(){
 		return $this->result->num_rows;
 	}
-	
 	public function getInsertID(){
 		return $this->insertid;
 	}
-	
 	public function fetchArray(){
 		return $this->result->fetch_array();	
 	}
-	
 	public function getAffectedRows(){
 		return $this->instance->affected_rows;
 	}

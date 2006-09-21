@@ -26,6 +26,7 @@ class EventHandler implements Singleton,ObserverSubject {
 	
 	private $handlers = array();
 	
+	
 	private function __construct(){
 		
 	}

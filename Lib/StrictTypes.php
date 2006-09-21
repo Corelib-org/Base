@@ -28,7 +28,7 @@ class StrictTypes {
 		}
 	}
 	static public function isFloat($subject){
-		if(!is_integer($subject)){
+		if(!is_float($subject)){
 			throw new StrictTypeFloatException($subject);
 			return false;
 		} else {

@@ -9,7 +9,7 @@
  * Portions created by the Initial Developer are Copyright (C) 1998
  * the Initial Developer. All Rights Reserved.
  * Ported to PHP by Henri Sivonen (http://hsivonen.iki.fi)
- * Slight modifications to fit with Bravura CoreLib library by Anders M¿ller
+ * Slight modifications to fit with Bravura CoreLib library by Anders MÃ¸ller
  *
  *	LICENSE:
  * 		This source file is divide work!
@@ -21,13 +21,13 @@
  * 				MPL/LGPL (He ported a Unicode / UTF-8 converter from the Mozilla codebase to PHP, which is re-used in pats in this class.)
  * 			harryf (http://phputf8.sourceforge.net/)
  * 				LGPL
- * 			Anders M¿ller <anders@bravura.dk>
+ * 			Anders MÃ¸ller <anders@bravura.dk>
  * 				LGPL (http://www.gnu.org/copyleft/lesser.html)
  * 
  *	@see http://lxr.mozilla.org/seamonkey/source/intl/uconv/src/nsUTF8ToUnicode.cpp
  *  @see http://lxr.mozilla.org/seamonkey/source/intl/uconv/src/nsUnicodeToUTF8.cpp
  *  @see http://hsivonen.iki.fi/php-utf8/
- *	@author Anders M¿ller <anders@bravura.dk>
+ *	@author Anders MÃ¸ller <anders@bravura.dk>
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.gnu.org/copyleft/lesser.html
  *	@package corelib

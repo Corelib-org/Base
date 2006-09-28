@@ -12,7 +12,7 @@
  * 				MPL/LGPL (He ported a Unicode / UTF-8 converter from the Mozilla codebase to PHP, which is re-used in pats in this class.)
  * 			harryf (http://phputf8.sourceforge.net/)
  * 				LGPL
- * 			Anders M¿ller <anders@bravura.dk>
+ * 			Anders MÃ¸ller <anders@bravura.dk>
  * 				LGPL (http://www.gnu.org/copyleft/lesser.html)
  * </i>
  *
@@ -23,7 +23,7 @@
  *	unable to obtain it through the web, please send a note to 
  *	license@bravura.dk so we can mail you a copy immediately.
  *
- *	@author Anders M¿ller <anders@bravura.dk>
+ *	@author Anders MÃ¸ller <anders@bravura.dk>
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
  *	@package corelib

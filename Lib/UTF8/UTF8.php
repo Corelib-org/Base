@@ -257,7 +257,7 @@ class UTF8 extends UTF8Core {
 	* @see http://www.php.net/str_ireplace
 	* @see UTF8Core::strtolower
 	*/
-	public static function ireplace($search, $replace, $str, $count = NULL){
+	public static function str_ireplace($search, $replace, $str, $count = NULL){
 	    if ( !is_array($search) ) {
 	        $slen = strlen($search);
 	        if ( $slen == 0 ) {

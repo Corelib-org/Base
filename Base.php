@@ -122,7 +122,7 @@ require_once(CORELIB.'/Base/Lib/Interfaces.php');
  *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
  * 	and set it to true
  */
-require_once(CORELIB.'/Base/Lib/ErrorHandler.php');
+require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
 
 
 //*****************************************************************//

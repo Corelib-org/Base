@@ -381,7 +381,18 @@ class InputHandler implements Singleton,Output {
 		$XMLget = $xml->createElement('get');
 		while(list($key, $val) = each($this->get)){
 			if(preg_match('/^[a-zA-Z0-9_]*$/', $key)){
-				$XMLget->appendChild($xml->createElement($key, $val));
+				if(is_array($val)) {
+					$XMLArray = $xml->createElement($key);
+					
+					while(list($key2, $val2) = each($val)){
+						$XMLItem = $xml->createElement('item', $val2);
+						$XMLItem->setAttribute('id',$key2);
+						$XMLArray->appendChild($XMLItem);
+					}
+					$XMLget->appendChild($XMLArray);
+				} else {
+					$XMLget->appendChild($xml->createElement($key, $val));
+				}
 			}
 		}
 		reset($this->get);
@@ -432,4 +443,25 @@ class IsArrayInputValidator implements InputValidator {
 		return (is_array($content));
 	}
 }
+
+/* Fuck! This does not work... */
+/*
+class ArrayInputValidator implements InputValidator {
+	private $validator;
+	
+	public function __construct($validator){
+		$this->validator = $validator;
+	}
+	public function validate($content){
+		var_dump($content);
+		foreach ($content as $k => $v) {
+			echo $v;
+			if(!$this->validator->validate($content[$k])) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+*/
 ?>

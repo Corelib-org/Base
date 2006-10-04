@@ -1,7 +1,5 @@
 <?php
 /*	@version 1.0 Beta ($Id: EventHandler.php 130 2005-10-08 00:44:20Z wayland $) */
-include_once(CORELIB.'/Base/Interfaces.php');
-include_once(CORELIB.'/Base/Base.php');
 
 interface InputValidator {
 	public function validate($content);

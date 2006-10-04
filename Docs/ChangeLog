@@ -3,6 +3,105 @@ Changelog For Base
 Last Changed: $Revision$ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
 
 
-Revision: 2092 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
------------------------------------------------------------------
-*	ChangeLog Started
+Revision: 2779 Date: 2006-09-06 11:38:44 +0200 (Wed, 06 Sep 2006)
+-----------------------------------------------------------------------
+*       Added "exit()" to the end of PageFactory:redirect()
+
+
+Revision: 2744 Date: 2006-09-04 11:45:26 +0200 (Wed, 03 May 2006)
+-----------------------------------------------------------------------
+*       SessionHandler now implements the Output interface
+
+*       Added SessionHandler::getId()
+                method for returning the unique session id
+
+*       Added SessionHandlerEngine::getId()
+                implementation for supporting SessionHandler Changes
+
+Revision: 2666 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
+-----------------------------------------------------------------------
+*       Fixed bug in InputHandler::_serializeArray()
+                function now strips slashes properly when serializing to 
+                urlencoded string.
+
+*       Added InputHandler::unValidateGet()
+                Method for unvalidating a GET variable.
+
+*       Added InputHandler::unValidatePost()
+                Method for unvalidating a POST variable.
+
+
+Revision: 2662 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
+-----------------------------------------------------------------------
+*       InputHandler behaviour has changed, by unsetting $_GET and $_POST
+        After objcet is initialized, unless constant INPUT_HANDLER_RESET_GET_POST
+        is set false
+
+*       Added InputHandler::_serializeArray()
+                private method for serialising get or post array
+                and adding error messages
+
+*       Added InputHandler::serializePost()
+                method for serializing post array
+
+*       Added InputHandler::serializeGet()
+                method for serializing get array
+
+*       Added InputHandler::setPostErrorCode()
+                method for embedding error codes in serialized get strings
+
+*       Added InputHandler::setGetErrorCode()
+                method for embedding error codes in serialized post strings
+
+*       Added InputHandler::addStripSerializeGetVariable()
+                method for stripping variables from serialized get strings
+
+*       Added InputHandler::addStripSerializePostVariable()
+                method for stripping variables from serialized post strings
+
+*       Added InputHandler::isValidGetVariables()
+                method for validating multiple get variables
+
+*       Added InputHandler::isValidPostVariables()
+                method for validating multiple post variables
+
+*       Added InputHandler::isSetGet()
+                method for checking if a get variable isset
+
+*       Added InputHandler::isSetPost()
+                method for checking if a post variable isset
+
+Revision: 2089 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
+-----------------------------------------------------------------------
+*       Added "magic_quotes" test to InputHandler::__construct()
+
+*       Added Page::addMetaData($name,$content)
+                method for adding meta data to settings
+
+*       Added UrlInputValidator
+                method for easy validat urls
+
+*       Added Page::addCSSStylesheet($file)
+                method for adding css stylesheets to settings
+
+*       Added Page::addJavaScript($file)
+                method for adding javascripts to settings
+
+*       Added new files to WebDummy
+                share/xsl/base/core.xsl
+                share/xsl/corelib/about.xsl
+                share/xsl/corelib/doc.xsl
+                share/xsl/corelib/install.xsl
+                share/xsl/corelib/license.xsl
+                share/xsl/corelib/templates.xsl
+                share/web/images/corelib/corelib.gif
+                share/web/style/corelib/style.css
+                lib/http/get/corelib/about.php
+                lib/http/get/corelib/doc.php
+                lib/http/get/corelib/install.php
+                lib/http/get/corelib/license.php
+
+*       Modified get.php.dist and post.php.dist 
+                was update to contain new corelib about pages
+
+*       ChangeLog Started

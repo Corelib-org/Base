@@ -1,0 +1,13 @@
+RewriteEngine on
+RewriteBase /
+RewriteCond ${REQUEST_URI} !.?index.php.*
+RewriteRule ^(.*)$ index.php?page=/$1 [QSA,L]
+
+<Files "index.php">
+	Order Allow,Deny
+	Allow From all
+	satisfy all
+</Files>
+
+ErrorDocument 403 /corelib/errors/403/
+ErrorDocument 404 /corelib/errors/404/

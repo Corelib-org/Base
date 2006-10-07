@@ -54,7 +54,13 @@ class InputHandler implements Singleton,Output {
 			if($valid = $this->_validate($this->post[$item], $mode)){
 				$this->post_valid[$item] = &$this->post[$item];
 				if($this->addslashes){
-					$this->post_valid[$item] = addslashes($this->post_valid[$item]);
+					if(is_array($this->post_valid[$item])) {
+						foreach ($this->post_valid[$item] as $key=>$val) {
+							$this->post_valid[$item][$key] = addslashes($this->post_valid[$item][$key]);
+						}
+					} else {
+						$this->post_valid[$item] = addslashes($this->post_valid[$item]);
+					}
 				}
 				return $valid;
 			} else {
@@ -444,8 +450,6 @@ class IsArrayInputValidator implements InputValidator {
 	}
 }
 
-/* Fuck! This does not work... */
-/*
 class ArrayInputValidator implements InputValidator {
 	private $validator;
 	
@@ -453,9 +457,7 @@ class ArrayInputValidator implements InputValidator {
 		$this->validator = $validator;
 	}
 	public function validate($content){
-		var_dump($content);
 		foreach ($content as $k => $v) {
-			echo $v;
 			if(!$this->validator->validate($content[$k])) {
 				return false;
 			}
@@ -463,5 +465,5 @@ class ArrayInputValidator implements InputValidator {
 		return true;
 	}
 }
-*/
+
 ?>

@@ -20,7 +20,7 @@ class StrictTypes {
 		}
 	}
 	static public function isInteger($subject){
-		if(!is_integer($subject)){
+		if(!is_integer($subject) && !is_double($subject)){
 			throw new StrictTypeIntegerException($subject);
 			return false;
 		} else {

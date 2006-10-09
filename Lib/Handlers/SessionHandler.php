@@ -1,39 +1,105 @@
 <?php
-/*	@version 1.0 ($Id$) */
-if(!defined('SESSION_HANDLER_ENGINE')){
+/**
+ *	Session Handler
+ *
+ *  <i>No Description</i>
+ * 
+ *	LICENSE: This source file is subject to version 1.0 or any later version of the 
+ *	Bravura Corelib license that is available through the 
+ *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
+ *	If you did not receive a copy of the Bravura Corelib License and are
+ *	unable to obtain it through the web, please send a note to 
+ *	license@bravura.dk so we can mail you a copy immediately.
+ * 
+ *	@author Steffen Sørensen <steffen@bravura.dk>
+ *	@copyright Copyright (c) 2006 Bravura ApS
+ * 	@license http://www.bravura.dk/licence/corelib_1_0/
+ *	@package corelib
+ *	@subpackage Base
+ * 	@version 1.1 ($Id$)
+ *	@link http://www.bravura.dk/
+ */
+
+if(!defined('SESSION_ENGINE')){
 	/*
 	*	Setup Session Handler Engine (developer only)
 	*/
-	define('SESSION_HANDLER_ENGINE', 'PHPSessionHandler');
+	define('SESSION_ENGINE', 'PHPSessionHandler');
 }
+
+/**
+ *	Init Session By Event
+ * 
+ * 	@see SESSION_INIT_METHOD
+ */
+define('SESSION_INIT_BY_EVENT', 1);
+
+/**
+ * 	Init Session By Get Instance
+ * 
+ * 	@see SESSION_INIT_METHOD
+ */
+define('SESSION_INIT_BY_GET_INSTANCE', 2);
+
 class SessionHandler implements Singleton,Output {
 	private static $instance = null;
-	private static $init_by_event = false;
+	
 	private $engine = null;
 	private $domain = '';
 	private $lifetime = 0;
 	private $path = '/';
 	private $secure = false;
 
-
-	public static function setInitByEvent($init=false){
-		return self::$init_by_event = $init;
-	}
-	public static function getInitByEvent(){
-		return self::$init_by_event;
-	}
-
 	private function __construct(){
-		if(!self::getInitByEvent()){
+		if(!defined('SESSION_INIT_METHOD')){
+			/**
+			 * 	Define SessionHandler Init Method
+			 * 
+			 *	@uses SESSION_INIT_BY_EVENT
+			 * 	@uses SESSION_INIT_BY_GET_INSTANCE
+			 */
+			define('SESSION_INIT_METHOD', SESSION_INIT_BY_GET_INSTANCE);
+		}
+		if(!defined('SESSION_DOMAIN')){
+			/**
+			 * Define Session Domain
+			 */
+			define('SESSION_DOMAIN', null);
+		}
+		$this->domain = SESSION_DOMAIN;
+		if(!defined('SESSION_LIFETIME')){
+			/**
+			 * Define session lifetime
+			 */
+			define('SESSION_LIFETIME', 0);
+		}
+		$this->lifetime = SESSION_LIFETIME;
+		if(!defined('SESSION_PATH')){
+			/**
+			 * Define Session Path
+			 */
+			define('SESSION_PATH', '/');
+		}
+		$this->path = SESSION_PATH;
+		if(!defined('SESSION_SECURE')){
+			/**
+			 * Define session secure
+			 */
+			define('SESSION_SECURE', false);
+		}
+		$this->secure = SESSION_SECURE;
+		
+		if(SESSION_INIT_METHOD == SESSION_INIT_BY_GET_INSTANCE){
 			$this->initSession();
 		}
 	}
+	
 	public function initSession(){
 		try {
-			if(!defined('SESSION_HANDLER_ENGINE')){
+			if(!defined('SESSION_ENGINE')){
 				throw new BaseException('Session Handler Engine not defined');
 			} else {
-				$engine = '$this->engine = '.SESSION_HANDLER_ENGINE.'::getInstance();';
+				$engine = '$this->engine = '.SESSION_ENGINE.'::getInstance();';
 				eval($engine);
 				if(!$this->engine instanceof SessionHandlerEngine){
 					throw new BaseException('Invalid Session Engine Given, Session handler engine must be a instance of SessionHandlerType.');
@@ -107,10 +173,6 @@ class SessionHandler implements Singleton,Output {
 	public function getString($format = '%1$s'){
 		return sprintf($format, $this->getId());
 	}
-	public function setDomain($domain){
-		$this->domain = $domain;
-	}
-
 }
 
 interface SessionHandlerEngine {
@@ -201,9 +263,8 @@ class SessionHandlerInitEvent implements EventTypeHandler,Observer  {
 		$this->subject = $subject;
 	}
 	public function update($update){
-		if(SessionHandler::getInitByEvent()){
-
-			$session = SessionHandler::getInstance();
+		$session = SessionHandler::getInstance();
+		if(SESSION_INIT_METHOD == SESSION_INIT_BY_EVENT){
 			$session->initSession();
 		}
 	}

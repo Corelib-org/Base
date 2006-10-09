@@ -56,6 +56,7 @@
 //**                7. __destruct() ........................     **//
 //**    5. Base Functions ..................................     **//
 //**        1. __autoload() ................................     **//
+//**    6. Depricated Base Functions .......................     **//
 //**        2. contains_http() .............................     **//
 //**                                                             **//
 //*****************************************************************//
@@ -75,11 +76,11 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
-define('CORELIB_BASE_VERSION', '3.0.1');
+define('CORELIB_BASE_VERSION', '3.6.0');
 /**
  * Define CoreLib Copyright owner
  */
-define('CORELIB_COPYRIGHT', 'Morkland.com / BackInFiveMinutes.com');
+define('CORELIB_COPYRIGHT', 'Bravura ApS - http://www.bravura.dk/');
 /**
  * Define CoreLib Copyright year
  */
@@ -364,6 +365,7 @@ class Base implements Singleton {
 			}
 			$content .= ' ?>';
 			file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
+			chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
 		}
 	}
 }
@@ -387,13 +389,19 @@ function __autoload($class){
 	include_once($base->findClass($class));
 }
 
+
+
+//*****************************************************************//
+//****************** Depricated Base Functions ********************//
+//*****************************************************************//
 /**
  *	Check if string contains http:// or https://
  *
  *	@param string $str subject, string to test whether or not it contains http:// or https://
  *	@return boolean returns true if $str contains http:// or https://, else return false
+ * 	@deprecated superceded by StringFilter::ContainsHTTP()
  */
 function contains_http($str){
-	return (preg_match('(^(http:\/\/))', $str) || preg_match('(^(https:\/\/))', $str));
+	return StringFilter::ContainsHTTP($str);
 }
 ?>

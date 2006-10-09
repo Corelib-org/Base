@@ -215,7 +215,7 @@ class PageFactory implements Singleton {
 	 *
 	 *	@param integer $msgID Current msgID
 	 *	@param string $target target URL, if URL is'nt prefixed with http:// the function will add http:// is self.
-	 *	@uses contains_http()
+	 *	@uses StringFilter::ContainsHTTP()
 	 */
 	static public function redirect($msgID=null, $target=null, $append=false, $query=false){
 		$session = SessionHandler::getInstance();
@@ -257,7 +257,7 @@ class PageFactory implements Singleton {
 			if(is_null(self::$redirect_base)){
 				throw new BaseException('self::$redirect_base Not set');
 			} else {
-				if(!contains_http($target)){
+				if(!StringFilter::ContainsHTTP($target)){
 					if(substr($target, 0,1) == '/' && substr(self::$redirect_base, -1) == '/'){
 						$target = substr($target,1);
 					}

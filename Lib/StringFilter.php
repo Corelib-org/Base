@@ -221,7 +221,19 @@ class StringFilter {
         	return in_array($value, $allowed);
         }
     }
+    
+	/**
+	 *	Check if string contains http:// or https://
+	 *
+	 *	@param string $str subject, string to test whether or not it contains http:// or https://
+	 *	@return boolean returns true if $str contains http:// or https://, else return false
+	 */
+	public static function ContainsHTTP($str){
+		return (preg_match('(^(http:\/\/))', $str) || preg_match('(^(https:\/\/))', $str));
+	}    
 }
+
+
 
 class StringFilterException extends BaseException {
 }

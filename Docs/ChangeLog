@@ -2,6 +2,31 @@ Changelog For Base
 ------------------
 Last Changed: $Revision$ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
 
+$Revision$ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
+-----------------------------------------------------------------------
+*		Moved contains_http() from Base.php to StringFilter::ContainsHTTP()
+
+*		Updated PageFactory::redirect()
+			method now supports the new StringFilter::ContainsHTTP() method
+
+*		Merged BaseCLI and BaseWeb into Base
+
+*		Renamed contant SESSION_HANDLER_ENGINE to SESSION_ENGINE
+
+*		Added contant SESSION_INIT_METHOD
+			Make it possible to change when the session is initiated
+			
+*		Added constant SESSION_DOMAIN
+			Allow developers to set a specific session domain
+			
+*		Added constant SESSION_LIFETIME
+			Allow developers to set session lifetime
+
+*		Added constant SESSION_PATH
+			Allow developers to set session path
+
+*		Added constant SESSION_SECURE
+			Allow developers to set session secure (what ever it is)
 
 Revision: 2779 Date: 2006-09-06 11:38:44 +0200 (Wed, 06 Sep 2006)
 -----------------------------------------------------------------------

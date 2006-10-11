@@ -11,5 +11,5 @@ $base = Base::getInstance();
 $base->addClassPath('lib/');
 
 define('SOFTWARE_VERSION', 'Base Dummy v1.0');
-define('REDIRECT_URL', 'http://path.to/site/');
+define('HTTP_REDIRECT_BASE', 'http://path.to/site/');
 ?>

@@ -51,7 +51,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->http_redirect_base = HTTP_REDIRECT_BASE;
 	}
-
 	public function init(){
 		ob_start();
 		return is_null($this->location);

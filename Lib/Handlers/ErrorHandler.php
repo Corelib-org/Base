@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+
 if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
 	if(!defined('BASE_DISABLE_ERROR_HANDLER')){
 		define('BASE_DISABLE_ERROR_HANDLER', false);

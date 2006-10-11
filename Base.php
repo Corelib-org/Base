@@ -76,7 +76,7 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
-define('CORELIB_BASE_VERSION', '3.6.0');
+define('CORELIB_BASE_VERSION', '4.0.0 Beta');
 /**
  * Define CoreLib Copyright owner
  */

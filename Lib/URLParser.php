@@ -1,5 +1,5 @@
 <?php
-class URLParser implements Singleton {
+class URLParser implements Singleton,Output {
 	private static $instance = null;
 	
 	private $url_parts = array();
@@ -25,6 +25,10 @@ class URLParser implements Singleton {
 		$this->url_parts = explode('/', $parse_url);
 	}
 	
+	private function _isValidURLPart($part){
+		return preg_match('/^[a-z0-9A-Z]*$/', $part);
+	}
+	
 	
 	public function getUrlPart($part){
 		if(isset($this->url_parts[$part])){
@@ -37,13 +41,27 @@ class URLParser implements Singleton {
 	public function getXML(DOMDocument $xml){
 		$urlparts = $xml->createElement('urlparts');
 		while(list($key,$val) = each($this->url_parts)){
-			if(preg_match('/^[a-z0-9A-Z]*$/', $val)){
+			if($this->_isValidURLPart($val)){
 				$part = $urlparts->appendChild($xml->createElement('urlpart', $val));
 				$part->setAttribute('id', $key);
 			}
 		}
 		reset($this->url_parts);
 		return $urlparts;
+	}
+	public function &getArray(){
+		$urlparts['urlparts'] = array();
+		while(list($key,$val) = each($this->url_parts)){
+			if($this->_isValidURLPart($val)){
+				$urlparts['urlparts'][$key] = $val;
+			}
+		}
+		reset($this->url_parts);
+		return $urlparts;
+	}
+	
+	public function getString($format = '%1$s'){
+		return $this->url;
 	}
 	
 	/**

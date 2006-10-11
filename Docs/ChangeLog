@@ -2,6 +2,10 @@ Changelog For Base
 ------------------
 Last Changed: $Revision$ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
 
+$Revision$ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
+-----------------------------------------------------------------------
+*		Branched to 3_6_0
+
 Revision: 2951 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
 -----------------------------------------------------------------------
 *		Moved contains_http() from Base.php to StringFilter::ContainsHTTP()

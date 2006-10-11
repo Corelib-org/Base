@@ -1,5 +1,5 @@
 <?php
-abstract class Page2 {
+abstract class Page {
 	private $settings = array();
 	private $content = array();
 	private $templates = array();

@@ -11,7 +11,7 @@ abstract class PageFactoryTemplate {
 
 abstract class PageFactoryTemplateEngine {
 	/**
-	 * @var Page2
+	 * @var Page
 	 */
 	protected $page = null;
 	/**
@@ -19,7 +19,7 @@ abstract class PageFactoryTemplateEngine {
 	 */
 	protected $template = null;
 	
-	public function build(Page2 $page){
+	public function build(Page $page){
 		$this->page = $page;
 		$this->page->build();
 	}
@@ -42,9 +42,9 @@ abstract class PageFactoryTemplateEngine {
 }
 
 
-class PageFactory2 implements Singleton {
+class PageFactory implements Singleton {
 	/**
-	 *	@var PageFactory2
+	 *	@var PageFactory
 	 */
 	private static $instance = null;
 	/**
@@ -58,16 +58,16 @@ class PageFactory2 implements Singleton {
 	}
 
 	/**
-	 *	@return PageFactory2
+	 *	@return PageFactory
 	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
-			self::$instance = new PageFactory2();
+			self::$instance = new PageFactory();
 		}
 		return self::$instance;
 	}	
 	
-	public function build(Page2 $page){
+	public function build(Page $page){
 		$this->engine->build($page);
 	}
 

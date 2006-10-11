@@ -31,6 +31,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	const MSGID = 'MSGID';
 	
 	public function __construct(){
+		if(!define('HTTP_REDIRECT_BASE')){
+			
+		}
 		$this->script_url = $_SERVER['SCRIPT_URL'];
 		$this->script_uri = $_SERVER['SCRIPT_URI'];
 		$this->request_uri = $_SERVER['REQUEST_URI'];

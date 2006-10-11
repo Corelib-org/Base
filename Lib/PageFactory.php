@@ -47,6 +47,7 @@ class PageFactory implements Singleton {
 
 	private $xml_version = '1.0';
 	private $xml_encoding = 'UTF-8';
+	
 	private $xsl_core = null;
 	
 	protected $header = null;
@@ -382,4 +383,5 @@ abstract class Page {
 	abstract public function build();
 	abstract public function prebuild();
 }
+
 ?>

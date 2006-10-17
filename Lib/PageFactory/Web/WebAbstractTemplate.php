@@ -1,4 +1,49 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ *	PageFactory Abstract Web Template
+ *
+ *	<i>No Description</i>
+ *
+ *	LICENSE: This source file is subject to version 1.0 of the 
+ *	Bravura Distribution license that is available through the 
+ *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
+ *	If you did not receive a copy of the Bravura License and are
+ *	unable to obtain it through the web, please send a note to 
+ *	license@bravura.dk so we can mail you a copy immediately.
+ *
+ * 
+ *	@author Steffen Sørensen <steffen@bravura.dk>
+ *	@copyright Copyright (c) 2006 Bravura ApS
+ * 	@license http://www.bravura.dk/licence/corelib_1_0/
+ *	@package corelib
+ *	@subpackage Base
+ *	@link http://www.bravura.dk/
+ *	@version 1.0.0 ($Id: Base.php 2966 2006-10-11 09:30:36Z wayland $)
+ */
+if(!defined('REDIRECT_URL')){
+	/**
+	 * Superceeded by {@link HTTP_REDIRECT_BASE}
+	 *
+	 * @deprecated Superceeded by HTTP_REDIRECT_BASE
+	 */
+	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');	
+} else {
+	try {
+		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
+	} catch (BaseException $e){
+		echo $e;
+	}
+	define('HTTP_REDIRECT_BASE', REDIRECT_URL);
+}
+if(!defined('HTTP_REDIRECT_BASE')){
+	/**
+	 * 	Define Redirect Base URL
+	 */
+	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME'].'/');
+}
+
+
 abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $last_modified = null;
 	private $expires = null;
@@ -43,12 +88,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
-		if(!defined('HTTP_REDIRECT_BASE')){
-			/**
-			 * 	Define Redirect Base URL
-			 */
-			define('HTTP_REDIRECT_BASE', 'http://'.$this->server_name.'/');
-		}
 		$this->http_redirect_base = HTTP_REDIRECT_BASE;
 	}
 	public function init(){

@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- *	PageFactory Base Classes
+ *	PageFactory Generic Output Class
  *
  *	<i>No Description</i>
  *

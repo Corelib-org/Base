@@ -21,21 +21,7 @@
  *	@link http://www.bravura.dk/
  *	@version 1.0.0 ($Id: Base.php 2966 2006-10-11 09:30:36Z wayland $)
  */
-if(!defined('REDIRECT_URL')){
-	/**
-	 * Superceeded by {@link HTTP_REDIRECT_BASE}
-	 *
-	 * @deprecated Superceeded by HTTP_REDIRECT_BASE
-	 */
-	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');	
-} else {
-	try {
-		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
-	} catch (BaseException $e){
-		echo $e;
-	}
-	define('HTTP_REDIRECT_BASE', REDIRECT_URL);
-}
+
 
 abstract class PageFactoryTemplate {
 	public function init(){

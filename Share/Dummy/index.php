@@ -1,6 +1,10 @@
 <?php
 include_once('etc/config.php');
 
+$url = URLParser::getInstance();
+
+$session = SessionHandler::getInstance();
+
 $eventHandler = EventHandler::getInstance();
 $eventHandler->triggerEvent(new EventRequestStart());
 

@@ -6,19 +6,20 @@
  *	<i>No Description</i>
  *
  *	LICENSE: This source file is subject to version 1.0 of the 
- *	Morkland Distribution license that is available through the 
- *	world-wide-web at the following URI: http://www.morkland.com/license/dist_1.0.txt.
- *	If you did not receive a copy of the PHP License and are
+ *	Bravura Distribution license that is available through the 
+ *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
+ *	If you did not receive a copy of the Bravura License and are
  *	unable to obtain it through the web, please send a note to 
- *	license@morkland.com so we can mail you a copy immediately.
+ *	license@bravura.dk so we can mail you a copy immediately.
  *
- *	@author Steffen S&oslash;rensen <steffen@morkland.com>
- *	@copyright Copyright &copy; 2006, Morkland
- * 	@license http://www.morkland.com/licence/dist_1.0.txt
+ * 
+ *	@author Steffen S&oslash;rensen <steffen@bravura.dk>
+ *	@copyright Copyright (c) 2006 Bravura ApS
+ * 	@license http://www.bravura.dk/licence/corelib_1_0/
  *	@package corelib
  *	@subpackage Base
- *	@link http://www.morkland.com/
- *	@version 3.0.1 ($Id$)
+ *	@link http://www.bravura.dk/
+ *	@version 4.0.0 ($Id$)
  */
 
 //*****************************************************************//

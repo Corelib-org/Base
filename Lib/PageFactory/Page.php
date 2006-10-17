@@ -14,6 +14,7 @@ abstract class Page {
 	
 	public function addTemplateDefinition(PageFactoryTemplate $template){
 		$this->templates[$template->getSupportedTemplateEngineName()] = $template;
+		
 		return $template;
 	}
 	
@@ -42,6 +43,9 @@ abstract class Page {
 	
 	public function draw(PageFactoryTemplateEngine $engine){
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
+			$event = EventHandler::getInstance();
+			$event->triggerEvent(new EventApplyDefaultSettings($this));
+
 			while(list(,$val) = each($this->content)){
 				$engine->addPageContent($val);
 			}
@@ -52,6 +56,20 @@ abstract class Page {
 		} else {
 			return false;
 		}
+	}
+}
+
+class EventApplyDefaultSettings implements Event {
+	private $page = null;
+
+	function __construct(Page $page){
+		$this->page = $page;
+	}
+	/**
+	 * @return Page
+	 */
+	public function getPage(){
+		return $this->page;
 	}
 }
 ?>

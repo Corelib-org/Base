@@ -13,7 +13,7 @@
  *	license@bravura.dk so we can mail you a copy immediately.
  *
  * 
- *	@author Steffen S&oslash;rensen <steffen@bravura.dk>
+ *	@author Steffen Sørensen <steffen@bravura.dk>
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
  *	@package corelib
@@ -44,7 +44,6 @@ abstract class PageFactoryTemplate {
 	
 	abstract public function getSupportedTemplateEngineName();
 	abstract public function cleanup();
-
 }
 
 abstract class PageFactoryTemplateEngine {

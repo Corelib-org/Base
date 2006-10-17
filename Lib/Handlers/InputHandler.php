@@ -1,5 +1,5 @@
 <?php
-/*	@version 1.0 Beta ($Id: EventHandler.php 130 2005-10-08 00:44:20Z wayland $) */
+/*	@version 1.0 Beta ($Id$) */
 
 interface InputValidator {
 	public function validate($content);

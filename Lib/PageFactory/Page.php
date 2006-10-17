@@ -19,7 +19,7 @@
  *	@package corelib
  *	@subpackage Base
  *	@link http://www.bravura.dk/
- *	@version 1.0.0 ($Id: Base.php 2966 2006-10-11 09:30:36Z wayland $)
+ *	@version 1.0.0 ($Id$)
  */
 
 abstract class Page {

@@ -60,6 +60,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+		$this->connection->query('SET character_set_results = NULL');
 		if($this->connection->errno === 0){
 			return true;
 		} else {

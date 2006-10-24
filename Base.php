@@ -51,6 +51,7 @@
 //**                1. __construct() .......................     **//
 //**                2. getInstance() .......................     **//
 //**                3. addClassPath() ......................     **//
+//**                3. loadClass() .........................     **//
 //**                4. findClass() .........................     **//
 //**                5. _classSearch() ......................     **//
 //**                6. _searchDir() ........................     **//
@@ -244,6 +245,7 @@ class Base implements Singleton {
 			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.self::BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
+		include_once(CORELIB.'/Base/Lib/StrictTypes.php');
 	}
 	
 	/**
@@ -269,7 +271,31 @@ class Base implements Singleton {
 	 * @uses Base::$class_paths
 	 */
 	public function addClassPath($path){
+		try {
+			StrictTypes::isString($path);
+		} catch (BaseException $e){
+			echo $e;
+		}
 		$this->class_paths[] = $path;
+	}
+
+	/**
+	 * Force Loading of class
+	 *
+	 * Force corelib to load a specific class, this is very
+	 * usefull for event classes which always needs to be loaded.
+	 * 
+	 * @param string $class Class name
+	 * @return boolean alwas returns true
+	 */
+	public function loadClass($class){
+		try {
+			StrictTypes::isString($class);
+		} catch (BaseException $e){
+			echo $e;
+		}
+		__autoload($class);
+		return true;
 	}
 	
 	/**
@@ -285,6 +311,11 @@ class Base implements Singleton {
 	 * @uses Base::$class_cache_updated
 	 */
 	public function findClass($class){
+		try {
+			StrictTypes::isString($class);
+		} catch (BaseException $e){
+			echo $e;
+		}
 		if(!isset($this->class_cache[$class])){
 			try {
 				if($file = $this->_classSearch($class)){
@@ -386,6 +417,11 @@ class Base implements Singleton {
  * @uses Base::findClass()
  */
 function __autoload($class){
+	try {
+		StrictTypes::isString($class);
+	} catch (BaseException $e){
+		echo $e;
+	}
 	$base = Base::getInstance();
 	include_once($base->findClass($class));
 }

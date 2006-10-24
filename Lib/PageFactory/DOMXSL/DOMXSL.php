@@ -56,7 +56,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			if($input->isSetGet('xml') && BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
 				$this->template->setContentType('text/xml');
 				$this->template->setContentCharset('UTF-8');
-				echo $this->xsl->saveXML();
+				echo $this->xml->saveXML();
 			} else {
 				$tranformToXML = false;
 				if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
@@ -90,11 +90,12 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		
 		$this->settings->appendChild($this->xml->createElement('script_uri', $this->template->getScriptUri()));
 		$this->settings->appendChild($this->xml->createElement('script_url', $this->template->getScriptUrl()));
-		$this->settings->appendChild($this->xml->createElement('request_url', $this->template->getRequestUri()));
+		$this->settings->appendChild($this->xml->createElement('request_url', str_replace('&', '&amp;', $this->template->getRequestUri())));
 		
 		$this->settings->appendChild($this->xml->createElement('server_name', $this->template->getServerName()));
 		$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
 		$this->settings->appendChild($this->xml->createElement('remote_address', $this->template->getRemoteAddress()));
+		$this->settings->appendChild($this->xml->createElement('redirect_url', $this->template->getHTTPRedirectBase()));
 		
 		$stylesheets = $this->template->getStyleSheets();
 		while(list(,$val) = each($stylesheets)){

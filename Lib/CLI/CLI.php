@@ -62,3 +62,4 @@ class CLI implements Singleton {
 		}
 	}
 }
+?>

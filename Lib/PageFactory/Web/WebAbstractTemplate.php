@@ -203,6 +203,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function getScriptUrl(){
 		return $this->script_url;
 	}
+	public function getMessageID(){
+		return $this->message_id;
+	}
 	public function getScriptUri(){
 		return $this->script_uri;
 	}
@@ -220,6 +223,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	}
 	public function getContentType(){
 		return $this->content_type;
+	}
+	public function getHTTPRedirectBase(){
+		return $this->http_redirect_base;
 	}
 	/**
 	 *	System redirect

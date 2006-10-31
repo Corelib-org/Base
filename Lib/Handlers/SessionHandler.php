@@ -167,7 +167,10 @@ class SessionHandler implements Singleton,Output {
 		return self::$instance;
 	}
 	public function getXML(DOMDocument $xml){
-		return $xml->createElement('session_id', $this->getId());
+		$session = $xml->createElement('session');
+		$session->appendChild($xml->createElement('session_id', $this->getId()));
+		$session->appendChild($this->engine->getXML($xml));
+		return $session;
 	}
 	public function &getArray(){
 		return array('session_id', $this->getId());
@@ -191,7 +194,7 @@ interface SessionHandlerEngine {
 	public function setDomain($domain);
 }
 
-class PHPSessionHandler implements SessionHandlerEngine,Singleton {
+class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	private static $instance = null;
 	private $domain = '';
 	private $lifetime = 0;
@@ -249,6 +252,21 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton {
 			self::$instance = new PHPSessionHandler();
 		}
 		return self::$instance;
+	}
+	
+	public function getXML(DOMDocument $xml){
+		$session = $xml->createElement('var');
+		while(list($key, $val) = each($_SESSION)){
+			$session->appendChild($xml->createElement($key, htmlspecialchars($val)));
+		}
+		reset($_SESSION);
+		return $session;
+	}
+	public function &getArray(){
+		return array('session_id', $this->getId());
+	}
+	public function getString($format = '%1$s'){
+		return sprintf($format, $this->getId());
 	}
 }
 

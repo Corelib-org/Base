@@ -27,7 +27,7 @@ if(!defined('REDIRECT_URL')){
 	 *
 	 * @deprecated Superceeded by HTTP_REDIRECT_BASE
 	 */
-	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');	
+	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME']);	
 } else {
 	try {
 		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
@@ -40,7 +40,13 @@ if(!defined('HTTP_REDIRECT_BASE')){
 	/**
 	 * 	Define Redirect Base URL
 	 */
-	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME'].'/');
+	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME']);
+}
+if(!defined('HTTP_STATUS_MESSAGE_FILE')){
+	/**
+	 * 	Define Redirect Base URL
+	 */
+	define('HTTP_STATUS_MESSAGE_FILE', 'share/status.xml');
 }
 
 
@@ -89,6 +95,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
 		$this->http_redirect_base = HTTP_REDIRECT_BASE;
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			$this->set_referer = false;
+		}
 	}
 	public function init(){
 		ob_start();
@@ -165,7 +174,11 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		} catch (BaseException $e){
 			echo $e;
 		}
-		$this->location = $location;
+		if(StringFilter::ContainsHTTP($location)){
+			$this->location = $location;
+		} else {
+			$this->location = $this->http_redirect_base.$location;
+		}
 	}
 	public function setMessageID($id){
 		try {
@@ -227,67 +240,28 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function getHTTPRedirectBase(){
 		return $this->http_redirect_base;
 	}
-	/**
-	 *	System redirect
-	 *	
-	 *	This function provides a easy way to redirecting using http
-	 *
-	 *	@param integer $msgID Current msgID
-	 *	@param string $target target URL, if URL is'nt prefixed with http:// the function will add http:// is self.
-	 *	@uses StringFilter::ContainsHTTP()
-	 *
-	static public function redirect($msgID=null, $target=null, $append=false, $query=false){
+	public function getStatusMessage(){
 		$session = SessionHandler::getInstance();
-	
-		if(!is_null($target) && !$append){
-		} else if(isset($_SERVER['HTTP_REFERER']) || $session->check(self::REFERER_VAR)){
-			$append_string = $target;
-			if(isset($_SERVER['HTTP_REFERER'])){
-				$target = $_SERVER['HTTP_REFERER'];
-			} else {
-				$target = $session->get(self::REFERER_VAR);
-			}
-			if($append){
-				if($query){
-					$list = explode('&', $append_string);
-					while(list($key, $var) = each($list)){
-						if(strstr($var, '=')){
-							list($var, $content) = explode('=', $var, 2);
-						}
-						$target = preg_replace('/(\?.*?)&{0,1}'.preg_quote($var).'\={0,1}.+?(&|$)/', '\\1\\2',$target);
-					}
-					if(!strstr($target,'?')){
-						$target .= '?';
-					} else if(substr($target, -1) != '?'){
-						$target .= '&';
-					}	
-					$target .= $append_string; 
+		if($session->check(self::MSGID)){
+			$DOMMessages = new DOMDocument('1.0','UTF-8');
+			$DOMMessages->load(HTTP_STATUS_MESSAGE_FILE);
+			$XPath = new DOMXPath($DOMMessages);
+			$DOMMessage = $XPath->query('/messages/message[@id = '.$session->get(self::MSGID).']');
+			try {
+				if($DOMMessage->length > 1){
+					throw new BaseException('Message Collission for messsage('.$session->get(self::MSGID).') ,in message file '.HTTP_STATUS_MESSAGE_FILE);
+				} else if ($DOMMessage->length < 1) {
+					throw new BaseException('Non-excisting message('.$session->get(self::MSGID).'), in message file '.HTTP_STATUS_MESSAGE_FILE);
 				} else {
-					$target = preg_replace('/\?.*$/','',$target);
+					$session->remove(self::MSGID);
+					return $DOMMessage->item(0);
 				}
+			} catch (BaseException $e){
+				echo $e;
+				exit;
 			}
-		} else {
-			$target = '';
 		}
-		try {
-			if(is_null(self::$redirect_base)){
-				throw new BaseException('self::$redirect_base Not set');
-			} else {
-				if(!StringFilter::ContainsHTTP($target)){
-					if(substr($target, 0,1) == '/' && substr(self::$redirect_base, -1) == '/'){
-						$target = substr($target,1);
-					}
-					$target = self::$redirect_base.$target;
-				}
-				header('Location: '.$target);
-				exit;	
-			}
-		} catch (BaseException $e){
-			echo $e;	
-		}		
-		
-		
+		return false;
 	}
-	*/
 }
 ?>

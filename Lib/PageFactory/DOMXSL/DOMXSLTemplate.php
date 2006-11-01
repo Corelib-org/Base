@@ -24,9 +24,7 @@
 if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
 	define('DOMXSL_TEMPLATE_XSL_PATH', CURRENT_WORKING_DIR.'share/xsl/');
 }
-if(!defined('DOMXSL_TEMPLATE_XSL_CORE')){
-	define('DOMXSL_TEMPLATE_XSL_CORE', DOMXSL_TEMPLATE_XSL_PATH.'base/core.xsl');
-}
+
 
 class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	private $xsl_templates = array();
@@ -38,6 +36,16 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 
 	const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
 
+	public function __construct($xslcore = null){
+		parent::__construct();
+		if(is_null($xslcore)){
+			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.'base/core.xsl';
+		}else {
+			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$xslcore;
+		}
+		define('DOMXSL_TEMPLATE_XSL_CORE', $xslcore);
+	}
+	
 	public function addTemplate($template_file){
 		try {
 			StrictTypes::isString($template_file);

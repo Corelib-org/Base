@@ -26,7 +26,7 @@ class MySQLiEngine implements DatabaseEngine {
 		} catch (BaseException $e){
 			echo $e;	
 		}
-		if($this->pid != posix_getpid() || is_null($this->connection) || !$this->connection->ping()){
+		if($this->pid != posix_getpid() || is_null($this->connection)){
 			$this->_connect();
 		}
 		$query->setInstance($this->connection);

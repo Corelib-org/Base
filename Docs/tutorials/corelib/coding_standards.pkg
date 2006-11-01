@@ -1,24 +1,81 @@
 <refentry id="{@id}">
 	<refnamediv>
 		<refname>Coding Standards</refname>
-		<refpurpose>phpDocumentor for newbies tutorial</refpurpose>
+		<refpurpose>Standardization is Important. Live them, love them.</refpurpose>
 	</refnamediv>
 	<refsynopsisdiv>
-		<author>
-			Gregory Beaver
-			<authorblurb>{@link mailto:cellog@php.net cellog@php.net}</authorblurb>
-		</author>
+		<para>
+			It helps if the standard annoys everyone in some way so everyone
+			feels they are on the same playing field. 
+			The proposal here has evolved over many projects, many companies, 
+			and literally a total of many weeks spent arguing. 
+			It is no particular person's style and is certainly open to local amendments.
+		</para>
+		<para>
+			<author>
+				Steffen Sørensen
+				<authorblurb>{@link mailto:steffen@bravura.dk steffen@bravura.dk}</authorblurb>
+			</author>
+		</para>
 	</refsynopsisdiv>
-	<refsect1 id="{@id source}">
-		<title>sample1.php</title>
+	{@toc}
+	<refsect1 id="{@id comments}">
+		<title>Comments</title>
 		<para>
-			{@example sample1.php}
+			Non-documentation comments are strongly encouraged.
+			A general rule of thumb is that if you look at a section of code and think 
+			"Wow, I don't want to try and describe that", 
+			you need to comment it before you forget how it works.
 		</para>
-	</refsect1>
-	<refsect1 id="{@id source}">
-		<title>sample1.php</title>
 		<para>
-			{@example sample1.php}
+			<itemizedlist>
+				<listitem>C++ style comments (/* */) and standard C comments (//) are both acceptable.</listitem>
+				<listitem>Use of perl/shell style comments (#) is prohibited.</listitem>
+			</itemizedlist>
 		</para>
+		<refsect2 id="{@id phpdoctags}">
+			<title>PHPdoc Tags</title>
+			<para>
+				Inline documentation for classes should follow the PHPDoc convention, 
+				similar to Javadoc. More information about PHPDoc can be found here:
+
+				{@link http://www.phpdoc.org/}
+			</para>			
+			<refsect3 id="{@id filecomments}">
+				<title>File Comments</title>
+			</refsect3>
+			<refsect3 id="{@id classcomments}">
+				<title>Function and Class Comments</title>
+			</refsect3>			
+			<refsect3>
+				<title>Note</title>
+				<para>
+					The placement of periods in the short and long descriptions is important to the PHPdoc parser.
+					The first period always ends the short description. 
+					All future periods are part of the long description, ending with a blank comment line. 
+					The long comment is optional.
+				</para>
+			</refsect3>			
+		</refsect2>
 	</refsect1>
+	
+	<refsect1 id="{@id indenting}">
+		<title>Indenting</title>
+		<para>
+			All indenting is done with TABS. Before committing any file to CVS,
+			make sure you first replace spaces with tabs and verify the formatting.
+		</para>
+		<refsect2 id="{@id testing}">
+			<title>PHPdoc Tags</title>
+		</refsect2>
+	</refsect1>
+	
+	<refsect1 id="{@id phpcodetags}">
+		<title>PHP Code Tags</title>
+		<para>
+			The use of &lt;?php ?> to delimit PHP code is required. Using &lt;? ?> is not valid. 
+			This is the most portable way to include PHP code on differing operating systems 
+			and webserver setups. Also, XML parsers are confused by the shorthand syntax.
+		</para>
+	</refsect1>	
 </refentry>

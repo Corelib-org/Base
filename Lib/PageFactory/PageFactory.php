@@ -46,7 +46,6 @@ abstract class PageFactoryTemplateEngine {
 	protected $template = null;
 	
 	public function build(Page $page, $callback=null){
-		var_dump($callback);
 		$this->page = $page;
 		if(!is_null($callback)){
 			eval('$this->page->'.$callback.';');

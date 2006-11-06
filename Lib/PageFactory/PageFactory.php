@@ -139,7 +139,7 @@ class PageFactory implements Singleton {
 		} else {
 			if(is_array($pages[$_GET['page']])){
 				try {
-					if(!isset($pages[$_GET['page']]['file'])){
+					if(!isset($pages[$_GET['page']]['page'])){
 						throw new BaseException('file not set.', E_USER_ERROR);
 					}
 					if(!isset($pages[$_GET['page']]['exec'])){
@@ -149,20 +149,20 @@ class PageFactory implements Singleton {
 					echo $e;
 					exit;
 				}
-				$file = $pages[$_GET['page']]['file'];
+				$page = $pages[$_GET['page']]['page'];
 				$this->callback = $pages[$_GET['page']]['exec'].'()';
 			} else {
-				$file = $pages[$_GET['page']];	
+				$page = $pages[$_GET['page']];	
 			}
 			try {
-				if(!is_file($pages[$_GET['page']])){
-					throw new BaseException('Unable to open: '.$pages[$_GET['page']].'. File not found.', E_USER_ERROR);
+				if(!is_file($page)){
+					throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
 				}
 			} catch (BaseException $e){
 				echo $e;
 				exit;
 			}
-			require_once($pages[$_GET['page']]);
+			require_once($page);
 			return true;
 		}
 	}

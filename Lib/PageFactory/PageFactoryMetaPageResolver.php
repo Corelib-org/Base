@@ -22,12 +22,13 @@ class PageFactoryMetaPageResolver implements PageFactoryPageResolver {
 					break;
 				case 'string':
 					$expr = str_replace($val, '[a-z]+', $expr);
-					$param[] = '(string) \'\\'.($val + 1).'\'';
+					$param[] = '(string) \'\\'.($key + 1).'\'';
 					break;
 			}
 			
 		}
-		$expr = '/^'.str_replace('/', '\/', $expr).'/';
+		
+		$expr = '/^'.str_replace('/', '\/', $expr).'$/';
 		$exec = '\\'.$function.'('.implode(', ', $param).')';
 		return array($expr, $exec);
 	}

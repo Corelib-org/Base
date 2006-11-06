@@ -77,6 +77,10 @@ abstract class Page {
 			exit;
 		}
 	}
+	
+	public function __call($function, $args){
+		$this->build();
+	}
 }
 
 class EventApplyDefaultSettings implements Event {

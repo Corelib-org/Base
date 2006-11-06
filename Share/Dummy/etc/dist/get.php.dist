@@ -10,4 +10,16 @@ $pages['/corelib/doc/'] = 'lib/http/get/corelib/doc.php';
 // HTTP Error Handlers
 $pages['/corelib/errors/403/'] = 'lib/http/get/corelib/errors/403.php';
 $pages['/corelib/errors/404/'] = 'lib/http/get/corelib/errors/404.php';
+
+/*
+$rpages[] = array('type'=>'regex',
+                  'expr'=>'/^\/manager\/(test)\/([0-9]+)\/$/',
+                  'exec'=>'\\1(\\2)',
+                  'page'=>'lib/http/get/test.php');
+                  
+$rpages[] = array('type'=>'PageFactoryMetaPageResolver',
+                  'expr'=>'/manager/(function)/(int:id)/(string:somestring)/',
+                  'exec'=>'id, somestring',
+                  'page'=>'lib/http/get/test.php');
+*/
 ?>

@@ -13,7 +13,7 @@
  *	license@bravura.dk so we can mail you a copy immediately.
  *
  * 
- *	@author Steffen Sørensen <steffen@bravura.dk>
+ *	@author Steffen Sørensen <steffen@bravura.dk>	
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
  *	@package corelib
@@ -23,7 +23,7 @@
  */
 
 interface PageFactoryPageResolver {
-	public static function resolve();
+	public static function resolve($expr, $exec);
 }
 
 abstract class PageFactoryTemplate {
@@ -46,8 +46,13 @@ abstract class PageFactoryTemplateEngine {
 	protected $template = null;
 	
 	public function build(Page $page, $callback=null){
+		var_dump($callback);
 		$this->page = $page;
-		$this->page->build();
+		if(!is_null($callback)){
+			eval('$this->page->'.$callback.';');
+		} else {
+			$this->page->build();
+		}
 	}
 	
 	public function setTemplate(PageFactoryTemplate $template){
@@ -115,7 +120,7 @@ class PageFactory implements Singleton {
 						$resolver = 'list($val[\'expr\'], $val[\'exec\']) = '.$val['type'].'::resolve($val[\'expr\'], $val[\'exec\']);';
 						eval($resolver);
 					}
-					if(preg_match($val['expr'])){
+					if(preg_match($val['expr'], $_GET['page'])){
 						try {
 							if(!is_file($val['page'])){
 								throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
@@ -124,8 +129,8 @@ class PageFactory implements Singleton {
 							echo $e;
 							exit;
 						}
-						$this->callback = preg_replace($val['expr'], $val['exec']);
-						require_once($val['expr']);
+						$this->callback = preg_replace($val['expr'], $val['exec'], $_GET['page']);
+						require_once($val['page']);
 						return true;
 					}
 				} 
@@ -146,7 +151,7 @@ class PageFactory implements Singleton {
 					exit;
 				}
 				$file = $pages[$_GET['page']]['file'];
-				$this->callback = $pages[$_GET['page']]['exec'];
+				$this->callback = $pages[$_GET['page']]['exec'].'()';
 			} else {
 				$file = $pages[$_GET['page']];	
 			}

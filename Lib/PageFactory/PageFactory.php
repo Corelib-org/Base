@@ -22,6 +22,9 @@
  *	@version 1.0.0 ($Id$)
  */
 
+interface PageFactoryPageResolver {
+	public static function resolve();
+}
 
 abstract class PageFactoryTemplate {
 	public function init(){
@@ -42,7 +45,7 @@ abstract class PageFactoryTemplateEngine {
 	 */
 	protected $template = null;
 	
-	public function build(Page $page){
+	public function build(Page $page, $callback=null){
 		$this->page = $page;
 		$this->page->build();
 	}
@@ -74,7 +77,8 @@ class PageFactory implements Singleton {
 	 * @var PageFactoryTemplateEngine
 	 */
 	private $engine = null;
-
+	
+	private $callback = null;
 
 	private function __construct(){	
 		$this->engine = new PageFactoryDOMXSL();
@@ -90,8 +94,77 @@ class PageFactory implements Singleton {
 		return self::$instance;
 	}	
 	
+	public function resolvePageObject(){
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			include_once('etc/post.php');
+		} else {
+			include_once('etc/get.php');
+		}
+
+		if(!isset($_GET['page'])){
+			$_GET['page'] = '/';
+		}
+
+		if(substr($_GET['page'], -1) != '/'){
+			$_GET['page'] .= '/';
+		}
+		if(!isset($pages[$_GET['page']])){
+			if(isset($rpages)){
+				while(list(,$val) = each($rpages)){
+					if($val['type'] != 'regex'){
+						$resolver = 'list($val[\'expr\'], $val[\'exec\']) = '.$val['type'].'::resolve($val[\'expr\'], $val[\'exec\']);';
+						eval($resolver);
+					}
+					if(preg_match($val['expr'])){
+						try {
+							if(!is_file($val['page'])){
+								throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
+							}
+						} catch (BaseException $e){
+							echo $e;
+							exit;
+						}
+						$this->callback = preg_replace($val['expr'], $val['exec']);
+						require_once($val['expr']);
+						return true;
+					}
+				} 
+			}
+			require_once($pages['/404/']);
+			return true;
+		} else {
+			if(is_array($pages[$_GET['page']])){
+				try {
+					if(!isset($pages[$_GET['page']]['file'])){
+						throw new BaseException('file not set.', E_USER_ERROR);
+					}
+					if(!isset($pages[$_GET['page']]['exec'])){
+						throw new BaseException('exec not set.', E_USER_ERROR);
+					}
+				} catch (BaseException $e){
+					echo $e;
+					exit;
+				}
+				$file = $pages[$_GET['page']]['file'];
+				$this->callback = $pages[$_GET['page']]['exec'];
+			} else {
+				$file = $pages[$_GET['page']];	
+			}
+			try {
+				if(!is_file($pages[$_GET['page']])){
+					throw new BaseException('Unable to open: '.$pages[$_GET['page']].'. File not found.', E_USER_ERROR);
+				}
+			} catch (BaseException $e){
+				echo $e;
+				exit;
+			}
+			require_once($pages[$_GET['page']]);
+			return true;
+		}
+	}
+	
 	public function build(Page $page){
-		$this->engine->build($page);
+		$this->engine->build($page, $this->callback);
 	}
 
 	public function draw(){

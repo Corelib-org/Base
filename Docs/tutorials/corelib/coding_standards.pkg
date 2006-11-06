@@ -38,7 +38,8 @@
 			<para>
 				Inline documentation for classes should follow the PHPDoc convention, 
 				similar to Javadoc. More information about PHPDoc can be found here:
-
+			</para>
+			<para>
 				{@link http://www.phpdoc.org/}
 			</para>			
 			<refsect3 id="{@id filecomments}">

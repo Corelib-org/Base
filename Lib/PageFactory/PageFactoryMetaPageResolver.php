@@ -25,7 +25,6 @@ class PageFactoryMetaPageResolver implements PageFactoryPageResolver {
 					$param[] = '(string) \'\\'.($key + 1).'\'';
 					break;
 			}
-			
 		}
 		
 		$expr = '/^'.str_replace('/', '\/', $expr).'$/';

@@ -28,5 +28,11 @@ $rpages[] = array('type'=>'PageFactoryMetaPageResolver',
                   'expr'=>'/manager/(function)/(int:id)/(string:somestring)/',
                   'exec'=>'id, somestring',
                   'page'=>'lib/http/get/test.php');
+                  
+// Dynamic Meta format with a static function
+$rpages[] = array('type'=>'PageFactoryMetaPageResolver',
+                  'expr'=>'/manager/(int:id)/(string:somestring)/',
+                  'exec'=>'function: id, somestring',
+                  'page'=>'lib/http/get/test.php');
 */
-?>
+?>	

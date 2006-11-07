@@ -27,6 +27,9 @@ abstract class Page {
 	private $content = array();
 	private $templates = array();
 	
+	private $args = array();
+	private $function = 'build';
+	
 	abstract public function build();
 	
 	public function addContent(Output $content){
@@ -47,6 +50,13 @@ abstract class Page {
 	public function getContent(){
 		return $this->settings;
 	}
+
+	protected function getArguments(){
+		return $this->args;
+	}
+	protected function getFunction(){
+		return $this->function;
+	}
 	
 	public function draw(PageFactoryTemplateEngine $engine){
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
@@ -65,6 +75,11 @@ abstract class Page {
 		}
 	}
 	
+	public function __call($function, $args){
+		$this->args = &$args;
+		$this->function = $function;
+		$this->build();
+	}
 	private function _getTemplateDefinition(PageFactoryTemplateEngine $engine){
 		try {
 			if(!isset($this->templates[$engine->getSupportedTemplateDefinition()])){
@@ -76,10 +91,6 @@ abstract class Page {
 			echo $e;
 			exit;
 		}
-	}
-	
-	public function __call($function, $args){
-		$this->build();
 	}
 }
 

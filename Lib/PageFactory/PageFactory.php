@@ -23,7 +23,9 @@
  */
 
 interface PageFactoryPageResolver {
-	public static function resolve($expr, $exec);
+	public function resolve($expr, $exec);
+	public function getExpression();
+	public function getExecute();
 }
 
 abstract class PageFactoryTemplate {
@@ -83,9 +85,12 @@ class PageFactory implements Singleton {
 	private $engine = null;
 	
 	private $callback = null;
+	
+	private $resolvers = array();
 
 	private function __construct(){	
 		$this->engine = new PageFactoryDOMXSL();
+		$this->addResolver('meta', new MetaResolver());
 	}
 
 	/**
@@ -97,6 +102,15 @@ class PageFactory implements Singleton {
 		}
 		return self::$instance;
 	}	
+	
+	public function addResolver($ident, PageFactoryPageResolver $resolver){
+		try {
+			StrictTypes::isString($ident);
+		} catch (BaseException $e){
+			echo $e;
+		}
+		$this->resolvers[$ident] = $resolver;
+	}
 	
 	public function resolvePageObject(){
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -116,8 +130,9 @@ class PageFactory implements Singleton {
 			if(isset($rpages)){
 				while(list(,$val) = each($rpages)){
 					if($val['type'] != 'regex'){
-						$resolver = 'list($val[\'expr\'], $val[\'exec\']) = '.$val['type'].'::resolve($val[\'expr\'], $val[\'exec\']);';
-						eval($resolver);
+						$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']);
+						$val['expr'] = $this->resolvers[$val['type']]->getExpression();
+						$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 					}
 					if(preg_match($val['expr'], $_GET['page'])){
 						try {

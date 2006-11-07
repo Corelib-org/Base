@@ -1,6 +1,9 @@
 <?php
-class PageFactoryMetaPageResolver implements PageFactoryPageResolver {
-	static public function resolve($expr, $exec){
+class MetaResolver implements PageFactoryPageResolver {
+	private $exec = null;
+	private $expr = null;
+	
+	public function resolve($expr, $exec){
 		preg_match_all('/\((.*?)\)/', $expr, $result);
 		
 		$param = array();
@@ -18,7 +21,7 @@ class PageFactoryMetaPageResolver implements PageFactoryPageResolver {
 					break;
 				case 'function':
 					$expr = str_replace($val, '[a-z]+', $expr);
-					$function = ($key + 1);
+					$function = '\\'.($key + 1);
 					break;
 				case 'string':
 					$expr = str_replace($val, '[a-z]+', $expr);
@@ -26,10 +29,21 @@ class PageFactoryMetaPageResolver implements PageFactoryPageResolver {
 					break;
 			}
 		}
-		
+		if(strstr($exec, ':')){
+			list($function) = explode(':', $exec, 2);
+		}
 		$expr = '/^'.str_replace('/', '\/', $expr).'$/';
-		$exec = '\\'.$function.'('.implode(', ', $param).')';
-		return array($expr, $exec);
+		$exec = $function.'('.implode(', ', $param).')';
+		$this->exec = $exec;
+		$this->expr = $expr;
+		return true;
+	}
+	
+	public function getExpression(){
+		return $this->expr;
+	}
+	public function getExecute(){
+		return $this->exec;
 	}
 }
 ?>

@@ -2,6 +2,11 @@ Changelog For Base
 ------------------
 Last Changed: $Revision: 2984 $ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
 
+$Revision: 2984 $ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
+-----------------------------------------------------------------------
+*		$base is always instansiated as a global variable
+			the Base instance can allways be found here
+
 Revision: 2967 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
 -----------------------------------------------------------------------
 *		Branched to 3_6_0

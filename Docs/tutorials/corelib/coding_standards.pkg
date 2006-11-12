@@ -44,9 +44,63 @@
 			</para>			
 			<refsect3 id="{@id filecomments}">
 				<title>File Comments</title>
+				<para>
+					Every file should start with a comment block describing its purpose,
+					version, author, package, subpackage, license and a copyright 
+					message. The comment block should be a block comment in standard 
+					JavaDoc format along with a CVS Id tag. While all JavaDoc tags are 
+					allowed, only the tags in the examples below will be parsed by 
+					PHPdoc.				
+				</para>
+				<para>
+					Bravura contains a mixed copyright. For files which contains
+					code from other projects like pear og pecl copyright and license
+					for both bravura and the source of the code must be specified.
+				</para>
+				<para>
+				    <programlisting role="php">
+					    <![CDATA[
+/**
+ * brief description.
+ * long description.  more long description.
+ *
+ * LICENSE: This source file is subject to version 1.0 of the 
+ * Bravura Distribution license that is available through the 
+ * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
+ * If you did not receive a copy of the Bravura License and are
+ * unable to obtain it through the web, please send a note to 
+ * license@bravura.dk so we can mail you a copy immediately.
+ * 
+ * @author Steffen Sørensen <steffen@bravura.dk>
+ * @copyright Copyright (c) 2006 Bravura ApS
+ * @license http://www.bravura.dk/licence/corelib_1_0/
+ * @package corelib
+ * @subpackage Base
+ * @link http://www.bravura.dk/
+ * @version 4.0.0 ($Id: Base.php 3382 2006-11-08 11:02:41Z wayland $)
+ */					    ]]>
+				    </programlisting>
+				</para>
 			</refsect3>
 			<refsect3 id="{@id classcomments}">
 				<title>Function and Class Comments</title>
+				<para>
+					Similarly, every function should have a block comment 
+					specifying name, parameters, return values, and last 
+					change date, etc.				
+				</para>
+				<para>
+				    <programlisting role="php">
+					    <![CDATA[
+/**
+ * brief description.
+ * long description.  more long description.
+ *
+ * @package corelib
+ * @subpackage Base
+ */					    ]]>
+				    </programlisting>
+				</para>				
 			</refsect3>			
 			<refsect3>
 				<title>Note</title>
@@ -66,17 +120,81 @@
 			All indenting is done with TABS. Before committing any file to CVS,
 			make sure you first replace spaces with tabs and verify the formatting.
 		</para>
-		<refsect2 id="{@id testing}">
-			<title>PHPdoc Tags</title>
-		</refsect2>
 	</refsect1>
 	
 	<refsect1 id="{@id phpcodetags}">
 		<title>PHP Code Tags</title>
 		<para>
-			The use of &lt;?php ?> to delimit PHP code is required. Using &lt;? ?> is not valid. 
 			This is the most portable way to include PHP code on differing operating systems 
 			and webserver setups. Also, XML parsers are confused by the shorthand syntax.
 		</para>
 	</refsect1>	
+	
+	<refsect1 id="{@id expressions}">
+		<title>Expressions</title>
+		<para>
+			<itemizedlist>
+				<listitem>Use parentheses liberally to resolve ambiguity.</listitem>
+				<listitem>Using parentheses can force an order of evaluation. This saves the time a reader may spend remembering precedence of operators.</listitem>
+				<listitem>Don't sacrifice clarity for cleverness.</listitem>
+				<listitem>Write conditional expressions so that they read naturally aloud.</listitem>
+				<listitem>Sometimes eliminating a not operator (!) will make an expression more understandable.</listitem>
+				<listitem>Keep each line simple.</listitem>
+				<listitem>The ternary operator (x ? 1 : 2) usually indicates too much code on one line. if... else if... else is usually more readable.</listitem>
+			</itemizedlist>
+		</para>
+	</refsect1>
+	
+	<refsect1>
+		<title>Control Structures</title>
+		<para>
+			These include if, for, while, switch, etc. Here is an example if statement, 
+			since it is the most complicated form:
+		</para>
+		<para>
+			<programlisting role="php">
+				<![CDATA[
+if ((condition1) || (condition2)) {
+    action1;
+} elseif ((condition3) && (condition4)) {
+    action2;
+} else {
+    defaultaction;
+}
+				]]>
+			</programlisting>
+		</para>
+		<para>
+			Control statements shall have one space between the control 
+			keyword and opening parenthesis, to distinguish them from function calls.
+		</para>
+		<para>
+			You should use curly braces even in situations where they are technically 
+			optional. Having them increases readability and decreases the likelihood 
+			of logic errors being introduced when new lines are added.
+		</para>
+		<para>
+			For switch statements:
+		</para>
+		<para>
+			<programlisting role="php">
+				<![CDATA[
+switch (condition) {
+    case 1: {
+        action1;
+        break;
+    }
+    case 2: {
+        action2;
+        break;
+    }
+    default: {
+        defaultaction;
+        break;
+    }
+}
+				]]>
+			</programlisting>
+		</para>
+	</refsect1>
 </refentry>

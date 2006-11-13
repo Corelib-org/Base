@@ -54,13 +54,7 @@ class InputHandler implements Singleton,Output {
 			if($valid = $this->_validate($this->post[$item], $mode)){
 				$this->post_valid[$item] = &$this->post[$item];
 				if($this->addslashes){
-					if(is_array($this->post_valid[$item])) {
-						foreach ($this->post_valid[$item] as $key=>$val) {
-							$this->post_valid[$item][$key] = addslashes($this->post_valid[$item][$key]);
-						}
-					} else {
-						$this->post_valid[$item] = addslashes($this->post_valid[$item]);
-					}
+					$this->post_valid[$item] = $this->_addslashes($this->post_valid[$item]);
 				}
 				return $valid;
 			} else {
@@ -80,7 +74,7 @@ class InputHandler implements Singleton,Output {
 		if(isset($this->get[$item]) && $valid = $this->_validate($this->get[$item], $mode)){
 			$this->get_valid[$item] = $this->get[$item];
 			if($this->addslashes){
-				$this->get_valid[$item] = addslashes($this->get_valid[$item]);
+				$this->get_valid[$item] = $this->_addslashes($this->get_valid[$item]);
 			}
 			return $valid;
 		} else {
@@ -407,6 +401,16 @@ class InputHandler implements Singleton,Output {
 	
 	public function &getArray(){ }
 	public function getString($format = '%1$s'){ }
+	
+	private function _addslashes($subject){
+		if(is_array($subject)){
+			while(list($key,$val) = each($subject)){
+				$key = $this->_addslashes($val);
+			}
+		} else {
+			return addslashes($subject);
+		}
+	}
 }
 
 class RegexInputValidator implements InputValidator {

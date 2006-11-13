@@ -128,7 +128,7 @@ class InputHandler implements Singleton,Output {
 				throw new BaseException('Variable Not valid');	
 			} else {
 				if($specialchars){
-					return htmlspecialchars($this->get_valid[$item], ENT_COMPAT, 'UTF-8');
+					return $this->_htmlspecialchars($this->get_valid[$item], ENT_COMPAT, 'UTF-8');
 				} else {
 					return $this->get_valid[$item];
 				}
@@ -146,7 +146,7 @@ class InputHandler implements Singleton,Output {
 				throw new BaseException('Variable Not valid');	
 			} else {
 				if($specialchars){
-					return htmlspecialchars($this->post_valid[$item], ENT_COMPAT, 'UTF-8');
+					return $this->_htmlspecialchars($this->post_valid[$item], ENT_COMPAT, 'UTF-8');
 				} else {
 					return $this->post_valid[$item];
 				}
@@ -405,11 +405,25 @@ class InputHandler implements Singleton,Output {
 	private function _addslashes($subject){
 		if(is_array($subject)){
 			while(list($key,$val) = each($subject)){
-				$key = $this->_addslashes($val);
+				$subject[$key] = $this->_addslashes($val);
 			}
+			reset($subject);
 		} else {
-			return addslashes($subject);
+			$subject = addslashes($subject);
 		}
+		return $subject;
+	}
+	
+	private function _htmlspecialchars($subject, $quote_style=ENT_COMPAT, $charset='UTF-8'){
+		if(is_array($subject)){
+			while(list($key,$val) = each($subject)){
+				$subject[$key] = $this->_htmlspecialchars($val, $quote_style, $charset);
+			}
+			reset($subject);
+		} else {
+			$subject = htmlspecialchars($subject, $quote_style, $charset);
+		}
+		return $subject;
 	}
 }
 

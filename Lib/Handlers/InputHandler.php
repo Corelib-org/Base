@@ -331,7 +331,7 @@ class InputHandler implements Singleton,Output {
 	public function isValidGetVariables($item1=null, $item2=null, $item3=null){
 		$array = func_get_args();
 		if(sizeof($array) > 0){
-			while(list(,$val) = each($array())){
+			while(list(,$val) = each($array)){
 				if(!$this->isValidGet($val)){
 					return false;
 				}

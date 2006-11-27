@@ -12,7 +12,7 @@
  * unable to obtain it through the web, please send a note to 
  * license@bravura.dk so we can mail you a copy immediately.
  * 
- * @author Steffen Sørensen <steffen@bravura.dk>
+ * @author Steffen Sorensen <steffen@bravura.dk>
  * @copyright Copyright (c) 2006 Bravura ApS
  * @license http://www.bravura.dk/licence/corelib_1_0/
  * @package corelib

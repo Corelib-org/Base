@@ -19,7 +19,7 @@
  * @subpackage Base
  * @link http://www.bravura.dk/
  * @link http://www.ietf.org/rfc/rfc4122.txt
- * @version 4.0.0 ($Id$)
+ * @version 1.0.0 ($Id$)
  */
 
 //*****************************************************************//
@@ -30,6 +30,7 @@
 //**        1. generate Method .............................     **//
 //**                                                             **//
 //*****************************************************************//
+
 
 //*****************************************************************//
 //************************ RFC 4122 Class *************************//
@@ -46,6 +47,15 @@ class RFC4122 {
 	 * 
 	 * Generate a Universally Unique IDentifier (UUID) and return it
 	 * 
+	 * <code>
+	 * <?php
+	 * // Provides: f485b374-8e40-46d0-8c67-0da94fb18dd1
+	 * $token = RFC4122::generate();
+	 * ?>
+	 * </code>
+	 * This will create a UUID 128 bits long, and can guarantee uniqueness 
+	 * across space and time
+	 * 
 	 * @return string Universally Unique IDentifier (UUID)
 	 */
 	public static function generate(){
@@ -56,4 +66,6 @@ class RFC4122 {
 		               mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ));
 	}
 }
+
+echo RFC4122::generate();
 ?>

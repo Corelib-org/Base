@@ -1,5 +1,5 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  * RFC 4122 A Universally Unique IDentifier (UUID) URN Namespace Generator
  * 
@@ -36,11 +36,16 @@
 //*****************************************************************//
 /**
  * RFC 4122 A Universally Unique IDentifier (UUID) URN Namespace Generator Class
+ * 
+ * @package corelib
+ * @subpackage Base
  */
 class RFC4122 {
 	/**
-	 * RFC 4122 A Universally Unique IDentifier (UUID) URN Namespace Generator Method
-	 *
+	 * RFC 4122 A Universally Unique IDentifier (UUID) URN Namespace Generator
+	 * 
+	 * Generate a Universally Unique IDentifier (UUID) and return it
+	 * 
 	 * @return string Universally Unique IDentifier (UUID)
 	 */
 	public static function generate(){

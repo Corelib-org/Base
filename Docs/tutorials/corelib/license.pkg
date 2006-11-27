@@ -29,7 +29,7 @@
 	</refsynopsisdiv>
 	{@toc}
 	<refsect1 id="{@id general}">
-		<title>General</title>
+		<title>1 General</title>
 		<para>
 			The software, documentation and any fonts accompanying this License and contained
 			in the corelib software package whether on disk, in read only
@@ -46,9 +46,9 @@
 	</refsect1>
 	
 	<refsect1 id="{@id definitions}">
-		<title>Definitions</title>
+		<title>2 Definitions</title>
 		<refsect2 id="{@id authorized_development_system}">	
-			<title>Authorized Development System</title>
+			<title>2.1 Authorized Development System</title>
 			<para>
 				"<emphasis>Authorized Development System</emphasis>" means any computer on which you are 
 				licensed to install the Bravura Software for development purposes, and that runs any version 
@@ -62,7 +62,7 @@
 			</itemizedlist>
 		</refsect2>
 		<refsect2 id="{@id authorized_deployment_system}">
-			<title>Authorized Deployment System</title>
+			<title>2.2 Authorized Deployment System</title>
 			<para>
 				"<emphasis>Authorized Deployment System</emphasis>" means a computer that runs an operating 
 				system that supports the Apache Webserver with mod_php and which is either owned and/or 
@@ -73,43 +73,136 @@
 		</refsect2>
 	</refsect1>
 	<refsect1 id="{@id Permitted_license_uses_and_restriction}">
-		<title>Permitted License Uses And Restrictions</title>
+		<title>3 Permitted License Uses And Restrictions</title>
 		<refsect2 id="{@id license_to_develop_application_programs}">
-			<title>License to Develop Application Programs</title>
+			<title>3.1 License to Develop Application Programs</title>
 			<para>
 				If the software package provides a developer serial number enabling you to install 
 				the Bravura Software for development purposes, then subject to the terms and conditions 
 				of this License, Bravura grants to you a personal, non-exclusive license to:
 			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						Install and use a single copy of the Bravura Software on one 
+						Authorized Development System, solely for the purpose of 
+						developing application programs.
+					</listitem>
+					<listitem>
+						Access and use the restricted deployment functionality of the 
+						Bravura Software made available from the developer serial number 
+						for the sole purpose of evaluating the performance of an 
+						application program which uses or is designed to use the 
+						Bravura Software in a test system environment.
+					</listitem>
+				</itemizedlist>
+			</para>
+		</refsect2>
+		<refsect2 id="{@id license_to_deploy_server-based_application_programs}">
+			<title>3.2 License to Deploy Server-Based Application Programs</title>
+			<para>
+				If the software package provides a deployment serial number enabling you to install 
+				the Bravura Software to deploy application programs developed using the Bravura Software, 
+				then subject to the terms and conditions of this License, Bravura grants to you a personal, 
+				non-exclusive license to:
+			</para>
+			<para>
+				<itemizedlist>
+					<listitem>
+						Install a single copy of the Bravura Software on one Authorized Deployment System.
+					</listitem>
+					<listitem>
+						Access and use the Bravura Software and any related application installed on 
+						the Authorized Deployment System and permit others to access and use the 
+						same in connection with your use from any remote computer.
+					</listitem>
+					<listitem>
+						Reproduce and distribute over a network, components of the Bravura Software for 
+						installation and use by others ("Java Client End Users") on any remote computer’s 
+						volatile memory (e.g. RAM) to enable Java Client functionality solely for 
+						communicating with the Bravura Software installed and executed on the 
+						Authorized Deployment System.
+					</listitem>
+					<listitem>
+						Reproduce and distribute, both manually and automatically over a network, 
+						components of the Bravura Software for installation and use by 
+						Java Client End Users on any remote computer’s non-volatile memory (e.g. ROM) 
+						to enable Java Client functionality solely for communicating with the 
+						Bravura Software installed and executed on the Authorized Deployment System, 
+						provided that all Java Client End Users who are not employees or contractors 
+						of your organization, are shown and accept, by means that are legally enforceable 
+						in the jurisdiction to which the Bravura Software components are distributed, 
+						the following terms prior to their use of the Bravura Software components:
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+				Certain components ("Bravura Software") included in the software are licensed, not sold, 
+				to you by Bravura ApS. ("Bravura"), and Bravura reserves all rights not expressly 
+				granted to you by these terms. Bravura grants to you a personal, nonexclusive to install 
+				and use the Bravura Software to enable Java Client functionality solely for communicating 
+				with Bravura's proprietary WebObjects software installed and executed on a remote server 
+				computer. You may make one copy of the Bravura Software for backup or archival purposes. 
+				Except as and only to the extent expressly permitted herein or by applicable law, you 
+				may not copy, decompile, reverse engineer, disassemble, modify, or create derivative 
+				works of the Bravura Software or any part thereof.
+			</para>
+			<para>
+				YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT USE OF THE BRAVURA SOFTWARE IS AT YOUR SOLE RISK 
+				AND THAT THE ENTIRE RISK AS TO SATISFACTORY QUALITY, PERFORMANCE, ACCURACY AND EFFORT IS 
+				WITH YOU. TO THE EXTENT NOT PROHIBITED BY APPLICABLE LAW, THE BRAVURA SOFTWARE IS PROVIDED 
+				"AS IS", WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND, AND BRAVURA HEREBY DISCLAIM ALL 
+				WARRANTIES AND CONDITIONS WITH RESPECT TO THE BRAVURA SOFTWARE, EITHER EXPRESS, IMPLIED OR 
+				STATUTORY, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES AND/OR CONDITIONS OF 
+				MERCHANTABILITY, OF SATISFACTORY QUALITY, OF FITNESS FOR A PARTICULAR PURPOSE, OF ACCURACY, 
+				OF QUIET ENJOYMENT, AND NON-INFRINGEMENT OF THIRD PARTY RIGHTS. BRAVURA DOES NOT WARRANT 
+				AGAINST INTERFERENCE WITH YOUR ENJOYMENT OF THE BRAVURA SOFTWARE, THAT THE FUNCTIONS CONTAINED 
+				IN THE BRAVURA SOFTWARE WILL MEET YOUR REQUIREMENTS, THAT THE OPERATION OF THE BRAVURA SOFTWARE 
+				WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT DEFECTS IN THE BRAVURA SOFTWARE WILL BE CORRECTED. 
+				NO ORAL OR WRITTEN INFORMATION OR ADVICE GIVEN BY BRAVURA OR AN BRAVURA AUTHORIZED REPRESENTATIVE 
+				SHALL CREATE A WARRANTY. SHOULD THE BRAVURA SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE ENTIRE 
+				COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION. SOME JURISDICTIONS DO NOT ALLOW THE 
+				EXCLUSION OF IMPLIED WARRANTIES OR LIMITATIONS ON APPLICABLE STATUTORY RIGHTS OF A CONSUMER, 
+				SO THE ABOVE EXCLUSION AND LIMITATIONS MAY NOT APPLY TO YOU.
+			</para>
+			<para>
+				TO THE EXTENT NOT PROHIBITED BY APPLICABLE LAW, IN NO EVENT SHALL BRAVURA, BE LIABLE FOR PERSONAL 
+				INJURY, OR ANY INCIDENTAL, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER, INCLUDING, 
+				WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, LOSS OF DATA, BUSINESS INTERRUPTION OR ANY 
+				OTHER COMMERCIAL DAMAGES OR LOSSES, ARISING OUT OF OR RELATED TO YOUR USE OR INABILITY TO 
+				USE THE BRAVURA SOFTWARE, HOWEVER CAUSED, REGARDLESS OF THE THEORY OF LIABILITY 
+				CONTRACT, TORT OR OTHERWISE) AND EVEN IF BRAVURA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH 
+				DAMAGES. SOME JURISDICTIONS DO NOT ALLOW THE LIMITATION OF LIABILITY FOR PERSONAL INJURY, 
+				OR OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS LIMITATION MAY NOT APPLY TO YOU. 
+				In no event shall Bravura's total liability to you for all damages 
+				(other than as may be required by applicable law in cases involving personal injury) 
+				exceed the amount of five dollars ($5.00). The foregoing limitations will apply even if 
+				the above stated remedy fails of its essential purpose.
+			</para>
+			<para>
+				You may implement acceptance of such terms by Java Client End Users via the Internet, 
+				online service or other reasonable manner of your choosing; however, it is your 
+				responsibility to ensure that such acceptance is legally enforceable under and otherwise 
+				complies with the relevant laws of the jurisdiction in which the Bravura Software components 
+				are distributed.
+			</para>
+		</refsect2>
+		<refsect2 id="{@id restrictions_on_evaluation_release}">
+			<title>3.3 Restrictions on Evaluation Release</title>
+			<para>
+				Should Bravura provide you an evaluation serial number enabling you to install the 
+				Bravura Software, then Bravura grants to you a time restricted license to use the 
+				Bravura Software to develop application programs under the terms of Section 3.1 and 
+				to deploy application programs developed using the Bravura Software under the terms of
+				Section 3.2 on your Authorized Deployment System for trial use and evaluation purposes
+				only. All rights to the Evaluation Release will terminate on the date specified when 
+				using the evaluation serial number. You may not transfer the Evaluation Release. 
+				All other terms of this License shall apply and Bravura will not be liable as a 
+				result of termination.
+			</para>
 		</refsect2>
 	</refsect1>
 <!--
-(a) Install and use a single copy of the Apple Software on one (1) Authorized Development System, solely for the purpose of developing application programs.
-
-(b) Use the Yellow Box for Windows files and run-time libraries contained in the Apple Software (collectively the "Yellow Box for Windows Runtimes") only on your Authorized Development System for the sole purpose of operating, and only to the extent necessary to operate, the development tools that are included as part of the Apple Software or used for developing Apple Software application programs. Except as expressly stated above, no other license, express or implied, is granted with respect to the Yellow Box for Windows Runtimes.
-
-(c) Access and use the restricted deployment functionality of the Apple Software made available from the developer serial number for the sole purpose of evaluating the performance of an application program which uses or is designed to use the Apple Software in a test system environment.
-
-3.2 License to Deploy Server-Based Application Programs. If the software package provides a deployment serial number enabling you to install the Apple Software to deploy application programs developed using the Apple Software, then subject to the terms and conditions of this License, Apple grants to you a personal, non-exclusive license to:
-
-(a) Install a single copy of the Apple Software (excluding the Yellow Box for Windows Runtimes) on one Authorized Deployment System.
-
-(b) Access and use the Apple Software (excluding the Yellow Box for Windows Runtimes) and any related application installed on the Authorized Deployment System and permit others to access and use the same in connection with your use from any remote computer.
-
-(c) Reproduce and distribute over a network, components of the Apple Software (excluding the Yellow Box for Windows Runtimes) for installation and use by others ("Java Client End Users") on any remote computer’s volatile memory (e.g. RAM) to enable Java Client functionality solely for communicating with the Apple Software installed and executed on the Authorized Deployment System.
-
-(d) Reproduce and distribute, both manually and automatically over a network, components of the Apple Software (excluding the Yellow Box for Windows Runtimes) for installation and use by Java Client End Users on any remote computer’s non-volatile memory (e.g. ROM) to enable Java Client functionality solely for communicating with the Apple Software installed and executed on the Authorized Deployment System, provided that all Java Client End Users who are not employees or contractors of your organization, are shown and accept, by means that are legally enforceable in the jurisdiction to which the Apple Software components are distributed, the following terms prior to their use of the Apple Software components:
-
-Certain components ("Apple Software") included in the software are licensed, not sold, to you by Apple Computer, Inc. ("Apple"), and Apple reserves all rights not expressly granted to you by these terms. Apple grants to you a personal, nonexclusive to install and use the Apple Software to enable Java Client functionality solely for communicating with Apple’s proprietary WebObjects software installed and executed on a remote server computer. You may make one copy of the Apple Software for backup or archival purposes. Except as and only to the extent expressly permitted herein or by applicable law, you may not copy, decompile, reverse engineer, disassemble, modify, or create derivative works of the Apple Software or any part thereof.
-
-YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT USE OF THE APPLE SOFTWARE IS AT YOUR SOLE RISK AND THAT THE ENTIRE RISK AS TO SATISFACTORY QUALITY, PERFORMANCE, ACCURACY AND EFFORT IS WITH YOU. TO THE EXTENT NOT PROHIBITED BY APPLICABLE LAW, THE APPLE SOFTWARE IS PROVIDED "AS IS", WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND, AND APPLE HEREBY DISCLAIM ALL WARRANTIES AND CONDITIONS WITH RESPECT TO THE APPLE SOFTWARE, EITHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES AND/OR CONDITIONS OF MERCHANTABILITY, OF SATISFACTORY QUALITY, OF FITNESS FOR A PARTICULAR PURPOSE, OF ACCURACY, OF QUIET ENJOYMENT, AND NON-INFRINGEMENT OF THIRD PARTY RIGHTS. APPLE DOES NOT WARRANT AGAINST INTERFERENCE WITH YOUR ENJOYMENT OF THE APPLE SOFTWARE, THAT THE FUNCTIONS CONTAINED IN THE APPLE SOFTWARE WILL MEET YOUR REQUIREMENTS, THAT THE OPERATION OF THE APPLE SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT DEFECTS IN THE APPLE SOFTWARE WILL BE CORRECTED. NO ORAL OR WRITTEN INFORMATION OR ADVICE GIVEN BY APPLE OR AN APPLE AUTHORIZED REPRESENTATIVE SHALL CREATE A WARRANTY. SHOULD THE APPLE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE ENTIRE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION. SOME JURISDICTIONS DO NOT ALLOW THE EXCLUSION OF IMPLIED WARRANTIES OR LIMITATIONS ON APPLICABLE STATUTORY RIGHTS OF A CONSUMER, SO THE ABOVE EXCLUSION AND LIMITATIONS MAY NOT APPLY TO YOU.
-
-TO THE EXTENT NOT PROHIBITED BY APPLICABLE LAW, IN NO EVENT SHALL APPLE, BE LIABLE FOR PERSONAL INJURY, OR ANY INCIDENTAL, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER, INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, LOSS OF DATA, BUSINESS INTERRUPTION OR ANY OTHER COMMERCIAL DAMAGES OR LOSSES, ARISING OUT OF OR RELATED TO YOUR USE OR INABILITY TO USE THE APPLE SOFTWARE, HOWEVER CAUSED, REGARDLESS OF THE THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE) AND EVEN IF APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. SOME JURISDICTIONS DO NOT ALLOW THE LIMITATION OF LIABILITY FOR PERSONAL INJURY, OR OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS LIMITATION MAY NOT APPLY TO YOU. In no event shall Apple’s total liability to you for all damages (other than as may be required by applicable law in cases involving personal injury) exceed the amount of five dollars ($5.00). The foregoing limitations will apply even if the above stated remedy fails of its essential purpose.
-
-You may implement acceptance of such terms by Java Client End Users via the Internet, online service or other reasonable manner of your choosing; however, it is your responsibility to ensure that such acceptance is legally enforceable under and otherwise complies with the relevant laws of the jurisdiction in which the Apple Software components are distributed.
-
-3.3 Restrictions on Evaluation Release. Should Apple provide you an evaluation serial number enabling you to install the Apple Software, then Apple grants to you a time restricted license to use the Apple Software to develop application programs under the terms of Section 3.1 and to deploy application programs developed using the Apple Software under the terms of Section 3.2 on your Authorized Deployment System for trial use and evaluation purposes only. All rights to the Evaluation Release will terminate on the date specified when using the evaluation serial number. You may not transfer the Evaluation Release. All other terms of this License shall apply and Apple will not be liable as a result of termination.
-
 3.4 Source Code Components. Apple may, either as part of the software package or on its Open Source web site (http://www.opensource.apple.com/), make available source code to certain portions of the Apple Software that are subject to third party open-source licensing terms (the "Open-Source Components"). You may modify or replace the Open-Source Components provided that you agree: (a) that Apple is not liable for and has no responsibility to provide any maintenance, technical or other support for any resultant Apple Software that replaces unmodified Open-Source Components, (b) to otherwise comply with the terms of this License and any applicable licensing terms governing use of the Open-Source Components, and (c) to include all copyright or other proprietary notices contained on the original.
 
 Apple may also make available source code to certain portions of the Apple Software that consist of sample or example code (the "Sample Code Components"). You may use, reproduce, modify and redistribute the Sample Code Components in accordance with the licensing terms accompanying such code or related project(s).

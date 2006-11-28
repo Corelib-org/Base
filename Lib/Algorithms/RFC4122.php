@@ -66,6 +66,4 @@ class RFC4122 {
 		               mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ));
 	}
 }
-
-echo RFC4122::generate();
 ?>

@@ -398,7 +398,7 @@ class Base implements Singleton {
 			}
 			$content .= ' ?>';
 			file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
-			chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
+			@chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
 		}
 	}
 }

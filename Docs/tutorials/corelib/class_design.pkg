@@ -1,0 +1,74 @@
+<refentry id="{@id}">
+	<refnamediv>
+		<refname>Class Design</refname>
+		<refpurpose></refpurpose>
+	</refnamediv>
+	<refsynopsisdiv>
+		<author>
+			Steffen Sørensen
+			<authorblurb>{@link mailto:steffen@bravura.dk steffen@bravura.dk}</authorblurb>
+		</author>
+	</refsynopsisdiv>
+	
+	<refsect1 id="{@id class_requirements}">
+		<title>Class Requirements</title>
+		
+		<refsect2 id="{@id give_them_states}">
+			<title>Give Them States</title>
+			<para>
+				Allways give classes which interacts with a database or any other
+				external service states, this will minimize the data load to the 
+				external services and improve performance.
+			</para>
+			<para>
+			    <programlisting role="php">
+				    <![CDATA[
+/**
+ * Give Them States
+ * 
+ * @author Steffen Sørensen <steffen@bravura.dk>
+ * @copyright Copyright (c) 2006 Bravura ApS
+ * @license http://www.bravura.dk/licence/corelib_1_0/
+ * @package corelib
+ * @subpackage Base
+ * @link http://www.bravura.dk/
+ * @version 4.0.0 ($Id: Base.php 3382 2006-11-08 11:02:41Z wayland $)
+ */					
+class GiveThemStates {
+	/**
+	 * State Property: Deleted
+	 *
+	 * Set this property to true when for example $self->delete is
+	 * called and when $self->commit() see it is true call the 
+	 * internal delete function. This allows you to undo the delete, 
+	 * prevents the class from calling delete more than once.
+	 *
+	 * @var boolean true if deleted
+	 */
+	private $delete = false;
+	
+	/**
+	 * State Property: Modified
+	 *
+	 * Set this property to true when a modifing method is called, 
+	 * this could be a method called $self->setTitle('My Title'), 
+	 * this will improve performance by only sending data to a 
+	 * external service if the class properties have been modified 
+	 * when $self->commit() is called.
+	 */
+	private $modified  = false;
+	
+	/**
+	 * State Property: Data Loaded
+	 *
+	 * Set this property to true, and prevents the class from asking 
+	 * for data more then once.
+	 */
+	private $data_loaded = false;
+}
+					]]>
+			    </programlisting>
+			</para>
+		</refsect2>
+	</refsect1>
+</refentry>

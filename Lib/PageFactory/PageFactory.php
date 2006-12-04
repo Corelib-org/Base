@@ -1,5 +1,5 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
  *	PageFactory Base Classes
  *

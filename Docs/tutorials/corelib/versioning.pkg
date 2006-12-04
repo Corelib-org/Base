@@ -1,12 +1,12 @@
 <refentry id="{@id}">
 	<refnamediv>
 		<refname>Versioning Scheme</refname>
-		<refpurpose>phpDocumentor for newbies tutorial</refpurpose>
+		<refpurpose></refpurpose>
 	</refnamediv>
 	<refsynopsisdiv>
 		<author>
-			Gregory Beaver
-			<authorblurb>{@link mailto:cellog@php.net cellog@php.net}</authorblurb>
+			Steffen Sørensen
+			<authorblurb>{@link mailto:steffen@bravura.dk steffen@bravura.dk}</authorblurb>
 		</author>
 	</refsynopsisdiv>
 </refentry>

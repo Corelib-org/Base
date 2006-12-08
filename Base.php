@@ -212,6 +212,9 @@ class Base implements Singleton {
 		} else {
 			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
 		}
+		if(is_callable('date_default_timezone_set')){
+			date_default_timezone_set('Europe/Copenhagen');
+		}
 		if(!defined('BASE_RUNLEVEL')){
 			/**
 			 *	Current Runlevel

@@ -22,6 +22,10 @@
  *	@version 1.0.0 ($Id$)
  */
 
+if(!defined('PAGE_FACTORY_ENGINE')){
+	define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
+}
+
 interface PageFactoryPageResolver {
 	public function resolve($expr, $exec);
 	public function getExpression();
@@ -88,8 +92,9 @@ class PageFactory implements Singleton {
 	
 	private $resolvers = array();
 
-	private function __construct(){	
-		$this->engine = new PageFactoryDOMXSL();
+	private function __construct(){
+		$engine = '$this->engine = new '.PAGE_FACTORY_ENGINE.'();';
+		eval($engine);
 		$this->addResolver('meta', new MetaResolver());
 	}
 
@@ -188,8 +193,9 @@ class PageFactory implements Singleton {
 
 	public function draw(){
 		$this->engine->draw();
-		$template = $this->engine->getTemplate();
-		$template->cleanup();
+		if($template = $this->engine->getTemplate()){
+			$template->cleanup();
+		}
 	}
 }
 ?>

@@ -118,19 +118,17 @@
 					</listitem>
 					<listitem>
 						Reproduce and distribute over a network, components of the Bravura Software for 
-						installation and use by others ("Java Client End Users") on any remote computer’s 
-						volatile memory (e.g. RAM) to enable Java Client functionality solely for 
-						communicating with the Bravura Software installed and executed on the 
-						Authorized Deployment System.
+						installation and use by others on any remote computer’s volatile memory (e.g. RAM) 
+						to enable Java Client functionality solely for communicating with the 
+						Bravura Software installed and executed on the Authorized Deployment System.
 					</listitem>
 					<listitem>
 						Reproduce and distribute, both manually and automatically over a network, 
-						components of the Bravura Software for installation and use by 
-						Java Client End Users on any remote computer’s non-volatile memory (e.g. ROM) 
-						to enable Java Client functionality solely for communicating with the 
+						components of the Bravura Software for installation and use on any remote 
+						computer’s non-volatile memory (e.g. ROM) solely for communicating with the 
 						Bravura Software installed and executed on the Authorized Deployment System, 
-						provided that all Java Client End Users who are not employees or contractors 
-						of your organization, are shown and accept, by means that are legally enforceable 
+						provided that all End Users who are not employees or contractors of your 
+						organization, are shown and accept, by means that are legally enforceable 
 						in the jurisdiction to which the Bravura Software components are distributed, 
 						the following terms prior to their use of the Bravura Software components:
 					</listitem>
@@ -140,12 +138,11 @@
 				Certain components ("Bravura Software") included in the software are licensed, not sold, 
 				to you by Bravura ApS. ("Bravura"), and Bravura reserves all rights not expressly 
 				granted to you by these terms. Bravura grants to you a personal, nonexclusive to install 
-				and use the Bravura Software to enable Java Client functionality solely for communicating 
-				with Bravura's proprietary WebObjects software installed and executed on a remote server 
-				computer. You may make one copy of the Bravura Software for backup or archival purposes. 
-				Except as and only to the extent expressly permitted herein or by applicable law, you 
-				may not copy, decompile, reverse engineer, disassemble, modify, or create derivative 
-				works of the Bravura Software or any part thereof.
+				and use the Bravura Software to solely for communicating with Bravura's proprietary software
+				installed and executed on a remote server computer. You may make one copy of the Bravura 
+				Software for backup or archival purposes. Except as and only to the extent expressly permitted 
+				herein or by applicable law, you may not copy, decompile, reverse engineer, disassemble, modify, 
+				or create derivative works of the Bravura Software or any part thereof.
 			</para>
 			<para>
 				YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT USE OF THE BRAVURA SOFTWARE IS AT YOUR SOLE RISK 

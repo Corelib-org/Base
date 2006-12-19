@@ -36,6 +36,10 @@
 //**    2. Basic Configuration Check .......................     **//
 //**        1. CORELIB .....................................     **//
 //**        2. CURRENT_WORKING_DIR .........................     **//
+//**        2. BASE_RUNLEVEL ...............................     **//
+//**        2. BASE_CLASS_CACHE_FILE .......................     **//
+//**        2. BASE_DEFAULT_TIMEZONE .......................     **//
+//**        2. BASE_ADMIN_EMAIL ............................     **//
 //**    3. Load Base Support Files .........................     **//
 //**        1. Base/Lib/Interfaces.php .....................     **//
 //**        2. Base/Lib/ErrorHandler.php ...................     **//
@@ -46,9 +50,7 @@
 //**                2. $class_cache ........................     **//
 //**                3. $class_cache_updated ................     **//
 //**                4. $class_paths ........................     **//
-//**            2. Base Class Constants ....................     **//
-//**                1. BASE_CLASS_CACHE_FILE ...............     **//
-//**            3. Base Class Methods ......................     **//
+//**            2. Base Class Methods ......................     **//
 //**                1. __construct() .......................     **//
 //**                2. getInstance() .......................     **//
 //**                3. addClassPath() ......................     **//
@@ -84,7 +86,7 @@ define('CORELIB_BASE_VERSION', '4.0.0 Beta');
 /**
  * Define CoreLib Copyright owner
  */
-define('CORELIB_COPYRIGHT', 'Bravura ApS - http://www.bravura.dk/');
+define('CORELIB_COPYRIGHT', 'Bravura - http://www.bravura.dk/');
 /**
  * Define CoreLib Copyright year
  */
@@ -113,6 +115,44 @@ if(!defined('CURRENT_WORKING_DIR')){
 	define('CURRENT_WORKING_DIR', getcwd().'/');
 }
 
+if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentation purposes
+	/**
+	 * Current Runlevel
+	 * 
+	 * This constant holds the current runlevel
+	 */
+	define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
+}
+
+if(!defined('BASE_CLASS_CACHE_FILE')){
+	/**
+	 * Define class cache file
+	 * 
+	 * This constants holds the path, on where to store the class
+	 * cache database, this file must be writable by the user running
+	 * the script, and it can be overwritten any time before include
+	 * {@link Base.php}.
+	 */
+	define('BASE_CLASS_CACHE_FILE', 'var/db/class.db');
+}
+
+if(!defined('BASE_DEFAULT_TIMEZONE')){
+	/**
+	 * Define default timezone
+	 * 
+	 * Define the default timezone for use in php date functions
+	 */
+	define('BASE_DEFAULT_TIMEZONE', 'CET');
+}
+
+if(!defined('BASE_ADMIN_EMAIL')){
+	/**
+	 * Define Admin Email
+	 * 
+	 * Define the admin email, for sending runtime informations about erros etc.
+	 */
+	define('BASE_ADMIN_EMAIL', false);
+}
 
 //*****************************************************************//
 //******************* Load Base Support Files *********************//
@@ -183,16 +223,7 @@ class Base implements Singleton {
 	 */
 	private $class_paths = array(CORELIB);
 	
-	
-	//*****************************************************************//
-	//********************** Base Class Constants *********************//
-	//*****************************************************************//
-	/**
-	 *	Default class cache file
-	 */
-	const BASE_CLASS_CACHE_FILE = 'var/db/class.db';
 
-	
 	//*****************************************************************//
 	//*********************** Base Class Methods **********************//
 	//*****************************************************************//
@@ -214,29 +245,15 @@ class Base implements Singleton {
 			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
 		}
 		if(is_callable('date_default_timezone_set')){
-			date_default_timezone_set('Europe/Copenhagen');
+			date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
 		}
 		if(!defined('BASE_RUNLEVEL')){
 			/**
-			 *	Current Runlevel
+			 * Current Runlevel
 			 * 
-			 * 	This constant holds the current runlevel
+			 * This constant holds the current runlevel
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
-		}
-		if(!defined('BASE_CLASS_CACHE_FILE')){
-			/**
-			 * Define class cache file
-			 * 
-			 * This constants holds the path, on where to store the class
-			 * cache database, this file must be writable by the user running
-			 * the script, and it can be overwritten any time before include
-			 * {@link Base.php}. if this constant is undefined,
-			 * {@link Base::BASE_CLASS_CACHE_FILE} will be used.
-			 * 
-			 * @see Base::BASE_CLASS_CACHE_FILE
-			 */
-			define('BASE_CLASS_CACHE_FILE', self::BASE_CLASS_CACHE_FILE);
 		}
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
@@ -247,10 +264,11 @@ class Base implements Singleton {
 			include_once(BASE_CLASS_CACHE_FILE);
 			$this->class_cache = &$classes;
 		} else {
-			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.self::BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
+			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
 		include_once(CORELIB.'/Base/Lib/StrictTypes.php');
+		$GLOBALS['base'] = $this;
 	}
 	
 	/**
@@ -445,10 +463,4 @@ function __autoload($class){
 function contains_http($str){
 	return StringFilter::ContainsHTTP($str);
 }
-
-
-//*****************************************************************//
-//************************ Instanciate Base ***********************//
-//*****************************************************************//
-$base = Base::getInstance();
 ?>

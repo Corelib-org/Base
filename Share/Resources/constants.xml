@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constants group="Base">
+	<constant>
+		<name>CORELIB</name>
+		<title>Corelib Path</title>
+		<desc>Path to where corelib is located</desc>
+		<value type="string" default="/path/to/corelib/"/>
+	</constant>
+	<constant>
+		<name>CURRENT_WORKING_DIR</name>
+		<title>Current Working Dir</title>
+		<desc>path to the current working dir, it is safe to leave this blank</desc>
+		<value fieldtype="string" type="string" default=""/>
+	</constant>
+	<constant>
+		<name>BASE_RUNLEVEL</name>
+		<title>Current Runlevel</title>
+		<desc>How much debugging should be displayed</desc>
+		<value fieldtype="select" type="constant" default="BASE_RUNLEVEL_DEVEL">
+			<option>BASE_RUNLEVEL_DEVEL</option>
+			<option>BASE_RUNLEVEL_PROD</option>
+		</value>
+	</constant>
+	<constant>
+		<name>BASE_CLASS_CACHE_FILE</name>
+		<title>class cache file</title>
+		<desc>where to store the class cache database, this file must be writable by the user running the script.</desc>
+		<value fieldtype="string" type="string" default="var/db/class.db"/>
+	</constant>
+	<constant>
+		<name>BASE_DEFAULT_TIMEZONE</name>
+		<title>Default timezone</title>
+		<desc>default timezone for use in php date functions.</desc>
+		<value fieldtype="string" type="string" default="CET"/>
+	</constant>
+</constants>

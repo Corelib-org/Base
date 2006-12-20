@@ -34,7 +34,7 @@
 			The software, documentation and any fonts accompanying this License and contained
 			in the corelib software package whether on disk, in read only
 			memory, on any other media or in any other form (collectively the "Bravura Software")
-			are licensed, not sold, to you by Bravura ApS. ("Bravura") for use only under the 
+			are licensed, not sold, to you by Bravura I/S. ("Bravura") for use only under the 
 			terms of this License, and Bravura reserves all rights not expressly granted to you. 
 			The rights granted herein are limited to Bravura's and its licensors' intellectual 
 			property rights in the Bravura Software and do not include any other patents or intellectual 
@@ -59,6 +59,8 @@
 				<listitem>OpenBSD</listitem>
 				<listitem>Linux</listitem>
 				<listitem>Mac OS X</listitem>
+				<listitem>Windows XP</listitem>
+				<listitem>Windows Vista</listitem>
 			</itemizedlist>
 		</refsect2>
 		<refsect2 id="{@id authorized_deployment_system}">
@@ -66,9 +68,9 @@
 			<para>
 				"<emphasis>Authorized Deployment System</emphasis>" means a computer that runs an operating 
 				system that supports the Apache Webserver with mod_php and which is either owned and/or 
-				operated (i) by you for your internal use, or (ii) by a third party as a web application server, 
-				provided that you have a written agreement with such third party that protects Bravura's interest
-				in the Bravura Software at least to the same extent as this License.
+				operated (i) by you for your internal and/or external web application, or (ii) by a third party 
+				as a web application service, provided that you have a written agreement with such third party 
+				that protects Bravura's interest in the Bravura Software at least to the same extent as this License.
 			</para>
 		</refsect2>
 	</refsect1>
@@ -116,33 +118,18 @@
 						the Authorized Deployment System and permit others to access and use the 
 						same in connection with your use from any remote computer.
 					</listitem>
-					<listitem>
-						Reproduce and distribute over a network, components of the Bravura Software for 
-						installation and use by others on any remote computer’s volatile memory (e.g. RAM) 
-						to enable Java Client functionality solely for communicating with the 
-						Bravura Software installed and executed on the Authorized Deployment System.
-					</listitem>
-					<listitem>
-						Reproduce and distribute, both manually and automatically over a network, 
-						components of the Bravura Software for installation and use on any remote 
-						computer’s non-volatile memory (e.g. ROM) solely for communicating with the 
-						Bravura Software installed and executed on the Authorized Deployment System, 
-						provided that all End Users who are not employees or contractors of your 
-						organization, are shown and accept, by means that are legally enforceable 
-						in the jurisdiction to which the Bravura Software components are distributed, 
-						the following terms prior to their use of the Bravura Software components:
-					</listitem>
 				</itemizedlist>
 			</para>
 			<para>
 				Certain components ("Bravura Software") included in the software are licensed, not sold, 
-				to you by Bravura ApS. ("Bravura"), and Bravura reserves all rights not expressly 
+				to you by Bravura I/S. ("Bravura"), and Bravura reserves all rights not expressly 
 				granted to you by these terms. Bravura grants to you a personal, nonexclusive to install 
-				and use the Bravura Software to solely for communicating with Bravura's proprietary software
-				installed and executed on a remote server computer. You may make one copy of the Bravura 
-				Software for backup or archival purposes. Except as and only to the extent expressly permitted 
-				herein or by applicable law, you may not copy, decompile, reverse engineer, disassemble, modify, 
-				or create derivative works of the Bravura Software or any part thereof.
+				and use the Bravura Software to enable functionality solely for communicating 
+				with Bravura's proprietary software installed and executed on a remote server 
+				computer. You may make one copy of the Bravura Software for backup or archival purposes. 
+				Except as and only to the extent expressly permitted herein or by applicable law, you 
+				may not copy, decompile, reverse engineer, disassemble, modify, or create derivative 
+				works of the Bravura Software or any part thereof.
 			</para>
 			<para>
 				YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT USE OF THE BRAVURA SOFTWARE IS AT YOUR SOLE RISK 
@@ -173,15 +160,8 @@
 				OR OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS LIMITATION MAY NOT APPLY TO YOU. 
 				In no event shall Bravura's total liability to you for all damages 
 				(other than as may be required by applicable law in cases involving personal injury) 
-				exceed the amount of five dollars ($5.00). The foregoing limitations will apply even if 
+				exceed the amount of one hundrede danish kroner (100 DKR). The foregoing limitations will apply even if 
 				the above stated remedy fails of its essential purpose.
-			</para>
-			<para>
-				You may implement acceptance of such terms by Java Client End Users via the Internet, 
-				online service or other reasonable manner of your choosing; however, it is your 
-				responsibility to ensure that such acceptance is legally enforceable under and otherwise 
-				complies with the relevant laws of the jurisdiction in which the Bravura Software components 
-				are distributed.
 			</para>
 		</refsect2>
 		<refsect2 id="{@id restrictions_on_evaluation_release}">
@@ -274,33 +254,8 @@
 		</para>
 	</refsect1>
 	
-	<refsect1 id="{@id printing}">
-		<title>5. Printing</title>
-		<para>
-			You are licensed to use the Bravura Software to output bitmaps generated by the PostScript 
-			interpreter included with the Bravura Software (a) to create images for display on any computer 
-			screen, (b) to output to Group III or Group IV facsimile devices, (c) to output to any output 
-			device containing its own PostScript language interpreter, and (d) to output to either 
-			(i) NeXT Laser Printers or (ii) NeXT Color Printers manufactured prior to April 1993 
-			(i.e., black NeXT-labeled printers). You are not otherwise licensed to print PostScript 
-			language files created with the Bravura Software.
-		</para>
-	</refsect1>
-	
-	<refsect1 id="{@id coded_font_programs}">
-		<title>6. Coded Font Programs</title>
-		<para>
-			You agree not to sell or otherwise distribute any bitmaps generated by the coded font programs 
-			contained in the Bravura Software. The trademarks used to identify the coded font programs are the
-			property of the trademark owners identified on or in the Bravura Software or accompanying 
-			documentation and may not be used except to identify printed output produced by the respective 
-			coded font programs. You shall use such trademarks only in accordance with accepted trademark 
-			practice, including identification of the trademark owner’s name.
-		</para>
-	</refsect1>
-	
 	<refsect1 id="{@id termination}">
-		<title>7. Termination</title>
+		<title>5. Termination</title>
 		<para>
 			This License is effective until terminated. Your rights under this License will terminate 
 			automatically without notice from Bravura if you fail to comply with any term(s) of this License. 
@@ -310,7 +265,7 @@
 	</refsect1>
 	
 	<refsect1 id="{@id limited_warranty_on_media}">
-		<title>8. Limited Warranty on Media (if applicable)</title>
+		<title>6. Limited Warranty on Media (if applicable)</title>
 		<para>
 			Bravura warrants the media on which the Bravura Software is recorded and delivered by Bravura to be 
 			free from defects in materials and workmanship under normal use for a period of ninety (90) days 
@@ -329,7 +284,7 @@
 	</refsect1>
 	
 	<refsect1 id="{@id disclaimer_of_warranties}">
-		<title>9. Disclaimer of Warranties</title>
+		<title>7. Disclaimer of Warranties</title>
 		<para>
 			You expressly acknowledge and agree that use of the Bravura Software is at your sole risk 
 			AND THAT THE ENTIRE RISK AS TO SATISFACTORY QUALITY, PERFORMANCE, ACCURACY AND EFFORT 
@@ -353,7 +308,7 @@
 	</refsect1>
 	
 	<refsect1 id="{@id Limitation of Liability}">
-		<title>10. Limitation of Liability.</title>
+		<title>8. Limitation of Liability.</title>
 		<para>
 			TO THE EXTENT NOT PROHIBITED BY LAW, IN NO EVENT SHALL BRAVURA, (AS DEFINED IN SECTION ABOVE) 
 			BE LIABLE FOR PERSONAL INJURY, OR ANY INCIDENTAL, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES 
@@ -365,13 +320,13 @@
 			OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THIS LIMITATION MAY NOT APPLY TO YOU. 
 			In no event shall Bravura's total liability to you for all damages 
 			(other than as may be required by applicable law in cases involving personal injury) 
-			exceed the amount of fifty dollars ($50.00). The foregoing limitations will apply even 
+			exceed the amount of five hundrede dansih kroner (500.00 DKR). The foregoing limitations will apply even 
 			if the above stated remedy fails of its essential purpose.
 		</para>
 	</refsect1>
 	
 	<refsect1 id="{@id export_law_assurances}">
-		<title>11. Export Law Assurances</title>
+		<title>9. Export Law Assurances</title>
 		<para>
 			You may not use or otherwise export or reexport the Bravura Software except as authorized by 
 			Danish law and the laws of the jurisdiction in which the Bravura Software was obtained. 
@@ -381,29 +336,9 @@
 			or a national or resident of any such country or on any such list.
 		</para>
 	</refsect1>
-	
-	<refsect1 id="{@id government_end_users}">
-		<title>12. Government End Users</title>
-		<para>
-			DET HER SKAL VIST BARE SLETTES ELLER ER MON DER FINDES NOGET DANSK??????
-		</para>
-		<para>
-			The Bravura Software and related documentation are "Commercial Items", as that term is defined 
-			at 48 C.F.R. §2.101, consisting of "Commercial Computer Software" and "Commercial Computer Software 
-			Documentation", as such terms are used in 48 C.F.R. §12.212 or 48 C.F.R. §227.7202, as applicable. 
-			Consistent with 48 C.F.R. §12.212 or 48 C.F.R. §227.7202-1through 227.7202-4, as applicable, the 
-			Commercial Computer Software and Commercial Computer Software Documentation are being licensed to 
-			U.S. Government end users (a) only as Commercial Items and (b) with only those rights as are 
-			granted to all other end users pursuant to the terms and conditions herein. Unpublished rights 
-			reserved under the copyright laws of the United States.
-		</para>
-	</refsect1>
-	
+		
 	<refsect1 id="{@id controlling_law_and_severability}">
-		<title>13. Controlling Law and Severability</title>
-		<para>
-			HNNN..... KRÆVER LIDT EKSTRA ARBEJDE TROR JEG
-		</para>		
+		<title>10. Controlling Law and Severability</title>
 		<para>
 			This License will be governed by and construed in accordance with Danish law, as applied to 
 			agreements entered into and to be performed entirely within Denmark between Danish residents. 
@@ -415,7 +350,7 @@
 	</refsect1>
 	
 	<refsect1 id="{@id third_party_acknowledgements}">
-		<title>14. Third Party Acknowledgements</title>
+		<title>11. Third Party Acknowledgements</title>
 		<para>
 			Portions of the Bravura Software utilize or include third party software and other 
 			copyrighted material. Acknowledgements, licensing terms and disclaimers for such material 
@@ -425,7 +360,7 @@
 	</refsect1>
 	
 	<refsect1 id="{@id complete_agreement}">
-		<title>15. Complete Agreement; Governing Language</title>
+		<title>12. Complete Agreement; Governing Language</title>
 		<para>
 			This License constitutes the entire agreement between the parties with respect to the use of 
 			the Bravura Software licensed hereunder and supersedes all prior or contemporaneous understandings 

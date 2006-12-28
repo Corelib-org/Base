@@ -64,6 +64,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 					$tranformToXML = true;
 				} 
 				if($tranformToXML){
+					
 					echo $proc->transformToXML($this->xml);
 				} else {
 					$doc = $proc->transformToDoc($this->xml);

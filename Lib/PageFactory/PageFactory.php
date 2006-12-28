@@ -118,19 +118,22 @@ class PageFactory implements Singleton {
 	}
 	
 	public function resolvePageObject(){
+		if(!isset($_GET['page'])){
+			$_GET['page'] = '/';
+		}
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once('etc/post.php');
 		} else {
 			include_once('etc/get.php');
 		}
 
-		if(!isset($_GET['page'])){
-			$_GET['page'] = '/';
-		}
-
 		if(substr($_GET['page'], -1) != '/'){
 			$_GET['page'] .= '/';
 		}
+		if(preg_match('/^\/corelib/', $_GET['page'])){
+			$manager = Manager::getInstance();
+			$manager->setupPageRegistry($pages, $rpages);
+		} 
 		if(!isset($pages[$_GET['page']])){
 			if(isset($rpages)){
 				while(list(,$val) = each($rpages)){
@@ -153,6 +156,14 @@ class PageFactory implements Singleton {
 						return true;
 					}
 				} 
+			}
+			try {
+				if(!isset($pages['/404/'])){
+					throw new BaseException('404 Error unspecified!', E_USER_ERROR);;
+				}
+			} catch (BaseException $e){
+				echo $e;
+				exit;
 			}
 			require_once($pages['/404/']);
 			return true;

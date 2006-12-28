@@ -87,8 +87,12 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	const MSGID = 'MSGID';
 	
 	public function __construct(){
-		$this->script_url = $_SERVER['SCRIPT_URL'];
-		$this->script_uri = $_SERVER['SCRIPT_URI'];
+		if(isset($_SERVER['SCRIPT_URL'])){
+			$this->script_url = $_SERVER['SCRIPT_URL'];
+		}
+		if(isset($_SERVER['SCRIPT_URI'])){
+			$this->script_uri = $_SERVER['SCRIPT_URI'];
+		}
 		$this->request_uri = $_SERVER['REQUEST_URI'];
 		
 		$this->user_agent = $_SERVER['HTTP_USER_AGENT'];

@@ -95,7 +95,6 @@ class BaseException extends Exception {
 	function __construct($msg, $code=0) {
 		parent::__construct($msg, $code);
 		if(!self::$buffer){
-			ob_start();
 			self::$buffer = true;
 			self::$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
 			self::$template_desc = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', self::$template);

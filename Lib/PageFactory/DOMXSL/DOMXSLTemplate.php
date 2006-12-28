@@ -46,6 +46,14 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}else {
 			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$xslcore;
 		}
+		try {
+			if(!is_file($xslcore)){
+				throw new BaseException('No such file or directory: '.$xslcore);
+			}
+		} catch (BaseException $e){
+			echo $e;
+			exit;
+		}
 		define('DOMXSL_TEMPLATE_XSL_CORE', $xslcore);
 	}
 	

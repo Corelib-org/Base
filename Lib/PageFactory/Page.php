@@ -40,7 +40,6 @@ abstract class Page {
 	}
 	public function addTemplateDefinition(PageFactoryTemplate $template){
 		$this->templates[$template->getSupportedTemplateEngineName()] = $template;
-		
 		return $template;
 	}
 	

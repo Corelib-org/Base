@@ -267,7 +267,7 @@ class Base implements Singleton {
 			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
-		include_once(CORELIB.'/Base/Lib/StrictTypes.php');
+		require_once(CORELIB.'/Base/Lib/StrictTypes.php');
 		$GLOBALS['base'] = $this;
 	}
 	

@@ -22,7 +22,6 @@ interface Converter {
 interface Output {
 	public function getXML(DOMDocument $xml);
 	public function &getArray();
-	public function getString($format = '%1$s');
 }
 
 abstract class Decorator {

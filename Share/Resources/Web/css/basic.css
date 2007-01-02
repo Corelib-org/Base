@@ -1,0 +1,19 @@
+/*-----------------------------------------------------------------
+Basic StyleSheet (for version 5 browseres)
+
+Version:	1.0
+Author: 	Steffen Sørensen
+Email: 		steffen@bravura.dk
+-----------------------------------------------------------------*/
+@import url(layout.css);
+
+* {
+	margin:0;
+	padding:0;
+}
+
+body {
+	text-align: center;
+	font-family: Arial, Helvetica, Verdana, Sans serif;
+	background-color: #F1F1F1;
+}

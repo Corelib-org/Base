@@ -16,10 +16,7 @@
 		<name>BASE_RUNLEVEL</name>
 		<title>Current Runlevel</title>
 		<desc>How much debugging should be displayed</desc>
-		<value fieldtype="select" type="constant" default="BASE_RUNLEVEL_DEVEL">
-			<option>BASE_RUNLEVEL_DEVEL</option>
-			<option>BASE_RUNLEVEL_PROD</option>
-		</value>
+		<value fieldtype="select" type="constant" default="BASE_RUNLEVEL_DEVEL"/>
 	</constant>
 	<constant>
 		<name>BASE_CLASS_CACHE_FILE</name>
@@ -32,5 +29,15 @@
 		<title>Default timezone</title>
 		<desc>default timezone for use in php date functions.</desc>
 		<value fieldtype="string" type="string" default="CET"/>
+	</constant>
+	<constant readonly="true" bind="BASE_RUNLEVEL">
+		<name>BASE_RUNLEVEL_PROD</name>
+		<title>Default timezone</title>
+		<desc>default timezone for use in php date functions.</desc>
+	</constant>
+	<constant readonly="true" bind="BASE_RUNLEVEL">
+		<name>BASE_RUNLEVEL_DEVEL</name>
+		<title>Default timezone</title>
+		<desc>default timezone for use in php date functions.</desc>
 	</constant>
 </constants>

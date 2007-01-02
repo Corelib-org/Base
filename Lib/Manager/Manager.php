@@ -10,20 +10,16 @@ class Manager implements Singleton,Output {
 	private static $instance = null;
 
 	private $extension_dirs = array(CORELIB);
-
-	/*
-	private $page_registry = array();
-	private $menu_registry = array();
-	private $registry = array();
-	*/
-	
 	private $extensions = array();
 	private $pages = array();
 	private $rpages = array();
 	private $menu = array();
+	private $resources = array();
 	
 	const PAGE_REGISTRY_FILE = 'pages.db';
 	const MENU_REGISTRY_FILE = 'menu.db';
+	const RESOURCE_REGISTRY_FILE = 'resources.db';
+	const CONSTANT_REGISTRY_FILE = 'constants.db';
 	const REGISTRY_FILE = 'registry.db';
 
 	private function __construct(){
@@ -51,27 +47,13 @@ class Manager implements Singleton,Output {
 		return self::$instance;
 	}
 
-	private function _loadManagerExtensions(){
-		if(!is_file(MANAGER_DATADIR.self::REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::MENU_REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE) || MANAGER_DEVELOPER_MODE){
-			$this->reloadManagerExtensions();
-		}
-		$this->extensions = unserialize(file_get_contents(MANAGER_DATADIR.self::REGISTRY_FILE));
-		$this->menu = unserialize(file_get_contents(MANAGER_DATADIR.self::MENU_REGISTRY_FILE));
-		$pages = file_get_contents(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE);
-		list($pages, $rpages) = explode("\n", $pages);
-		$this->pages = unserialize($pages);
-		$this->rpages = unserialize($rpages);
-	}
-
 	public function setupPageRegistry(&$pages, &$rpages){
 		$pages = $this->pages;
 		$rpages = $this->rpages;
 	}
-
 	public function addExtensionDir($dir){
 		$this->extension_dirs[] = $dir;
 	}
-
 	public function reloadManagerExtensions(){
 		$this->pages = array();
 		$this->extensions = array();
@@ -92,6 +74,9 @@ class Manager implements Singleton,Output {
 				while (list(, $rpage) = each($extension['rpages'])) {
 					$this->rpages[] = $rpage;
 				}
+				while (list($handle, $resource) = each($extension['resources'])) {
+					$this->resources[$handle] = $resource;
+				}
 				while (list($title, $group) = each($extension['menu'])){
 					if(!isset($this->menu[$title])){
 						$this->menu[$title] = array();
@@ -106,16 +91,57 @@ class Manager implements Singleton,Output {
 		
 		file_put_contents(MANAGER_DATADIR.self::REGISTRY_FILE, serialize($this->extensions));
 		file_put_contents(MANAGER_DATADIR.self::MENU_REGISTRY_FILE, serialize($this->menu));
+		file_put_contents(MANAGER_DATADIR.self::RESOURCE_REGISTRY_FILE, serialize($this->resources));
 		file_put_contents(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE, serialize($this->pages)."\n".serialize($this->rpages));
 	}
+	public function getResource($handle, $resource){
+		try {
+			StrictTypes::isString($handle);
+			StrictTypes::isString($resource);
+			if(!isset($this->resources[$handle])){
+				throw new BaseException('Unknown Resource Handle: '.$handle);
+			} else if(!is_dir($this->resources[$handle])){
+				throw new BaseException('No Such file or directory: '.$this->resources[$handle]);
+			}
+			$filename = $this->resources[$handle].'/'.$resource;
+			$filename = str_replace('../', '/', $filename);
+			while(strstr($filename, '//')){
+				$filename = str_replace('//', '/', $filename);
+			}
+			if(!is_file($filename)){
+				throw new BaseException('No Such file or directory: '.$filename);
+			}
+		} catch (BaseException $e){
+			echo $e;
+			exit;
+		}
+		return $filename;
+	}
 
+	private function _loadManagerExtensions(){
+		if(!is_file(MANAGER_DATADIR.self::REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::MENU_REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE) || MANAGER_DEVELOPER_MODE){
+			$this->reloadManagerExtensions();
+		}
+		$this->extensions = unserialize(file_get_contents(MANAGER_DATADIR.self::REGISTRY_FILE));
+		$this->menu = unserialize(file_get_contents(MANAGER_DATADIR.self::MENU_REGISTRY_FILE));
+		$this->resources = unserialize(file_get_contents(MANAGER_DATADIR.self::RESOURCE_REGISTRY_FILE));
+		$pages = file_get_contents(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE);
+		list($pages, $rpages) = explode("\n", $pages);
+		$this->pages = unserialize($pages);
+		$this->rpages = unserialize($rpages);
+	}
 	private function _searchDir($dir){
 		$d = dir($dir);
 		while (false !== ($entry = $d->read())) {
 			if(preg_match('/\.mext$/', $entry)){
 				$this->_loadExtension($dir.'/'.$entry);
+			} else if($entry == 'constants.xml'){
+				$this->_loadConstants($dir.'/'.$entry);
 			} else if(is_dir($dir.'/'.$entry) && $entry != '.' && $entry != '..'){
 				$this->_searchDir($dir.'/'.$entry);
+			} else if($entry != '.' && $entry != '..'){
+				$event = EventHandler::getInstance();
+				$event->triggerEvent(new ManagerFileSearch($dir.'/'.$entry));
 			}
 		}
 	}
@@ -157,6 +183,21 @@ class Manager implements Singleton,Output {
 									$extension['menu'][$groupname][] = array('url'=>$item->getAttribute('url'),
 									                                         'title'=>trim($item->nodeValue));
 								}
+							}
+						}
+					}
+				}
+				$extension['resources'] = array();
+				$resources = $dom->documentElement->getElementsByTagName('resources');
+				if($resources->length > 0){
+					$resources = $resources->item(0);
+					$i = 0;
+					while($resource = $resources->childNodes->item($i++)){
+						if(is_callable(array($resource, 'getAttribute')) && $handle = $resource->getAttribute('handle')){
+							if($resource->nodeName == 'resourcedir'){
+								$dir = $resource->childNodes->item(0);
+								$dir = trim($resource->nodeValue);
+								$extension['resources'][$handle] = str_replace('CORELIB', CORELIB, $dir);
 							}
 						}
 					}
@@ -242,6 +283,17 @@ class Manager implements Singleton,Output {
 		}
 	}
 	
+	private function _loadConstants($file){
+		echo '<pre>';
+		echo htmlentities(file_get_contents($file));
+		
+		$constants = new DOMDocument('1.0', 'UTF-8');
+		$constants->load($file);
+		
+		
+		exit;
+	}
+	
 	public function getXML(DOMDocument $xml){
 		$menu = $xml->createElement('managermenu');
 		while (list($name, $group) = each($this->menu)) {
@@ -255,17 +307,26 @@ class Manager implements Singleton,Output {
 		reset($this->menu);
 		return $menu;
 	}
-	
 	public function &getArray(){
 		
 	}
 }
+
+class ManagerFileSearch implements Event {
+		
+}
+
+
 abstract class ManagerPage extends Page {
+	/**
+	 * @var PageFactoryDOMXSLTemplate
+	 */
 	protected $xsl = null;
 	
 	final public function __construct(){
 		define('DOMXSL_TEMPLATE_XSL_PATH', CORELIB);
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
+		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
 		
 		$manager = Manager::getInstance();

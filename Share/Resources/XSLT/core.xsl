@@ -17,7 +17,7 @@
 					//</xsl:comment>
 				</script>
 				<link rel="shortcut icon" href="/corelib/resource/Manager/images/favicon.ico" />
-				<link rel="stylesheet" type="text/css" href="/corelib/resource/Manager/css/main.css" />
+				<link rel="stylesheet" type="text/css" href="/corelib/resource/Manager/css/basic.css" />
 				<xsl:for-each select="/page/settings/stylesheet">
 					<link rel="stylesheet" type="text/css" href="{.}" />
 				</xsl:for-each>
@@ -27,16 +27,6 @@
 			</head>
 			<body>
 				<xsl:apply-templates select="page/content"/>	
-	
-		<div style="border: 1px solid #FF0000; margin: auto; width: 768px;">
-			<div style="width: 200px; border: 1px solid #00FF00; float:left;">
-				menu
-			</div>
-			<div style="border: 1px solid #00FF00;">
-				content
-			</div>
-		</div>
-				
 			</body>
 		</html>
 	</xsl:template>

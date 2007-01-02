@@ -115,7 +115,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		if($this->set_referer){
 			$session->set(self::REFERER_VAR, $this->request_uri);
 		}
-		
+
 		if(is_null($this->location)){
 			header('Content-MD5: '.md5(ob_get_contents()));
 	

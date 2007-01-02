@@ -73,12 +73,13 @@ abstract class Page {
 			return false;
 		}
 	}
-	
+	/*
 	public function __call($function, $args){
 		$this->args = &$args;
 		$this->function = $function;
 		$this->build();
 	}
+	*/
 	private function _getTemplateDefinition(PageFactoryTemplateEngine $engine){
 		try {
 			if(!isset($this->templates[$engine->getSupportedTemplateDefinition()])){

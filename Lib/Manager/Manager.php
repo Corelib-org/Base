@@ -284,14 +284,14 @@ class Manager implements Singleton,Output {
 	}
 	
 	private function _loadConstants($file){
-		echo '<pre>';
+/*		echo '<pre>';
 		echo htmlentities(file_get_contents($file));
 		
 		$constants = new DOMDocument('1.0', 'UTF-8');
 		$constants->load($file);
 		
 		
-		exit;
+		exit;*/
 	}
 	
 	public function getXML(DOMDocument $xml){

@@ -36,7 +36,7 @@ if(!defined('BASE_ERROR_LOGFILE')){
 	define('BASE_ERROR_LOGFILE','var/log/errors');
 }
 
-if(!defined('BASE_ERROR_FATAL_REDIRECT')){
+if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
 	define('BASE_ERROR_FATAL_REDIRECT','http://'.$_SERVER['SERVER_NAME'].'/corelib/report/');
 }
 

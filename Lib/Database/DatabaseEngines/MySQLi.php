@@ -60,6 +60,11 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+//**
+//**	FOLLOWING LINES ARE REMOVED, BECAUSE OF INCOMBATABILITY WIRH REALLIFELOG
+//**	
+//**	BREAK NATIVE UTF 8 SUPPORT
+//
 //		$this->connection->query('SET character_set_results = NULL');
 //		$this->connection->query('SET NAMES \'utf8\'');
 //		$this->connection->query('SET CHARACTER_SET utf8');

@@ -49,13 +49,8 @@ class EventHandler implements Singleton,ObserverSubject {
 		} catch (Exception $e){
 			echo $e;
 		}
-		if(is_array($evnt = $observer->getEventType())){
-			while (list(,$val) = each($evnt)) {
-				$this->handlers[$val][get_class($observer)] = &$observer;	
-			}
-		} else {
-			$this->handlers[$evnt][get_class($observer)] = &$observer;
-		}
+		
+		$this->handlers[$observer->getEventType()][get_class($observer)] = &$observer;
 	}
 	
 	public function removeObserver(Observer &$observer){

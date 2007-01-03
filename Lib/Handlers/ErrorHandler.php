@@ -1,43 +1,15 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-/**
- *	Error Handling Functions and Classes
- *
- *	<i>No Description</i>
- *
- *	LICENSE: This source file is subject to version 1.0 of the 
- *	Bravura Distribution license that is available through the 
- *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to 
- *	license@bravura.dk so we can mail you a copy immediately.
- *
- * 
- *	@author Steffen Sørensen <steffen@bravura.dk>
- *	@copyright Copyright (c) 2006 Bravura ApS
- * 	@license http://www.bravura.dk/licence/corelib_1_0/
- *	@package corelib
- *	@subpackage Base
- *	@link http://www.bravura.dk/
- *	@version 1.0.0 ($Id$)
- */
 error_reporting(E_ALL);
 
 if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
 	if(!defined('BASE_DISABLE_ERROR_HANDLER')){
 		define('BASE_DISABLE_ERROR_HANDLER', false);
 	}
-	ini_set('html_errors',true);
 	set_error_handler('BaseError');
-	ob_start('BaseFatalError');
 }
 
 if(!defined('BASE_ERROR_LOGFILE')){
 	define('BASE_ERROR_LOGFILE','var/log/errors');
-}
-
-if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
-	define('BASE_ERROR_FATAL_REDIRECT','http://'.$_SERVER['SERVER_NAME'].'/corelib/report/');
 }
 
 /**
@@ -62,30 +34,9 @@ function BaseError($errno, $errstr, $errfile, $errline, $errorcontext){
 		}
 	} catch (BaseException $e){
 		echo $e;
-		return $e;
 	}
 }
 
-function BaseFatalError($buffer){
-	if(!strstr($buffer, '<b>Fatal error</b>:')){
-		return false;
-	} else {
-		preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
-		while(list($key, $val) = each($result[0])){
-			$buffer = str_replace($result[0][$key], '', $buffer);
-			$e = BaseError(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
-			$buffer .= $e->__toString();
-			$checksum = md5($result[3][$key].$result[4][$key]);
-			if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && BASE_ADMIN_EMAIL !== false){
-				mail(BASE_ADMIN_EMAIL, '[ Corelib Error Handler:  '.$result[2][$key].' ] '.$checksum, $e->writeToLog(true));
-			}
-			if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
-				$buffer = '<html><head><META http-equiv="refresh" content="30;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
-			}
-		}
-		return $buffer;
-	}
-}
 
 class BaseException extends Exception {
 	private static $buffer = false;
@@ -95,6 +46,7 @@ class BaseException extends Exception {
 	function __construct($msg, $code=0) {
 		parent::__construct($msg, $code);
 		if(!self::$buffer){
+			ob_start();
 			self::$buffer = true;
 			self::$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
 			self::$template_desc = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', self::$template);

@@ -1,26 +1,24 @@
 <?php
-/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Base Functions and Classes
+ *	Corelib Base Functions and Classes
  *
- * <i>No Description</i>
+ *	<i>No Description</i>
  *
- * LICENSE: This source file is subject to version 1.0 of the 
- * Bravura Distribution license that is available through the 
- * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- * If you did not receive a copy of the Bravura License and are
- * unable to obtain it through the web, please send a note to 
- * license@bravura.dk so we can mail you a copy immediately.
+ *	LICENSE: This source file is subject to version 1.0 of the 
+ *	Morkland Distribution license that is available through the 
+ *	world-wide-web at the following URI: http://www.morkland.com/license/dist_1.0.txt.
+ *	If you did not receive a copy of the PHP License and are
+ *	unable to obtain it through the web, please send a note to 
+ *	license@morkland.com so we can mail you a copy immediately.
  *
- * 
- * @author Steffen Sorensen <steffen@bravura.dk>
- * @copyright Copyright (c) 2006 Bravura ApS
- * @license http://www.bravura.dk/licence/corelib_1_0/
- * @package corelib
- * @subpackage Base
- * @link http://www.bravura.dk/
- * @version 4.0.0 ($Id$)
- * @filesource
+ *	@author Steffen S&oslash;rensen <steffen@morkland.com>
+ *	@copyright Copyright &copy; 2006, Morkland
+ * 	@license http://www.morkland.com/licence/dist_1.0.txt
+ *	@package corelib
+ *	@subpackage Base
+ *	@link http://www.morkland.com/
+ *	@version 3.0.1 ($Id$)
  */
 
 //*****************************************************************//
@@ -36,10 +34,6 @@
 //**    2. Basic Configuration Check .......................     **//
 //**        1. CORELIB .....................................     **//
 //**        2. CURRENT_WORKING_DIR .........................     **//
-//**        2. BASE_RUNLEVEL ...............................     **//
-//**        2. BASE_CLASS_CACHE_FILE .......................     **//
-//**        2. BASE_DEFAULT_TIMEZONE .......................     **//
-//**        2. BASE_ADMIN_EMAIL ............................     **//
 //**    3. Load Base Support Files .........................     **//
 //**        1. Base/Lib/Interfaces.php .....................     **//
 //**        2. Base/Lib/ErrorHandler.php ...................     **//
@@ -50,11 +44,12 @@
 //**                2. $class_cache ........................     **//
 //**                3. $class_cache_updated ................     **//
 //**                4. $class_paths ........................     **//
-//**            2. Base Class Methods ......................     **//
+//**            2. Base Class Constants ....................     **//
+//**                1. BASE_CLASS_CACHE_FILE ...............     **//
+//**            3. Base Class Methods ......................     **//
 //**                1. __construct() .......................     **//
 //**                2. getInstance() .......................     **//
 //**                3. addClassPath() ......................     **//
-//**                3. loadClass() .........................     **//
 //**                4. findClass() .........................     **//
 //**                5. _classSearch() ......................     **//
 //**                6. _searchDir() ........................     **//
@@ -63,7 +58,6 @@
 //**        1. __autoload() ................................     **//
 //**    6. Depricated Base Functions .......................     **//
 //**        2. contains_http() .............................     **//
-//**    7. Instanciate Base ................................     **//
 //**                                                             **//
 //*****************************************************************//
 
@@ -82,11 +76,11 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
-define('CORELIB_BASE_VERSION', '4.0.0 Beta');
+define('CORELIB_BASE_VERSION', '3.6.0');
 /**
  * Define CoreLib Copyright owner
  */
-define('CORELIB_COPYRIGHT', 'Bravura - http://www.bravura.dk/');
+define('CORELIB_COPYRIGHT', 'Bravura ApS - http://www.bravura.dk/');
 /**
  * Define CoreLib Copyright year
  */
@@ -115,44 +109,6 @@ if(!defined('CURRENT_WORKING_DIR')){
 	define('CURRENT_WORKING_DIR', getcwd().'/');
 }
 
-if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentation purposes
-	/**
-	 * Current Runlevel
-	 * 
-	 * This constant holds the current runlevel
-	 */
-	define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
-}
-
-if(!defined('BASE_CLASS_CACHE_FILE')){
-	/**
-	 * Define class cache file
-	 * 
-	 * This constants holds the path, on where to store the class
-	 * cache database, this file must be writable by the user running
-	 * the script, and it can be overwritten any time before include
-	 * {@link Base.php}.
-	 */
-	define('BASE_CLASS_CACHE_FILE', 'var/db/class.db');
-}
-
-if(!defined('BASE_DEFAULT_TIMEZONE')){
-	/**
-	 * Define default timezone
-	 * 
-	 * Define the default timezone for use in php date functions
-	 */
-	define('BASE_DEFAULT_TIMEZONE', 'CET');
-}
-
-if(!defined('BASE_ADMIN_EMAIL')){
-	/**
-	 * Define Admin Email
-	 * 
-	 * Define the admin email, for sending runtime informations about erros etc.
-	 */
-	define('BASE_ADMIN_EMAIL', false);
-}
 
 //*****************************************************************//
 //******************* Load Base Support Files *********************//
@@ -223,7 +179,16 @@ class Base implements Singleton {
 	 */
 	private $class_paths = array(CORELIB);
 	
+	
+	//*****************************************************************//
+	//********************** Base Class Constants *********************//
+	//*****************************************************************//
+	/**
+	 *	Default class cache file
+	 */
+	const BASE_CLASS_CACHE_FILE = 'var/db/class.db';
 
+	
 	//*****************************************************************//
 	//*********************** Base Class Methods **********************//
 	//*****************************************************************//
@@ -244,16 +209,27 @@ class Base implements Singleton {
 		} else {
 			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
 		}
-		if(is_callable('date_default_timezone_set')){
-			date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
-		}
 		if(!defined('BASE_RUNLEVEL')){
 			/**
-			 * Current Runlevel
+			 *	Current Runlevel
 			 * 
-			 * This constant holds the current runlevel
+			 * 	This constant holds the current runlevel
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
+		}
+		if(!defined('BASE_CLASS_CACHE_FILE')){
+			/**
+			 * Define class cache file
+			 * 
+			 * This constants holds the path, on where to store the class
+			 * cache database, this file must be writable by the user running
+			 * the script, and it can be overwritten any time before include
+			 * {@link Base.php}. if this constant is undefined,
+			 * {@link Base::BASE_CLASS_CACHE_FILE} will be used.
+			 * 
+			 * @see Base::BASE_CLASS_CACHE_FILE
+			 */
+			define('BASE_CLASS_CACHE_FILE', self::BASE_CLASS_CACHE_FILE);
 		}
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
@@ -264,11 +240,9 @@ class Base implements Singleton {
 			include_once(BASE_CLASS_CACHE_FILE);
 			$this->class_cache = &$classes;
 		} else {
-			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
+			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.self::BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
-		require_once(CORELIB.'/Base/Lib/StrictTypes.php');
-		$GLOBALS['base'] = $this;
 	}
 	
 	/**
@@ -294,31 +268,7 @@ class Base implements Singleton {
 	 * @uses Base::$class_paths
 	 */
 	public function addClassPath($path){
-		try {
-			StrictTypes::isString($path);
-		} catch (BaseException $e){
-			echo $e;
-		}
 		$this->class_paths[] = $path;
-	}
-
-	/**
-	 * Force Loading of class
-	 *
-	 * Force corelib to load a specific class, this is very
-	 * usefull for event classes which always needs to be loaded.
-	 * 
-	 * @param string $class Class name
-	 * @return boolean alwas returns true
-	 */
-	public function loadClass($class){
-		try {
-			StrictTypes::isString($class);
-		} catch (BaseException $e){
-			echo $e;
-		}
-		__autoload($class);
-		return true;
 	}
 	
 	/**
@@ -334,11 +284,6 @@ class Base implements Singleton {
 	 * @uses Base::$class_cache_updated
 	 */
 	public function findClass($class){
-		try {
-			StrictTypes::isString($class);
-		} catch (BaseException $e){
-			echo $e;
-		}
 		if(!isset($this->class_cache[$class])){
 			try {
 				if($file = $this->_classSearch($class)){
@@ -420,7 +365,7 @@ class Base implements Singleton {
 			}
 			$content .= ' ?>';
 			file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
-			@chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
+			chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
 		}
 	}
 }
@@ -440,11 +385,6 @@ class Base implements Singleton {
  * @uses Base::findClass()
  */
 function __autoload($class){
-	try {
-		StrictTypes::isString($class);
-	} catch (BaseException $e){
-		echo $e;
-	}
 	$base = Base::getInstance();
 	include_once($base->findClass($class));
 }

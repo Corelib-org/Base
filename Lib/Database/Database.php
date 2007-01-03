@@ -19,10 +19,7 @@ class Database implements Singleton {
 		return self::$instance;	
 	}
 	
-	public static function getDAO($class, $deprecated=null){
-		if(!is_null($deprecated)){
-			trigger_error('$lib is deprecated please update getDAO function', E_USER_NOTICE);
-		}
+	public static function getDAO($lib, $class){
 		$eval = 'return '.self::$dao_prefix.'_'.$class.'::getInstance();';
 		return eval($eval);
 	}

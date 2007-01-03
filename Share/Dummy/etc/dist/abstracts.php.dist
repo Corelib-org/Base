@@ -22,5 +22,13 @@ $eventHandler->registerObserver(new UsersAuthorizationStoreEvent());
 $eventHandler->registerObserver(new UsersAuthorizationPutSettingsXML());
 */
 
+/*
+ *	Setup Basic Factory settings (developer only)
+ */
+$pageFactory = PageFactory::getInstance();
+$pageFactory->setXSLCore('share/xsl/base/core.xsl');
+$pageFactory->setRewriteEngine(true);
+$pageFactory->setRedirectBase(REDIRECT_URL);
+
 // $pageFactory->setMessageFile('rescources/language/'.$language->getLanguage().'/message_reference.xml');
 ?>

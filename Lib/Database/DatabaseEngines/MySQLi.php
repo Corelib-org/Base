@@ -26,7 +26,7 @@ class MySQLiEngine implements DatabaseEngine {
 		} catch (BaseException $e){
 			echo $e;	
 		}
-		if($this->pid != posix_getpid() || is_null($this->connection)){
+		if($this->pid != posix_getpid() || is_null($this->connection) || !$this->connection->ping()){
 			$this->_connect();
 		}
 		$query->setInstance($this->connection);
@@ -60,6 +60,14 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+//**
+//**	FOLLOWING LINES ARE REMOVED, BECAUSE OF INCOMBATABILITY WIRH REALLIFELOG
+//**	
+//**	BREAK NATIVE UTF 8 SUPPORT
+//
+//		$this->connection->query('SET character_set_results = NULL');
+//		$this->connection->query('SET NAMES \'utf8\'');
+//		$this->connection->query('SET CHARACTER_SET utf8');
 		if($this->connection->errno === 0){
 			return true;
 		} else {

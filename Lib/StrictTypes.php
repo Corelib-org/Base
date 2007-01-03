@@ -7,7 +7,7 @@ class StrictTypes {
 		} 
 		if(!is_null($length)){
 			if(self::isInteger($length)){
-				if(strlen($subject) > $length){
+				if(strlen($subjcet) > $length){
 					$error = true;
 				}
 			}

@@ -1,7 +1,6 @@
 RewriteEngine on
 RewriteBase /
-
-RewriteRule ^(.?robots.txt)$ robots.txt [L]
+RewriteCond ${REQUEST_URI} !.?index.php.*
 RewriteRule ^(.*)$ index.php?page=/$1 [QSA,L]
 
 <Files "index.php">

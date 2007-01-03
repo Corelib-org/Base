@@ -1,13 +1,8 @@
 Changelog For Base
 ------------------
-Last Changed: $Revision: 3384 $ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
+Last Changed: $Revision$ $Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006) $
 
-Revision: 3384 Date: 2006-11-08 11:45:26 +0200 (Wed, 08 Nov 2006)
------------------------------------------------------------------------
-*		$base is always instansiated as a global variable
-			the Base instance can allways be found here
-
-Revision: 2967 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
+Revision: 2968 Date: 2006-05-31 11:45:26 +0200 (Wed, 31 May 2006)
 -----------------------------------------------------------------------
 *		Branched to 3_6_0
 

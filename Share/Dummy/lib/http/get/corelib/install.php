@@ -1,11 +1,13 @@
 <?php
 class WebPage extends Page {
 	
-	public function build(){
-		$xsl = new PageFactoryDOMXSLTemplate();
-		$xsl->addTemplate('corelib/install.xsl');
-		$xsl->addStyleSheet('/share/web/style/corelib/style.css');
-		$this->addTemplateDefinition($xsl);
+	public function build(){ 
+		
+	}
+	
+	public function prebuild(){
+		$this->addCSSStyleSheet('/share/web/style/corelib/style.css');
+		$this->setXSLTStyleSheet('../corelib/install.xsl');	
 	}
 }
 ?>

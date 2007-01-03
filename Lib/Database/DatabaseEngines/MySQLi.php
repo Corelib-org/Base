@@ -60,9 +60,9 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
-		$this->connection->query('SET character_set_results = NULL');
-		$this->connection->query('SET NAMES \'utf8\'');
-		$this->connection->query('SET CHARACTER_SET utf8');
+//		$this->connection->query('SET character_set_results = NULL');
+//		$this->connection->query('SET NAMES \'utf8\'');
+//		$this->connection->query('SET CHARACTER_SET utf8');
 		if($this->connection->errno === 0){
 			return true;
 		} else {

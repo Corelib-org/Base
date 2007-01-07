@@ -1,16 +1,15 @@
 <?php
+
 /* 
  * Setup Language 
  */
-/* UNCOMMENT TO ADD LANGUAGE SUPPORT
 $language = Language::getInstance();
 $language->setLanguageMap(array('en','da'));
 $language->setLanguageFileBase('rescources/language/');
 
-if(isset($_GET['lang'])){
-	$language->setLanguage($_GET['lang']);
+if(!defined('HTTP_STATUS_MESSAGE_FILE')){
+	define('HTTP_STATUS_MESSAGE_FILE', $language->getLanguageFilePath().'status.xml');
 }
-*/
 
 /*
  *	Setup event Handler (developer only)
@@ -22,5 +21,12 @@ $eventHandler->registerObserver(new UsersAuthorizationStoreEvent());
 $eventHandler->registerObserver(new UsersAuthorizationPutSettingsXML());
 */
 
-// $pageFactory->setMessageFile('rescources/language/'.$language->getLanguage().'/message_reference.xml');
+abstract class MyPage extends Page {
+	protected $xsl = null;
+	
+	function __construct() {
+		$this->xsl = new PageFactoryDOMXSLTemplate();
+		$this->addSettings(Language::getInstance());
+	}
+}
 ?>

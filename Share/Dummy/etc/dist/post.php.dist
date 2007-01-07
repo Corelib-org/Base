@@ -1,13 +1,4 @@
 <?php
 // Generic Pages
-$pages['/'] = 'lib/http/get/corelib/about.php';
-
-$pages['/corelib/about/'] = 'lib/http/get/corelib/about.php';
-$pages['/corelib/install/'] = 'lib/http/get/corelib/install.php';
-$pages['/corelib/license/'] = 'lib/http/get/corelib/license.php';
-$pages['/corelib/doc/'] = 'lib/http/get/corelib/doc.php';
-
-// HTTP Error Handlers
-$pages['/corelib/errors/403/'] = 'lib/http/get/corelib/errors/403.php';
-$pages['/corelib/errors/404/'] = 'lib/http/get/corelib/errors/404.php';
+$pages['/'] = 'lib/http/get/index.php';
 ?>

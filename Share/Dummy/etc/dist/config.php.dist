@@ -7,6 +7,7 @@ if(!defined('CORELIB')){
 }
 include_once(CORELIB.'/Base/Base.php');
 
+$base = Base::getInstance();
 $base->addClassPath('lib/');
 
 define('SOFTWARE_VERSION', 'Base Dummy v1.0');

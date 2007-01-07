@@ -1,16 +1,20 @@
 <?php
-
-/* 
- * Setup Language 
+/*
+ * Setup Language
  */
-$language = Language::getInstance();
-$language->setLanguageMap(array('en'));
-$language->setLanguageFileBase('rescources/language/');
+if(defined('ABSTRACTS_ENABLE_LANGUAGE') && ABSTRACTS_ENABLE_LANGUAGE){
+	$language = Language::getInstance();
+	$language->setLanguageMap(array('en'));
+	$language->setLanguageFileBase('rescources/language/');
 
-if(!defined('HTTP_STATUS_MESSAGE_FILE')){
-	define('HTTP_STATUS_MESSAGE_FILE', $language->getLanguageFilePath().'status.xml');
+	if(!defined('HTTP_STATUS_MESSAGE_FILE')){
+		define('HTTP_STATUS_MESSAGE_FILE', $language->getLanguageFilePath().'status.xml');
+	}
+} else {
+	define('ABSTRACTS_ENABLE_LANGUAGE', false);
 }
 
+//$base->loadClass('UsersAuthorization');
 /*
  *	Setup event Handler (developer only)
  */
@@ -23,7 +27,7 @@ $eventHandler->registerObserver(new UsersAuthorizationPutSettingsXML());
 
 abstract class MyPage extends Page {
 	protected $xsl = null;
-	
+
 	function __construct() {
 		$this->xsl = new PageFactoryDOMXSLTemplate();
 		$this->addSettings(Language::getInstance());

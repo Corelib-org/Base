@@ -10,6 +10,9 @@ include_once(CORELIB.'/Base/Base.php');
 $base = Base::getInstance();
 $base->addClassPath('lib/');
 
-define('SOFTWARE_VERSION', 'Base Dummy v1.0');
-define('HTTP_REDIRECT_BASE', 'http://path.to/site/');
+define('SOFTWARE_VERSION', 'Experian Shop v1.0');
+
+// define('HTTP_REDIRECT_BASE', 'http://path.to/site/');
+
+define('ABSTRACTS_ENABLE_LANGUAGE', true);
 ?>

@@ -15,4 +15,5 @@ define('SOFTWARE_VERSION', 'Experian Shop v1.0');
 // define('HTTP_REDIRECT_BASE', 'http://path.to/site/');
 
 define('ABSTRACTS_ENABLE_LANGUAGE', true);
+define('ABSTRACTS_ENABLE_AUTHORIZATION', false);
 ?>

@@ -5,14 +5,14 @@
  *
  * <i>No Description</i>
  *
- * LICENSE: This source file is subject to version 1.0 of the 
- * Bravura Distribution license that is available through the 
+ * LICENSE: This source file is subject to version 1.0 of the
+ * Bravura Distribution license that is available through the
  * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
  * If you did not receive a copy of the Bravura License and are
- * unable to obtain it through the web, please send a note to 
+ * unable to obtain it through the web, please send a note to
  * license@bravura.dk so we can mail you a copy immediately.
  *
- * 
+ *
  * @author Steffen Sorensen <steffen@bravura.dk>
  * @copyright Copyright (c) 2006 Bravura ApS
  * @license http://www.bravura.dk/licence/corelib_1_0/
@@ -27,7 +27,6 @@
 if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
 	define('DOMXSL_TEMPLATE_XSL_PATH', CURRENT_WORKING_DIR.'share/xsl/');
 }
-
 
 class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	private $xsl_templates = array();
@@ -56,7 +55,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 		define('DOMXSL_TEMPLATE_XSL_CORE', $xslcore);
 	}
-	
+
 	public function addTemplate($template_file){
 		try {
 			StrictTypes::isString($template_file);

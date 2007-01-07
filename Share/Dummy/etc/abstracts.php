@@ -4,7 +4,7 @@
  * Setup Language 
  */
 $language = Language::getInstance();
-$language->setLanguageMap(array('en','da'));
+$language->setLanguageMap(array('en'));
 $language->setLanguageFileBase('rescources/language/');
 
 if(!defined('HTTP_STATUS_MESSAGE_FILE')){

@@ -2,12 +2,12 @@
 class Database implements Singleton {
 	private static $instance = null;
 	private static $dao_prefix = null;
-	
+
 	private $slave = null;
 	private $master = null;
-	
+
 	private function __construct(){
-		
+
 	}
 	/**
 	 *	@return Database
@@ -16,9 +16,9 @@ class Database implements Singleton {
 		if(is_null(self::$instance)){
 			self::$instance = new Database();
 		}
-		return self::$instance;	
+		return self::$instance;
 	}
-	
+
 	public static function getDAO($class, $deprecated=null){
 		if(!is_null($deprecated)){
 			trigger_error('$lib is deprecated please update getDAO function', E_USER_NOTICE);
@@ -26,47 +26,50 @@ class Database implements Singleton {
 		$eval = 'return '.self::$dao_prefix.'_'.$class.'::getInstance();';
 		return eval($eval);
 	}
-	
+
 	public static function getAlternateDAO($folder, $class){
-		include_once($folder.'/'.self::$dao_prefix.'.'.$class.'.php');	
+		include_once($folder.'/'.self::$dao_prefix.'.'.$class.'.php');
 		$eval = 'return '.self::$dao_prefix.'_'.$class.'::getInstance();';
 		return eval($eval);
 	}
-	
+
 	public function masterConnect(DatabaseEngine $master){
 		$this->master = $master;
 		self::$dao_prefix = $this->master->getPrefix();
 		if(is_null($this->slave)){
 			$this->slave = $master;
-		}	
+		}
 	}
-	
+
 	public function slaveConnect(DatabaseEngine $slave){
 		$this->slave = $slave;
 	}
-	
+	/**
+	 * @param Query $query
+	 * @return Query
+	 */
 	public function query(Query $query){
 		if(preg_match('/INSERT|SELECT INTO|UPDATE|MERGE|DELETE|TRUNCATE/', $query->getQuery())){
-			$this->masterQuery($query);	
+			$this->masterQuery($query);
 		} else {
-			$this->slaveQuery($query);	
+			$this->slaveQuery($query);
 		}
 		$this->error($query);
 		return $query;
 	}
-	
+
 	public function masterQuery(Query $query){
 		$this->master->query($query);
 		$this->error($query);
 		return $query;
 	}
-	
+
 	public function slaveQuery(Query $query){
 		$this->slave->query($query);
 		$this->error($query);
 		return $query;
 	}
-	
+
 	private function error(Query $query){
 		try {
 			if($query->getErrno()){
@@ -76,11 +79,11 @@ class Database implements Singleton {
 			echo $e;
 		}
 	}
-	
+
 	public static function getPrefix(){
 		return self::$dao_prefix;
 	}
-	
+
 	public function startTransaction(){
 		$this->master->startTransaction();
 	}
@@ -104,13 +107,13 @@ abstract class Query {
 	protected $query = null;
 	protected $count = null;
 	protected $numberOflimit = null;
-	
+
 	public function __construct($query, $limit=null, $limitOffset=null, $order=null, $orderType=null, $countKey=null) {
 		$this->query = $query;
 		if(!is_null($countKey))
-			$this->getCount($countKey);	
+			$this->getCount($countKey);
 		if(!is_null($order))
-			$this->setOrder($order,$orderType);		
+			$this->setOrder($order,$orderType);
 		if(!is_null($limit))
 			$this->setLimit($limit,$limitOffset);
 	}
@@ -125,9 +128,9 @@ abstract class Query {
 	abstract public function setLimit($limit=null,$limitOffset=null);
 	abstract public function setOrder($order=null,$orderType=null);
 	abstract protected function doCount($countKey);
-	
+
 	abstract public function execute();
-	abstract public function getQuery();	
+	abstract public function getQuery();
 	abstract public function getError();
 	abstract public function getErrno();
 	abstract public function setInstance($instance);
@@ -139,13 +142,13 @@ abstract class Query {
 
 abstract class DatabaseDAO {
 	private $database;
-	
+
 	final protected function __construct(){
-		$this->database = Database::getInstance();	
+		$this->database = Database::getInstance();
 	}
-	
+
 	final protected function query(Query $query){
-		return $this->database->query($query);	
+		return $this->database->query($query);
 	}
 	/**
 	 * Enter description here...
@@ -154,18 +157,18 @@ abstract class DatabaseDAO {
 	 * @return Query
 	 */
 	final protected function masterQuery(Query $query){
-		return $this->database->masterQuery($query);	
+		return $this->database->masterQuery($query);
 	}
 	/**
 	 * Enter description here...
 	 *
 	 * @param Query $query
 	 * @return Query
-	 */	
+	 */
 	final protected function slaveQuery(Query $query){
-		return $this->database->slaveQuery($query);	
+		return $this->database->slaveQuery($query);
 	}
-	
+
 	public function startTransaction(){
 		$this->database->startTransaction();
 	}
@@ -174,6 +177,6 @@ abstract class DatabaseDAO {
 	}
 	public function rollback(){
 		$this->database->rollback();
-	}	
+	}
 }
 ?>

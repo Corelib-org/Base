@@ -2,7 +2,7 @@
 Basic StyleSheet (for version 5 browseres)
 
 Version:	1.0
-Author: 	Kenneth M¿rk
+Author: 	Kenneth Mï¿½rk
 Email: 		kenneth@bravura.dk
 -----------------------------------------------------------------*/
 @import url(layout.css);
@@ -20,3 +20,7 @@ p { }
 a { }
 a:hover	{ }
 hr { }
+
+pre {
+	text-align: left;
+}

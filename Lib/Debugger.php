@@ -2,7 +2,7 @@
 define('CORELIB_DEBUGGER_VERSION', '1.0.0');
 
 class Debugger implements Singleton {
-	
+
 	private static $instance = null;
 	private $stderr = null;
 	private $stdout = null;
@@ -10,9 +10,9 @@ class Debugger implements Singleton {
 	private function __construct(){
 		$this->stdout = @fopen('php://stdout', 'w');
 		$this->stderr = @fopen('php://stderr', 'w');
-		$this->copyright('Corelib CLI v'.CORELIB_DEBUGGER_VERSION.' Copyright '.CORELIB_COPYRIGHT_YEAR.' '.CORELIB_COPYRIGHT);
+		$this->copyright('Corelib Debugger v'.CORELIB_DEBUGGER_VERSION.' Copyright '.CORELIB_COPYRIGHT_YEAR.' '.CORELIB_COPYRIGHT);
 	}
-	
+
 	/**
 	 *	@return Debugger
 	 */
@@ -20,9 +20,9 @@ class Debugger implements Singleton {
 		if(is_null(self::$instance)){
 			self::$instance = new Debugger();
 		}
-		return self::$instance;	
+		return self::$instance;
 	}
-	
+
 	public function debug($string){
 		$this->_sendMessage('DEBUG: '.$string);
 	}
@@ -38,7 +38,7 @@ class Debugger implements Singleton {
 	public function copyright($string){
 		$this->_sendMessage($string, null, false);
 	}
-	
+
 	private function _sendMessage($string, $target=null, $date=true){
 		if(php_sapi_name() == 'cli'){
 			if($date){

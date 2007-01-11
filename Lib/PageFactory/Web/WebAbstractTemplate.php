@@ -5,14 +5,14 @@
  *
  *	<i>No Description</i>
  *
- *	LICENSE: This source file is subject to version 1.0 of the 
- *	Bravura Distribution license that is available through the 
+ *	LICENSE: This source file is subject to version 1.0 of the
+ *	Bravura Distribution license that is available through the
  *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
  *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to 
+ *	unable to obtain it through the web, please send a note to
  *	license@bravura.dk so we can mail you a copy immediately.
  *
- * 
+ *
  *	@author Steffen Sørensen <steffen@bravura.dk>
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
@@ -27,7 +27,7 @@ if(!defined('REDIRECT_URL')){
 	 *
 	 * @deprecated Superceeded by HTTP_REDIRECT_BASE
 	 */
-	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME']);	
+	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME']);
 } else {
 	try {
 		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
@@ -42,6 +42,7 @@ if(!defined('HTTP_REDIRECT_BASE')){
 	 */
 	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME']);
 }
+
 if(!defined('HTTP_STATUS_MESSAGE_FILE')){
 	/**
 	 * 	Define Redirect Base URL
@@ -55,37 +56,37 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $expires = null;
 	private $cache_control = null;
 	private $pragma = null;
-	
+
 	private $content_md5 = null;
 	private $content_location = null;
 	private $content_type = 'text/html';
 	private $content_charset = 'UTF-8';
 	private $content_length = null;
-	
+
 	private $location = null;
 	private $message_id = null;
-	
+
 	private $script_url = null;
 	private $script_uri = null;
-	
+
 	private $request_uri = null;
-	
+
 	private $remote_addr = null;
-	
+
 	private $user_agent = null;
-	
+
 	private $server_name = null;
 
 	private $stylesheets = array();
 	private $javascripts = array();
-	
+
 	private $http_redirect_base = null;
-	
+
 	private $set_referer = true;
-	
+
 	const REFERER_VAR = 'PUBLIC_REFERER';
 	const MSGID = 'MSGID';
-	
+
 	public function __construct(){
 		if(isset($_SERVER['SCRIPT_URL'])){
 			$this->script_url = $_SERVER['SCRIPT_URL'];
@@ -94,7 +95,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			$this->script_uri = $_SERVER['SCRIPT_URI'];
 		}
 		$this->request_uri = $_SERVER['REQUEST_URI'];
-		
+
 		$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
@@ -110,22 +111,22 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function cleanup(){
 		$session = SessionHandler::getInstance();
 		if(!is_null($this->message_id)){
-			$session->set(self::MSGID, $this->message_id); 
-		}		
+			$session->set(self::MSGID, $this->message_id);
+		}
 		if($this->set_referer){
 			$session->set(self::REFERER_VAR, $this->request_uri);
 		}
 
 		if(is_null($this->location)){
 			header('Content-MD5: '.md5(ob_get_contents()));
-	
+
 			header('Content-Location: '. $this->request_uri);
-			
+
 			if(is_null($this->content_length)){
 				$this->content_length = ob_get_length();
 			}
 			header('Content-Lenght: '.$this->content_length);
-	
+
 			$type = $this->content_type;
 			if(!is_null($this->content_charset)){
 				$type .= '; charset='.$this->content_charset;
@@ -137,7 +138,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			ob_end_clean();
 		}
 	}
-	
+
 	public function setLastModified($timestamp){
 		try {
 			StrictTypes::isInteger($timestamp);
@@ -192,7 +193,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->message_id = $id;
 	}
-	
+
 	public function addJavaScript($javascript){
 		try {
 			StrictTypes::isString($javascript);
@@ -209,14 +210,14 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->stylesheets[] = $stylesheet;
 	}
-	
+
 	public function getJavaScripts(){
 		return $this->javascripts;
 	}
 	public function getStyleSheets(){
 		return $this->stylesheets;
 	}
-	
+
 	public function getScriptUrl(){
 		return $this->script_url;
 	}

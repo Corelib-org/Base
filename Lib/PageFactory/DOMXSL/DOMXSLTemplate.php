@@ -31,6 +31,8 @@ if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
 class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	private $xsl_templates = array();
 
+	private $xsl_core = null;
+
 	private $xml_version = '1.0';
 	private $xml_encoding = 'UTF-8';
 
@@ -53,9 +55,12 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 			echo $e;
 			exit;
 		}
-		define('DOMXSL_TEMPLATE_XSL_CORE', $xslcore);
+		$this->xsl_core = $xslcore;
 	}
 
+	public function getCoreXSLT(){
+		return $this->xsl_core;
+	}
 	public function addTemplate($template_file){
 		try {
 			StrictTypes::isString($template_file);

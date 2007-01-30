@@ -77,6 +77,9 @@ define('BASE_RUNLEVEL_PROD', 1);
  *	Define current version of corelib Base
  */
 define('CORELIB_BASE_VERSION', '3.6.0');
+define('CORELIB_BASE_VERSION_MAJOR', '3');
+define('CORELIB_BASE_VERSION_MINOR', '6');
+define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
  */
@@ -262,7 +265,7 @@ class Base implements Singleton {
 	}
 	
 	/**
-	 * Add Class Search Path
+	 * Add Class Path
 	 *
 	 * @param string $path Relative or complete path, to search for classes
 	 * @uses Base::$class_paths

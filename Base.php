@@ -5,14 +5,14 @@
  *
  * <i>No Description</i>
  *
- * LICENSE: This source file is subject to version 1.0 of the 
- * Bravura Distribution license that is available through the 
+ * LICENSE: This source file is subject to version 1.0 of the
+ * Bravura Distribution license that is available through the
  * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
  * If you did not receive a copy of the Bravura License and are
- * unable to obtain it through the web, please send a note to 
+ * unable to obtain it through the web, please send a note to
  * license@bravura.dk so we can mail you a copy immediately.
  *
- * 
+ *
  * @author Steffen Sorensen <steffen@bravura.dk>
  * @copyright Copyright (c) 2006 Bravura ApS
  * @license http://www.bravura.dk/licence/corelib_1_0/
@@ -100,7 +100,7 @@ if(!defined('CORELIB')){
 	trigger_error('CORELIB Constant Undefined', E_USER_ERROR);
 	/**
 	 * 	Corelib Path Constant
-	 * 
+	 *
 	 * 	This constanst holds the path to the corelib
 	 */
 	define('CORELIB', '/path/to/corelib/');
@@ -109,7 +109,7 @@ if(!defined('CORELIB')){
 if(!defined('CURRENT_WORKING_DIR')){
 	/**
 	 *	Current Working Dir Constant
-	 * 
+	 *
 	 * 	This constant holds the path to the current working dir
 	 */
 	define('CURRENT_WORKING_DIR', getcwd().'/');
@@ -118,7 +118,7 @@ if(!defined('CURRENT_WORKING_DIR')){
 if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentation purposes
 	/**
 	 * Current Runlevel
-	 * 
+	 *
 	 * This constant holds the current runlevel
 	 */
 	define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
@@ -127,7 +127,7 @@ if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentatio
 if(!defined('BASE_CLASS_CACHE_FILE')){
 	/**
 	 * Define class cache file
-	 * 
+	 *
 	 * This constants holds the path, on where to store the class
 	 * cache database, this file must be writable by the user running
 	 * the script, and it can be overwritten any time before include
@@ -139,7 +139,7 @@ if(!defined('BASE_CLASS_CACHE_FILE')){
 if(!defined('BASE_DEFAULT_TIMEZONE')){
 	/**
 	 * Define default timezone
-	 * 
+	 *
 	 * Define the default timezone for use in php date functions
 	 */
 	define('BASE_DEFAULT_TIMEZONE', 'CET');
@@ -148,7 +148,7 @@ if(!defined('BASE_DEFAULT_TIMEZONE')){
 if(!defined('BASE_ADMIN_EMAIL')){
 	/**
 	 * Define Admin Email
-	 * 
+	 *
 	 * Define the admin email, for sending runtime informations about erros etc.
 	 */
 	define('BASE_ADMIN_EMAIL', false);
@@ -163,7 +163,7 @@ if(!defined('BASE_ADMIN_EMAIL')){
 require_once(CORELIB.'/Base/Lib/Interfaces.php');
 /**
  *	Load Error Handler
- * 
+ *
  *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
  * 	and set it to true
  */
@@ -175,11 +175,11 @@ require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
 //*****************************************************************//
 /**
  *	Base Class
- * 
+ *
  *	The base class provides all basic functionality, it is also
  *	responsible for controlling some basic PHP features, such
  *	as making sure everything is UTF-8 encoded and managing classes.
- * 
+ *
  *	@package corelib
  *	@subpackage Base
  */
@@ -192,13 +192,13 @@ class Base implements Singleton {
 	 *
 	 *	@var Base
 	 */
-	private static $instance = null;	
+	private static $instance = null;
 	/**
 	 *	Class Cache
-	 * 
+	 *
 	 *	Array containing references about in which files
 	 * 	the different classes are located.
-	 * 
+	 *
 	 * @var array
 	 */
 	private $class_cache = array();
@@ -208,7 +208,7 @@ class Base implements Singleton {
 	 *	Holds informations wether the class cache have been update
 	 *	true if the class cache file should be rewritten, false if no
 	 *	changes have been made.
-	 * 
+	 *
 	 *	@var boolean
 	 * 	@see Base::__destruct()
 	 */
@@ -217,19 +217,19 @@ class Base implements Singleton {
 	 *	Class Paths
 	 *
 	 * 	Holds informations about where classes are stored.
-	 * 
+	 *
 	 *	@var array
 	 * 	@see Base::setClassPaths()
 	 */
 	private $class_paths = array(CORELIB);
-	
+
 
 	//*****************************************************************//
 	//*********************** Base Class Methods **********************//
 	//*****************************************************************//
 	/**
 	 *	Base Constructor
-	 * 
+	 *
 	 * 	@uses BASE_CLASS_CACHE_FILE
 	 * 	@uses CORELIB_COPYRIGHT_YEAR
 	 * 	@uses CORELIB_COPYRIGHT
@@ -250,7 +250,7 @@ class Base implements Singleton {
 		if(!defined('BASE_RUNLEVEL')){
 			/**
 			 * Current Runlevel
-			 * 
+			 *
 			 * This constant holds the current runlevel
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
@@ -259,7 +259,7 @@ class Base implements Singleton {
 			$this->class_cache_updated = true;
 		}else if(is_writeable(BASE_CLASS_CACHE_FILE) && is_readable(BASE_CLASS_CACHE_FILE)){
 			/**
-			 * @ignore 
+			 * @ignore
 			 */
 			include_once(BASE_CLASS_CACHE_FILE);
 			$this->class_cache = &$classes;
@@ -270,13 +270,13 @@ class Base implements Singleton {
 		require_once(CORELIB.'/Base/Lib/StrictTypes.php');
 		$GLOBALS['base'] = $this;
 	}
-	
+
 	/**
 	 * 	Return instance of Base
-	 * 
+	 *
 	 * 	Please refer to the {@link Singleton} interface for complete
 	 * 	description.
-	 * 
+	 *
 	 * 	@see Singleton
 	 *	@return Base
 	 */
@@ -284,9 +284,9 @@ class Base implements Singleton {
 		if(is_null(self::$instance)){
 			self::$instance = new Base();
 		}
-		return self::$instance;			
+		return self::$instance;
 	}
-	
+
 	/**
 	 * Add Class Search Path
 	 *
@@ -307,9 +307,9 @@ class Base implements Singleton {
 	 *
 	 * Force corelib to load a specific class, this is very
 	 * usefull for event classes which always needs to be loaded.
-	 * 
+	 *
 	 * @param string $class Class name
-	 * @return boolean alwas returns true
+	 * @return boolean always returns true
 	 */
 	public function loadClass($class){
 		try {
@@ -320,12 +320,12 @@ class Base implements Singleton {
 		__autoload($class);
 		return true;
 	}
-	
+
 	/**
 	 * Find Class
 	 *
 	 * Search for a specific class and save it in the class cache.
-	 * 
+	 *
 	 * @param string $class Name of the class
 	 * @return string File containing the class, else return false
 	 * @uses Base::_classSearch()
@@ -354,7 +354,7 @@ class Base implements Singleton {
 		}
 		return $this->class_cache[$class];
 	}
-	
+
 	/**
 	 * Search for class in directories
 	 *
@@ -373,7 +373,7 @@ class Base implements Singleton {
 		reset($this->class_paths);
 		return $file;
 	}
-	
+
 	/**
 	 * Recursive search files for a class
 	 *
@@ -398,12 +398,12 @@ class Base implements Singleton {
 		}
 		return false;
 	}
-		
+
 	/**
 	 * Base Destructor
-	 * 
+	 *
 	 * The base destructor saves the current class cache, if changed
-	 * 
+	 *
 	 *	@uses CURRENT_WORKING_DIR
 	 * 	@uses BASE_CLASS_CACHE_FILE
 	 * 	@uses Base::$class_cache
@@ -435,7 +435,7 @@ class Base implements Singleton {
  * When a unknown class is used, this function is called.
  * It will then intruct the {@link Base} class to find the
  * file containing the missing class
- * 
+ *
  * @param string $class Missing class name
  * @uses Base::findClass()
  */

@@ -30,6 +30,12 @@
 		<desc>default timezone for use in php date functions.</desc>
 		<value fieldtype="string" type="string" default="CET"/>
 	</constant>
+	<constant>
+		<name>MANAGER_DEVELOPER_MODE</name>
+		<title>Manager Run Mode</title>
+		<desc>default timezone for use in php date functions.</desc>
+		<value fieldtype="string" type="string" default="CET"/>
+	</constant>
 	<constant readonly="true" bind="BASE_RUNLEVEL">
 		<name>BASE_RUNLEVEL_PROD</name>
 		<title>Default timezone</title>

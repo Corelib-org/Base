@@ -5,6 +5,9 @@
 	<resources>
 		<resourcedir handle="Manager">CORELIB/Base/Share/Resources/Web/</resourcedir>
 	</resources>
+	<load>
+		<class>ConfigurationLoadConstantsFile</class>
+	</load>
 	<menu>
 		<group title="Overview">
 			<item url="/corelib/manager/dashboard/">Dashboard</item>

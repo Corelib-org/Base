@@ -193,6 +193,11 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->message_id = $id;
 	}
+	public function setForceSSL(){
+		if(!isset($_SERVER['HTTPS'])){
+			$this->setLocation(str_replace('http://', 'https://', HTTP_REDIRECT_BASE).$_SERVER['REQUEST_URI']);
+		}
+	}
 
 	public function addJavaScript($javascript){
 		try {

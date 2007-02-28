@@ -5,12 +5,13 @@ class MySQLiEngine implements DatabaseEngine {
 	private $username = null;
 	private $password = null;
 	private $database = null;
+	private $charset = 'utf8';
 	private $pid = null;
 	private $reconnect = false;
 
 	const PREFIX = 'MySQLi';
 	
-	public function __construct($hostname, $username, $password, $database, $reconnect=false){
+	public function __construct($hostname, $username, $password, $database, $reconnect=false, $charset='utf8'){
 		$this->hostname = $hostname;
 		$this->username = $username;
 		$this->password = $password;
@@ -61,6 +62,8 @@ class MySQLiEngine implements DatabaseEngine {
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
+			$this->connection->query('SET NAMES '.$this->charset);
+			$this->connection->query('SET CHARACTER SET '.$this->charset);			
 			return true;
 		} else {
 			return false;

@@ -40,6 +40,7 @@
 //**        2. BASE_CLASS_CACHE_FILE .......................     **//
 //**        2. BASE_DEFAULT_TIMEZONE .......................     **//
 //**        2. BASE_ADMIN_EMAIL ............................     **//
+//**        2. TEMPORARY_DIR ...............................     **//
 //**    3. Load Base Support Files .........................     **//
 //**        1. Base/Lib/Interfaces.php .....................     **//
 //**        2. Base/Lib/ErrorHandler.php ...................     **//
@@ -83,6 +84,9 @@ define('BASE_RUNLEVEL_PROD', 1);
  *	Define current version of corelib Base
  */
 define('CORELIB_BASE_VERSION', '4.0.0 Beta');
+define('CORELIB_BASE_VERSION_MAJOR', '4');
+define('CORELIB_BASE_VERSION_MINOR', '0');
+define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
  */
@@ -90,7 +94,7 @@ define('CORELIB_COPYRIGHT', 'Bravura - http://www.bravura.dk/');
 /**
  * Define CoreLib Copyright year
  */
-define('CORELIB_COPYRIGHT_YEAR', '2006');
+define('CORELIB_COPYRIGHT_YEAR', '2006-2007');
 
 
 //*****************************************************************//
@@ -152,6 +156,14 @@ if(!defined('BASE_ADMIN_EMAIL')){
 	 * Define the admin email, for sending runtime informations about erros etc.
 	 */
 	define('BASE_ADMIN_EMAIL', false);
+}
+if(!defined('TEMPORARY_DIR')){
+	/**
+	 * Define Admin Email
+	 * 
+	 * Define the admin email, for sending runtime informations about erros etc.
+	 */
+	define('TEMPORARY_DIR', 'var/tmp/');
 }
 
 //*****************************************************************//

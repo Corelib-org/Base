@@ -84,6 +84,8 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 
 	private $set_referer = true;
 
+	private $cache_append = '';
+
 	const REFERER_VAR = 'PUBLIC_REFERER';
 	const MSGID = 'MSGID';
 

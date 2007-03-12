@@ -5,15 +5,15 @@
  *
  *	<i>No Description</i>
  *
- *	LICENSE: This source file is subject to version 1.0 of the 
- *	Bravura Distribution license that is available through the 
+ *	LICENSE: This source file is subject to version 1.0 of the
+ *	Bravura Distribution license that is available through the
  *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
  *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to 
+ *	unable to obtain it through the web, please send a note to
  *	license@bravura.dk so we can mail you a copy immediately.
  *
- * 
- *	@author Steffen Sørensen <steffen@bravura.dk>	
+ *
+ *	@author Steffen Sørensen <steffen@bravura.dk>
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
  *	@package corelib
@@ -24,6 +24,9 @@
 
 if(!defined('PAGE_FACTORY_ENGINE')){
 	define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
+}
+if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
+	define('PAGE_FACTORY_CACHE_ENABLE', false);
 }
 
 interface PageFactoryPageResolver {
@@ -36,7 +39,7 @@ abstract class PageFactoryTemplate {
 	public function init(){
 		return true;
 	}
-	
+
 	abstract public function getSupportedTemplateEngineName();
 	abstract public function cleanup();
 }
@@ -50,7 +53,7 @@ abstract class PageFactoryTemplateEngine {
 	 * @var PageFactoryTemplate
 	 */
 	protected $template = null;
-	
+
 	public function build(Page $page, $callback=null){
 		$this->page = $page;
 		if(!is_null($callback)){
@@ -59,7 +62,7 @@ abstract class PageFactoryTemplateEngine {
 			$this->page->build();
 		}
 	}
-	
+
 	public function setTemplate(PageFactoryTemplate $template){
 		$this->template = $template;
 		return $this->template->init();
@@ -70,7 +73,7 @@ abstract class PageFactoryTemplateEngine {
 	public function getTemplate(){
 		return $this->template;
 	}
-	
+
 	abstract public function draw();
 	abstract public function getSupportedTemplateDefinition();
 	abstract public function addPageContent(Output $content);
@@ -87,9 +90,9 @@ class PageFactory implements Singleton {
 	 * @var PageFactoryTemplateEngine
 	 */
 	private $engine = null;
-	
+
 	private $callback = null;
-	
+
 	private $resolvers = array();
 
 	private function __construct(){
@@ -106,8 +109,8 @@ class PageFactory implements Singleton {
 			self::$instance = new PageFactory();
 		}
 		return self::$instance;
-	}	
-	
+	}
+
 	public function addResolver($ident, PageFactoryPageResolver $resolver){
 		try {
 			StrictTypes::isString($ident);
@@ -116,7 +119,7 @@ class PageFactory implements Singleton {
 		}
 		$this->resolvers[$ident] = $resolver;
 	}
-	
+
 	public function resolvePageObject(){
 		if(!isset($_GET['page'])){
 			$_GET['page'] = '/';
@@ -124,7 +127,12 @@ class PageFactory implements Singleton {
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once('etc/post.php');
 		} else {
-			include_once('etc/get.php');
+			if(PAGE_FACTORY_CACHE_ENABLE){
+				include_once(CORELIB.'/Base/Lib/PageFactory/CacheManager.php');
+				return true;
+			} else {
+				include_once('etc/get.php');
+			}
 		}
 
 		if(substr($_GET['page'], -1) != '/'){
@@ -133,7 +141,7 @@ class PageFactory implements Singleton {
 		if(preg_match('/^\/corelib/', $_GET['page'])){
 			$manager = Manager::getInstance();
 			$manager->setupPageRegistry($pages, $rpages);
-		} 
+		}
 		if(!isset($pages[$_GET['page']])){
 			if(isset($rpages)){
 				while(list(,$val) = each($rpages)){
@@ -155,7 +163,7 @@ class PageFactory implements Singleton {
 						require_once($val['page']);
 						return true;
 					}
-				} 
+				}
 			}
 			try {
 				if(!isset($pages['/404/'])){
@@ -183,7 +191,7 @@ class PageFactory implements Singleton {
 				$page = $pages[$_GET['page']]['page'];
 				$this->callback = $pages[$_GET['page']]['exec'].'()';
 			} else {
-				$page = $pages[$_GET['page']];	
+				$page = $pages[$_GET['page']];
 			}
 			try {
 				if(!is_file($page)){
@@ -197,7 +205,7 @@ class PageFactory implements Singleton {
 			return true;
 		}
 	}
-	
+
 	public function build(Page $page){
 		$this->engine->build($page, $this->callback);
 	}

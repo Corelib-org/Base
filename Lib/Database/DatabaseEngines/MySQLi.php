@@ -7,7 +7,7 @@ class MySQLiEngine implements DatabaseEngine {
 	private $database = null;
 	private $charset = 'utf8';
 	private $pid = null;
-	private $reconnect = false;
+		private $reconnect = false;
 
 	const PREFIX = 'MySQLi';
 
@@ -70,7 +70,6 @@ class MySQLiEngine implements DatabaseEngine {
 			return false;
 		}
 	}
-
 }
 
 class MySQLiQuery extends Query {

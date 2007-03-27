@@ -189,20 +189,42 @@ interface SessionHandlerEngine {
 	public function init();
 	public function setDomain($domain);
 }
+interface DAO_PHPSessionHandler {
+	public function read($session);
+	public function update($session, $data, $expire); 
+	public function destroy($session);
+	public function cleanup();
+}
 
 class PHPSessionHandler implements SessionHandlerEngine,Singleton {
 	private static $instance = null;
+	/**
+	 * @var DAO_PHPSessionHandler
+	 */
+	private static $dao = null;
 	private $domain = '';
 	private $lifetime = 0;
 	private $path = '/';
 	private $secure = false;
+	
 
 	private function __construct(){
 	}
-
+	public function __destruct(){
+		session_write_close();
+	}
+	
 	public function init(){
 		ini_set('session.name', 'SSID');
 		if(php_sapi_name() != 'cli'){
+			if(defined('SESSION_PHP_HAS_MYSQL') && SESSION_PHP_HAS_MYSQL){
+				session_set_save_handler(array($this, '_open'),
+				                         array($this, '_close'),
+				                         array($this, '_read'),
+				                         array($this, '_write'),
+				                         array($this, '_destroy'),
+				                         array($this, '_gc'));
+			}
 			session_start();
 		}
 	}
@@ -237,6 +259,36 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton {
 		$this->domain = $domain;
 		$this->_setCookieParams();
 	}
+	
+	public function _open(){
+		return true;
+	}
+	public function _close(){
+		return true;
+	}
+	public function _read($session){
+		$this->_getDAO();
+		return self::$dao->read($session);
+	}
+	public function _write($session, $data){
+		$this->_getDAO();
+		if($this->lifetime == 0){
+			$lifetime = 86400;
+		} else {
+			$lifetime = $this->lifetime;
+		}
+		self::$dao->update($session, $data, time()+$lifetime);
+		return true;
+	}
+	public function _destroy($session){
+		$this->_getDAO();
+		self::$dao->destroy($session);
+	}
+	public function _gc(){
+		$this->_getDAO();
+		self::$dao->cleanup();
+	}
+	
 	private function _setCookieParams(){
 		session_set_cookie_params($this->lifetime, $this->path, $this->domain, $this->secure);
 	}
@@ -249,6 +301,17 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton {
 		}
 		return self::$instance;
 	}
+	
+	private function _getDAO(){
+		if(is_null(self::$dao)){
+			if(defined('CORELIB_BASE_VERSION_MAJOR') && CORELIB_BASE_VERSION_MAJOR == 3){
+				self::$dao = Database::getDAO('PHPSessionHandler', 'PHPSessionHandler');
+			} else {
+				self::$dao = Database::getDAO('PHPSessionHandler');
+			}
+		}
+		return true;
+	}		
 }
 
 class SessionHandlerInitEvent implements EventTypeHandler,Observer  {
@@ -274,7 +337,6 @@ class SessionHandlerInitEvent implements EventTypeHandler,Observer  {
 class EventSessionConfigured implements Event {
 		
 }
-
 $event = EventHandler::getInstance();
 $event->registerObserver(new SessionHandlerInitEvent());
 ?>

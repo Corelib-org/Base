@@ -18,6 +18,29 @@ class InputHandler implements Singleton,Output {
 	private $error_overwrite_post = array();
 	private $serialize_strip_get = array();
 	private $serialize_strip_post = array();
+	
+	/**
+	 * @var array
+	 */
+	private $cp1252_bad_charecters = array("\xE2\x80\xA6",        // ellipsis
+	                                       "\xE2\x80\x93",        // long dash
+	                                       "\xE2\x80\x94",        // long dash
+	                                       "\xE2\x80\x98",        // single quote opening
+	                                       "\xE2\x80\x99",        // single quote closing
+	                                       "\xE2\x80\x9c",        // double quote opening
+	                                       "\xE2\x80\x9d",        // double quote closing
+	                                       "\xE2\x80\xa2");       // dot used for bullet points)
+	/**
+	 * @var array
+	 */
+	private $cp1252_new_charecters = array('...',
+	                                       '-',
+	                                       '-',
+	                                       '\\\'',
+	                                       '\\\'',
+	                                       '"',
+	                                       '"',
+	                                       '*');	                                       
 
 	private function __construct(){
 		if(!defined('INPUT_HANDLER_RESET_GET_POST')){
@@ -52,6 +75,7 @@ class InputHandler implements Singleton,Output {
 	public function validatePost($item, InputValidator $mode){
 		if(isset($this->post[$item])){
 			if($valid = $this->_validate($this->post[$item], $mode)){
+				$this->post[$item] = $this->_cp1252Safe($this->post[$item]);
 				$this->post_valid[$item] = &$this->post[$item];
 				if($this->addslashes){
 					$this->post_valid[$item] = $this->_addslashes($this->post_valid[$item]);
@@ -73,10 +97,12 @@ class InputHandler implements Singleton,Output {
 
 	public function validateGet($item, InputValidator $mode){
 		if(isset($this->get[$item]) && $valid = $this->_validate($this->get[$item], $mode)){
-			$this->get_valid[$item] = $this->get[$item];
+			$this->get[$item] = $this->_cp1252Safe($this->get[$item]);
+			$this->get_valid[$item] = &$this->get[$item];
 			if($this->addslashes){
 				$this->get_valid[$item] = $this->_addslashes($this->get_valid[$item]);
 			}
+			
 			return $valid;
 		} else {
 			if(isset($this->get_valid[$item])){
@@ -212,9 +238,10 @@ class InputHandler implements Singleton,Output {
 			if(!empty($val) && !isset($strip_variables[$key])){
 				if($urlencode){
 					if($this->addslashes){
-						$val = stripslashes($val);
+						$val = $this->_stripslashes($val);
 					}
-					$encoded .= $key.'='.urlencode($val).'&';
+					$val = $this->_urlencode($val);
+					$encoded .= $this->_urlencodeArray($val, $key).'&';
 				} else {
 					$encoded[$key] = $val;
 				}
@@ -238,6 +265,9 @@ class InputHandler implements Singleton,Output {
 			if(!$urlencode){
 				$encoded = serialize($encoded);
 			}
+		}
+		while(strstr($encoded, '&&')){
+			$encoded = str_replace('&&', '&', $encoded);
 		}
 		return $encoded;
 	}
@@ -384,12 +414,7 @@ class InputHandler implements Singleton,Output {
 			if(preg_match('/^[a-zA-Z0-9_]*$/', $key)){
 				if(is_array($val)) {
 					$XMLArray = $xml->createElement($key);
-
-					while(list($key2, $val2) = each($val)){
-						$XMLItem = $xml->createElement('item', $val2);
-						$XMLItem->setAttribute('id',$key2);
-						$XMLArray->appendChild($XMLItem);
-					}
+					$this->_xmlArray($xml, $XMLArray, $val);
 					$XMLget->appendChild($XMLArray);
 				} else {
 					$XMLget->appendChild($xml->createElement($key, $val));
@@ -403,6 +428,20 @@ class InputHandler implements Singleton,Output {
 	public function &getArray(){ }
 	public function getString($format = '%1$s'){ }
 
+
+	private function _xmlArray(DOMDocument $xml, DOMElement $parentNode, $array){
+		while(list($key, $val) = each($array)){
+			if(is_array($val)){
+				$XMLItem = $xml->createElement('item');
+				$this->_xmlArray($xml, $XMLItem, $val);
+			} else {
+				$XMLItem = $xml->createElement('item', $val);
+			}
+			$XMLItem->setAttribute('id',$key);
+			$parentNode->appendChild($XMLItem);
+		}
+
+	}
 	private function _addslashes($subject){
 		if(is_array($subject)){
 			while(list($key,$val) = each($subject)){
@@ -414,7 +453,48 @@ class InputHandler implements Singleton,Output {
 		}
 		return $subject;
 	}
+	private function _stripslashes($subject){
+		if(is_array($subject)){
+			while(list($key,$val) = each($subject)){
+				$subject[$key] = $this->_stripslashes($val);
+			}
+			reset($subject);
+		} else {
+			$subject = stripslashes($subject);
+		}
+		return $subject;
+	}
+	private function _urlencode($subject){
+		if(is_array($subject)){
+			while(list($key,$val) = each($subject)){
+				$subject[$key] = $this->_urlencode($val);
+			}
+			reset($subject);
+		} else {
+			$subject = urlencode($subject);
+		}
+		return $subject;
+	}
+	private function _urlencodeArray($array, $parent=null){
+		$return = '';
+		if(is_array($array)){
+			while(list($key,$val) = each($array)){
+				$return .= '&'.$this->_urlencodeArray($val, $parent.'['.$key.']');
+			}
+			while(strstr($return, '&&')){
+				$return = str_replace('&&', '&', $return);
+			}
+			return $return;
+		} else {
+			return $parent.'='.$array;
+		}
 
+	}
+
+	private function _cp1252Safe($string){
+		return str_replace($this->cp1252_bad_charecters, $this->cp1252_new_charecters, $string);
+	}
+	
 	private function _htmlspecialchars($subject, $quote_style=ENT_COMPAT, $charset='UTF-8'){
 		if(is_array($subject)){
 			while(list($key,$val) = each($subject)){
@@ -484,5 +564,4 @@ class ArrayInputValidator implements InputValidator {
 		return true;
 	}
 }
-
 ?>

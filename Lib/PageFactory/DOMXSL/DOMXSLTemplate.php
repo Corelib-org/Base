@@ -36,6 +36,8 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	private $xml_version = '1.0';
 	private $xml_encoding = 'UTF-8';
 
+	private $custom_cache_string = null;
+
 	const TEMPLATE_ENGINE = 'PageFactoryDOMXSL';
 
 	const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
@@ -104,6 +106,26 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 		$this->xml_encoding = $encoding;
 	}
+	public function setPageCacheString($string){
+		try {
+			StrictTypes::isString($string);
+		} catch (BaseException $e){
+			echo $e;
+			return false;
+		}
+		$this->custom_cache_string = $string;
+		return true;
+	}
+
+
+	public function getPageCacheString(){
+		if(is_null($this->custom_cache_string)){
+			$this->custom_cache_string = sha1($this->getScriptUri().serialize($this->xsl_templates).$this->xsl_core);
+		}
+		return $this->custom_cache_string;
+	}
+
+
 
 	public function getSupportedTemplateEngineName(){
 		return self::TEMPLATE_ENGINE;

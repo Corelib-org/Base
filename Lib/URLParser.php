@@ -26,7 +26,8 @@ class URLParser implements Singleton,Output {
 	}
 	
 	private function _isValidURLPart($part){
-		return preg_match('/^[a-z0-9A-Z]*$/', $part);
+		return true;
+		return preg_match('/^[a-z0-9A-Z\.\s-_\0x00f8]*$/', $part);
 	}
 	
 	
@@ -41,9 +42,11 @@ class URLParser implements Singleton,Output {
 	public function getXML(DOMDocument $xml){
 		$urlparts = $xml->createElement('urlparts');
 		while(list($key,$val) = each($this->url_parts)){
-			if($this->_isValidURLPart($val)){
+			if(!empty($val) && $this->_isValidURLPart($val)){
 				$part = $urlparts->appendChild($xml->createElement('urlpart', $val));
 				$part->setAttribute('id', $key);
+			} else {
+				echo $val;
 			}
 		}
 		reset($this->url_parts);

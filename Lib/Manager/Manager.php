@@ -144,7 +144,9 @@ class Manager implements Singleton,Output {
 		$this->extensions = unserialize(file_get_contents(MANAGER_DATADIR.self::REGISTRY_FILE));
 		$this->menu = unserialize(file_get_contents(MANAGER_DATADIR.self::MENU_REGISTRY_FILE));
 		$this->resources = unserialize(file_get_contents(MANAGER_DATADIR.self::RESOURCE_REGISTRY_FILE));
-		$this->autoload = unserialize(file_get_contents(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE));
+		if(!$this->autoload = unserialize(file_get_contents(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE))){
+			$this->autoload = array();
+		}
 		$pages = file_get_contents(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE);
 		list($pages, $rpages) = explode("\n", $pages);
 		$this->pages = unserialize($pages);

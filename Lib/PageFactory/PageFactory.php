@@ -23,7 +23,11 @@
  */
 
 if(!defined('PAGE_FACTORY_ENGINE')){
-	define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
+	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+		define('PAGE_FACTORY_ENGINE', 'PageFactoryPost');
+	} else {
+		define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
+	}
 }
 if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
 	define('PAGE_FACTORY_CACHE_ENABLE', false);

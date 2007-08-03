@@ -73,6 +73,18 @@
 //*********************** Define Contants *************************//
 //*****************************************************************//
 /**
+ *	Define Base Terminal Debug Runlevel Constant
+ */
+define('BASE_RUNLEVEL_TERM_DEBUG', 30);
+/**
+ *	Define Base Terminal Notice Runlevel Constant
+ */
+define('BASE_RUNLEVEL_TERM_NOTICE', 20);
+/**
+ *	Define Base Terminal Warning Runlevel Constant
+ */
+define('BASE_RUNLEVEL_TERM_WARN', 10);
+/**
  *	Define Base Development Runlevel Constant
  */
 define('BASE_RUNLEVEL_DEVEL', 2);

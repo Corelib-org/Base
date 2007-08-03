@@ -36,8 +36,8 @@ class InputHandler implements Singleton,Output {
 	private $cp1252_new_charecters = array('...',
 	                                       '-',
 	                                       '-',
-	                                       '\\\'',
-	                                       '\\\'',
+	                                       '\'',
+	                                       '\'',
 	                                       '"',
 	                                       '"',
 	                                       '*');	                                       

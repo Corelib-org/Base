@@ -98,7 +98,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->request_uri = $_SERVER['REQUEST_URI'];
 
-		$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		if(isset($_SERVER['HTTP_USER_AGENT'])){
+			$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
+		}
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
 		$this->http_redirect_base = HTTP_REDIRECT_BASE;
@@ -275,5 +277,19 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		return false;
 	}
+}
+
+class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
+	const TEMPLATE_ENGINE = 'PageFactoryPost';
+
+	public function getSupportedTemplateEngineName(){
+		return self::TEMPLATE_ENGINE;
+	}
+}
+class PageFactoryPost extends PageFactoryTemplateEngine {
+	public function draw(){ return $this->page->draw($this); }
+	public function getSupportedTemplateDefinition(){ return __CLASS__; }
+	public function addPageContent(Output $content){ return true; }
+	public function addPageSettings(Output $settings){ return true; }
 }
 ?>

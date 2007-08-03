@@ -7,7 +7,7 @@
  *
  * LICENSE: This source file is subject to version 1.0 of the
  * Bravura Distribution license that is available through the
- * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
+ * world-wide-web at the following URI: http://www.bravura.dk/$/corelib_1_0/.
  * If you did not receive a copy of the Bravura License and are
  * unable to obtain it through the web, please send a note to
  * license@bravura.dk so we can mail you a copy immediately.

@@ -51,6 +51,7 @@ class GenericOutput implements Output {
 
 	public function setXML(DOMElement $xml){
 		$this->xml = $xml;
+		return $this->xml;
 	}
 
 	public function setString($string){

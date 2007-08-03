@@ -178,5 +178,14 @@ abstract class DatabaseDAO {
 	public function rollback(){
 		$this->database->rollback();
 	}
+
+	protected function _parseNullValue(&$val){
+		if(is_null($val)){
+			$val = 'NULL';
+		} else {
+			$val = '\''.$val.'\'';
+		}
+		return $val;
+	}
 }
 ?>

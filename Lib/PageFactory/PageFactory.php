@@ -61,6 +61,9 @@ abstract class PageFactoryTemplateEngine {
 	public function build(Page $page, $callback=null){
 		$this->page = $page;
 		if(!is_null($callback)){
+			if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL && isset($_GET['CALLBACK'])){
+				echo $callback;
+			}
 			eval('$this->page->'.$callback.';');
 		} else {
 			$this->page->build();

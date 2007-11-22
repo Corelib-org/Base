@@ -102,7 +102,7 @@ define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
  */
-define('CORELIB_COPYRIGHT', 'Bravura - http://www.bravura.dk/');
+define('CORELIB_COPYRIGHT', 'Steffen Sorensen - http://www.backinfiveminutes.com/');
 /**
  * Define CoreLib Copyright year
  */

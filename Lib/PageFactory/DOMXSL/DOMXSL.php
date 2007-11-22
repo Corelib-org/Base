@@ -22,6 +22,13 @@
  * @version 1.0.0 ($Id$)
  * @filesource
  */
+if(!defined('PAGE_FACTORY_DOMXSL_CACHE_XMLNS')){
+	define('PAGE_FACTORY_DOMXSL_CACHE_XMLNS', 'http://www.backinfiveminutes.com/corelib/cache/tranform');
+}
+if(!defined('PAGE_FACTORY_DOMXSL_XSL_XMLNS')){
+	define('PAGE_FACTORY_DOMXSL_XSL_XMLNS', 'http://www.w3.org/1999/XSL/Transform');
+}
+
 class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	/**
 	 *	@var DOMDocument
@@ -36,13 +43,31 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 */
 	private $content = null;
 	/**
+	 * @var Array
+	 */
+	private $content_array = array();
+	/**
 	 * @var DOMElement
 	 */
 	private $settings = null;
 	/**
+	 * @var Array
+	 */
+	private $settings_array = array();
+	/**
 	 * @var PageFactoryDOMXSLTemplate
 	 */
 	protected $template = null;
+
+	/**
+	 * @var string
+	 */
+	private $template_cache_file = false;
+
+	/**
+	 * @var Array
+	 */
+	private $parse_tokens = array();
 
 	public function draw(){
 		if($this->page->draw($this)){
@@ -59,15 +84,26 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				$this->template->setContentCharset('UTF-8');
 				echo $this->xml->saveXML();
 			} else {
-				$tranformToXML = false;
-				if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
-					$tranformToXML = true;
-				}
-				if($tranformToXML){
-					$page = $proc->transformToXML($this->xml);
-				} else {
+				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
+					$tranformToXML = false;
+					if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
+						$tranformToXML = true;
+					}
 					$doc = $proc->transformToDoc($this->xml);
-					$page = $doc->saveHTML();
+					if(PAGE_FACTORY_CACHE_ENABLE){
+						$page = $this->_xslRewrite($doc, $tranformToXML);
+					} else {
+						$page = $this->_transformPage($doc, $tranformToXML);
+					}
+					if(!PAGE_FACTORY_CACHE_DEBUG){
+						file_put_contents($this->template_cache_file, $page);
+					}
+				} else {
+					$page = file_get_contents($this->template_cache_file);
+				}
+				if(PAGE_FACTORY_CACHE_ENABLE){
+					echo PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
+					return true;
 				}
 				echo $page;
 			}
@@ -75,11 +111,21 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	}
 
 	public function addPageContent(Output $content){
-		$this->content->appendChild($content->getXML($this->xml));
+		if(PAGE_FACTORY_CACHE_ENABLE){
+			$this->content_array[] = $content->getArray();
+		}
+		if(!$this->template_cache_file){
+			$this->content->appendChild($content->getXML($this->xml));
+		}
 	}
 
 	public function addPageSettings(Output $settings){
-		$this->settings->appendChild($settings->getXML($this->xml));
+		if(PAGE_FACTORY_CACHE_ENABLE){
+			$this->settings_array[] = $settings->getArray();
+		}
+		if(!$this->template_cache_file){
+			$this->settings->appendChild($settings->getXML($this->xml));
+		}
 	}
 
 	public function getSupportedTemplateDefinition(){
@@ -88,32 +134,48 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 	public function setTemplate(PageFactoryTemplate $template){
 		$return = parent::setTemplate($template);
-		$this->_prepareXML();
+		if(PAGE_FACTORY_CACHE_ENABLE && is_file(PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString())){
+			$this->template_cache_file = PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString();
+		} else {
+			$this->_prepareXML();
 
-		$this->settings->appendChild($this->xml->createElement('script_uri', $this->template->getScriptUri()));
-		$this->settings->appendChild($this->xml->createElement('script_url', $this->template->getScriptUrl()));
-		$this->settings->appendChild($this->xml->createElement('request_url', str_replace('&', '&amp;', $this->template->getRequestUri())));
+			$this->settings->appendChild($this->xml->createElement('script_uri', $this->template->getScriptUri()));
+			$this->settings->appendChild($this->xml->createElement('script_url', $this->template->getScriptUrl()));
+			$this->settings->appendChild($this->xml->createElement('request_url', str_replace('&', '&amp;', $this->template->getRequestUri())));
 
-		$this->settings->appendChild($this->xml->createElement('server_name', $this->template->getServerName()));
-		$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
-		$this->settings->appendChild($this->xml->createElement('remote_address', $this->template->getRemoteAddress()));
-		$this->settings->appendChild($this->xml->createElement('redirect_url', $this->template->getHTTPRedirectBase()));
+			$this->settings->appendChild($this->xml->createElement('server_name', $this->template->getServerName()));
+			$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
+			$this->settings->appendChild($this->xml->createElement('remote_address', $this->template->getRemoteAddress()));
+			$this->settings->appendChild($this->xml->createElement('redirect_url', $this->template->getHTTPRedirectBase()));
 
-		$stylesheets = $this->template->getStyleSheets();
-		while(list(,$val) = each($stylesheets)){
-			$this->settings->appendChild($this->xml->createElement('stylesheet', $val));
-		}
-		$javascripts = $this->template->getJavaScripts();
-		while(list(,$val) = each($javascripts)){
-			$this->settings->appendChild($this->xml->createElement('javascript', $val));
-		}
+			$stylesheets = $this->template->getStyleSheets();
+			while(list(,$val) = each($stylesheets)){
+				$this->settings->appendChild($this->xml->createElement('stylesheet', $val));
+			}
+			$javascripts = $this->template->getJavaScripts();
+			while(list(,$val) = each($javascripts)){
+				$this->settings->appendChild($this->xml->createElement('javascript', $val));
+			}
 
-		$input = InputHandler::getInstance();
-		$this->settings->appendChild($input->getXML($this->xml));
-		if($message = $this->template->getStatusMessage()){
-			$this->settings->appendChild($this->xml->importNode($message, true));
+			$input = InputHandler::getInstance();
+			$this->addPageSettings($input);
+			// $this->settings->appendChild($input->getXML($this->xml));
+			if($message = $this->template->getStatusMessage()){
+				$this->settings->appendChild($this->xml->importNode($message, true));
+			}
 		}
 		return $return;
+	}
+
+	public function addParseToken(PageFactoryDOMXSLParseToken $token){
+		$this->parse_tokens[] = $token;
+	}
+	private function _transformPage(DOMDocument $dom, $tranformToXML=true){
+		if($tranformToXML){
+			return $dom->saveXML();
+		} else {
+			return $dom->saveHTML();
+		}
 	}
 
 	protected function _prepareXML(){
@@ -127,6 +189,99 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		$this->settings = $page->appendChild($this->xml->createElement('settings'));
 		$this->content = $page->appendChild($this->xml->createElement('content'));
 		return true;
+	}
+
+	private function _xslRewrite(DOMDocument $dom, $transformToXML=true){
+		$this->_xslRewriteTemplates($dom);
+
+		$this->addParseToken(new PageFactoryDOMXSLParseTokenTemplate());
+		$this->addParseToken(new PageFactoryDOMXSLParseTokenDump());
+		$this->addParseToken(new PageFactoryDOMXSLParseTokenControlStructure());
+
+		$dom->formatOutput = true;
+		$page = $this->_transformPage($dom, true);
+
+		// remove un needed xmlns attributes
+		$page = preg_replace('/\s*xmlns:c=".*?"/',
+		                     '', $page);
+
+		// Rewrite xml version declaration to a valid php tag
+		$page = preg_replace('/\<\?xml(.*?)\?\>/',
+		                     '<?php echo \'<?xml\\1?>\'."\n"; ?>', $page);
+
+		while (list(,$val) = each($this->parse_tokens)) {
+			$page = $val->parse($page);
+		}
+		return $page;
+	}
+
+	private function _xslRewriteTemplates(DOMDocument $xml){
+		$templates = $this->_parseTemplates($this->xsl);
+		while (list(,$val) = each($templates[0])) {
+			$xml->documentElement->insertBefore($xml->importNode($val, true), $xml->documentElement->firstChild);
+		}
+		while (list(,$val) = each($templates[1])) {
+			$xml->documentElement->insertBefore($xml->importNode($val, true), $xml->documentElement->firstChild);
+		}
+	}
+	private function _parseTemplates(DOMDocument $xsl, $path=null, $call=array(), $match=array()){
+		if(is_null($path)){
+			$path = getcwd();
+		}
+		$imports = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_XSL_XMLNS, 'import');
+		$includes = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_XSL_XMLNS, 'include');
+		$templates = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_CACHE_XMLNS, 'template');
+
+		$stylesheets = array();
+		$templateElm = array('match'=>array(), 'name'=>array());
+
+		for ($i = 0; $template = $templates->item($i); $i++){
+			$nametpl = $template->getAttribute('name');
+			$matchtpl = $template->getAttribute('match');
+			if(empty($nametpl) && !empty($matchtpl)){
+				$match[$matchtpl] = $template;
+			} else if(!empty($nametpl)){
+				$call[$nametpl] = $template;
+			}
+		}
+
+		for ($i = 0; $import = $imports->item($i); $i++){
+			$stylesheets[] = $import->getAttribute('href');
+		}
+		for ($i = 0; $include = $includes->item($i); $i++){
+			$stylesheets[] = $include->getAttribute('href');
+		}
+		while (list(,$val) = each($stylesheets)) {
+			$val = $this->_relativeToPath($path, $val);
+			$xsl = new DOMDocument('1.0', 'UTF-8');
+			$xsl->load($val);
+			$templates = $this->_parseTemplates($xsl, $val, $call, $match);
+			$call = $templates[0];
+			$match = $templates[1];
+		}
+		return array($call, $match);
+	}
+	private function _relativeToPath($path, $relative){
+		if($relative{0} != '/'){
+			$filename = basename($relative);
+			$cwd = getcwd();
+			chdir(dirname($path));
+			chdir(dirname($relative));
+			$relative = getcwd();
+			chdir($cwd);
+			return $relative.'/'.$filename;
+		} else {
+			return $relative;
+		}
+	}
+
+	private function _xslRewriteParseForeachAs($as){
+		if(strstr($as, ',')){
+			list($key, $val) = explode(',', $as);
+			return '$'.trim($key).', $'.trim($val);
+		} else {
+			return ', $'.trim($as);
+		}
 	}
 }
 ?>

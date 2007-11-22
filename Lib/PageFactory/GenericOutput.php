@@ -1,7 +1,7 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- *	PageFactory Generic Output Class
+ *	PageFactory Generic Output Classes
  *
  *	<i>No Description</i>
  *
@@ -35,11 +35,6 @@ class GenericOutput implements Output {
 	 */
 	private $array = array();
 
-	/**
-	 * @var string
-	 */
-	private $string;
-
 	public function setArray(&$array){
 		try {
 			StrictTypes::isArray($array);
@@ -70,7 +65,5 @@ class GenericOutput implements Output {
 	public function &getArray(){
 		return $this->array;
 	}
-	public function getString($format = '%1$s'){
-		return $this->string;
-	}
 }
+?>

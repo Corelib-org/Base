@@ -329,7 +329,17 @@ class Manager implements Singleton,Output {
 		return $menu;
 	}
 	public function &getArray(){
-
+		$menu = array();
+		while (list($name, $group) = each($this->menu)) {
+			$groupA = array('title'=>$name);
+			while (list(,$item) = each($group)) {
+				$groupA['items'][] = array('title'=>$item['title'], 'url'=>$item['url']);
+			}
+			$menu[] = $groupA;
+		}
+		$menu = array('menu' => $menu);
+		reset($this->menu);
+		return $menu;
 	}
 }
 

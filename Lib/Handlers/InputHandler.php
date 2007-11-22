@@ -18,7 +18,7 @@ class InputHandler implements Singleton,Output {
 	private $error_overwrite_post = array();
 	private $serialize_strip_get = array();
 	private $serialize_strip_post = array();
-	
+
 	/**
 	 * @var array
 	 */
@@ -40,7 +40,7 @@ class InputHandler implements Singleton,Output {
 	                                       '\'',
 	                                       '"',
 	                                       '"',
-	                                       '*');	                                       
+	                                       '*');
 
 	private function __construct(){
 		if(!defined('INPUT_HANDLER_RESET_GET_POST')){
@@ -102,7 +102,7 @@ class InputHandler implements Singleton,Output {
 			if($this->addslashes){
 				$this->get_valid[$item] = $this->_addslashes($this->get_valid[$item]);
 			}
-			
+
 			return $valid;
 		} else {
 			if(isset($this->get_valid[$item])){
@@ -425,8 +425,20 @@ class InputHandler implements Singleton,Output {
 		return $XMLget;
 	}
 
-	public function &getArray(){ }
-	public function getString($format = '%1$s'){ }
+	public function &getArray(){
+		$array = array();
+		while(list($key, $val) = each($this->get)){
+			if(preg_match('/^[a-zA-Z0-9_]*$/', $key)){
+				if(is_array($val)) {
+					$array[$key] = $val;
+				} else {
+					$array[$key] = $val;
+				}
+			}
+		}
+		$array = array('get'=>$array);
+		return $array;
+	}
 
 
 	private function _xmlArray(DOMDocument $xml, DOMElement $parentNode, $array){
@@ -494,7 +506,7 @@ class InputHandler implements Singleton,Output {
 	private function _cp1252Safe($string){
 		return str_replace($this->cp1252_bad_charecters, $this->cp1252_new_charecters, $string);
 	}
-	
+
 	private function _htmlspecialchars($subject, $quote_style=ENT_COMPAT, $charset='UTF-8'){
 		if(is_array($subject)){
 			while(list($key,$val) = each($subject)){

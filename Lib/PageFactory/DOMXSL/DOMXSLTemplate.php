@@ -126,7 +126,6 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	}
 
 
-
 	public function getSupportedTemplateEngineName(){
 		return self::TEMPLATE_ENGINE;
 	}

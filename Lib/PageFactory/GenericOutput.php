@@ -34,6 +34,20 @@ class GenericOutput implements Output {
 	 * @var Array
 	 */
 	private $array = array();
+	/**
+	 * @var DOMDocument
+	 */
+	private static $DOMDocument = null;
+
+	public function __construct(){
+		if(!self::$DOMDocument instanceof DOMDocument){
+			self::$DOMDocument = new DOMDocument('1.0', 'UTF-8');
+		}
+	}
+
+	public function createElement($element, $content=null){
+		return self::$DOMDocument->createElement($element, $content);
+	}
 
 	public function setArray(&$array){
 		try {

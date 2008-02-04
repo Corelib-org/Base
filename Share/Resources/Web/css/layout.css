@@ -7,14 +7,14 @@ Email: 		steffen@bravura.dk
 -----------------------------------------------------------------*/
 
 #page {
-	margin: auto; 
+	margin: auto;
 	width: 980px;
 	margin-top: 20px;
 }
 
 #manager_menu {
-	width: 175px; 
-	border: 1px solid #aeafaf; 
+	width: 175px;
+	border: 1px solid #aeafaf;
 	margin-right: 15px;
 	float: left;
 	background-color: #FFFFFF;
@@ -23,10 +23,10 @@ Email: 		steffen@bravura.dk
 }
 
 #manager_content {
-	width: 786px; 
+	width: 786px;
 	float: left;
-	border: 1px solid #AEAFAF; 
+	border: 1px solid #AEAFAF;
 	background-color: #FFFFFF;
 	text-align: left;
-	
+
 }

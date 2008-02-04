@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension id="3160ed1c-52e2-4662-ac3a-4141c6aa199a" enabled="true" locked="true">
+	<setup>
+		<name>Corelib - Base Menu Manager</name>
+		<description>Extension controlling corelib menu</description>
+	</setup>
+	<properties>
+
+	</properties>
+</extension>

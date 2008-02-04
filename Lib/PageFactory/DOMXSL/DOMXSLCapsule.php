@@ -8,7 +8,7 @@ class PageFactoryDOMXSLCapsule {
 	}
 
 	private static function _eval(&$code){
-		// echo highlight_string($code);
+		echo highlight_string($code);
 		return eval('?>'.$code);
 	}
 
@@ -55,12 +55,9 @@ class PageFactoryDOMXSLCapsule {
 		}
 	}
 
-
-
 	public static function dump($data){
 		return "\n".self::_dump($data);
 	}
-
 	private static function _dump($data, $prefix='', $return=''){
 		while (list($key, $val) = each($data)) {
 			if(is_array($val)){

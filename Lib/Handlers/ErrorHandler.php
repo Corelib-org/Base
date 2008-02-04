@@ -5,14 +5,14 @@
  *
  *	<i>No Description</i>
  *
- *	LICENSE: This source file is subject to version 1.0 of the 
- *	Bravura Distribution license that is available through the 
+ *	LICENSE: This source file is subject to version 1.0 of the
+ *	Bravura Distribution license that is available through the
  *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
  *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to 
+ *	unable to obtain it through the web, please send a note to
  *	license@bravura.dk so we can mail you a copy immediately.
  *
- * 
+ *
  *	@author Steffen Sørensen <steffen@bravura.dk>
  *	@copyright Copyright (c) 2006 Bravura ApS
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
@@ -42,12 +42,12 @@ if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
 
 /**
  * 	PHP error handler
- * 
+ *
  * 	This function is used for capturing PHP errors.
  * 	The function captures PHP errors triggered either
- * 	by programming errors, or errors triggered by the 
+ * 	by programming errors, or errors triggered by the
  * 	PHP trigger_error() function.
- * 
+ *
  *	@param integer $errno
  *	@param string $errstr
  *	@param string $errfile
@@ -58,7 +58,7 @@ if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
 function BaseError($errno, $errstr, $errfile, $errline, $errorcontext){
 	try {
 		if(error_reporting() != 0){
-			throw new BaseException(htmlentities($errstr).' <br/><i> '.$errfile.' at line '.$errline.'</i>', $errno);
+			throw new BaseException(htmlentities($errstr).' <br/><i> '.$errfile.' at line '.$errline.'</i>', $errno, $errstr, $errfile, $errline, $errorcontext);
 		}
 	} catch (BaseException $e){
 		echo $e;
@@ -91,9 +91,19 @@ class BaseException extends Exception {
 	private static $buffer = false;
 	private static $template = null;
 	private static $template_desc = null;
+	private $errstr = null;
+	private $errfile = null;
+	private $errline = null;
+	private $errorcontext = null;
 
-	function __construct($msg, $code=0) {
+	const SOURCE_LINES = 6;
+
+	function __construct($msg, $code=0, $errstr=null, $errfile=null, $errline=null, $errorcontext=null) {
 		parent::__construct($msg, $code);
+		$this->errstr = $errstr;
+		$this->errfile = $errfile;
+		$this->errline = $errline;
+		$this->errorcontext = $errorcontext;
 		if(!self::$buffer){
 			self::$buffer = true;
 			self::$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
@@ -113,31 +123,79 @@ class BaseException extends Exception {
 		}
 	}
 
+	public function myGetFile(){
+		if(!is_null($this->errfile)){
+			return $this->errfile;
+		} else {
+			return $this->getFile();
+		}
+	}
+	public function myGetLine(){
+		if(!is_null($this->errline)){
+			return $this->errline;
+		} else {
+			return $this->getLine();
+		}
+	}
+	public function myGetMessage(){
+		if(!is_null($this->errstr)){
+			return $this->errstr;
+		} else {
+			return $this->getMessage();
+		}
+	}
+
 	function htmlError(){
 		$return = str_replace('!ERROR_NAME!', ($this->getCode().': '.$this->myGetCode()), self::$template_desc);
-		$return = str_replace('!ERROR_DESC!', $this->getMessage(), $return);
-		$return = str_replace('!ERROR_FILE!', $this->getFile(), $return);
-		$return = str_replace('!ERROR_LINE!', $this->getLine(), $return);
+		$return = str_replace('!ERROR_DESC!', $this->myGetMessage(), $return);
+		$return = str_replace('!ERROR_FILE!', $this->myGetFile(), $return);
+		$return = str_replace('!ERROR_LINE!', $this->myGetLine(), $return);
+		$return = str_replace('!ERROR_FILE_CONTENT!', $this->getSource(), $return);
 		$return = str_replace('!CORELIB_VERSION!', CORELIB_BASE_VERSION, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT!', CORELIB_COPYRIGHT, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT_YEAR!', CORELIB_COPYRIGHT_YEAR, $return);
 		$return = str_replace('!STACK_TRACE!', nl2br(htmlentities($this->getTraceAsString())), $return);
+		$this->getSource();
 		return $return;
 	}
-	
+
+	function getSource(){
+		//$source = highlight_file($this->myGetFile(), true);
+		//$source = highlight_file($this->myGetFile(), true);
+		$source = file_get_contents($this->myGetFile());
+		$source = explode('<br />', $source);
+		$source = file($this->myGetFile());
+		if($this->myGetLine() < self::SOURCE_LINES){
+			$offset = 1;
+		} else {
+			$offset = $this->myGetLine() - self::SOURCE_LINES;
+		}
+		if(($offset + (self::SOURCE_LINES * 2)) > sizeof($source)){
+			$offset = sizeof($source) - (self::SOURCE_LINES * 2);
+		}
+		$offset--;
+		$content = '';
+		for ($i = $offset; $i <= $offset + (self::SOURCE_LINES * 2); $i++){
+			if(isset($source[$i])){
+				$content .= ($i + 1).': '.($source[$i]).'<br/>';
+			}
+		}
+		return $content;
+	}
+
 	function WriteToLog($return = false){
 		$content = '--====MD5 '.md5($this->getFile().$this->getLine()).' Time: '.date('r')."\n";
 		$content .= 'Error Code: '.$this->myGetCode()."\n";
 		$content .= 'Error File: '.$this->getFile()."\n";
 		$content .= 'Error Line: '.$this->getLine()."\n";
 		if(isset($_SERVER['REQUEST_URI'])){
-			$content .= 'Request URI: '.$_SERVER['REQUEST_URI']."\n";	
+			$content .= 'Request URI: '.$_SERVER['REQUEST_URI']."\n";
 		}
 		if(isset($_SERVER['HTTP_REFERER'])){
-			$content .= 'HTTP Referer: '.$_SERVER['HTTP_REFERER']."\n";	
+			$content .= 'HTTP Referer: '.$_SERVER['HTTP_REFERER']."\n";
 		}
 		if(isset($_SERVER['REMOTE_ADDR'])){
-			$content .= 'Remote Address: '.$_SERVER['REMOTE_ADDR']."\n";	
+			$content .= 'Remote Address: '.$_SERVER['REMOTE_ADDR']."\n";
 		}
 		$content .= "\n";
 		$content .= strip_tags(preg_replace('/\<br\/\\>\s*/', "\n", $this->getMessage()))."\n\n";
@@ -169,7 +227,7 @@ class BaseException extends Exception {
 				break;
 		}
 	}
-	
+
 	static function IsErrorThrown(){
 		$base = Base::getInstance();
 		if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){

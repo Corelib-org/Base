@@ -28,8 +28,15 @@
 				</tr>
 				<tr>
 			 		<td style="font-family: Verdana, Arial; font-size: 10px; line-height: 13px; color: #666666;">
-			 			<div style="margin: 10px; border: 1px dashed #CCCCCC; padding: 10px; background-color: #ffffef;">
+			 			<div style="margin: 10px; border: 1px dashed #CCCCCC; padding: 10px; background-color: #ffffef; margin-bottom: 0px;">
 			 				!STACK_TRACE!
+			 			</div>
+					</td>
+				</tr>
+				<tr>
+			 		<td style="font-family: Verdana, Arial; font-size: 12px; line-height: 13px; color: #666666;">
+			 			<div style="margin: 10px; border: 1px dashed #CCCCCC; padding: 10px; background-color: #ffffef;">
+			 				!ERROR_FILE_CONTENT!
 			 			</div>
 					</td>
 				</tr>

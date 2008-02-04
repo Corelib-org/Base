@@ -42,6 +42,10 @@ abstract class Page {
 	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
 		$this->settings[] = $settings;
 	}
+	/**
+	 * @param PageFactoryTemplate $template
+	 * @return PageFactoryTemplate
+	 */
 	public function addTemplateDefinition(PageFactoryTemplate $template){
 		$this->templates[$template->getSupportedTemplateEngineName()] = $template;
 		return $template;

@@ -6,22 +6,58 @@ if(!defined('MANAGER_DEVELOPER_MODE')){
 	define('MANAGER_DEVELOPER_MODE', false);
 }
 
+abstract class CorelibManagerConfig implements Singleton {
+	abstract public function addProperties(DOMElement $properties);
+}
+
+class ManagerConfig extends CorelibManagerConfig {
+	private static $instance = null;
+	/**
+	 *	@return ManagerConfig
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new ManagerConfig();
+		}
+		return self::$instance;
+	}
+
+	public function addProperties(DOMElement $properties){
+		var_dump($properties);
+	}
+}
+class ResourceManager extends CorelibManagerConfig {
+	private static $instance = null;
+	/**
+	 *	@return ResourceManager
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new ResourceManager();
+		}
+		return self::$instance;
+	}
+
+	public function addProperties(DOMElement $properties){
+		var_dump($properties);
+	}
+}
+
 class Manager implements Singleton,Output {
 	private static $instance = null;
 
-	private $extension_dirs = array(CORELIB);
-	private $extensions = array();
-	private $pages = array();
-	private $rpages = array();
-	private $menu = array();
-	private $resources = array();
-	private $autoload = array();
+	const EXTENSIONS_FILE = 'extensions.xml';
+	const EXTENSIONS_DATA_FILE = 'extensions.dat';
 
-	const PAGE_REGISTRY_FILE = 'pages.db';
-	const MENU_REGISTRY_FILE = 'menu.db';
-	const RESOURCE_REGISTRY_FILE = 'resources.db';
-	const REGISTRY_FILE = 'registry.db';
-	const AUTOLOAD_REGISTRY_FILE = 'autoload.db';
+	private $extension_dirs = array(CORELIB);
+	/**
+	 * @var DOMDocument
+	 */
+	private $extensions = null;
+	/**
+	 * @var array
+	 */
+	private $extensions_data = array();
 
 	private function __construct(){
 		if(!is_dir(MANAGER_DATADIR)){
@@ -35,19 +71,16 @@ class Manager implements Singleton,Output {
 			echo $e;
 			exit;
 		}
+		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
+			$this->_reloadManagerExtensions();
+		}
+		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_DATA_FILE) || MANAGER_DEVELOPER_MODE){
+			$this->_reloadManagerExtensionsData();
+		}
+		header('Content-Type: text/xml');
+		echo ($this->extensions->saveXML());
 
-		$md5 = '';
-		if(!is_file(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE) || MANAGER_DEVELOPER_MODE){
-			file_put_contents(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE, '');
-		}
-		while ($md5 != md5_file(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE)) {
-			$md5 = md5_file(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE);
-			$this->_loadManagerExtensions();
-			$base = Base::getInstance();
-			while(list(,$val) = each($this->autoload)){
-				$base->loadClass($val);
-			}
-		}
+		exit;
 	}
 
 	/**
@@ -60,97 +93,69 @@ class Manager implements Singleton,Output {
 		return self::$instance;
 	}
 
-	public function setupPageRegistry(&$pages, &$rpages){
-		$pages = $this->pages;
-		$rpages = $this->rpages;
-	}
 	public function addExtensionDir($dir){
 		$this->extension_dirs[] = $dir;
 	}
-	public function reloadManagerExtensions(){
-		$this->pages = array();
-		$this->extensions = array();
-		$this->pages = array();
-		$this->rpages = array();
-		$this->menu = array();
 
+
+	public function getXML(DOMDocument $xml){
+		$this->_loadExtensionsXML();
+		return $xml->importNode($this->extensions->documentElement);
+	}
+	public function &getArray(){
+
+	}
+	private function _reloadManagerExtensionsData(){
+		echo '<pre>';
+		$this->_loadExtensionsXML();
+		$xpath = new DOMXPath($this->extensions);
+		$properties = $this->extensions->getElementsByTagName('extension');
+		for ($i = 0; $item = $properties->item($i); $i++){
+			if($setup = $item->getElementsByTagName('setup')->item(0)){
+				echo htmlentities($this->extensions->saveXML($item))."\n\n";
+				$name = $setup->getElementsByTagName('name');
+				if($name->length > 0){
+					$data['name'] = $name->item(0)->nodeValue;
+				}
+				$description = $setup->getElementsByTagName('description');
+				if($description->length > 0){
+					$data['description'] = $description->item(0)->nodeValue;
+				}
+				$classes = $setup->getElementsByTagName('class');
+				for ($c = 0; $class = $classes->item($c); $c++){
+					switch ($class->getAttribute('type')){
+						case 'handler':
+							eval('$data[\'handler\'] = '.$class->nodeValue.'::getInstance();');
+							break;
+						case 'autoload':
+							$data['autoload'][] = $class->nodeValue;
+							break;
+					}
+				}
+				$xdata = $xpath->query('//extensions/extension/properties[@extend = \''.$item->getAttribute('id').'\']');
+
+				for ($p = 0; $xitem = $xdata->item($p); $p++){
+					if(isset($data['handler'])){
+						$data['handler']->addProperties($xitem);
+					}
+				}
+			}
+		}
+		exit;
+	}
+	private function _reloadManagerExtensions(){
+		$this->extensions = new DOMDocument('1.0', 'UTF-8');
+		$this->extensions->appendChild($this->extensions->createElement('extensions'));
 		while (list(,$val) = each($this->extension_dirs)) {
 			$this->_searchDir($val);
 		}
 		reset($this->extension_dirs);
-
-		while (list(,$extension) = each($this->extensions)) {
-			if($extension['enabled']){
-				while (list($url, $page) = each($extension['pages'])) {
-					$this->pages[$url] = $page;
-				}
-				while (list(, $rpage) = each($extension['rpages'])) {
-					$this->rpages[] = $rpage;
-				}
-				while (list($handle, $resource) = each($extension['resources'])) {
-					$this->resources[$handle] = $resource;
-				}
-				while (list(, $load) = each($extension['load'])) {
-					if(!in_array($load, $this->autoload)){
-						$this->autoload[] = $load;
-					}
-				}
-				while (list($title, $group) = each($extension['menu'])){
-					if(!isset($this->menu[$title])){
-						$this->menu[$title] = array();
-					}
-					while (list(, $item) = each($group)){
-						$this->menu[$title][] = $item;
-					}
-				}
-			}
-		}
-		reset($this->extensions);
-
-		file_put_contents(MANAGER_DATADIR.self::REGISTRY_FILE, serialize($this->extensions));
-		file_put_contents(MANAGER_DATADIR.self::MENU_REGISTRY_FILE, serialize($this->menu));
-		file_put_contents(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE, serialize($this->autoload));
-		file_put_contents(MANAGER_DATADIR.self::RESOURCE_REGISTRY_FILE, serialize($this->resources));
-		file_put_contents(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE, serialize($this->pages)."\n".serialize($this->rpages));
 	}
-	public function getResource($handle, $resource){
-		try {
-			StrictTypes::isString($handle);
-			StrictTypes::isString($resource);
-			if(!isset($this->resources[$handle])){
-				throw new BaseException('Unknown Resource Handle: '.$handle);
-			} else if(!is_dir($this->resources[$handle])){
-				throw new BaseException('No Such file or directory: '.$this->resources[$handle]);
-			}
-			$filename = $this->resources[$handle].'/'.$resource;
-			$filename = str_replace('../', '/', $filename);
-			while(strstr($filename, '//')){
-				$filename = str_replace('//', '/', $filename);
-			}
-			if(!is_file($filename)){
-				throw new BaseException('No Such file or directory: '.$filename);
-			}
-		} catch (BaseException $e){
-			echo $e;
-			exit;
+	private function _loadExtensionsXML(){
+		if(!$this->extensions instanceof DOMDocument){
+			$this->extensions = new DOMDocument('1.0', 'UTF-8');
+			$this->extensions->load(MANAGER_DATADIR.self::EXTENSIONS_FILE);
 		}
-		return $filename;
-	}
-
-	private function _loadManagerExtensions(){
-		if(!is_file(MANAGER_DATADIR.self::REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::MENU_REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE) || !is_file(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE) || MANAGER_DEVELOPER_MODE){
-			$this->reloadManagerExtensions();
-		}
-		$this->extensions = unserialize(file_get_contents(MANAGER_DATADIR.self::REGISTRY_FILE));
-		$this->menu = unserialize(file_get_contents(MANAGER_DATADIR.self::MENU_REGISTRY_FILE));
-		$this->resources = unserialize(file_get_contents(MANAGER_DATADIR.self::RESOURCE_REGISTRY_FILE));
-		if(!$this->autoload = unserialize(file_get_contents(MANAGER_DATADIR.self::AUTOLOAD_REGISTRY_FILE))){
-			$this->autoload = array();
-		}
-		$pages = file_get_contents(MANAGER_DATADIR.self::PAGE_REGISTRY_FILE);
-		list($pages, $rpages) = explode("\n", $pages);
-		$this->pages = unserialize($pages);
-		$this->rpages = unserialize($rpages);
 	}
 	private function _searchDir($dir){
 		$d = dir($dir);
@@ -170,176 +175,18 @@ class Manager implements Singleton,Output {
 
 		$dom = new DOMDocument('1.0', 'UTF-8');
 		$dom->load($file);
-		$enabled = $dom->documentElement->getAttribute('enabled');
-		if($id = $dom->documentElement->getAttribute('id')){
-			$name = $dom->documentElement->getElementsByTagName('name');
-			if($name->length > 0){
-				if($enabled){
-					$extension['enabled'] = true;
-				} else {
-					$extension['enabled'] = false;
-				}
-				$name = $name->item(0);
-				$extension['name'] = trim($name->nodeValue);
-				$extension['description'] = '';
-				$desc = $dom->documentElement->getElementsByTagName('description');
-				if($desc->length > 0){
-					$desc = $desc->item(0);
-					$extension['description'] = trim($desc->nodeValue);
-				}
 
-				$extension['load'] = array();
-				$load = $dom->documentElement->getElementsByTagName('load');
-				if($load->length > 0){
-					$load = $load->item(0);
-					$i = 0;
-					while($class = $load->childNodes->item($i++)){
-						if($class->nodeName == 'class'){
-							$extension['load'][] = $class->nodeValue;
-						}
-					}
+		if($dom->getElementsByTagName('setup')->length > 0){
+			$properties = $dom->getElementsByTagName('properties');
+			for ($i = 0; $item = $properties->item($i); $i++){
+				$extend = $item->getAttribute('extend');
+				if(empty($extend)){
+					$item->setAttribute('extend', $dom->documentElement->getAttribute('id'));
 				}
-
-				$extension['menu'] = array();
-				$menu = $dom->documentElement->getElementsByTagName('menu');
-				if($menu->length > 0){
-					$menu = $menu->item(0);
-					$i = 0;
-					while($group = $menu->childNodes->item($i++)){
-						if($group->nodeName == 'group'){
-							$groupname = $group->getAttribute('title');
-							$extension['menu'][$groupname] = array();
-							$mi = 0;
-							while($item = $group->childNodes->item($mi++)){
-								if($item->nodeName == 'item'){
-									$extension['menu'][$groupname][] = array('url'=>$item->getAttribute('url'),
-									                                         'title'=>trim($item->nodeValue));
-								}
-							}
-						}
-					}
-				}
-				$extension['resources'] = array();
-				$resources = $dom->documentElement->getElementsByTagName('resources');
-				if($resources->length > 0){
-					$resources = $resources->item(0);
-					$i = 0;
-					while($resource = $resources->childNodes->item($i++)){
-						if(is_callable(array($resource, 'getAttribute')) && $handle = $resource->getAttribute('handle')){
-							if($resource->nodeName == 'resourcedir'){
-								$dir = $resource->childNodes->item(0);
-								$dir = trim($resource->nodeValue);
-								$extension['resources'][$handle] = str_replace('CORELIB', CORELIB, $dir);
-							}
-						}
-					}
-				}
-
-				$extension['pages'] = array();
-				$extension['rpages'] = array();
-				$pages = $dom->documentElement->getElementsByTagName('pages');
-				if($pages->length > 0){
-					$pages = $pages->item(0);
-					$i = 0;
-					while($page = $pages->childNodes->item($i++)){
-						if($page->nodeName == 'page'){
-							$exec = $page->getElementsByTagName('exec');
-							if($exec->length > 0){
-								$exec = $exec->item(0);
-								$exec = $exec->nodeValue;
-							} else {
-								$exec = false;
-							}
-							$url = $page->getElementsByTagName('url');
-							if($url->length > 0){
-								$url = $url->item(0);
-								$url = $url->nodeValue;
-							} else {
-								$url = false;
-							}
-							$file = $page->getElementsByTagName('file');
-							if($file->length > 0){
-								$file = $file->item(0);
-								$file = $file->nodeValue;
-							} else {
-								$file = false;
-							}
-							if(!empty($file) && !empty($url)){
-								if(empty($exec)){
-									$extension['pages'][$url] = str_replace('CORELIB', CORELIB, $file);
-								} else {
-									$extension['pages'][$url] = array('page'=>str_replace('CORELIB', CORELIB, $file),
-									                                  'exec'=>$exec);
-								}
-							}
-						} else if($page->nodeName == 'rpage'){
-							$exec = $page->getElementsByTagName('exec');
-							if($exec->length > 0){
-								$exec = $exec->item(0);
-								$exec = $exec->nodeValue;
-							} else {
-								$exec = false;
-							}
-							$expr = $page->getElementsByTagName('expr');
-							if($expr->length > 0){
-								$expr = $expr->item(0);
-								$expr = $expr->nodeValue;
-							} else {
-								$expr = false;
-							}
-							$file = $page->getElementsByTagName('file');
-							if($file->length > 0){
-								$file = $file->item(0);
-								$file = $file->nodeValue;
-							} else {
-								$file = false;
-							}
-							if(!$type = $page->getAttribute('type')){
-								$type = false;
-							}
-							if(!empty($file) && !empty($exec) && !empty($expr) && !empty($type)){
-								if(empty($exec)){
-									$extension['rpages'][] = $file;
-								} else {
-									$extension['rpages'][] = array('type'=>$type,
-									                               'expr'=>$expr,
-									                               'exec'=>$exec,
-									                               'page'=>str_replace('CORELIB', CORELIB, $file));
-								}
-							}
-						}
-					}
-				}
-				$this->extensions[] = $extension;
 			}
+			$dom = $this->extensions->importNode($dom->documentElement, true);
+			$this->extensions->documentElement->appendChild($dom);
 		}
-	}
-
-	public function getXML(DOMDocument $xml){
-		$menu = $xml->createElement('managermenu');
-		while (list($name, $group) = each($this->menu)) {
-			$DOMgroup = $menu->appendChild($xml->createElement('group'));
-			$DOMgroup->setAttribute('title', $name);
-			while (list(,$item) = each($group)) {
-				$DOMitem = $DOMgroup->appendChild($xml->createElement('item', $item['title']));
-				$DOMitem->setAttribute('url', $item['url']);
-			}
-		}
-		reset($this->menu);
-		return $menu;
-	}
-	public function &getArray(){
-		$menu = array();
-		while (list($name, $group) = each($this->menu)) {
-			$groupA = array('title'=>$name);
-			while (list(,$item) = each($group)) {
-				$groupA['items'][] = array('title'=>$item['title'], 'url'=>$item['url']);
-			}
-			$menu[] = $groupA;
-		}
-		$menu = array('menu' => $menu);
-		reset($this->menu);
-		return $menu;
 	}
 }
 
@@ -355,12 +202,10 @@ class ManagerFileSearch implements Event {
 		}
 		$this->filename = $filename;
 	}
-
 	public function getFilename(){
 		return $this->filename;
 	}
 }
-
 
 abstract class ManagerPage extends Page {
 	/**

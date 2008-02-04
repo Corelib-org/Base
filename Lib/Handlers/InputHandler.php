@@ -576,4 +576,12 @@ class ArrayInputValidator implements InputValidator {
 		return true;
 	}
 }
+
+class IsSetInputValidator implements InputValidator {
+	public function validate($content){
+		$regex = new RegexInputValidator('/^.*$/');
+		return $regex->validate($content);
+	}
+}
+
 ?>

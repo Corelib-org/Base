@@ -228,6 +228,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		if(is_null($path)){
 			$path = getcwd();
 		}
+
 		$imports = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_XSL_XMLNS, 'import');
 		$includes = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_XSL_XMLNS, 'include');
 		$templates = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_CACHE_XMLNS, 'template');
@@ -251,6 +252,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		for ($i = 0; $include = $includes->item($i); $i++){
 			$stylesheets[] = $include->getAttribute('href');
 		}
+
 		while (list(,$val) = each($stylesheets)) {
 			$val = $this->_relativeToPath($path, $val);
 			$xsl = new DOMDocument('1.0', 'UTF-8');

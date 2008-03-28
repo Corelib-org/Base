@@ -106,7 +106,7 @@ define('CORELIB_COPYRIGHT', 'Steffen Sorensen - http://www.backinfiveminutes.com
 /**
  * Define CoreLib Copyright year
  */
-define('CORELIB_COPYRIGHT_YEAR', '2006-2007');
+define('CORELIB_COPYRIGHT_YEAR', '2006-2008');
 
 
 //*****************************************************************//

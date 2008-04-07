@@ -183,7 +183,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		} catch (BaseException $e){
 			echo $e;
 		}
-		if(preg_match('(^(http:\/\/))', $str) || preg_match('(^(https:\/\/))', $str)){
+		if(preg_match('(^(http:\/\/))', $location) || preg_match('(^(https:\/\/))', $location)){
 			$this->location = $location;
 		} else {
 			$this->location = $this->http_redirect_base.$location;

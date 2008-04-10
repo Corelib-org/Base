@@ -13,12 +13,12 @@
  * license@bravura.dk so we can mail you a copy immediately.
  *
  *
- * @author Steffen Sorensen <steffen@bravura.dk>
- * @copyright Copyright (c) 2006 Bravura ApS
- * @license http://www.bravura.dk/licence/corelib_1_0/
+ * @author Steffen Soerensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @license http://www.corelib.org/
  * @package corelib
  * @subpackage Base
- * @link http://www.bravura.dk/
+ * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
  * @filesource
  */
@@ -33,7 +33,7 @@
 //**        3. CORELIB_BASE_VERSION ........................     **//
 //**        3. CORELIB_COPYRIGHT ...........................     **//
 //**        3. CORELIB_COPYRIGHT_YEAR ......................     **//
-//**    2. Basic Configuration Check .......................     **//
+//**    2. Basic Configuration Checks ......................     **//
 //**        1. CORELIB .....................................     **//
 //**        2. CURRENT_WORKING_DIR .........................     **//
 //**        2. BASE_RUNLEVEL ...............................     **//
@@ -102,11 +102,11 @@ define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
  */
-define('CORELIB_COPYRIGHT', 'Steffen Sorensen - http://www.backinfiveminutes.com/');
+define('CORELIB_COPYRIGHT', 'Steffen Soerensen - http://www.corelib.org/');
 /**
  * Define CoreLib Copyright year
  */
-define('CORELIB_COPYRIGHT_YEAR', '2006-2008');
+define('CORELIB_COPYRIGHT_YEAR', '2005-2008');
 
 
 //*****************************************************************//

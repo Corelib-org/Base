@@ -160,7 +160,7 @@ class Manager implements Singleton,Output {
 	private function _searchDir($dir){
 		$d = dir($dir);
 		while (false !== ($entry = $d->read())) {
-			if(preg_match('/\.mext$/', $entry)){
+			if(preg_match('/\.cxd$/', $entry)){
 				$this->_loadExtension($dir.'/'.$entry);
 			} else if(is_dir($dir.'/'.$entry) && $entry != '.' && $entry != '..'){
 				$this->_searchDir($dir.'/'.$entry);

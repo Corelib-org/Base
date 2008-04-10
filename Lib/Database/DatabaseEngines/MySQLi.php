@@ -28,8 +28,14 @@ class MySQLiEngine implements DatabaseEngine {
 		} catch (BaseException $e){
 			echo $e;
 		}
-		if($this->pid != posix_getpid() || is_null($this->connection)){
-			$this->_connect();
+		if(function_exists('posix_getpid')){
+			if($this->pid != posix_getpid() || is_null($this->connection)){
+				$this->_connect();
+			}
+		} else {
+			if(is_null($this->connection)){
+				$this->_connect();
+			}			
 		}
 		$query->setInstance($this->connection);
 		if($this->reconnect){
@@ -45,8 +51,9 @@ class MySQLiEngine implements DatabaseEngine {
 				}
 			}
 		} else {
-			$query->execute();
+			return $query->execute();
 		}
+		return false;
 	}
 	public function getPrefix(){
 		return self::PREFIX;

@@ -19,6 +19,16 @@ class URLParser implements Singleton,Output {
 		$this->_setUrlParts();
 	}
 	
+	/**
+	 *	@return URLParser
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new URLParser();
+		}
+		return self::$instance;	
+	}	
+	
 	private function _setUrlParts(){
 		$parse_url = preg_replace('/^\//','', $this->url);
 		$parse_url = preg_replace('/\/$/','', $parse_url);
@@ -62,19 +72,6 @@ class URLParser implements Singleton,Output {
 		reset($this->url_parts);
 		return $urlparts;
 	}
-	
-	public function getString($format = '%1$s'){
-		return $this->url;
-	}
-	
-	/**
-	 *	@return URLParser
-	 */
-	public static function getInstance(){
-		if(is_null(self::$instance)){
-			self::$instance = new URLParser();
-		}
-		return self::$instance;	
-	}
+
 }
 ?>

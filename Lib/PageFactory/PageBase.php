@@ -26,7 +26,7 @@ define('PAGE_OUTPUT_CACHE_DYNAMIC', 0);
 define('PAGE_OUTPUT_CACHE_EXPIRE', 1);
 define('PAGE_OUTPUT_CACHE_STATIC', 2);
 
-abstract class Page {
+abstract class PageBase {
 	private $settings = array();
 	private $content = array();
 	private $templates = array();

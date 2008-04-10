@@ -9,8 +9,8 @@ $page = PageFactory::getInstance();
 $page->resolvePageObject();
 		
 try {
-	if(class_exists('WebPage', false)){
-		$page->build(new WebPage());
+	if(class_exists(PAGE_FACTORY_CLASS_NAME, false)){
+		eval('$page->build(new '.PAGE_FACTORY_CLASS_NAME.'());');
 	} else {
 		throw new BaseException('Could not find WebPage Class.');
 	}

@@ -32,6 +32,9 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
 	define('PAGE_FACTORY_CACHE_ENABLE', false);
 }
+if(!defined('PAGE_FACTORY_CLASS_NAME')){
+	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
+}
 if(!defined('PAGE_FACTORY_CACHE_DEBUG')){
 	define('PAGE_FACTORY_CACHE_DEBUG', false);
 }
@@ -156,25 +159,28 @@ class PageFactory implements Singleton {
 			$manager->setupPageRegistry($pages, $rpages);
 		}
 		if(!isset($pages[$_GET['page']])){
-			if(isset($rpages)){
-				while(list(,$val) = each($rpages)){
-					if($val['type'] != 'regex'){
-						$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']);
-						$val['expr'] = $this->resolvers[$val['type']]->getExpression();
-						$val['exec'] = $this->resolvers[$val['type']]->getExecute();
-					}
-					if(preg_match($val['expr'], $_GET['page'])){
-						try {
-							if(!is_file($val['page'])){
-								throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
-							}
-						} catch (BaseException $e){
-							echo $e;
-							exit;
+			if(isset($pages)){
+				while(list(,$val) = each($pages)){
+					if(is_array($val)){
+						if( isset($val['type']) && $val['type'] != 'regex' ){
+							var_dump($val);
+							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']); 
+							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
+							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 						}
-						$this->callback = preg_replace($val['expr'], $val['exec'], $_GET['page']);
-						require_once($val['page']);
-						return true;
+						if( isset($val['expr']) && preg_match($val['expr'], $_GET['page']) ){
+							try {
+								if(!is_file($val['page'])){
+									throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
+								}
+							} catch (BaseException $e){
+								echo $e;
+								exit;
+							}
+							$this->callback = preg_replace($val['expr'], $val['exec'], $_GET['page']);
+							require_once($val['page']);
+							return true;
+						}
 					}
 				}
 			}

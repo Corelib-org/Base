@@ -6,11 +6,13 @@ if(!defined('MANAGER_DEVELOPER_MODE')){
 	define('MANAGER_DEVELOPER_MODE', false);
 }
 
-abstract class CorelibManagerConfig implements Singleton {
-	abstract public function addProperties(DOMElement $properties);
+abstract class CorelibManagerExtension implements Singleton {
+	public function addProperties(DOMElement $properties){
+		
+	}
 }
 
-class ManagerConfig extends CorelibManagerConfig {
+class ManagerConfig extends CorelibManagerExtension {
 	private static $instance = null;
 	/**
 	 *	@return ManagerConfig
@@ -26,7 +28,7 @@ class ManagerConfig extends CorelibManagerConfig {
 		var_dump($properties);
 	}
 }
-class ResourceManager extends CorelibManagerConfig {
+class ResourceManager extends CorelibManagerExtension {
 	private static $instance = null;
 	/**
 	 *	@return ResourceManager
@@ -108,11 +110,12 @@ class Manager implements Singleton,Output {
 	private function _reloadManagerExtensionsData(){
 		echo '<pre>';
 		$this->_loadExtensionsXML();
+//		htmlentities($this->extensions->saveXML());
 		$xpath = new DOMXPath($this->extensions);
 		$properties = $this->extensions->getElementsByTagName('extension');
 		for ($i = 0; $item = $properties->item($i); $i++){
 			if($setup = $item->getElementsByTagName('setup')->item(0)){
-				echo htmlentities($this->extensions->saveXML($item))."\n\n";
+				// echo htmlentities($this->extensions->saveXML($item))."\n\n";
 				$name = $setup->getElementsByTagName('name');
 				if($name->length > 0){
 					$data['name'] = $name->item(0)->nodeValue;
@@ -132,15 +135,17 @@ class Manager implements Singleton,Output {
 							break;
 					}
 				}
+				
 				$xdata = $xpath->query('//extensions/extension/properties[@extend = \''.$item->getAttribute('id').'\']');
-
 				for ($p = 0; $xitem = $xdata->item($p); $p++){
 					if(isset($data['handler'])){
 						$data['handler']->addProperties($xitem);
 					}
 				}
+				$gather[] = $data;
 			}
 		}
+		print_r($gather);
 		exit;
 	}
 	private function _reloadManagerExtensions(){

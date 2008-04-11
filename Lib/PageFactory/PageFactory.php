@@ -41,6 +41,12 @@ if(!defined('PAGE_FACTORY_CACHE_DEBUG')){
 if(!defined('PAGE_FACTORY_CACHE_DIR')){
 	define('PAGE_FACTORY_CACHE_DIR', 'var/db/cache/');
 }
+if(!defined('PAGE_FACTORY_GET_FILE')){
+	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
+}
+if(!defined('PAGE_FACTORY_POST_FILE')){
+	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
+}
 
 interface PageFactoryPageResolver {
 	public function resolve($expr, $exec);
@@ -141,13 +147,13 @@ class PageFactory implements Singleton {
 			$_GET['page'] = '/';
 		}
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			include_once('etc/post.php');
+			include_once(PAGE_FACTORY_POST_FILE);
 		} else {
 /*			if(PAGE_FACTORY_CACHE_ENABLE){
 				include_once(CORELIB.'/Base/Lib/PageFactory/CacheManager.php');
 				return true;
 			} else { */
-				include_once('etc/get.php');
+				include_once(PAGE_FACTORY_GET_FILE);
 			// }
 		}
 

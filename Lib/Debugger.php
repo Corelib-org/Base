@@ -23,32 +23,41 @@ class Debugger implements Singleton {
 		return self::$instance;
 	}
 
-	public function debug($string){
-		$this->_sendMessage('DEBUG: '.$string);
+	public function debug( $string ) {
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_TERM_DEBUG){
+			$this->_sendMessage('DEBUG: '.$string);
+		}
 	}
-	public function status($string){
+	public function status( $string ) {
 		$this->_sendMessage('STATUS: '.$string);
 	}
-	public function notice($string){
-		$this->_sendMessage('NOTICE: '.$string);
+	public function notice( $string ) {
+		if( BASE_RUNLEVEL >= BASE_RUNLEVEL_TERM_NOTICE ) {
+			$this->_sendMessage('NOTICE: '.$string);
+		}
 	}
-	public function error($string){
+	public function warning( $string ) {
+		if( BASE_RUNLEVEL >= BASE_RUNLEVEL_TERM_WARN ) {
+			$this->_sendMessage('WARNING: '.$string, $this->stderr);
+		}
+	}
+	public function error( $string ) {
 		$this->_sendMessage('ERROR: '.$string, $this->stderr);
 	}
-	public function copyright($string){
+	public function copyright( $string ) {
 		$this->_sendMessage($string, null, false);
 	}
 
-	private function _sendMessage($string, $target=null, $date=true){
-		if(php_sapi_name() == 'cli'){
-			if($date){
+	private function _sendMessage( $string, $target=null, $date=true ) {
+		if( php_sapi_name() == 'cli' ) {
+			if( $date ) {
 				$string = '['.date('r').'] '.$string;
 			}
 			$string .= "\n";
-			if(is_null($target)){
+			if( is_null($target) ) {
 				$target = $this->stdout;
 			}
-			if(!is_resource($target)){
+			if( !is_resource($target) ) {
 				echo $string;
 			} else {
 				fwrite($target, $string, strlen($string));

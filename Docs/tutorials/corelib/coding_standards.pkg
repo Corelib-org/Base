@@ -11,78 +11,73 @@
 			and literally a total of many weeks spent arguing. 
 			It is no particular person's style and is certainly open to local amendments.
 		</para>
-		<para>
-			<author>
-				Steffen Sørensen
-				<authorblurb>{@link mailto:steffen@bravura.dk steffen@bravura.dk}</authorblurb>
-			</author>
-		</para>
+
 	</refsynopsisdiv>
 	{@toc}
-	<refsect1 id="{@id comments}">
-		<title>Comments</title>
-		<para>
-			Non-documentation comments are strongly encouraged.
-			A general rule of thumb is that if you look at a section of code and think 
-			"Wow, I don't want to try and describe that", 
-			you need to comment it before you forget how it works.
-		</para>
-		<para>
-			<itemizedlist>
-				<listitem>C++ style comments (/* */) and standard C comments (//) are both acceptable.</listitem>
-				<listitem>Use of perl/shell style comments (#) is prohibited.</listitem>
-			</itemizedlist>
-		</para>
-		<refsect2 id="{@id phpdoctags}">
-			<title>PHPdoc Tags</title>
+	<!--
+		COMMENTS START HERE
+	-->
+	<refsect1 id="{@id php}">
+		<title>PHP</title>
+		<refsect2 id="{@id php_comments}">
+			<title>Comments</title>
 			<para>
-				Inline documentation for classes should follow the PHPDoc convention, 
-				similar to Javadoc. More information about PHPDoc can be found here:
+				Non-documentation comments are strongly encouraged.
+				A general rule of thumb is that if you look at a section of code and think 
+				"Wow, I don't want to try and describe that", 
+				you need to comment it before you forget how it works.
 			</para>
 			<para>
-				{@link http://www.phpdoc.org/}
-			</para>			
-			<refsect3 id="{@id filecomments}">
+				<itemizedlist>
+					<listitem>C++ style comments (/* */) and standard C comments (//) are both acceptable.</listitem>
+					<listitem>Use of perl/shell style comments (#) is prohibited.</listitem>
+				</itemizedlist>
+			</para>
+			<refsect3 id="{@id php_comments_phpdoctags}">
+				<title>PHPdoc Tags</title>
+				<para>
+					Inline documentation for classes should follow the PHPDoc convention, 
+					similar to Javadoc. More information about PHPDoc can be found here:
+				</para>
+				<para>
+					{@link http://www.phpdoc.org/}
+				</para>
+			</refsect3>	
+			<refsect3 id="{@id php_comments_filecomments}">
 				<title>File Comments</title>
 				<para>
 					Every file should start with a comment block describing its purpose,
 					version, author, package, subpackage, license and a copyright 
 					message. The comment block should be a block comment in standard 
-					JavaDoc format along with a CVS Id tag. While all JavaDoc tags are 
+					JavaDoc format along with a SVN Id tag. While all JavaDoc tags are 
 					allowed, only the tags in the examples below will be parsed by 
 					PHPdoc.				
 				</para>
 				<para>
-					Bravura contains a mixed copyright. For files which contains
+					corelib contains a mixed copyright. For files which contains
 					code from other projects like pear og pecl copyright and license
-					for both bravura and the source of the code must be specified.
+					for both corelib and the source of the code must be specified.
 				</para>
 				<para>
 				    <programlisting role="php">
 					    <![CDATA[
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */						
 /**
  * brief description.
  * long description.  more long description.
  *
- * LICENSE: This source file is subject to version 1.0 of the 
- * Bravura Distribution license that is available through the 
- * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- * If you did not receive a copy of the Bravura License and are
- * unable to obtain it through the web, please send a note to 
- * license@bravura.dk so we can mail you a copy immediately.
- * 
- * @author Steffen Sørensen <steffen@bravura.dk>
- * @copyright Copyright (c) 2006 Bravura ApS
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2008 Back in five minutes
  * @license http://www.bravura.dk/licence/corelib_1_0/
  * @package corelib
  * @subpackage Base
- * @link http://www.bravura.dk/
+ * @link http://www.corelib.org/
  * @version 4.0.0 ($Id: Base.php 3382 2006-11-08 11:02:41Z wayland $)
  */					    ]]>
 				    </programlisting>
 				</para>
 			</refsect3>
-			<refsect3 id="{@id classcomments}">
+			<refsect3 id="{@id php_comments_classcomments}">
 				<title>Function and Class Comments</title>
 				<para>
 					Similarly, every function should have a block comment 
@@ -98,7 +93,8 @@
  *
  * @package corelib
  * @subpackage Base
- */					    ]]>
+ */					    
+	 						]]>
 				    </programlisting>
 				</para>				
 			</refsect3>			
@@ -112,74 +108,85 @@
 				</para>
 			</refsect3>			
 		</refsect2>
-	</refsect1>
+		
+		<!--
+			INDENTING START HERE
+		-->
+		<refsect2 id="{@id php_indenting}">
+			<title>Indenting</title>
+			<para>
+				All indenting is done with TABS. Before committing any file to SVN,
+				make sure you first replace spaces with tabs and verify the formatting.
+			</para>
+		</refsect2>
 	
-	<refsect1 id="{@id indenting}">
-		<title>Indenting</title>
-		<para>
-			All indenting is done with TABS. Before committing any file to CVS,
-			make sure you first replace spaces with tabs and verify the formatting.
-		</para>
-	</refsect1>
 	
-	<refsect1 id="{@id phpcodetags}">
-		<title>PHP Code Tags</title>
-		<para>
-			This is the most portable way to include PHP code on differing operating systems 
-			and webserver setups. Also, XML parsers are confused by the shorthand syntax.
-		</para>
-	</refsect1>	
-	
-	<refsect1 id="{@id expressions}">
-		<title>Expressions</title>
-		<para>
-			<itemizedlist>
-				<listitem>Use parentheses liberally to resolve ambiguity.</listitem>
-				<listitem>Using parentheses can force an order of evaluation. This saves the time a reader may spend remembering precedence of operators.</listitem>
-				<listitem>Don't sacrifice clarity for cleverness.</listitem>
-				<listitem>Write conditional expressions so that they read naturally aloud.</listitem>
-				<listitem>Sometimes eliminating a not operator (!) will make an expression more understandable.</listitem>
-				<listitem>Keep each line simple.</listitem>
-				<listitem>The ternary operator (x ? 1 : 2) usually indicates too much code on one line. if... else if... else is usually more readable.</listitem>
-			</itemizedlist>
-		</para>
-	</refsect1>
-	
-	<refsect1>
-		<title>Control Structures</title>
-		<para>
-			These include if, for, while, switch, etc. Here is an example if statement, 
-			since it is the most complicated form:
-		</para>
-		<para>
-			<programlisting role="php">
-				<![CDATA[
-if ((condition1) || (condition2)) {
+		<!--
+			PHP CODE TAGS STRUCTURE START HERE
+		-->
+		<refsect2 id="{@id php_phpcodetags}">
+			<title>PHP Code Tags</title>
+			<para>
+				Always use &lt;?php ?&gt; to delimit PHP code, not the &lt;? ?&gt; shorthand. This is required for corelib
+				compliance and is also the most portable way to include PHP code on differing operating systems and setups.
+			</para>
+		</refsect2>
+		
+			
+		<!--
+			CONTROL STRUCTURE START HERE
+		-->
+		<refsect2 id="{@id php_expressions}">
+			<title>Expressions</title>
+			<para>
+				<itemizedlist>
+					<listitem>Use parentheses liberally to resolve ambiguity.</listitem>
+					<listitem>Using parentheses can force an order of evaluation. This saves the time a reader may spend remembering precedence of operators.</listitem>
+					<listitem>Don't sacrifice clarity for cleverness.</listitem>
+					<listitem>Write conditional expressions so that they read naturally aloud.</listitem>
+					<listitem>Sometimes eliminating a not operator (!) will make an expression more understandable.</listitem>
+					<listitem>Keep each line simple.</listitem>
+					<listitem>The ternary operator (x ? 1 : 2) usually indicates too much code on one line. if... else if... else is usually more readable.</listitem>
+				</itemizedlist>
+			</para>
+		</refsect2>
+		
+		<refsect2 id="{@id php_control_structure}">
+			<title>Control Structures</title>
+			<para>
+				These include if, for, while, switch, etc. Here is an example if statement, 
+				since it is the most complicated form:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+if ( ( condition1 ) || ( condition2 ) ) {
     action1;
-} elseif ((condition3) && (condition4)) {
+} elseif ( ( condition3 ) && ( condition4 ) ) {
     action2;
 } else {
     defaultaction;
 }
-				]]>
-			</programlisting>
-		</para>
-		<para>
-			Control statements shall have one space between the control 
-			keyword and opening parenthesis, to distinguish them from function calls.
-		</para>
-		<para>
-			You should use curly braces even in situations where they are technically 
-			optional. Having them increases readability and decreases the likelihood 
-			of logic errors being introduced when new lines are added.
-		</para>
-		<para>
-			For switch statements:
-		</para>
-		<para>
-			<programlisting role="php">
-				<![CDATA[
-switch (condition) {
+					]]>
+				</programlisting>
+			</para>
+			<para>
+				Control statements shall have one space between the control 
+				keyword and opening parenthesis, to distinguish them from function calls.
+			</para>
+			<para>
+				You are strongly encouraged to always use curly braces even in situations 
+				where they are technically optional. Having them increases readability and 
+				decreases the likelihood of logic errors being introduced when new 
+				lines are added.
+			</para>
+			<para>
+				For switch statements:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+switch ( condition ) {
     case 1: {
         action1;
         break;
@@ -193,8 +200,352 @@ switch (condition) {
         break;
     }
 }
-				]]>
+					]]>
+				</programlisting>
+			</para>
+		</refsect2>
+		
+		
+		<!--
+			FUNCTION CALLS START HERE
+		-->
+		<refsect2 id="{@id php_indenting}">
+			<title>Function Calls</title>
+			<para>
+				Functions should be called with no spaces between the function name, 
+				the opening parenthesis, and the first parameter; spaces between commas 
+				and each parameter, and no space between the last parameter, the closing 
+				parenthesis, and the semicolon. Here's an example:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+$var = foo($bar, $baz, $quux);
+					]]>				
+				</programlisting>
+			</para>		
+			<para>
+				As displayed above, there should be one space on either side of an equals sign used 
+				to assign the return value of a function to a variable. In the case of a block of 
+				related assignments, more space may be inserted to promote readability:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+$short         = foo($bar);
+$long_variable = foo($baz);
+					]]>				
+				</programlisting>
+			</para>		
+		</refsect2>	
+		
+		<!--
+			FUNCTION DECLARATION START HERE
+		-->
+		<refsect2 id="{@id php_function_declarations}">
+			<title>Function Declarations</title>
+			<para>
+				Functions should be called with no spaces between the function name, 
+				the opening parenthesis, and the first parameter; spaces between commas 
+				and each parameter, and no space between the last parameter, the closing 
+				parenthesis, and the semicolon. Here's an example:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+function funstuff_system( $field ) {
+	$system["description"] = t( "This module inserts funny text into posts randomly." );
+	return $system[$field];
+}
+					]]>				
+				</programlisting>
+			</para>		
+			<para>
+				Arguments with default values go at the end of the argument list. 
+				Always attempt to return a meaningful value from a function if one is appropriate.
+			</para>
+		</refsect2>		
+		
+		<!--
+			ARRAYS START HERE
+		-->
+		<refsect2 id="{@id php_arrays}">
+			<title>Arrays</title>
+			<para>
+				Arrays should be formatted with a space separating each element and assignment operator, if applicable:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+$some_array = array( 'hello', 'world', 'foo' => 'bar' );
+					]]>				
+				</programlisting>
+			</para>		
+			<para>
+				Note that if the line spans longer than 80 characters , each element should be broken into its own line,
+				and indented one level:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+$array[] = array(
+	'type' => 'textfield',
+	'size' => 60,
+	'maxlength' => 128,
+);
+	
+					]]>				
+				</programlisting>
+			</para>
+			<para>
+				Note the comma at the end of the last array element; This is not a typo! It helps prevent parsing errors 
+				if another element is placed at the end of the list later.
+			</para>
+		</refsect2>		
+		
+		<!--
+			NAMING CONVENTIONS START HERE
+		-->
+		<refsect2 id="{@id php_naming_conventions}">
+			<title>Naming Conventions</title>
+			<refsect3 id="{@id php_naming_conventions_functions_and_methods}">
+				<title>Functions and Methods</title>
+				<para>
+					Functions and methods should be named using lowercase and words should be separated with an underscore. 
+					Functions should in addition have the grouping/module name as a prefix, to avoid name collisions between modules.
+				</para>
+				<para>
+					Private class members (meaning class members that are intended to be used only from within the same class in which 
+					they are declared; PHP 4 does not support truly-enforceable private namespaces) are preceded by a single underscore. 
+					For example:
+				</para>
+				<para>
+					<programlisting role="php">
+						<![CDATA[
+_node_get()
+$this->_status
+						]]>				
+					</programlisting>
+				</para>
+			</refsect3>
+			
+			<refsect3 id="{@id php_naming_conventions_constants}">
+				<title>Constants</title>
+				<para>
+					Constants should always be all-uppercase, with underscores to separate words. This includes pre-defined PHP constants 
+					like TRUE, FALSE, and NULL. Prefix module-defined constant names with the uppercased name of the module they are a part of.
+				</para>
+			</refsect3>
+			
+			<refsect3 id="{@id php_naming_conventions_global_variables}">
+				<title>Global Variables</title>
+				<para>
+					If you need to define global variables, their name should start with a single underscore followed by the 
+					module/theme name and another underscore.
+				</para>
+			</refsect3>
+			
+			<refsect3 id="{@id php_naming_conventions_class_names}">
+				<title>Class Names</title>
+				<para>
+					Classes should be given descriptive names. Avoid using abbreviations where possible. Class names should always begin with an uppercase letter.
+				</para>
+				<para>
+					<programlisting role="php">
+						<![CDATA[
+$type = new stdClass();
+						]]>				
+					</programlisting>
+				</para>			
+			</refsect3>
+	
+			<refsect3 id="{@id php_naming_conventions_filenames}">
+				<title>Filenames</title>
+				<para>
+					All documentation files should have the filename extension ".txt" to make viewing them on Windows systems easier. 
+					Also, the filenames for such files should be all-caps (e.g. README.txt instead of readme.txt) while the extension 
+					itself is all-lowercase (i.e. txt instead of TXT).
+				</para>
+				<para>
+					Examples: README.txt, INSTALL.txt, TODO.txt, CHANGELOG.txt etc.
+				</para>
+			</refsect3>
+		</refsect2>
+		
+		<!--
+			STRING CONCATENATIONS START HERE
+		-->
+		<refsect2 id="{@id php_string_concatenations}">
+			<title>String concatenations</title>
+			<para>
+				Always use a space between the dot and the concatenated part, unless it is a quote. So there is no space 
+				between the dot and the quote..
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+	$string = 'Foo'. $bar;
+	$string = $bar .'foo';
+	$string = bar() .'foo';
+?>
+				]]>				
 			</programlisting>
-		</para>
+		</para>				
+		<para>
+				When you concatenate simple variables, you can use double quotes and add the string inside, otherwise use single quotes.
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+	$string = "Foo $bar";
+?>
+					]]>				
+				</programlisting>
+			</para>				
+			<para>
+				When concatenating two quoted strings together, use a space on both sides of the dot for readability.
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+	$string = 'foo' . 'bar';
+?>
+					]]>				
+				</programlisting>
+			</para>				
+			<para>
+				When using the concatenating assignment operator ('.='), use a space on each side as with the assignment operator:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+$string .= 'Foo';
+$string .= $bar;
+$string .= baz();
+?>
+					]]>				
+				</programlisting>
+			</para>				
+		</refsect2>
+		
+		<refsect2 id="{@id php_e_all_code}">
+			<title>Write E_ALL compliant code</title>
+			<para>
+				This document is a very recent addition to the coding guidelines, and is still subject to discussion among developers. 
+				Do NOT post comments on this page yet. One issue will be created for each point introduced here. 
+				Those issues will be used for discussion and patch submission. I'll keep updating this page as the discussion progresses. 
+				When a consensus has been reached on each point, this introduction will be deleted. Eventually, when everything has been 
+				patched up, I'll delete the mention about Drupal not being E_STRICT compliant.
+			</para>
+			<refsect3 id="{@id php_e_all_code_better_practice}">
+				<title>E_ALL: a better practice</title>
+				<para>
+					Currently, the Drupal code is not E_STRICT compliant. When running a Drupal site with E_ALL, 
+					each page view creates scores of error notices messages. Many developers agree that it would be 
+					good if the source of Drupal could be brought up to par with commonly accepted good practice.
+				</para>
+				<para>
+					The purpose of this document is twofold:
+				</para>
+				<para>
+					<itemizedlist>
+						<listitem>to show common coding mistakes that prevent Drupal from being E_STRICT compliant.</listitem>
+						<listitem>to set better coding guidelines to use in new code and patches.</listitem>
+					</itemizedlist>
+				</para>	
+				<para>
+					Once those guidelines are accepted, it is only a matter of time and some developers' efforts before all the 
+					previous coding mistakes are patched up. Then, we will be able to run Drupal with the E_ALL directive.
+				</para>
+			</refsect3>
+		</refsect2>
+		<refsect2 id="{@id php_common_mistakes}">
+			<title>Common coding mistakes and new coding practice</title>
+			<para>
+				If you want to test if an array has been set to any value, don't use:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+if ($foo) {}
+?>					
+					]]>				
+				</programlisting>
+			</para>				
+			<para>
+				but:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+// either
+if (isset($foo)) {} // $foo=0 (zero) and $foo= '' return TRUE
+// or
+if (!empty($foo)) {} // use this when 0 or '' are not expected
+// and are not valid values for $foo.
+?>				
+					]]>				
+				</programlisting>
+			</para>				
+			<para>
+				The difference between isset() and !empty() is that unlike !empty(), isset() 
+				will return TRUE even if the variable is set to an empty string or to the integer 0. 
+				In order to decide which one to use, consider whether 0 or '' are valid and expected 
+				values for your variable.
+			</para>
+			<para>
+				The following code is wrong:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+function _form_builder($form, $parents = array(), $multiple = FALSE) {
+	// (...)
+	if ($form['#input']) {
+		// some code (...)
+	}
+}
+?>			
+					]]>				
+				</programlisting>
+			</para>				
+			<para>
+				Here, the variable $form is passed on to the function. If $form['#input'] has been set to any value, 
+				some code is executed. The problem is that testing this way outputs the following error message:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+notice: Undefined index:  #input in includes/form.inc on line 194.
+					]]>				
+				</programlisting>
+			</para>				
+			<para>
+				Even though the array $form is already declared and passed to the function, each array's index must be explicitly declared. 
+				The previous code should read:
+			</para>
+			<para>
+				<programlisting role="php">
+					<![CDATA[
+<?php
+function _form_builder($form, $parents = array(), $multiple = FALSE) {
+	// (...)
+	if (!empty($form['#input'])) {
+		// some code (...)
+	}
+}
+?>
+					]]>				
+				</programlisting>
+			</para>				
+		</refsect2>	
+					
 	</refsect1>
 </refentry>

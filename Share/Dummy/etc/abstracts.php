@@ -32,7 +32,7 @@ if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
 	                             DATABASE_MASTER_CHARSET);
 	$dbms = Database::getInstance();
 	$dbms->masterConnect($masterdb);
-} else {
+} else if(!defined('ABSTRACTS_ENABLE_DATABASE')){
 	define('ABSTRACTS_ENABLE_DATABASE', false);
 }
 

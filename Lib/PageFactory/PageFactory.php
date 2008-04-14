@@ -13,12 +13,12 @@
  *	license@bravura.dk so we can mail you a copy immediately.
  *
  *
- *	@author Steffen Sørensen <steffen@bravura.dk>
- *	@copyright Copyright (c) 2006 Bravura ApS
+ *	@author Steffen Sørensen <ss@corelib.org>
+ *	@copyright Copyright (c) 2006 Back in five minutes
  * 	@license http://www.bravura.dk/licence/corelib_1_0/
  *	@package corelib
  *	@subpackage Base
- *	@link http://www.bravura.dk/
+ *	@link http://www.corelib.org/
  *	@version 1.0.0 ($Id$)
  */
 
@@ -45,7 +45,7 @@ if(!defined('PAGE_FACTORY_GET_FILE')){
 	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
 }
 if(!defined('PAGE_FACTORY_POST_FILE')){
-	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
+	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
 }
 
 interface PageFactoryPageResolver {

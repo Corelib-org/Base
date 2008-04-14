@@ -212,7 +212,7 @@ class ManagerFileSearch implements Event {
 	}
 }
 
-abstract class ManagerPage extends Page {
+abstract class ManagerPage extends PageBase {
 	/**
 	 * @var PageFactoryDOMXSLTemplate
 	 */

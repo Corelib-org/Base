@@ -1,5 +1,5 @@
 <?php
-class WebPage extends ManagerPage {
+class Page extends ManagerPage {
 	public function build(){
 
 	}

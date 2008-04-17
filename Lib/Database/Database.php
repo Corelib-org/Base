@@ -179,11 +179,19 @@ abstract class DatabaseDAO {
 		$this->database->rollback();
 	}
 
-	protected function _parseNullValue(&$val){
+	protected function _parseNullValue($val){
 		if(is_null($val)){
 			$val = 'NULL';
 		} else {
 			$val = '\''.$val.'\'';
+		}
+		return $val;
+	}
+	protected function _parseBooleanValue($val){
+		if($val === true){
+			$val = '\'TRUE\'';
+		} else {
+			$val = '\'FALSE\'';
 		}
 		return $val;
 	}

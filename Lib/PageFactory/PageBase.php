@@ -105,7 +105,7 @@ abstract class PageBase {
 class EventApplyDefaultSettings implements Event {
 	private $page = null;
 
-	public function __construct(Page $page){
+	public function __construct(PageBase $page){
 		$this->page = $page;
 	}
 	/**

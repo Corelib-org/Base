@@ -73,7 +73,7 @@ abstract class PageFactoryTemplateEngine {
 	 */
 	protected $template = null;
 
-	public function build(Page $page, $callback=null){
+	public function build(PageBase $page, $callback=null){
 		$this->page = $page;
 		if(!is_null($callback)){
 			if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL && isset($_GET['CALLBACK'])){
@@ -149,6 +149,7 @@ class PageFactory implements Singleton {
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once(PAGE_FACTORY_POST_FILE);
 		} else {
+			// TODO finish cache implementation
 /*			if(PAGE_FACTORY_CACHE_ENABLE){
 				include_once(CORELIB.'/Base/Lib/PageFactory/CacheManager.php');
 				return true;
@@ -162,7 +163,7 @@ class PageFactory implements Singleton {
 		}
 		if(preg_match('/^\/corelib/', $_GET['page'])){
 			$manager = Manager::getInstance();
-			$manager->setupPageRegistry($pages, $rpages);
+			$manager->setupPageRegistry($pages);
 		}
 		if(!isset($pages[$_GET['page']])){
 			if(isset($pages)){
@@ -231,7 +232,7 @@ class PageFactory implements Singleton {
 		}
 	}
 
-	public function build(Page $page){
+	public function build(PageBase $page){
 		$this->engine->build($page, $this->callback);
 	}
 

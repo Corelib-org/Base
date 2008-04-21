@@ -199,7 +199,12 @@ class PageFactory implements Singleton {
 				echo $e;
 				exit;
 			}
-			require_once($pages['/404/']);
+			if(is_array($pages['/404/'])){
+				require_once($pages['/404/']['page']);
+			} else {
+				require_once($pages['/404/']);	
+			}
+			
 			return true;
 		} else {
 			if(is_array($pages[$_GET['page']])){

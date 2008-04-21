@@ -53,10 +53,10 @@
 				<group title="System">
 					<item url="/corelib/system/configuration/">Configuration</item>
 				</group>
-			</menu>		
+			</menu>
+			<resources>
+				<resource handle="manager">{CORELIB}/Base/Share/Resources/Web/</resource>
+			</resources>
 		</props>
 	</setup>
-	<extendprops id="f2f83cfd-4bb0-4e29-8971-b4baacc5349b">
-		<resourcedir handle="Manager">CORELIB/Base/Share/Resources/Web/</resourcedir>
-	</extendprops>
 </extension>

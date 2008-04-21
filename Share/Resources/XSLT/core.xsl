@@ -16,13 +16,12 @@
 						var redirect_url = '<xsl:value-of select="/page/settings/redirect_url"/>';
 					//</xsl:comment>
 				</script>
-				<link rel="shortcut icon" href="/corelib/resource/Manager/images/favicon.ico" />
-				<link rel="stylesheet" type="text/css" href="/corelib/resource/Manager/css/basic.css" />
+				<!-- <link rel="shortcut icon" href="/corelib/resource/Manager/images/favicon.ico" /> -->
+				<link rel="stylesheet" type="text/css" href="{/page/settings/redirect_url}/corelib/resource/manager/css/basic.css" />
+				<link rel="stylesheet" type="text/css" href="{/page/settings/redirect_url}/corelib/resource/manager/css/layout.css" />
+				<link rel="stylesheet" type="text/css" href="{/page/settings/redirect_url}/corelib/resource/manager/css/forms.css" />
 				<xsl:for-each select="/page/settings/stylesheet">
 					<link rel="stylesheet" type="text/css" href="{.}" />
-				</xsl:for-each>
-				<xsl:for-each select="/page/settings/rss">
-					<link rel="alternate" type="application/rss+xml" title="{.}" href="{/page/settings/get/page}rss/"/>
 				</xsl:for-each>
 			</head>
 			<body>

@@ -4,13 +4,13 @@ interface Singleton {
 }
 
 interface ObserverSubject {
-	public function registerObserver(Observer &$observer);
-	public function removeObserver(Observer &$observer);
+	public function registerObserver(Observer $observer);
+	public function removeObserver(Observer $observer);
 	public function notifyObservers();
 }
 
 interface Observer {
-	public function register(ObserverSubject &$subject);
+	public function register(ObserverSubject $subject);
 	public function update($update);
 }
 

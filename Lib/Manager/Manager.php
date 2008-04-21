@@ -3,7 +3,7 @@ if(!defined('MANAGER_DATATIR')){
 	define('MANAGER_DATADIR', 'var/db/manager/');
 }
 if(!defined('MANAGER_DEVELOPER_MODE')){
-	define('MANAGER_DEVELOPER_MODE', true);
+	define('MANAGER_DEVELOPER_MODE', false);
 }
 
 abstract class CorelibManagerExtension implements Singleton {
@@ -26,6 +26,14 @@ abstract class CorelibManagerExtension implements Singleton {
 		return $this->description;
 	}
 	
+	public function getPropertyXML($property){
+		if(isset($this->properties[$property])){
+			return $this->properties[$property];
+		} else {
+			return false;
+		}
+	}
+
 	public function addBaseProperty(DOMElement $property){
 		$this->properties[$property->nodeName] = $property;
 	}
@@ -50,36 +58,8 @@ abstract class CorelibManagerExtension implements Singleton {
 	}
 }
 
-class ManagerConfig extends CorelibManagerExtension {
-	private static $instance = null;
-	/**
-	 *	@return ManagerConfig
-	 */
-	public static function getInstance(){
-		if(is_null(self::$instance)){
-			self::$instance = new ManagerConfig();
-		}
-		return self::$instance;
-	}
 
-}
-
-class ManagerMenuConfig extends CorelibManagerExtension {
-	private static $instance = null;
-	/**
-	 *	@return ManagerConfig
-	 */
-	public static function getInstance(){
-		if(is_null(self::$instance)){
-			self::$instance = new ManagerMenuConfig();
-		}
-		return self::$instance;
-	}
-
-}
-
-
-class Manager implements Singleton,Output {
+class Manager implements Singleton {
 	private static $instance = null;
 
 	const EXTENSIONS_FILE = 'extensions.xml';
@@ -141,7 +121,8 @@ class Manager implements Singleton,Output {
 			try {
 				$file = $page->getElementsByTagName('file');
 				if($file->length > 0){
-					eval('$p[\'page\'] = \''.preg_replace('/\{([A-Za-z_-]+)\}/', '\'.\\1.\'', $file->item(0)->nodeValue).'\';');
+					// eval('$p[\'page\'] = \''.preg_replace('/\{([A-Za-z_-]+)\}/', '\'.\\1.\'', $file->item(0)->nodeValue).'\';');
+					$p['page'] = Manager::parseConstantTags($file->item(0)->nodeValue);
 				}
 			} catch (BaseException $e){
 				echo $e;
@@ -170,14 +151,37 @@ class Manager implements Singleton,Output {
 		}
 		return true;
 	}
-
-	public function getXML(DOMDocument $xml){
-		$this->_loadExtensionsXML();
-		return $xml->importNode($this->extensions->documentElement);
-	}
-	public function &getArray(){
-
-	}
+	
+	public function getResource($handle, $resource){
+		try {			
+			StrictTypes::isString($handle);
+			StrictTypes::isString($resource);
+			$config = ManagerConfig::getInstance();
+			if(!$dir = $config->getResourceDir($handle)){
+				return false;
+			} else if(!is_dir($dir)){
+				throw new BaseException('No Such file or directory: '.$dir);
+			}
+			$filename = $dir.'/'.$resource;
+			$filename = str_replace('../', '/', $filename);
+			while(strstr($filename, '//')){
+				$filename = str_replace('//', '/', $filename);
+			}
+			if(!is_file($filename)){
+				return false;
+			}
+		} catch (BaseException $e){
+			echo $e;
+		}
+		return $filename;
+	}	
+	
+	static public function parseConstantTags($string){
+		eval('$string = \''.preg_replace('/\{([A-Za-z_-]+)\}/', '\'.\\1.\'', addcslashes($string, '\'')).'\';');
+		return $string;
+	}	
+		
+	
 	private function _reloadManagerExtensionsData(){
 		$this->_loadExtensionsXML();
 		$xpath = new DOMXPath($this->extensions);
@@ -293,9 +297,6 @@ abstract class ManagerPage extends PageBase {
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
-
-		$manager = Manager::getInstance();
-		$this->addSettings($manager);
 	}
 }
 ?>

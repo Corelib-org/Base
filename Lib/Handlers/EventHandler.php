@@ -40,7 +40,7 @@ class EventHandler implements Singleton,ObserverSubject {
 		return self::$instance;	
 	}
 	
-	public function registerObserver(Observer &$observer){
+	public function registerObserver(Observer $observer){
 		// Lets find out about exceptions and but one here, to check for the right type of observer is given
 		try {
 			if(!$observer instanceof EventTypeHandler){
@@ -51,14 +51,14 @@ class EventHandler implements Singleton,ObserverSubject {
 		}
 		if(is_array($evnt = $observer->getEventType())){
 			while (list(,$val) = each($evnt)) {
-				$this->handlers[$val][get_class($observer)] = &$observer;	
+				$this->handlers[$val][get_class($observer)] = $observer;	
 			}
 		} else {
-			$this->handlers[$evnt][get_class($observer)] = &$observer;
+			$this->handlers[$evnt][get_class($observer)] = $observer;
 		}
 	}
 	
-	public function removeObserver(Observer &$observer){
+	public function removeObserver(Observer $observer){
 		
 	}
 	
@@ -66,7 +66,7 @@ class EventHandler implements Singleton,ObserverSubject {
 		
 	}
 	
-	public function triggerEvent(Event &$event){
+	public function triggerEvent(Event $event){
 		if(isset($this->handlers[get_class($event)])){
 			while(list(,$val) = each($this->handlers[get_class($event)])){
 				$val->update($event);

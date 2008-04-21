@@ -279,7 +279,7 @@ class SessionHandlerInitEvent implements EventTypeHandler,Observer  {
 	public function getEventType(){
 		return 'EventSessionConfigured';
 	}
-	public function register(ObserverSubject &$subject){
+	public function register(ObserverSubject $subject){
 		$this->subject = $subject;
 	}
 	public function update($update){

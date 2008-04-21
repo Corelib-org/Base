@@ -21,6 +21,22 @@ class WebPage extends ManagerPage {
 				header('Content-Type: text/css');
 				echo file_get_contents($resource);
 				break;
+			case 'jpg' || 'epg':
+				header('Content-Type: image/jpeg');
+				echo file_get_contents($resource);
+				break;
+			case 'gif':
+				header('Content-Type: image/gif');
+				echo file_get_contents($resource);
+				break;
+			case 'png':
+				header('Content-Type: image/png');
+				echo file_get_contents($resource);
+				break;
+			case '.js':
+				header('Content-Type: text/javascript');
+				echo file_get_contents($resource);
+				break;
 			default:
 				trigger_error('Illegal Resource type!', E_USER_ERROR);
 		}

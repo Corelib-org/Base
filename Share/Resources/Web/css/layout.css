@@ -1,32 +1,210 @@
 /*-----------------------------------------------------------------
-Layout StyleSheet (for version 5 browseres)
+Layout StyleSheet (for version 6 browseres)
 
 Version:	1.0
-Author: 	Steffen Sørensen
-Email: 		steffen@bravura.dk
+Author: 	Kenneth Mørk
+Email: 		kenneth@bravura.dk
+website:	ZCMS 
 -----------------------------------------------------------------*/
 
+/* ----------------------------------------------------------------
+GLOBAL LAYOUT STYLES 
+---------------------------------------------------------------- */
+
+.floatLeft {
+	float:left;
+}
+.floatRight {
+	float:right;
+}
+a img {
+	border: none;
+}
+.clearboth {
+	clear:both;
+}
+#container {
+	text-align: left;
+	background-color: #FFF;
+	
+}
+
+/* ----------------------------------------------------------------
+HEADER
+---------------------------------------------------------------- */
+#header {
+	width: 100%;
+	height: 146px;
+	background: #FFF url(../images/header/header_bgr.jpg) repeat-x;
+}
+.inner_header {
+	width: 900px;
+	height: 146px;
+	margin: 0 auto 0 auto;
+}
+/* ----------------------------------------------------------------
+TAB NAV
+---------------------------------------------------------------- */
+.nav li {
+	float:left;
+	text-align: center;
+	list-style: none;
+	background: #565656 url(../images/header/tab_inactive_left_bgr.gif) top left no-repeat;
+	padding: 0 0 0 5px;
+	height: 23px;
+	margin-right: 5px;
+}
+.nav li img {
+	vertical-align: -8px;
+}
+.nav li a {
+	margin-right: 3px;
+}
+.nav li.selected {
+	float:left;
+	text-align: center;
+	list-style: none;
+	background: #FFF url(../images/header/tab_active_left_bgr.gif) top left no-repeat;
+	padding: 0 0 0 5px;
+	height: 23px;
+}
+
+.nav li a:link, .nav li a:visited, .nav li a:active {
+	font-family: Arial, Helvetica, Verdana, Sans serif;
+	font-size: 11px;
+	color: #FFF;
+	font-weight: normal;
+	text-decoration: none;
+}
+.nav li a:hover {
+	font-family: Arial, Helvetica, Verdana, Sans serif;
+	font-size: 11px;
+	color: #000;
+	font-weight: normal;
+	text-decoration: none;
+}
+.nav li.selected a:link, .nav li.selected a:visited, .nav li.selected a:active {
+	color: #000;
+}
+.nav li.selected a:hover {
+	color: #000;
+}
+/* GREEN TAB */
+.nav li.green {
+	float:left;
+	text-align: center;
+	list-style: none;
+	background: #f4cf00 url(../images/header/tab_green_left_bgr.gif) top left no-repeat;
+	padding: 0 0 0 5px;
+	height: 23px;
+}
+.nav li.green a:link, .nav li.green a:visited, .nav li.green a:active, .nav li.green a:hover {
+	color: #000;
+}
+/* ----------------------------------------------------------------
+SHORTCUT NAV
+---------------------------------------------------------------- */
+.shortcut_nav {
+	margin: 20px 0 0 0;
+	color: #FFF;
+	font-size: 11px;
+}
+.shortcut_nav a:link, .shortcut_nav a:active, .shortcut_nav a:hover, .shortcut_nav a:visited {
+	color: #FFF;
+}
+/* ----------------------------------------------------------------
+SUB NAV
+---------------------------------------------------------------- */
+.subnav li {
+	float:left;
+	list-style: none;
+	background: url(../images/header/subnav_spacer.jpg) top left no-repeat;
+	padding: 0px 11px 0px 12px;
+	line-height: 18px;
+	height: 21px;
+}
+.subnav ul {
+	margin: 7px 0 0 0;
+}
+.subnav li a:link, .subnav li a:visited, .subnav li a:active {
+	font-family: Arial, Helvetica, Verdana;
+	font-size: 11px;
+	color: #000;
+	font-weight: normal;
+	text-decoration: none;
+}
+.subnav li a:hover {
+	font-family: Arial, Helvetica, Verdana;
+	font-size: 11px;
+	color: #de4343;
+	font-weight: normal;
+	text-decoration: underline;
+}
+.subnav li.selected a:link, .subnav li.selected a:visited, .subnav li.selected a:active {
+	color: #de4343;
+	text-decoration: underline;
+}
+.subnav li.selected a:hover {
+	color: #000;
+	text-decoration: underline;
+}
+
+/* ----------------------------------------------------------------
+PAGE AND CONTENT
+---------------------------------------------------------------- */
 #page {
-	margin: auto;
-	width: 980px;
-	margin-top: 20px;
+	margin: 0 auto 0 auto;
+	width: 900px;
+}
+.left_content_container {
+	width: 635px;
+	margin-bottom: 50px;
+}
+.right_content_container {
+	width: 250px;	
+	margin-bottom: 50px;
+}
+/*right filter box*/
+.admin_filter h2 {
+	background-color: #565656;
+	line-height: 21px;
+	font-size: 11px;
+	color: #FFF;
+	padding: 0 0 0 5px;
 }
 
-#manager_menu {
-	width: 175px;
-	border: 1px solid #aeafaf;
-	margin-right: 15px;
-	float: left;
-	background-color: #FFFFFF;
-	font-size: 13px;
-	text-align: left;
+
+/* Tables */
+table {
+	width: 100%;
 }
-
-#manager_content {
-	width: 786px;
-	float: left;
-	border: 1px solid #AEAFAF;
-	background-color: #FFFFFF;
+th {
+	background-color: #565656;
+	color: #FFF;
+	font-size: 11px;
+	line-height: 21px;
+	padding-left: 5px;
+}
+td {
+	padding-left: 5px;
+	line-height: 21px;
+}
+tr.colorrow {
+	background-color: #f9f9f9;
+}
+tr.table_footer {
+	background-color: #565656;
+	color: #FFF;
+	font-size: 11px;
+	line-height: 21px;
+	padding-left: 5px;
+}
+/* ----------------------------------------------------------------
+FOOTER
+---------------------------------------------------------------- */
+#footer {
 	text-align: left;
-
+	margin: 15px auto 30px auto;
+	width: 900px;
+	line-height: 21px;
 }

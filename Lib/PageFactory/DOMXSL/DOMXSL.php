@@ -108,6 +108,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				echo $page;
 			}
 		}
+		return true;
 	}
 
 	public function addPageContent(Output $content){
@@ -171,6 +172,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		$this->parse_tokens[] = $token;
 	}
 	private function _transformPage(DOMDocument $dom, $tranformToXML=true){
+		$dom->formatOutput = true;
 		if($tranformToXML){
 			return $dom->saveXML();
 		} else {

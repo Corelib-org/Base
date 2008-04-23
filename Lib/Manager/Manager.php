@@ -185,6 +185,10 @@ class Manager implements Singleton {
 		return $filename;
 	}	
 	
+	public function getExtensionsXML(){
+		return $this->extensions->documentElement;
+	}
+	
 	static public function parseConstantTags($string){
 		eval('$string = \''.preg_replace('/\{([A-Za-z_-]+)\}/', '\'.\\1.\'', addcslashes($string, '\'')).'\';');
 		return $string;

@@ -1,5 +1,5 @@
 <?php
-if(!defined('MANAGER_DATATIR')){
+if(!defined('MANAGER_DATADIR')){
 	define('MANAGER_DATADIR', 'var/db/manager/');
 }
 if(!defined('MANAGER_DEVELOPER_MODE')){
@@ -10,6 +10,10 @@ abstract class CorelibManagerExtension implements Singleton {
 	private $name = '';
 	private $description = '';
 	private $properties = array();
+	/**
+	 * @var DOMXPath
+	 */
+	private $xpath = null;
 	
 	final public function setName($name){
 		$this->name = $name;
@@ -38,17 +42,21 @@ abstract class CorelibManagerExtension implements Singleton {
 		$this->properties[$property->nodeName] = $property;
 	}
 	public function addProperty(DOMElement $property){
+		if(is_null($this->xpath)){
+			$this->xpath = new DOMXPath($property->ownerDocument);
+		}
 		if(isset($this->properties[$property->nodeName]) && $this->properties[$property->nodeName]->getAttribute('locked') != 'true'){
 			$this->_mergeNodes($this->properties[$property->nodeName], $property);
 		}
 	}
 	private function _mergeNodes(DOMElement $DOMTarget, DOMElement $DOMSource){
 		for ($i = 0; $item = $DOMSource->childNodes->item($i); $i++){
-			if($item->nodeType != XML_TEXT_NODE && $item->getAttribute('id')){
-				for ($ti = 0; $titem = $DOMTarget->childNodes->item($ti); $ti++){
-					if($titem->nodeType != XML_TEXT_NODE && $item->getAttribute('id') == $titem->getAttribute('id')){
-						$this->_mergeNodes($titem, $item);
-					}
+			if($item->nodeType != XML_TEXT_NODE && $item->getAttribute('id')){;
+				$list = $this->xpath->query('child::*[@id = \''.$item->getAttribute('id').'\']', $DOMTarget);
+				if($list->length > 0){
+					$this->_mergeNodes($list->item(0), $item);
+				} else {
+					$DOMTarget->appendChild($item->cloneNode(true));	
 				}
 			} else {
 				$DOMTarget->appendChild($item->cloneNode(true));
@@ -65,7 +73,8 @@ class Manager implements Singleton {
 	const EXTENSIONS_FILE = 'extensions.xml';
 	// const EXTENSIONS_DATA_FILE = 'extensions.dat';
 
-	private $extension_dirs = array(CORELIB);
+	protected $extension_dirs = array(CORELIB, 
+	                                  'var/');
 	/**
 	 * @var DOMDocument
 	 */
@@ -75,7 +84,7 @@ class Manager implements Singleton {
 	 */
 	private $extensions_data = array();
 
-	private function __construct(){
+	protected function __construct(){
 		if(!is_dir(MANAGER_DATADIR)){
 			mkdir(MANAGER_DATADIR);
 		}
@@ -89,7 +98,7 @@ class Manager implements Singleton {
 		}
 		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
 			$this->_reloadManagerExtensions();
-		} else {
+		} else { 
 			$this->_loadExtensionsXML();
 		}
 		// if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_DATA_FILE) || MANAGER_DEVELOPER_MODE){
@@ -115,7 +124,7 @@ class Manager implements Singleton {
 
 	public function setupPageRegistry(&$pages){
 		$xpath = new DOMXPath($this->extensions);
-		$pagelist = $xpath->query('//extensions/extension/setup/pages/child::*');
+		$pagelist = $xpath->query('//extensions/extension/pages/child::*');
 		for ($i = 0; $page = $pagelist->item($i); $i++){
 			$p = array();
 			try {
@@ -184,6 +193,7 @@ class Manager implements Singleton {
 	
 	private function _reloadManagerExtensionsData(){
 		$this->_loadExtensionsXML();
+		$event = EventHandler::getInstance();
 		$xpath = new DOMXPath($this->extensions);
 		$properties = $this->extensions->getElementsByTagName('extension');
 		for ($i = 0; $item = $properties->item($i); $i++){
@@ -200,16 +210,21 @@ class Manager implements Singleton {
 					echo $e;
 					exit;
 				}
-				$name = $setup->getElementsByTagName('name');
-				if($name->length > 0){
-					$handler->setName($name->item(0)->nodeValue);
-				}
-				$description = $setup->getElementsByTagName('description');
-				if($description->length > 0){
-					$handler->setDescription($description->item(0)->nodeValue);
+				
+				for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
+					switch ($prop->nodeName){
+						case 'name':
+							$handler->setName($prop->nodeValue);
+							break;
+						case 'description':
+							$handler->setDescription($prop->nodeValue);
+							break;
+						default:
+							$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
+					}
 				}
 
-				$props = $xpath->query('//extensions/extension[@id = \''.$item->getAttribute('id').'\']/setup/props/child::*');
+				$props = $xpath->query('//extensions/extension[@id = \''.$item->getAttribute('id').'\']/props/child::*');
 				for ($p = 0; $prop = $props->item($p); $p++){
 					$handler->addBaseProperty($prop);
 				}
@@ -217,10 +232,10 @@ class Manager implements Singleton {
 				for ($p = 0; $xitem = $xdata->item($p); $p++){
 					$handler->addProperty($xitem);
 				}
-				$gather[] = $handler;
 			}
 		}
 	}
+	
 	private function _reloadManagerExtensions(){
 		$this->extensions = new DOMDocument('1.0', 'UTF-8');
 		$this->extensions->appendChild($this->extensions->createElement('extensions'));
@@ -236,7 +251,7 @@ class Manager implements Singleton {
 			$this->extensions->load(MANAGER_DATADIR.self::EXTENSIONS_FILE);
 		}
 	}
-	private function _searchDir($dir){
+	protected function _searchDir($dir){
 		$d = dir($dir);
 		while (false !== ($entry = $d->read())) {
 			if(preg_match('/\.cxd$/', $entry)){
@@ -249,7 +264,7 @@ class Manager implements Singleton {
 			}
 		}
 	}
-	private function _loadExtension($file){
+	protected function _loadExtension($file){
 		$extension = array();
 
 		$dom = new DOMDocument('1.0', 'UTF-8');
@@ -286,6 +301,41 @@ class ManagerFileSearch implements Event {
 	}
 }
 
+class ManagerUnknownSetupProperty implements Event {
+	/**
+	 * @var DOMNode
+	 */
+	private $property;
+	/**
+	 * @var CorelibManagerExtension
+	 */
+	private $handler;
+
+	public function __construct(CorelibManagerExtension $handler, DOMNode $property){
+		$this->property = $property;
+		$this->handler = $handler;
+	}
+	/**
+	 * @return DOMNode
+	 */
+	public function getProperty(){
+		return $this->property;
+	}
+	/**
+	 * @return CorelibManagerExtension
+	 */
+	public function getHandler(){
+		return $this->handler;
+	}
+	/**
+	 * @return string
+	 */
+	public function getPropertyName(){
+		return $this->property->nodeName;
+	}
+}
+
+
 abstract class ManagerPage extends PageBase {
 	/**
 	 * @var PageFactoryDOMXSLTemplate
@@ -297,6 +347,13 @@ abstract class ManagerPage extends PageBase {
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
+	}
+	
+	protected function _selectMenuItem($tab, $item){
+/*		$xml = new DOMDocument('1.0', 'UTF-8');
+		$select = $xml->createElement('menuselect');
+		$select->setAttribnute
+		return true; */
 	}
 }
 ?>

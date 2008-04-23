@@ -2,59 +2,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
 	<xsl:output method="xml" indent="yes" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 		
-	<xsl:template match="content">
+	<xsl:template match="blaaaaaaa">
 		<div id="container">
-			<div id="header">
-		
-				<div class="inner_header">
-					<!-- Logo and shortcut menu -->
-					<div class="header_top">
-						<div class="logo floatLeft"><a href="/" title="Gå til forsiden"><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/logo_zcms.gif" title="ZCMS - Zornig Interactive" /></a></div>
-						<div class="shortcut_nav floatRight">
-							Shortcuts:&#160;&#160;
-							<a href="#" title="Nyhedsbrev">Newsletter</a>&#160;&#160;|&#160;&#160;
-		
-							<a href="#" title="Nyheder">News</a>&#160;&#160;|&#160;&#160;
-							raquo; <a href="#" title="Add shortcut">Add shortcut</a> 
-							(3 left)
-						</div>
-					</div>
-					<div class="clearboth"></div>
-					
-					<!-- Tab menu - left and right -->
-					<div class="header_middle">
-		
-						<div class="nav floatLeft">
-							<ul>
-								<li class="selected"><a href="#">Dashboard</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_active_right_bgr.gif" /></li>
-								<li><a href="#">Pages</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
-								<li><a href="#">Modules</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
-							</ul>
-						</div>
-		
-						<div class="nav floatRight">
-							<ul>
-								<li><a href="#">Pages</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
-								<li><a href="#">Modules</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
-								<li class="green"><a href="#">Help</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_green_right_bgr.gif" /></li>
-							</ul>
-						</div>
-		
-					</div>
-					<div class="clearboth"></div>
-					
-					<!-- Submenu -->
-					<div class="subnav">
-						<ul>
-							<li class="selected"><a href="#">Dashboard</a></li>
-							<li><a href="#">Pages</a></li>
-							<li><a href="#">Modules</a></li>
-		
-						</ul>
-						<div class="clearboth"></div>
-					</div>
-				</div>
-			</div>
+
 			
 			
 			<!-- Content begin -->
@@ -158,15 +108,89 @@
 				<div class="clearboth"></div>
 			</div>
 		</div>
+
+	</xsl:template>	
+	
+	<xsl:template name="header">
+		<div id="header">
+	
+			<div class="inner_header">
+				<!-- Logo and shortcut menu -->
+				<div class="header_top">
+					<div class="logo floatLeft"><a href="/" title="Gå til forsiden"><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/logo_zcms.gif" title="ZCMS - Zornig Interactive" /></a></div>
+					<div class="shortcut_nav floatRight">
+						Shortcuts:&#160;&#160;
+						<a href="#" title="Nyhedsbrev">Newsletter</a>&#160;&#160;|&#160;&#160;
+	
+						<a href="#" title="Nyheder">News</a>&#160;&#160;|&#160;&#160;
+						raquo; <a href="#" title="Add shortcut">Add shortcut</a> 
+						(3 left)
+					</div>
+				</div>
+				<div class="clearboth"></div>
+				
+				<!-- Tab menu - left and right -->
+				<div class="header_middle">
+	
+					<div class="nav floatLeft">
+						<ul>
+							<xsl:for-each select="/page/settings/menu/group[@align = 'left' or @align != true()]">
+								<li><a href="#"><xsl:value-of select="@title"/></a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
+							</xsl:for-each>
+							
+							<!--	
+							<li class="selected"><a href="#">Dashboard</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_active_right_bgr.gif" /></li>
+							<li><a href="#">Pages</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
+							<li><a href="#">Modules</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
+							-->
+						</ul>
+					</div>
+	
+					<div class="nav floatRight">
+						<ul>
+							<xsl:for-each select="/page/settings/menu/group[@align = 'right']">
+								<li><a href="#"><xsl:value-of select="@title"/></a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
+							</xsl:for-each>
+
+
+<!--							<li><a href="#">Pages</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
+							<li><a href="#">Modules</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_inactive_right_bgr.gif" /></li>
+							<li class="green"><a href="#">Help</a><img src="{/page/settings/redirect_url}/corelib/resource/manager/images/header/tab_green_right_bgr.gif" /></li> -->
+						</ul>
+					</div>
+	
+				</div>
+				<div class="clearboth"></div>
+				
+				<!-- Submenu -->
+				<div class="subnav">
+					<ul>
+						<li class="selected"><a href="#">Dashboard</a></li>
+						<li><a href="#">Pages</a></li>
+						<li><a href="#">Modules</a></li>
+	
+					</ul>
+					<div class="clearboth"></div>
+				</div>
+			</div>
+		</div>		
+	</xsl:template>
+	
+	<xsl:template name="footer">
 		<div id="footer">
 			ZCMS er udviklet af Zornig Interactive Aps  -  Hillerødgade 30A  -  2200 København N  -  Telefon: +45 35 87 01 00  -  E-mail: info@zornig.dk  -  Webside: www.zornig.dk<br />
 			Copyright 2007 - 2008 Zornig Interactive Aps. Alle rettigheder forbeholdes.
-		
-		</div>
-	</xsl:template>	
-	<!--
+		</div>		
+	</xsl:template>
+	
 	<xsl:template name="manager">
 		<xsl:param name="content"/>
+		<div id="container">
+			<xsl:call-template name="header"/>
+
+		</div>
+		<xsl:call-template name="footer"/>		
+		<!--
 		<div id="page">
 			<div id="manager_menu">
 				<div style="margin: 5px;">
@@ -185,6 +209,7 @@
 				<xsl:copy-of select="$content"/>
 			</div>
 		</div>
+		-->
 	</xsl:template>
-	-->
+
 </xsl:stylesheet>

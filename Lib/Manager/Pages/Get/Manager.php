@@ -9,6 +9,7 @@ class WebPage extends ManagerPage {
 	}
 	
 	public function dashboard(){
+		$this->addContent(new ManagerDashboard());
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/manager/dashboard.xsl');
 	}
 	

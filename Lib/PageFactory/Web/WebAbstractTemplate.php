@@ -281,7 +281,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 
 class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
 	const TEMPLATE_ENGINE = 'PageFactoryPost';
-
+	
 	public function getSupportedTemplateEngineName(){
 		return self::TEMPLATE_ENGINE;
 	}

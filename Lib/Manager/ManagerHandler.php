@@ -21,8 +21,12 @@ class ManagerConfig extends CorelibManagerExtension {
 	 */
 	public function getMenuOutput(){
 		$output = new GenericOutput();
-		$output->setXML($this->getPropertyXML('menu'));
-		return $output;
+		if($xml = $this->getPropertyXML('menu')){
+			$output->setXML($xml);
+			return $output;
+		} else {
+			return false;
+		}
 	}
 	
 	public function getResourceDir($handle){
@@ -37,6 +41,35 @@ class ManagerConfig extends CorelibManagerExtension {
 		} else {
 			return false;
 		}
+	}
+}
+
+class ManagerDashboard implements Output {
+	/**
+	 * @var ManagerConfig
+	 */
+	private $config = null;
+	
+	public function __construct(){
+		$this->config = ManagerConfig::getInstance(); 
+	}
+	
+	public function getXML(DOMDocument $xml){
+		$widgets = $xml->createElement('dashboard');
+		
+		$dashboard = $this->config->getPropertyXML('dashboard');
+		for ($i = 0; $item = $dashboard->childNodes->item($i); $i++){
+			if($item->nodeName == 'widget'){
+				eval('$widget = new '.$item->getAttribute('handler').'();');
+				$widget->setSettings($item); 
+				$widgets->appendChild($widget->getXML($xml));
+			}
+		}
+		return $widgets;
+	}
+	
+	public function &getArray(){
+		
 	}
 }
 

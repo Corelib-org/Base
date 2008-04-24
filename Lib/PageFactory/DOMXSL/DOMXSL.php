@@ -23,7 +23,7 @@
  * @filesource
  */
 if(!defined('PAGE_FACTORY_DOMXSL_CACHE_XMLNS')){
-	define('PAGE_FACTORY_DOMXSL_CACHE_XMLNS', 'http://www.backinfiveminutes.com/corelib/cache/tranform');
+	define('PAGE_FACTORY_DOMXSL_CACHE_XMLNS', 'http://www.corelib.org/xmlns/cache');
 }
 if(!defined('PAGE_FACTORY_DOMXSL_XSL_XMLNS')){
 	define('PAGE_FACTORY_DOMXSL_XSL_XMLNS', 'http://www.w3.org/1999/XSL/Transform');

@@ -105,29 +105,11 @@ interface DatabaseEngine {
 
 abstract class Query {
 	protected $query = null;
-	protected $count = null;
-	protected $numberOflimit = null;
-
-	public function __construct($query, $limit=null, $limitOffset=null, $order=null, $orderType=null, $countKey=null) {
+	
+	public function __construct($query) {
 		$this->query = $query;
-		if(!is_null($countKey))
-			$this->getCount($countKey);
-		if(!is_null($order))
-			$this->setOrder($order,$orderType);
-		if(!is_null($limit))
-			$this->setLimit($limit,$limitOffset);
 	}
-	public function getCount($countKey) {
-		if(is_null($this->count)){
-			$this->count = $this->doCount($countKey);
-			return $this->count;
-		} else {
-			return $this->count;
-		}
-	}
-	abstract public function setLimit($limit=null,$limitOffset=null);
-	abstract public function setOrder($order=null,$orderType=null);
-	abstract protected function doCount($countKey);
+
 
 	abstract public function execute();
 	abstract public function getQuery();

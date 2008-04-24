@@ -43,13 +43,6 @@ if(!defined('HTTP_REDIRECT_BASE')){
 	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME']);
 }
 
-if(!defined('HTTP_STATUS_MESSAGE_FILE')){
-	/**
-	 * 	Define Redirect Base URL
-	 */
-	define('HTTP_STATUS_MESSAGE_FILE', 'share/status.xml');
-}
-
 
 abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $last_modified = null;
@@ -90,6 +83,12 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	const MSGID = 'MSGID';
 
 	public function __construct(){
+		if(!defined('HTTP_STATUS_MESSAGE_FILE')){
+			/**
+			 * 	Define Redirect Base URL
+			 */
+			define('HTTP_STATUS_MESSAGE_FILE', 'share/status.xml');
+		}
 		if(isset($_SERVER['SCRIPT_URL'])){
 			$this->script_url = $_SERVER['SCRIPT_URL'];
 		}

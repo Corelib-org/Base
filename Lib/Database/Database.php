@@ -152,30 +152,15 @@ abstract class DatabaseDAO {
 	}
 
 	public function startTransaction(){
-		$this->database->startTransaction();
+		return $this->database->startTransaction();
 	}
 	public function commit(){
-		$this->database->commit();
+		return $this->database->commit();
 	}
 	public function rollback(){
-		$this->database->rollback();
-	}
-
-	protected function _parseNullValue($val){
-		if(is_null($val)){
-			$val = 'NULL';
-		} else {
-			$val = '\''.$val.'\'';
-		}
-		return $val;
-	}
-	protected function _parseBooleanValue($val){
-		if($val === true){
-			$val = '\'TRUE\'';
-		} else {
-			$val = '\'FALSE\'';
-		}
-		return $val;
+		return $this->database->rollback();
 	}
 }
+
+
 ?>

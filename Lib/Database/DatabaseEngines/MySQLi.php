@@ -1,4 +1,7 @@
 <?php
+define('DATABASE_ORDER_DESC', 'DESC');
+define('DATABASE_ORDER_ASC', 'ASC');
+
 class MySQLiEngine implements DatabaseEngine {
 	private $connection = null;
 	private $hostname = null;
@@ -67,6 +70,7 @@ class MySQLiEngine implements DatabaseEngine {
 	public function rollback(){
 		$this->query(new MySQLiQuery('ROLLBACK'));
 	}
+	
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
@@ -119,23 +123,54 @@ class MySQLiQuery extends Query {
 	public function getAffectedRows(){
 		return $this->instance->affected_rows;
 	}
-	public function setLimit($limit=null,$limitOffset=null) {
-		if(!is_null($limit)) {
-			if(is_null($limitOffset)) {
-				$limitOffset = 0;
+}
+
+class MySQLiTools {
+	static public function parseNullValue($val){
+		if(is_null($val)){
+			$val = 'NULL';
+		} else {
+			$val = '\''.$val.'\'';
+		}
+		return $val;
+	}
+	static public function parseBooleanValue($val){
+		if($val === true){
+			$val = '\'TRUE\'';
+		} else {
+			$val = '\'FALSE\'';
+		}
+		return $val;
+	}	
+	static public function parseWildcards($val){
+		return str_replace('*', '%', $val);
+	}
+	static public function prepareOrderStatement(DatabaseListHelperOrder $order){
+		$args = func_get_args();
+		$fields = array();
+		array_shift($args);
+		while (list(,$val) = each($args)) {
+			if($arg = $order->get($val)){
+				$fields[] = $arg;
 			}
-			if(!is_null($this->count))
-				$this->numberOflimit = ceil($this->_count/$limit);
-			$this->query .= ' LIMIT '.$limitOffset.','.$limit;
+		}
+		if(sizeof($fields) > 0){
+			return implode(', ', $fields);
+		} else {
+			return false;
 		}
 	}
-	public function setOrder($order=null,$orderType=null) {
-		if(!is_null($order)) {
-			$this->query .= ' ORDER by ' . $order;
-			if(strtoupper($orderType) == 'DESC') {
-				$this->query .= ' DESC';
-			}
+	static public function prepareLimitStatement($offset=null, $limit=null){
+		if(!is_null($offset) && !is_null(!$limit)){
+			return 'LIMIT '.$offset.', '.$limit;
+		} else if(!is_null($offset) && is_null($limit)){
+			return 'OFFSET '.$offset;
+		} else if(is_null($offset) && !is_null($limit)){
+			return 'LIMIT '.$limit; 
+		} else {
+			return false;
 		}
 	}
 }
+ 
 ?>

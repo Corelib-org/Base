@@ -37,7 +37,7 @@ class URLParser implements Singleton,Output {
 	
 	private function _isValidURLPart($part){
 		return true;
-		return preg_match('/^[a-z0-9A-Z\.\s-_\0x00f8]*$/', $part);
+		// return preg_match('/^[a-z0-9A-Z\.\s-_\0x00f8]*$/', $part);
 	}
 	
 	

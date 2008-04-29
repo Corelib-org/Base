@@ -101,4 +101,31 @@ class l18n implements Singleton {
 	}
 }
 
+class l18nDateConverter implements Singleton,Converter {
+	/**
+	 * @var l18nDateConverter
+	 */
+	private static $instance = null;
+	
+	const DEFAULT_DATE_FORMAT = '%D %T';
+	
+	/**
+	 *	@return l18nDateConverter
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new l18nDateConverter();
+		}
+		return self::$instance;
+	}
+	
+	private function __construct(){
+
+	}	
+	
+	public function convert($data){
+		return strftime(self::DEFAULT_DATE_FORMAT, $data);
+	}
+}
+
 ?>

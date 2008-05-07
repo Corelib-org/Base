@@ -366,8 +366,13 @@ class InputHandler implements Singleton,Output {
 	 *
 	 *	@return boolean true, if all get variables is valid, else return false
 	 */
-	public function isValidGetVariables($item1=null, $item2=null, $item3=null){
-		$array = func_get_args();
+	public function isValidGetVariables($item=null /*, [$items...] */){
+		if(!is_array($item)){
+			$array = func_get_args();
+		} else {
+			$array = $item;
+		}
+		
 		if(sizeof($array) > 0){
 			while(list(,$val) = each($array)){
 				if(!$this->isValidGet($val)){
@@ -394,8 +399,12 @@ class InputHandler implements Singleton,Output {
 	 *
 	 *	@return boolean true, if all post variables is valid, else return false
 	 */
-	public function isValidPostVariables($item1=null, $item2=null, $item3=null){
-		$array = func_get_args();
+	public function isValidPostVariables($item=null /*, [$items...] */){
+		if(!is_array($item)){
+			$array = func_get_args();
+		} else {
+			$array = $item;
+		}
 		if(sizeof($array) > 0){
 			while(list(,$val) = each($array)){
 				if(!$this->isValidPost($val)){

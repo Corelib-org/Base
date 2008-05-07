@@ -1,27 +1,27 @@
 <?php
-if(!defined('L18N_COOKIE_NAME')){
-	define('L18N_COOKIE_NAME', 'l18n');
+if(!defined('I18N_COOKIE_NAME')){
+	define('I18N_COOKIE_NAME', 'i18n');
 }
-if(!defined('L18N_COOKIE_TIMEOUT')){
-	define('L18N_COOKIE_TIMEOUT', 31536000);
+if(!defined('I18N_COOKIE_TIMEOUT')){
+	define('I18N_COOKIE_TIMEOUT', 31536000);
 }
-if(!defined('L18N_COOKIE_PATH')){
-	define('L18N_COOKIE_PATH', '/');
+if(!defined('I18N_COOKIE_PATH')){
+	define('I18N_COOKIE_PATH', '/');
 }
-if(!defined('L18N_COOKIE_PATH')){
-	define('L18N_COOKIE_PATH', '/');
+if(!defined('I18N_COOKIE_PATH')){
+	define('I18N_COOKIE_PATH', '/');
 }
-if(!defined('L18N_DEFAULT_TIMEZONE')){
-	define('L18N_DEFAULT_TIMEZONE', date('e'));
+if(!defined('I18N_DEFAULT_TIMEZONE')){
+	define('I18N_DEFAULT_TIMEZONE', date('e'));
 }
 
-class l18n implements Singleton,Output {
+class i18n implements Singleton,Output {
 	/**
-	 * @var l18n
+	 * @var i18n
 	 */
 	private static $instance = null;
 	
-	private $locales = array();
+	private $languages = array();
 	private $date_formats = array();
 	private $date_default_format = '%D %T';
 	
@@ -32,22 +32,22 @@ class l18n implements Singleton,Output {
 	private $current_language = null;
 	
 	/**
-	 *	@return l18n
+	 *	@return i18n
 	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
-			self::$instance = new l18n();
+			self::$instance = new i18n();
 		}
 		return self::$instance;
 	}
 	
 	private function __construct(){
-		ini_set('date.timezone', L18N_DEFAULT_TIMEZONE);
-		date_default_timezone_set(L18N_DEFAULT_TIMEZONE);
-		if(!isset($_COOKIE[L18N_COOKIE_NAME.'_timezone'])){
-			$this->setTimezone(L18N_DEFAULT_TIMEZONE);
+		ini_set('date.timezone', I18N_DEFAULT_TIMEZONE);
+		date_default_timezone_set(I18N_DEFAULT_TIMEZONE);
+		if(!isset($_COOKIE[I18N_COOKIE_NAME.'_timezone'])){
+			$this->setTimezone(I18N_DEFAULT_TIMEZONE);
 		} else {
-			$this->setTimezone($_COOKIE[L18N_COOKIE_NAME.'_timezone']);
+			$this->setTimezone($_COOKIE[I18N_COOKIE_NAME.'_timezone']);
 		}
 	}	
 	
@@ -58,12 +58,12 @@ class l18n implements Singleton,Output {
 	 * @param $locale string RFC 1766 valid locale string
 	 * @return boolean true on success, else return false
 	 */
-	public function addLocale($language, $locale){
-		if(sizeof($this->locales) > 0){
+	public function addLanguage($language, $locale){
+		if(sizeof($this->languages) > 0){
 			$this->current_language = $language;
 			$this->current_locale = $locale;
 		}
-		$this->locales[$language] = $locale;
+		$this->languages[$language] = $locale;
 	}
 	
 	public function addDateFormat($language, $id, $format='%D %T'){
@@ -72,9 +72,9 @@ class l18n implements Singleton,Output {
 	
 	public function getDateFormat($id){
 		if(isset($this->date_formats[$this->getLanguage()][$id])){
-			return new l18nDateConverter($this->date_formats[$this->getLanguage()][$id], $this->getTimezoneOffset());
+			return new i18nDateConverter($this->date_formats[$this->getLanguage()][$id], $this->getTimezoneOffset());
 		} else {
-			return new l18nDateConverter($this->date_default_format, $this->getTimezoneOffset());
+			return new i18nDateConverter($this->date_default_format, $this->getTimezoneOffset());
 		}
 	}
 	
@@ -92,10 +92,10 @@ class l18n implements Singleton,Output {
 	}
 	
 	public function setLanguage($language){
-		if(isset($this->locales[$language])){
-			$this->current_locale = $this->locales[$language];
+		if(isset($this->languages[$language])){
+			$this->current_locale = $this->languages[$language];
 			$this->current_language = $language;
-			setcookie(L18N_COOKIE_NAME, $language, time()+L18N_COOKIE_TIMEOUT, L18N_COOKIE_PATH);
+			setcookie(I18N_COOKIE_NAME, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 			return true;
 		} else {
 			return false;
@@ -104,17 +104,17 @@ class l18n implements Singleton,Output {
 	
 	public function setTimezone($timezone){
 		$this->timezone = $timezone;
-		setcookie(L18N_COOKIE_NAME.'_timezone', $timezone, time()+L18N_COOKIE_TIMEOUT, L18N_COOKIE_PATH);
-		
+		setcookie(I18N_COOKIE_NAME.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+
 		// Calculate time offset in seconds
-		$default_timezone = timezone_open(L18N_DEFAULT_TIMEZONE);
+		$default_timezone = timezone_open(I18N_DEFAULT_TIMEZONE);
 		$timezone = timezone_open($timezone);
 		$date = date_create(null, $default_timezone);
 		$this->timezone_offset = $default_timezone->getOffset($date) - $timezone->getOffset($date);		
 	}
 	
 	public function detectLanguage(){
-		if(!isset($_COOKIE[L18N_COOKIE_NAME]) || !isset($languages[$_COOKIE[L18N_COOKIE_NAME]])){
+		if(!isset($_COOKIE[I18N_COOKIE_NAME]) || !isset($this->languages[$_COOKIE[I18N_COOKIE_NAME]])){
 			$locales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 			while (list(,$val) = each($locales)){
 				if(strstr($val, ';')){
@@ -129,19 +129,19 @@ class l18n implements Singleton,Output {
 			$languages = array_keys($languages);
 			while(sizeof($languages) > 0){
 				$language = array_pop($languages);
-				if(isset($this->locales[$language])){
+				if(isset($this->languages[$language])){
 					$this->setLanguage($language);
 					break;
 				} else if(strstr($language, '-')){
 					list($suffix,) = explode('-', $language);
-					if(isset($this->locales[$suffix])){
+					if(isset($this->languages[$suffix])){
 						$this->setLanguage($suffix);
 						break;					
 					}
 				}
 			}
 		} else {
-			$this->setLanguage($_COOKIE[L18N_COOKIE_NAME]);
+			$this->setLanguage($_COOKIE[I18N_COOKIE_NAME]);
 		}
 		return true;
 	}
@@ -159,7 +159,7 @@ class l18n implements Singleton,Output {
 }
 	
 
-class l18nDateConverter implements Converter {
+class i18nDateConverter implements Converter {
 	private $format = null;
 	private $timezone_offset = 0;
 	
@@ -173,7 +173,7 @@ class l18nDateConverter implements Converter {
 	}
 }
 
-class l18nTimezones implements Output {
+class i18nTimezones implements Output {
 	private $timezones = null;
 	
 	public function __construct($timezones=null){

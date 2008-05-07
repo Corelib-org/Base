@@ -30,6 +30,10 @@ abstract class CorelibManagerExtension implements Singleton {
 		return $this->description;
 	}
 	
+	public function loaded(){
+		
+	}
+	
 	public function getPropertyXML($property){
 		if(isset($this->properties[$property])){
 			return $this->properties[$property];
@@ -236,6 +240,7 @@ class Manager implements Singleton {
 				for ($p = 0; $xitem = $xdata->item($p); $p++){
 					$handler->addProperty($xitem);
 				}
+				$handler->loaded();
 			}
 		}
 	}

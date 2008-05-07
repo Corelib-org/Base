@@ -41,7 +41,7 @@ class i18n implements Singleton,Output {
 		return self::$instance;
 	}
 	
-	private function __construct(){
+	protected function __construct(){
 		ini_set('date.timezone', I18N_DEFAULT_TIMEZONE);
 		date_default_timezone_set(I18N_DEFAULT_TIMEZONE);
 		if(!isset($_COOKIE[I18N_COOKIE_NAME.'_timezone'])){

@@ -11,6 +11,9 @@ if(!defined('I18N_COOKIE_PATH')){
 if(!defined('I18N_COOKIE_PATH')){
 	define('I18N_COOKIE_PATH', '/');
 }
+if(!defined('I18N_LANGUAGE_BASE')){
+	define('I18N_LANGUAGE_BASE', 'share/lang/');
+}
 if(!defined('I18N_DEFAULT_TIMEZONE')){
 	define('I18N_DEFAULT_TIMEZONE', date('e'));
 }
@@ -30,6 +33,8 @@ class i18n implements Singleton,Output {
 	
 	private $current_locale = null;
 	private $current_language = null;
+
+	private $language_files = array();
 	
 	/**
 	 *	@return i18n
@@ -76,6 +81,13 @@ class i18n implements Singleton,Output {
 		} else {
 			return new i18nDateConverter($this->date_default_format, $this->getTimezoneOffset());
 		}
+	}
+	
+	public function addLanguageFile($filename){
+		$this->addLanguageFilePath(I18N_LANGUAGE_BASE.$this->getLanguage().'/'.$filename);
+	}
+	public function addLangaugeFilePath($filename){
+		$this->language_files[] = $filename;
 	}
 	
 	public function getLanguage(){
@@ -151,6 +163,18 @@ class i18n implements Singleton,Output {
 		$language->setAttribute('language', $this->getLanguage());
 		$language->setAttribute('locale', $this->getLocale());
 		$language->setAttribute('timezone', $this->getTimezone());
+		
+		while (list(,$val) = each($this->language_files)){
+			$languagefile = new DOMDocument('1.0', 'UTF-8');
+			$languagefile->load($val);
+			for ($i = 0; $item = $languagefile->documentElement->childNodes->item($i); $i++){
+				if($item->nodeName == 'item'){
+					$language->appendChild($xml->importNode($item, true));
+				}
+			}
+		}
+		reset($this->language_files);
+		
 		return $language;
 	}
 	public function &getArray(){

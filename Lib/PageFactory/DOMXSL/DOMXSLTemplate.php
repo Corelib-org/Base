@@ -38,6 +38,8 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 
 	private $custom_cache_string = null;
 
+	private $registered_php_functions = false;
+	
 	const TEMPLATE_ENGINE = 'PageFactoryDOMXSL';
 
 	const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
@@ -62,6 +64,9 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 
 	public function getCoreXSLT(){
 		return $this->xsl_core;
+	}
+	public function getRegisteredPHPFunctions(){
+		return $this->registered_php_functions;
 	}
 	public function addTemplate($template_file){
 		try {
@@ -90,6 +95,10 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 	}
 
+	public function registerPHPFunctions(array $functions){
+		$this->registered_php_functions = $functions;
+	}
+	
 	public function setXMLVersion($version){
 		$this->xml_version = $version;
 		try {

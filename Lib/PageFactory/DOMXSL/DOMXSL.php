@@ -76,6 +76,10 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 			$proc = new XsltProcessor();
 			$proc->importStylesheet($this->xsl);
+			
+			if($functions = $this->template->getRegisteredPHPFunctions()){
+				$proc->registerPHPFunctions($functions);
+			}
 
 			$input = InputHandler::getInstance();
 

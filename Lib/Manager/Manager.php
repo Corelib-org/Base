@@ -53,7 +53,7 @@ abstract class CorelibManagerExtension implements Singleton {
 			$this->_mergeNodes($this->properties[$property->nodeName], $property);
 		}
 	}
-	private function _mergeNodes(DOMElement $DOMTarget, DOMElement $DOMSource){
+	protected function _mergeNodes(DOMElement $DOMTarget, DOMElement $DOMSource){
 		for ($i = 0; $item = $DOMSource->childNodes->item($i); $i++){
 			if($item->nodeType != XML_TEXT_NODE && $item->getAttribute('id')){;
 				$list = $this->xpath->query('child::*[@id = \''.$item->getAttribute('id').'\']', $DOMTarget);

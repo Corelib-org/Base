@@ -26,9 +26,7 @@ interface Output {
 
 abstract class Decorator {
 	protected $decorator = null;
-	
-	abstract public function getXML(DOMDocument $xml);
-	
+		
 	public function getDecorator(){
 		return $this->decorator;
 	}
@@ -42,9 +40,27 @@ abstract class Decorator {
 			return $DOMNode;
 		}
 	}
+}
+
+abstract class Component {
+	/**
+	 * Child UserComponents
+	 * 
+	 * @var Array instantiated components
+	 */
+	protected $components = array();
 	
-	public function __sleep(){
-		return array('decorator');
+	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
+		while(list(,$val) = each($this->components)){
+			$DOMnode->appendChild($val->getXML($xml));
+		}
+		reset($this->components);
 	}
+	
+	public function removeComponents(){
+		$this->components = array();
+		return true;
+	}
+	
 }
 ?>

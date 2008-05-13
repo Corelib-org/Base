@@ -36,7 +36,7 @@ if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
 	define('ABSTRACTS_ENABLE_DATABASE', false);
 }
 
-abstract class Page extends PageBase {
+abstract class WebPage extends PageBase {
 	protected $xsl = null;
 
 	function __construct() {

@@ -64,13 +64,14 @@ function BaseError($errno, $errstr, $errfile, $errline, $errorcontext){
 		echo $e;
 		return $e;
 	}
+	return true;
 }
 
 function BaseFatalError($buffer){
 	if(!strstr($buffer, '<b>Fatal error</b>:')){
 		return false;
 	} else {
-		preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
+		preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin\s.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
 		while(list($key, $val) = each($result[0])){
 			$buffer = str_replace($result[0][$key], '', $buffer);
 			$e = BaseError(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);

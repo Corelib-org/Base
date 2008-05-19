@@ -42,6 +42,17 @@ abstract class CorelibManagerExtension implements Singleton {
 		}
 	}
 
+	public function getPropertyOutput($property){
+		$output = new GenericOutput();
+		if($xml = $this->getPropertyXML($property)){
+			$output->setXML($xml);
+			return $output;
+		} else {
+			return false;
+		}
+		
+	}
+	
 	public function addBaseProperty(DOMElement $property){
 		$this->properties[$property->nodeName] = $property;
 	}

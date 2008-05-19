@@ -16,19 +16,6 @@ class ManagerConfig extends CorelibManagerExtension {
 		$event->registerObserver(new ManagerConfigAddSettings($this));
 	}
 	
-	/**
-	 * @return returns a valid output object containing the menu.
-	 */
-	public function getMenuOutput(){
-		$output = new GenericOutput();
-		if($xml = $this->getPropertyXML('menu')){
-			$output->setXML($xml);
-			return $output;
-		} else {
-			return false;
-		}
-	}
-	
 	public function getResourceDir($handle){
 		if($resources = $this->getPropertyXML('resources')){
 			$xpath = new DOMXPath($resources->ownerDocument);
@@ -91,7 +78,7 @@ class ManagerConfigAddSettings implements EventTypeHandler,Observer  {
 		$this->subject = $subject;
 	}
 	public function update($update){
-		$update->getPage()->addSettings($this->config->getMenuOutput());
+		$update->getPage()->addSettings($this->config->getPropertyOutput('menu'));
 	}
 }
 ?>

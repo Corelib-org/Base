@@ -110,7 +110,6 @@ abstract class Query {
 		$this->query = $query;
 	}
 
-
 	abstract public function execute();
 	abstract public function getQuery();
 	abstract public function getError();

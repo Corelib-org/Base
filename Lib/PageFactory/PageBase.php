@@ -37,10 +37,10 @@ abstract class PageBase {
 	abstract public function build();
 
 	public function addContent(Output $content, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
-		$this->content[] = $content;
+		return $this->content[] = $content;
 	}
 	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
-		$this->settings[] = $settings;
+		return $this->settings[] = $settings;
 	}
 	/**
 	 * @param PageFactoryTemplate $template

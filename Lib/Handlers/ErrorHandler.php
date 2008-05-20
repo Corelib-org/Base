@@ -177,10 +177,13 @@ class BaseException extends Exception {
 		$offset--;
 		$content = '';
 		for ($i = $offset; $i <= $offset + (self::SOURCE_LINES * 2); $i++){
+			// 
 			if(isset($source[$i])){
+				// $source[$i] = preg_replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
 				$content .= ($i + 1).': '.($source[$i]).'<br/>';
 			}
 		}
+		$content = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $content);
 		return $content;
 	}
 

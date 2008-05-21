@@ -47,6 +47,9 @@ if(!defined('PAGE_FACTORY_GET_FILE')){
 if(!defined('PAGE_FACTORY_POST_FILE')){
 	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
 }
+if(!defined('PAGE_FACTORY_GET_TOKEN')){
+	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
+}
 
 interface PageFactoryPageResolver {
 	public function resolve($expr, $exec);
@@ -143,8 +146,8 @@ class PageFactory implements Singleton {
 	}
 
 	public function resolvePageObject(){
-		if(!isset($_GET['page'])){
-			$_GET['page'] = '/';
+		if(!isset($_GET[PAGE_FACTORY_GET_TOKEN])){
+			$_GET[PAGE_FACTORY_GET_TOKEN] = '/';
 		}
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once(PAGE_FACTORY_POST_FILE);
@@ -158,14 +161,14 @@ class PageFactory implements Singleton {
 			// }
 		}
 
-		if(substr($_GET['page'], -1) != '/'){
-			$_GET['page'] .= '/';
+		if(substr($_GET[PAGE_FACTORY_GET_TOKEN], -1) != '/'){
+			$_GET[PAGE_FACTORY_GET_TOKEN] .= '/';
 		}
-		if(preg_match('/^\/corelib/', $_GET['page'])){
+		if(preg_match('/^\/corelib/', $_GET[PAGE_FACTORY_GET_TOKEN])){
 			$manager = Manager::getInstance();
 			$manager->setupPageRegistry($pages);
 		}
-		if(!isset($pages[$_GET['page']])){
+		if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]])){
 			if(isset($pages)){
 				while(list(,$val) = each($pages)){
 					if(is_array($val)){
@@ -175,7 +178,7 @@ class PageFactory implements Singleton {
 							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
 							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 						}
-						if( isset($val['expr']) && preg_match($val['expr'], $_GET['page']) ){
+						if( isset($val['expr']) && preg_match($val['expr'], $_GET[PAGE_FACTORY_GET_TOKEN]) ){
 							try {
 								if(!is_file($val['page'])){
 									throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
@@ -184,7 +187,7 @@ class PageFactory implements Singleton {
 								echo $e;
 								exit;
 							}
-							$this->callback = preg_replace($val['expr'], $val['exec'], $_GET['page']);
+							$this->callback = preg_replace($val['expr'], $val['exec'], $_GET[PAGE_FACTORY_GET_TOKEN]);
 							require_once($val['page']);
 							return true;
 						}
@@ -207,22 +210,22 @@ class PageFactory implements Singleton {
 			
 			return true;
 		} else {
-			if(is_array($pages[$_GET['page']])){
+			if(is_array($pages[$_GET[PAGE_FACTORY_GET_TOKEN]])){
 				try {
-					if(!isset($pages[$_GET['page']]['page'])){
+					if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['page'])){
 						throw new BaseException('file not set.', E_USER_ERROR);
 					}
-					if(!isset($pages[$_GET['page']]['exec'])){
+					if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['exec'])){
 						throw new BaseException('exec not set.', E_USER_ERROR);
 					}
 				} catch (BaseException $e){
 					echo $e;
 					exit;
 				}
-				$page = $pages[$_GET['page']]['page'];
-				$this->callback = $pages[$_GET['page']]['exec'].'()';
+				$page = $pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['page'];
+				$this->callback = $pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['exec'].'()';
 			} else {
-				$page = $pages[$_GET['page']];
+				$page = $pages[$_GET[PAGE_FACTORY_GET_TOKEN]];
 			}
 			try {
 				if(!is_file($page)){

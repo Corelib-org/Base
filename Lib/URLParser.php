@@ -7,14 +7,14 @@ class URLParser implements Singleton,Output {
 	private $query = null;
 	
 	private function __construct(){
-		if(!isset($_GET['page'])){
+		if(!isset($_GET[PAGE_FACTORY_GET_TOKEN])){
 			if(strstr($_SERVER['REQUEST_URI'], '?')){
 				list($this->url, $this->query) = explode('?', $_SERVER['REQUEST_URI']);
 			} else {
 				$this->url = $_SERVER['REQUEST_URI'];
 			}
 		} else {
-			$this->url = $_GET['page'];
+			$this->url = $_GET[PAGE_FACTORY_GET_TOKEN];
 		}
 		$this->_setUrlParts();
 	}

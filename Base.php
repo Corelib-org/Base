@@ -344,7 +344,7 @@ class Base implements Singleton {
 		__autoload($class);
 		return true;
 	}
-
+	
 	/**
 	 * Find Class
 	 *

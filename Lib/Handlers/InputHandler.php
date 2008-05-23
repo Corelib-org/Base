@@ -242,7 +242,7 @@ class InputHandler implements Singleton,Output {
 	private function _serializeArray(&$array, &$valid, &$error_codes, &$strip_variables, $urlencode=true){
 		$encoded = '';
 		while(list($key, $val) = each($array)){
-			if(!empty($val) && !isset($strip_variables[$key])){
+			if(!isset($strip_variables[$key])){
 				if($urlencode){
 					if($this->addslashes){
 						$val = $this->_stripslashes($val);

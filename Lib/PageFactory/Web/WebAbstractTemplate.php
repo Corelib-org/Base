@@ -129,7 +129,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 				$this->content_length = ob_get_length();
 			}
 			header('Content-Lenght: '.$this->content_length);
-
 			$type = $this->content_type;
 			if(!is_null($this->content_charset)){
 				$type .= '; charset='.$this->content_charset;

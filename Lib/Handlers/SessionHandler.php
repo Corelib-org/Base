@@ -214,7 +214,11 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 		$_SESSION[$name] = $content;
 	}
 	public function get($name){
-		return $_SESSION[$name];
+		if(isset($_SESSION[$name])){
+			return $_SESSION[$name];
+		} else {
+			return false;
+		}
 	}
 	public function check($name){
 		return isset($_SESSION[$name]);
@@ -255,18 +259,27 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	}
 	
 	public function getXML(DOMDocument $xml){
-		$session = $xml->createElement('var');
-		while(list($key, $val) = each($_SESSION)){
-			$session->appendChild($xml->createElement($key, htmlspecialchars($val)));
-		}
-		reset($_SESSION);
+		$session = $xml->createElement('session');
+		$this->_getXMLArray($session, $_SESSION);
 		return $session;
 	}
 	public function &getArray(){
 		return array('session_id', $this->getId());
 	}
-	public function getString($format = '%1$s'){
-		return sprintf($format, $this->getId());
+
+	
+	private function _getXMLArray(DOMElement $parent, array $array){
+		while(list($key, $val) = each($array)){
+			if(is_numeric($key)){
+				$key = 'item';
+			}
+			if(is_array($val)){
+				$key = $parent->appendChild($parent->ownerDocument->createElement($key));
+				$this->_getXMLArray($key, $val);
+			} else {
+				$parent->appendChild($parent->ownerDocument->createElement($key, htmlspecialchars($val)));
+			}
+		}
 	}
 }
 

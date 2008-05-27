@@ -194,10 +194,16 @@ class InputHandler implements Singleton,Output {
 	}
 
 	public function unsetPost($item){
-		unset($this->post_valid[$item], $this->post[$item]);
+		$item = func_get_args();
+		while (list(,$val) = each($item)){
+			unset($this->post_valid[$val], $this->post[$val]);
+		}
 	}
 	public function unsetGet($item){
-		unset($this->post_valid[$item], $this->post[$item]);
+		$item = func_get_args();
+		while (list(,$val) = each($item)){
+			unset($this->get_valid[$val], $this->get[$val]);
+		}
 	}
 	
 	/**

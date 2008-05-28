@@ -28,6 +28,9 @@ if(!defined('PAGE_FACTORY_DOMXSL_CACHE_XMLNS')){
 if(!defined('PAGE_FACTORY_DOMXSL_XSL_XMLNS')){
 	define('PAGE_FACTORY_DOMXSL_XSL_XMLNS', 'http://www.w3.org/1999/XSL/Transform');
 }
+if(!defined('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT')){
+	define('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT', true);
+}
 
 class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	/**
@@ -176,7 +179,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		$this->parse_tokens[] = $token;
 	}
 	private function _transformPage(DOMDocument $dom, $tranformToXML=true){
-		$dom->formatOutput = true;
+		$dom->formatOutput = PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT;
 		if($tranformToXML){
 			return $dom->saveXML();
 		} else {

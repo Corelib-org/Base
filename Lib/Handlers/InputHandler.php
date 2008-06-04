@@ -46,26 +46,22 @@ class InputHandler implements Singleton,Output {
 		if(!defined('INPUT_HANDLER_RESET_GET_POST')){
 			define('INPUT_HANDLER_RESET_GET_POST', true);
 		}
-		set_magic_quotes_runtime(FALSE);
-		if (get_magic_quotes_gpc()) {
-			$this->addslashes = false;
-		} else {
-			$this->addslashes = true;
-		}
+		set_magic_quotes_runtime(false);
 
 		if(isset($_POST)){
 			$this->post = $_POST;
-			if(INPUT_HANDLER_RESET_GET_POST){
-				unset($_POST);
-			}
 		}
-
 		if(isset($_GET)){
 			$this->get = $_GET;
-			if(INPUT_HANDLER_RESET_GET_POST){
-				unset($_GET);
-			}
 		}
+		if(INPUT_HANDLER_RESET_GET_POST){
+			unset($_POST, $_GET);
+		}
+		if(get_magic_quotes_gpc()){
+			$this->_stripslashes($this->get);			
+			$this->_stripslashes($this->post);			
+		}
+		$this->addslashes = true;
 	}
 
 	public function addslashes($boolean=true){

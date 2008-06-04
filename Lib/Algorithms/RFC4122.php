@@ -28,7 +28,7 @@
 //**                                                        Line **//
 //**    1. RFC4122 Class ...................................     **//
 //**        1. RFC4122 Class Methods .......................     **//
-//**            1. generate Method .........................     **//
+//**            1. generate() ..............................     **//
 //**                                                             **//
 //*****************************************************************//
 
@@ -54,7 +54,7 @@ class RFC4122 {
 	 * <code>
 	 * <?php
 	 * // Provides: f485b374-8e40-46d0-8c67-0da94fb18dd1
-	 * $token = RFC4122::generate();
+	 * $uuid = RFC4122::generate();
 	 * ?>
 	 * </code>
 	 * This will create a UUID 128 bits long, and can guarantee uniqueness 

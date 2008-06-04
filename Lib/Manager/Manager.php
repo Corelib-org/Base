@@ -102,7 +102,7 @@ class Manager implements Singleton {
 	protected function __construct(){
 		if(!is_dir(MANAGER_DATADIR)){
 			mkdir(MANAGER_DATADIR, 0777);
-			chmod(MANAGER_DATADIR, 0777);
+			@chmod(MANAGER_DATADIR, 0777);
 		}
 		try {
 			if(!is_writeable(MANAGER_DATADIR)){
@@ -265,7 +265,7 @@ class Manager implements Singleton {
 		}
 		reset($this->extension_dirs);
 		$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
-		chmod(MANAGER_DATADIR.self::EXTENSIONS_FILE, 0666);
+		@chmod(MANAGER_DATADIR.self::EXTENSIONS_FILE, 0666);
 	}
 	private function _loadExtensionsXML(){
 		if(!$this->extensions instanceof DOMDocument){

@@ -5,17 +5,27 @@
  *
  * <i>No Description</i>
  *
- * LICENSE: This source file is subject to version 1.0 of the
- * Bravura Distribution license that is available through the
- * world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- * If you did not receive a copy of the Bravura License and are
- * unable to obtain it through the web, please send a note to
- * license@bravura.dk so we can mail you a copy immediately.
+ * This script is part of the corelib project. The corelib project is 
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
  *
  * @author Steffen Soerensen <ss@corelib.org>
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
- * @license http://www.corelib.org/
+ * @license http://www.gnu.org/copyleft/gpl.html
  * @package corelib
  * @subpackage Base
  * @link http://www.corelib.org/
@@ -26,21 +36,27 @@
 //*****************************************************************//
 //************************ Table Of Content ***********************//
 //*****************************************************************//
-//**                                                        Line **//
+//**                                                             **//
 //**    1. Define Contants .................................     **//
-//**        1. BASE_RUNLEVEL_DEVEL .........................     **//
-//**        2. BASE_RUNLEVEL_PROD ..........................     **//
-//**        3. CORELIB_BASE_VERSION ........................     **//
-//**        3. CORELIB_COPYRIGHT ...........................     **//
-//**        3. CORELIB_COPYRIGHT_YEAR ......................     **//
+//**        1. BASE_RUNLEVEL_TERM_DEBUG ....................     **//
+//**        2. BASE_RUNLEVEL_TERM_NOTICE ...................     **//
+//**        3. BASE_RUNLEVEL_TERM_WARN .....................     **//
+//**        4. BASE_RUNLEVEL_DEVEL .........................     **//
+//**        5. BASE_RUNLEVEL_PROD ..........................     **//
+//**        6. CORELIB_BASE_VERSION ........................     **//
+//**        7. CORELIB_BASE_VERSION_MAJOR ..................     **//
+//**        8. CORELIB_BASE_VERSION_MINOR ..................     **//
+//**        9. CORELIB_BASE_VERSION_PATCH ..................     **//
+//**       10. CORELIB_COPYRIGHT ...........................     **//
+//**       11. CORELIB_COPYRIGHT_YEAR ......................     **//
 //**    2. Basic Configuration Checks ......................     **//
 //**        1. CORELIB .....................................     **//
 //**        2. CURRENT_WORKING_DIR .........................     **//
-//**        2. BASE_RUNLEVEL ...............................     **//
-//**        2. BASE_CLASS_CACHE_FILE .......................     **//
-//**        2. BASE_DEFAULT_TIMEZONE .......................     **//
-//**        2. BASE_ADMIN_EMAIL ............................     **//
-//**        2. TEMPORARY_DIR ...............................     **//
+//**        3. BASE_RUNLEVEL ...............................     **//
+//**        4. BASE_CLASS_CACHE_FILE .......................     **//
+//**        5. BASE_DEFAULT_TIMEZONE .......................     **//
+//**        6. BASE_ADMIN_EMAIL ............................     **//
+//**        7. TEMPORARY_DIR ...............................     **//
 //**    3. Load Base Support Files .........................     **//
 //**        1. Base/Lib/Interfaces.php .....................     **//
 //**        2. Base/Lib/ErrorHandler.php ...................     **//
@@ -59,12 +75,11 @@
 //**                4. findClass() .........................     **//
 //**                5. _classSearch() ......................     **//
 //**                6. _searchDir() ........................     **//
-//**                7. __destruct() ........................     **//
+//**                7. __clone() ...........................     **//
+//**                8. __destruct() ........................     **//
 //**    5. Base Functions ..................................     **//
 //**        1. __autoload() ................................     **//
-//**    6. Depricated Base Functions .......................     **//
-//**        2. contains_http() .............................     **//
-//**    7. Instanciate Base ................................     **//
+//**    6. Instanciate Base ................................     **//
 //**                                                             **//
 //*****************************************************************//
 
@@ -190,6 +205,8 @@ require_once(CORELIB.'/Base/Lib/Interfaces.php');
  *
  *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
  * 	and set it to true
+ * 
+ * @see BASE_DISABLE_ERROR_HANDLER
  */
 require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
 
@@ -201,8 +218,8 @@ require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
  *	Base Class
  *
  *	The base class provides all basic functionality, it is also
- *	responsible for controlling some basic PHP features, such
- *	as making sure everything is UTF-8 encoded and managing classes.
+ *	responsible for controlling some basic PHP features, but the main
+ * 	purpose of this file is to control autoloading of class as the are used.
  *
  *	@package corelib
  *	@subpackage Base
@@ -415,7 +432,7 @@ class Base implements Singleton {
 				}
 			} else if($entry{0} != '.' && is_readable($dir.'/'.$entry)){
 				$content = file_get_contents($dir.'/'.$entry);
-				if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/si', $content, $match)){
+				if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $content, $match)){
 					return $dir.'/'.$entry;
 				}
 			}
@@ -423,6 +440,17 @@ class Base implements Singleton {
 		return false;
 	}
 
+	/**
+	 * Clone function
+	 * 
+	 * Declared private to prevent cloning
+	 * 
+	 * @return false
+	 */
+	private function __clone(){
+		return false;
+	}
+	
 	/**
 	 * Base Destructor
 	 *
@@ -471,20 +499,5 @@ function __autoload($class){
 	}
 	$base = Base::getInstance();
 	include_once($base->findClass($class));
-}
-
-
-//*****************************************************************//
-//****************** Depricated Base Functions ********************//
-//*****************************************************************//
-/**
- *	Check if string contains http:// or https://
- *
- *	@param string $str subject, string to test whether or not it contains http:// or https://
- *	@return boolean returns true if $str contains http:// or https://, else return false
- * 	@deprecated superceded by StringFilter::ContainsHTTP()
- */
-function contains_http($str){
-	return StringFilter::ContainsHTTP($str);
 }
 ?>

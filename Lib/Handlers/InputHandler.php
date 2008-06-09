@@ -58,14 +58,17 @@ class InputHandler implements Singleton,Output {
 			unset($_POST, $_GET);
 		}
 		if(get_magic_quotes_gpc()){
-			$this->_stripslashes($this->get);			
-			$this->_stripslashes($this->post);			
+			$this->get = $this->_stripslashes($this->get);			
+			$this->post = $this->_stripslashes($this->post);			
 		}
 		$this->addslashes = true;
 	}
 
-	public function addslashes($boolean=true){
-		$this->addslashes = $boolean;
+	public function addslashes($boolean=null){
+		if(!is_null($boolean)){
+			$this->addslashes = $boolean;
+		}
+		return $this->addslashes;
 	}
 
 	public function validatePost($item, InputValidator $mode){

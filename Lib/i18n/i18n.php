@@ -76,6 +76,9 @@ class i18n implements Singleton,Output {
 	}
 	
 	public function getDateFormat($id){
+	//	echo '<pre style="text-align: left">';
+	//	print_r($this);
+	//	echo I18N_DEFAULT_TIMEZONE;
 		if(isset($this->date_formats[$this->getLanguage()][$id])){
 			return new i18nDateConverter($this->date_formats[$this->getLanguage()][$id], $this->getTimezoneOffset());
 		} else {
@@ -119,9 +122,13 @@ class i18n implements Singleton,Output {
 		setcookie(I18N_COOKIE_NAME.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 
 		// Calculate time offset in seconds
+		//echo I18N_DEFAULT_TIMEZONE;
 		$default_timezone = timezone_open(I18N_DEFAULT_TIMEZONE);
+		// echo $timezone;
 		$timezone = timezone_open($timezone);
 		$date = date_create(null, $default_timezone);
+		//echo date('r', $default_timezone->getOffset($date))."\n";
+		//echo date('r', $timezone->getOffset($date)),"\n";
 		$this->timezone_offset = $default_timezone->getOffset($date) - $timezone->getOffset($date);		
 	}
 	

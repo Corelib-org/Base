@@ -380,20 +380,25 @@ class Base implements Singleton {
 		} catch (BaseException $e){
 			echo $e;
 		}
+		
 		if(!isset($this->class_cache[$class])){
 			try {
 				if($file = $this->_classSearch($class)){
 					$this->class_cache[$class] = $file;
 					$this->class_cache_updated = true;
 				} else {
-					throw new BaseException('File containing class '.$class.' could not be found');
+		//			throw new BaseException('File containing class '.$class.' could not be found');
 				}
 			} catch (BaseException $e){
 				echo $e->htmlError();
 				exit;
 			}
 		}
-		return $this->class_cache[$class];
+		if(isset($this->class_cache[$class])){
+			return $this->class_cache[$class];
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -492,12 +497,12 @@ class Base implements Singleton {
  * @uses Base::findClass()
  */
 function __autoload($class){
-	try {
-		StrictTypes::isString($class);
-	} catch (BaseException $e){
-		echo $e;
-	}
 	$base = Base::getInstance();
-	include_once($base->findClass($class));
+	if($base->findClass($class)){
+		include_once($base->findClass($class));
+		return true;
+	} else {
+		return false;
+	}
 }
 ?>

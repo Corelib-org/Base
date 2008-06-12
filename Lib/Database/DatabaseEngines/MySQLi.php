@@ -123,6 +123,9 @@ class MySQLiQuery extends Query {
 	public function getAffectedRows(){
 		return $this->instance->affected_rows;
 	}
+	public function __toString(){
+		return $this->getQuery();
+	}
 }
 
 class MySQLiTools {
@@ -144,6 +147,9 @@ class MySQLiTools {
 	}	
 	static public function parseWildcards($val){
 		return str_replace('*', '%', $val);
+	}
+	static public function parseUnixtimestamp($val){
+		return 'FROM_UNIXTIME(\''.$val.'\')';
 	}
 	static public function prepareOrderStatement(DatabaseListHelperOrder $order){
 		$args = func_get_args();

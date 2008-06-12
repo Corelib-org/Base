@@ -173,7 +173,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		return $this->content_charset = $charset;
 	}
-	public function setLocation($location){
+	public function setLocation($location, $param=null){
 		try {
 			if($location !== true){
 				StrictTypes::isString($location);
@@ -181,10 +181,17 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		} catch (BaseException $e){
 			echo $e;
 		}
+		if(!is_null($param)){
+			if(strstr($this->location.$this->http_redirect_base, '?')){
+				$param = '&'.$param;
+			} else {
+				$param = '?'.$param;
+			}
+		}
 		if(preg_match('(^(http:\/\/))', $location) || preg_match('(^(https:\/\/))', $location)){
 			$this->location = $location;
 		} else {
-			$this->location = $this->http_redirect_base.$location;
+			$this->location = $this->http_redirect_base.$location.$param;
 		}
 	}
 	public function setMessageID($id){

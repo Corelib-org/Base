@@ -97,7 +97,7 @@ class BaseException extends Exception {
 	private $errline = null;
 	private $errorcontext = null;
 
-	const SOURCE_LINES = 6;
+	const SOURCE_LINES = 12;
 
 	function __construct($msg, $code=0, $errstr=null, $errfile=null, $errline=null, $errorcontext=null) {
 		parent::__construct($msg, $code);
@@ -189,7 +189,7 @@ class BaseException extends Exception {
 				$source[$i] = preg_replace('/[\'"].*?[\'"]/', '<span style="color: #008200">\\0</span>', $source[$i]);
 				$source[$i] = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
 				$source[$i] = preg_replace('/\$[[:alpha:]_]+/', '<span style="color: #ad2e00">\\0</span>', $source[$i]);
-				$source[$i] = preg_replace('/\b(public|private|protected|static|function|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
+				$source[$i] = preg_replace('/\b(public|private|class|extends|protected|static|function|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
 				
 				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
 			}

@@ -1,6 +1,9 @@
 <?php
 define('DATABASE_ORDER_DESC', 'DESC');
 define('DATABASE_ORDER_ASC', 'ASC');
+define('DATABASE_GT', '>');
+define('DATABASE_LT', '<');
+define('DATABASE_EQUAL', '=');
 
 class MySQLiEngine implements DatabaseEngine {
 	private $connection = null;

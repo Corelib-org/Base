@@ -189,7 +189,7 @@ class BaseException extends Exception {
 				$source[$i] = preg_replace('/[\'"].*?[\'"]/', '<span style="color: #008200">\\0</span>', $source[$i]);
 				$source[$i] = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
 				$source[$i] = preg_replace('/\$[[:alpha:]_]+/', '<span style="color: #ad2e00">\\0</span>', $source[$i]);
-				$source[$i] = preg_replace('/\b(public|private|class|extends|protected|static|function|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
+				$source[$i] = preg_replace('/\b(public|private|class|extends|protected|static|function|require_once|require|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
 				
 				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
 			}

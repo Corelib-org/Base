@@ -176,8 +176,8 @@ class BaseException extends Exception {
 		}
 		$offset--;
 		$content = '';
+		$instring = false;
 		for ($i = $offset; $i <= $offset + (self::SOURCE_LINES * 2); $i++){
-			// 
 			if(isset($source[$i])){
 				// $source[$i] = preg_replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
 				if($this->mygetLine() == ($i + 1)){
@@ -186,10 +186,22 @@ class BaseException extends Exception {
 					$style="";
 				}
 				
-				$source[$i] = preg_replace('/[\'"].*?[\'"]/', '<span style="color: #008200">\\0</span>', $source[$i]);
+				if(!$instring){
+					if(preg_match('/[\'"].*?\n/s', $source[$i])){
+						$instring = true;
+					}
+					$source[$i] = preg_replace('/[\'"].*?[\'"\n]/s', '<span style="color: #008200">\\0</span>', $source[$i]);
+					$source[$i] = preg_replace('/\$[[:alpha:]_]+/', '<span style="color: #ad2e00">\\0</span>', $source[$i]);
+					$source[$i] = preg_replace('/\b(public|private|implements|const|class|extends|protected|static|function|require_once|require|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
+				} else {
+					if(preg_match('/.*?[\'"]/', $source[$i])){
+						$instring = false;
+					}
+					$source[$i] = preg_replace('/.*?[\'"\n]/', '<span style="color: #008200">\\0</span>', $source[$i]);
+				}
+					
+
 				$source[$i] = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
-				$source[$i] = preg_replace('/\$[[:alpha:]_]+/', '<span style="color: #ad2e00">\\0</span>', $source[$i]);
-				$source[$i] = preg_replace('/\b(public|private|class|extends|protected|static|function|require_once|require|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
 				
 				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
 			}

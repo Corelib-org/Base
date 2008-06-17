@@ -181,7 +181,7 @@ class i18n implements Singleton,Output {
 				}
 				if(isset($lfile) && !is_file($lfile)){
 					throw new BaseException('Unable to load fallback language file '.$lfile.'. File does not excist', E_USER_ERROR);
-				} else {
+				} else if(!isset($lfile)){
 					$lfile = $val;
 				}
 				$languagefile = new DOMDocument('1.0', 'UTF-8');
@@ -195,6 +195,7 @@ class i18n implements Singleton,Output {
 				echo $e;
 				exit;
 			}
+			unset($lfile);
 		}
 		reset($this->language_files);
 		return $language;

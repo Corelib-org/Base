@@ -33,6 +33,8 @@ class i18n implements Singleton,Output {
 	
 	private $current_locale = null;
 	private $current_language = null;
+	
+	private $default_language = null;
 
 	private $language_files = array();
 	
@@ -67,6 +69,7 @@ class i18n implements Singleton,Output {
 		if(sizeof($this->languages) > 0){
 			$this->current_language = $language;
 			$this->current_locale = $locale;
+			$this->default_language = $language;
 		}
 		$this->languages[$language] = $locale;
 	}
@@ -172,16 +175,28 @@ class i18n implements Singleton,Output {
 		$language->setAttribute('timezone', $this->getTimezone());
 		
 		while (list(,$val) = each($this->language_files)){
-			$languagefile = new DOMDocument('1.0', 'UTF-8');
-			$languagefile->load($val);
-			for ($i = 0; $item = $languagefile->documentElement->childNodes->item($i); $i++){
-				if($item->nodeName == 'item'){
-					$language->appendChild($xml->importNode($item, true));
+			try {
+				if(!is_file($val)){
+					$lfile = str_replace('/'.$this->current_language.'/', '/'.$this->default_language.'/', $val);
 				}
+				if(isset($lfile) && !is_file($lfile)){
+					throw new BaseException('Unable to load fallback language file '.$lfile.'. File does not excist', E_USER_ERROR);
+				} else {
+					$lfile = $val;
+				}
+				$languagefile = new DOMDocument('1.0', 'UTF-8');
+				$languagefile->load($lfile);
+				for ($i = 0; $item = $languagefile->documentElement->childNodes->item($i); $i++){
+					if($item->nodeName == 'item'){
+						$language->appendChild($xml->importNode($item, true));
+					}
+				}
+			} catch (BaseException $e){
+				echo $e;
+				exit;
 			}
 		}
 		reset($this->language_files);
-		
 		return $language;
 	}
 	public function &getArray(){

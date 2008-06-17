@@ -108,6 +108,9 @@ class i18n implements Singleton,Output {
 	public function getLocale(){
 		return $this->current_locale;
 	}
+	public function getDefaultLanguage(){
+		return $this->default_language;
+	}
 	
 	public function setLanguage($language){
 		if(isset($this->languages[$language])){

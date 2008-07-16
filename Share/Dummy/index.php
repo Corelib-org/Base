@@ -1,4 +1,5 @@
 <?php
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 require_once('etc/config.php');
 require_once('etc/abstracts.php');
 
@@ -12,7 +13,7 @@ try {
 	if(class_exists(PAGE_FACTORY_CLASS_NAME, false)){
 		eval('$page->build(new '.PAGE_FACTORY_CLASS_NAME.'());');
 	} else {
-		throw new BaseException('Could not find WebPage Class.');
+		throw new BaseException('Could not find '.PAGE_FACTORY_CLASS_NAME.' Class.');
 	}
 } catch (BaseException $e) {
 	echo $e;

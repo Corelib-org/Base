@@ -111,6 +111,9 @@ class i18n implements Singleton,Output {
 	public function getDefaultLanguage(){
 		return $this->default_language;
 	}
+	public function getFileBase(){
+		return I18N_LANGUAGE_BASE.$this->getLanguage();
+	}
 	
 	public function setLanguage($language){
 		if(isset($this->languages[$language])){

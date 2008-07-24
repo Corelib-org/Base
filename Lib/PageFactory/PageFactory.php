@@ -170,7 +170,7 @@ class PageFactory implements Singleton {
 		}
 		if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]])){
 			if(isset($pages)){
-				while(list(,$val) = each($pages)){
+				foreach($pages as $val){
 					if(is_array($val)){
 						if( isset($val['type']) && $val['type'] != 'regex' ){
 							var_dump($val);

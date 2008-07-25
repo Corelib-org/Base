@@ -38,6 +38,8 @@ class i18n implements Singleton,Output {
 
 	private $language_files = array();
 	
+	protected $cookie_name = null;
+	
 	/**
 	 *	@return i18n
 	 */
@@ -49,12 +51,15 @@ class i18n implements Singleton,Output {
 	}
 	
 	protected function __construct(){
+		if(is_null($this->cookie_name)){
+			$this->cookie_name = I18N_COOKIE_NAME;
+		}
 		ini_set('date.timezone', I18N_DEFAULT_TIMEZONE);
 		date_default_timezone_set(I18N_DEFAULT_TIMEZONE);
-		if(!isset($_COOKIE[I18N_COOKIE_NAME.'_timezone'])){
+		if(!isset($_COOKIE[$this->cookie_name.'_timezone'])){
 			$this->setTimezone(I18N_DEFAULT_TIMEZONE);
 		} else {
-			$this->setTimezone($_COOKIE[I18N_COOKIE_NAME.'_timezone']);
+			$this->setTimezone($_COOKIE[$this->cookie_name.'_timezone']);
 		}
 	}	
 	
@@ -119,7 +124,7 @@ class i18n implements Singleton,Output {
 		if(isset($this->languages[$language])){
 			$this->current_locale = $this->languages[$language];
 			$this->current_language = $language;
-			setcookie(I18N_COOKIE_NAME, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+			setcookie($this->cookie_name, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 			return true;
 		} else {
 			return false;
@@ -128,7 +133,7 @@ class i18n implements Singleton,Output {
 	
 	public function setTimezone($timezone){
 		$this->timezone = $timezone;
-		setcookie(I18N_COOKIE_NAME.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+		setcookie($this->cookie_name.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 
 		// Calculate time offset in seconds
 		//echo I18N_DEFAULT_TIMEZONE;
@@ -142,7 +147,7 @@ class i18n implements Singleton,Output {
 	}
 	
 	public function detectLanguage(){
-		if(!isset($_COOKIE[I18N_COOKIE_NAME]) || !isset($this->languages[$_COOKIE[I18N_COOKIE_NAME]])){
+		if(!isset($_COOKIE[$this->cookie_name]) || !isset($this->languages[$_COOKIE[$this->cookie_name]])){
 			$locales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 			while (list(,$val) = each($locales)){
 				if(strstr($val, ';')){
@@ -169,7 +174,7 @@ class i18n implements Singleton,Output {
 				}
 			}
 		} else {
-			$this->setLanguage($_COOKIE[I18N_COOKIE_NAME]);
+			$this->setLanguage($_COOKIE[$this->cookie_name]);
 		}
 		return true;
 	}

@@ -541,7 +541,7 @@ class InputHandler implements Singleton,Output {
 	}
 }
 
-class RegexInputValidator implements InputValidator {
+class InputValidatorRegex implements InputValidator {
 	private $expr;
 
 	public function __construct($expr){
@@ -551,6 +551,13 @@ class RegexInputValidator implements InputValidator {
 	public function validate($content){
 		return preg_match($this->expr, $content);
 	}
+}
+
+/**
+ * @deprecated 
+ */
+class RegexInputValidator extends InputValidatorRegex {
+	
 }
 
 class EmailInputValidator implements InputValidator {
@@ -581,27 +588,30 @@ class EqualsInputValidator implements InputValidator {
 	}
 }
 
-class IsArrayInputValidator implements InputValidator {
-	public function validate($content){
-		return (is_array($content));
-	}
-}
-
 class ArrayInputValidator implements InputValidator {
 	private $validator;
 
-	public function __construct($validator){
+	public function __construct($validator=null){
 		$this->validator = $validator;
 	}
 	public function validate($content){
-		foreach ($content as $k => $v) {
-			if(!$this->validator->validate($content[$k])) {
-				return false;
+		if(!$this->validator instanceof InputValidator && is_array($content)){
+			return true;
+		} else {
+			foreach ($content as $k => $v) {
+				if(!$this->validator->validate($content[$k])) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
 	}
 }
+
+/**
+ * @deprecated 
+ */
+class IsArrayInputValidator extends ArrayInputValidator { }
 
 class IsSetInputValidator implements InputValidator {
 	public function validate($content){

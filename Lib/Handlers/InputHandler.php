@@ -639,11 +639,17 @@ class ArrayInputValidator implements InputValidator {
  */
 class IsArrayInputValidator extends ArrayInputValidator { }
 
-class IsSetInputValidator implements InputValidator {
+class InputValidatorIsSet implements InputValidator {
 	public function validate($content){
 		$regex = new RegexInputValidator('/^.*$/');
 		return $regex->validate($content);
 	}
+}
+/**
+ * @deprecated use InputValidatorIsSet instead
+ */
+class IsSetInputValidator extends InputValidatorIsSet {
+	
 }
 
 ?>

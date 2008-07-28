@@ -215,7 +215,6 @@ class i18n implements Singleton,Output {
 		
 	}
 }
-	
 
 
 ?>

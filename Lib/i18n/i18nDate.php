@@ -1,6 +1,4 @@
 <?php
-
-
 class i18nDateConverter implements Converter {
 	private $format = null;
 	private $timezone_offset = 0;

@@ -13,7 +13,7 @@ class MySQLiEngine implements DatabaseEngine {
 	private $database = null;
 	private $charset = 'utf8';
 	private $pid = null;
-		private $reconnect = false;
+	private $reconnect = false;
 
 	const PREFIX = 'MySQLi';
 

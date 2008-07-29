@@ -468,9 +468,9 @@ class Base implements Singleton {
 	 */
 	public function __destruct(){
 		if($this->class_cache_updated){
-			$content = '<?php ';
+			$content = '<?php '."\n";
 			while(list($key, $val) = each($this->class_cache)){
-				$content .= '$classes[\''.$key.'\'] = \''.$val.'\'; ';
+				$content .= '$classes[\''.$key.'\'] = \''.$val.'\'; '."\n";
 			}
 			if(!$this->class_cache > 0){
 				$content .= '$classes = array();';

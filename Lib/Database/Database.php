@@ -211,19 +211,21 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 			$time += $line['time'];
 			if(!isset($duplicates[md5($line['query'])])){
 				$duplicates[md5($line['query'])] = ($key + 1);
-				$result .= '<h2>#'.($key + 1).' Query ('.$line['time'].'s)</h2>';
+				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }">#'.($key + 1).' Query ('.$line['time'].'s)';
 			} else {
 				$duplicate_count++;
-				$result .= '<h2>#'.($key + 1).' Query ('.$line['time'].'s) <b>WARNING: DUPLICATED QUERY ('.$duplicates[md5($line['query'])].')</b></h2>';
+				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.$line['time'].'s) <b>WARNING: DUPLICATED QUERY (#'.$duplicates[md5($line['query'])].')</b></u>';
 			}
+			$result .= '<br/><span style="color: #999999; font-size: 10px;">'.substr($line['query'], 0, 200).'</span></h2>';
 			
 			if($line['error']['code'] > 0){
 				$result .= '<h3>Error Code: '.$line['error']['code'].'</h3>';
 				$result .= '<p>'.$line['error']['message'].'</p>';
 			}
-			$result .= '<h3>SQL</h3><pre>'.$line['query'].'</pre><br/>';
+			
+			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.$line['query'].'</pre><br/>';
 			$result .= '<h3>Backtrace</h3><pre>'.$line['backtrace'].'</pre><br/>';
-			$result .= '<hr/><br/></div>';
+			$result .= '<hr/><br/></div></div>';
 		}
 		
 		echo '<div id="DatabaseQueryLog" style="text-align: left; width: 80%; margin: auto; background-color: #ffffef; padding: 20px;">';

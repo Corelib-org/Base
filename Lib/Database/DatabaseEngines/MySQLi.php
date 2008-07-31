@@ -196,7 +196,7 @@ class MySQLiTools {
 			$qfields[] = $field;
 			$qvalues[] = $value;
 		}
-		return '('.implode(', ', $qfields)."\n".'VALUES('.implode(', ', $qvalues).')';
+		return '('.implode(', ', $qfields)."\n".')VALUES('.implode(', ', $qvalues).')';
 	}
 }
  

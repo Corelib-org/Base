@@ -180,6 +180,24 @@ class MySQLiTools {
 			return false;
 		}
 	}
+	
+	static public function makeInsertStatement($table, array $fields){
+		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
+	}
+	
+	static public function makeReplaceStatement($table, array $fields){
+		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
+	}
+	
+	static protected function _makeInsertReplaceValues(array $fields){
+		$qfields = array();
+		$qvalues = array();
+		foreach ($fields as $field => $value){
+			$qfields[] = $field;
+			$qvalues[] = $value;
+		}
+		return '('.implode(', ', $qfields)."\n".'VALUES('.implode(', ', $qvalues).')';
+	}
 }
  
 ?>

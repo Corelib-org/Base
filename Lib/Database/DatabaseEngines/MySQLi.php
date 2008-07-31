@@ -189,6 +189,15 @@ class MySQLiTools {
 		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
 	}
 	
+	static public function makeUpdateStatement($table, array $fields, $where=''){
+		$query = 'UPDATE '.$table."\n".' SET';
+		$qfields = array();
+		foreach ($fields as $field => $value){
+			$qfields[] = ' '.$field.'='.$value.'';
+		}
+		return $query.' '.implode(', ', $qfields).' '.$where;
+	}
+	
 	static protected function _makeInsertReplaceValues(array $fields){
 		$qfields = array();
 		$qvalues = array();

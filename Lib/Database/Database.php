@@ -79,7 +79,7 @@ class Database implements Singleton {
 	}
 
 	public function _runQuery(DatabaseEngine $instance, Query $query){
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		if(DATABASE_SHOW_QUERY_LOG && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
 			$start = microtime(true);
 			$instance->query($query);
 			$e = new Exception();

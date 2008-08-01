@@ -106,6 +106,14 @@ abstract class Component {
 	 */
 	protected $components = array();
 	
+	/**
+	 * Parent Component
+	 * 
+	 * @var Component parent component
+	 */
+	protected $parent = null;	
+		
+	
 	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
 		while(list(,$val) = each($this->components)){
 			$DOMnode->appendChild($val->getXML($xml));
@@ -124,6 +132,29 @@ abstract class Component {
 		$this->components = array();
 		return true;
 	}
+	
+	public function addComponent(Component $component){
+		$this->components[] = $component;
+		$component->setParentComponent($this);
+		return $component;
+	}
+	
+	public function setParentComponent(Component $component){
+		$this->parent = $component;
+		return $component;
+	}
+	
+	protected function _commitComponents($recursive=true){
+		if($recursive){
+			foreach ($this->components as $component){
+				$component->commit();
+			}
+		}
+	}
+	
+	public function commit($recursive=true){
+		$this->_commitComponents($recursive);
+	}	
 	
 }
 ?>

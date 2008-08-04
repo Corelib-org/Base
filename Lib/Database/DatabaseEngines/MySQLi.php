@@ -198,14 +198,14 @@ class MySQLiTools {
 		return $query.' '.implode(', ', $qfields).' '.$where;
 	}
 	
-	static public function makeInStatement(){
-		foreach ($fields as $key => $val){
+	static public function makeInStatement(array $values){
+		foreach ($values as $key => $val){
 			if(!is_numeric($val)){
 				$val = '\''.$val.'\'';
 			}
-			$fields[$key] = $val;
+			$values[$key] = $val;
 		}
-		return 'IN('.implode(', ', $fields).')';
+		return 'IN('.implode(', ', $values).')';
 	}
 	
 	static protected function _makeInsertReplaceValues(array $fields){

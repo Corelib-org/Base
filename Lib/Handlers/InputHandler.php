@@ -148,7 +148,7 @@ class InputHandler implements Singleton,Output {
 		return isset($this->post_valid[$item]);
 	}
 
-	public function getGet($item, $specialchars=true){
+	public function getGet($item, $specialchars=false){
 		try {
 			if(!isset($this->get_valid[$item])){
 				throw new BaseException('Variable Not valid');
@@ -166,7 +166,7 @@ class InputHandler implements Singleton,Output {
 		return false;
 	}
 
-	public function getPost($item, $specialchars=true){
+	public function getPost($item, $specialchars=false){
 		try {
 			if(!isset($this->post_valid[$item])){
 				throw new BaseException('Variable Not valid');

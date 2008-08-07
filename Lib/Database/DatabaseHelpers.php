@@ -10,7 +10,7 @@ abstract class DatabaseListHelper {
 		if(isset($this->settings[$column])){
 			return $this->settings[$column];
 		} else {
-			return false;
+			return null;
 		}
 	}
 	

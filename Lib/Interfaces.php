@@ -74,6 +74,7 @@ interface Output {
 	public function getXML(DOMDocument $xml);
 	public function &getArray();
 }
+
 /**
  * @see http://en.wikipedia.org/wiki/Decorator_pattern
  */
@@ -154,7 +155,6 @@ abstract class Component {
 	
 	public function commit($recursive=true){
 		$this->_commitComponents($recursive);
-	}	
-	
+	}		
 }
 ?>

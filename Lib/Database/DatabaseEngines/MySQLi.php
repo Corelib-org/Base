@@ -217,6 +217,5 @@ class MySQLiTools {
 		}
 		return '('.implode(', ', $qfields)."\n".')VALUES('.implode(', ', $qvalues).')';
 	}
-}
- 
+} 
 ?>

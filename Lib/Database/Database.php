@@ -154,7 +154,7 @@ abstract class Query {
 abstract class DatabaseDAO {
 	private $database;
 
-	final protected function __construct(){
+	protected function __construct(){
 		$this->database = Database::getInstance();
 	}
 
@@ -234,6 +234,8 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 		echo '</div">';
 	}
 }
+
+
 if(DATABASE_SHOW_QUERY_LOG && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
 	$eventHandler = EventHandler::getInstance();
 	$eventHandler->registerObserver(new DatabasePrintStatsEvent());

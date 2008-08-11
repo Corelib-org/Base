@@ -87,11 +87,11 @@ class MySQLiEngine implements DatabaseEngine {
 }
 
 class MySQLiQuery extends Query {
-	private $instance = null;
-	private $result = null;
-	private $error = null;
-	private $errno = null;
-	private $insertid = null;
+	protected $instance = null;
+	protected $result = null;
+	protected $error = null;
+	protected $errno = null;
+	protected $insertid = null;
 
 	public function __construct($query){
 		parent::__construct($query);
@@ -101,7 +101,7 @@ class MySQLiQuery extends Query {
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;
 		$this->insertid = $this->instance->insert_id;
-	}
+	}	
 	public function setInstance($instance){
 		$this->instance = $instance;
 	}
@@ -128,6 +128,77 @@ class MySQLiQuery extends Query {
 	}
 	public function __toString(){
 		return $this->getQuery();
+	}
+}
+
+class MySQLiQueryStatement extends MySQLiQuery {
+	/**
+	 * @var mysqli_stmt
+	 */
+	private $statement = null;
+	private $bind = array();
+	private $blob = array();
+	
+	public function __construct($query, $item=null /*, [$items...] */){
+		parent::__construct($query);
+		$bind = func_get_args();
+		array_shift($bind);
+		call_user_func_array(array($this, 'bind'), $bind);
+	}
+	
+	public function bind($item=null /*, [$items...] */){
+		$bind = func_get_args();
+		foreach ($bind as $key => $val) {
+			$this->bind['param'][$key] = $val;
+			if(is_string($val) && strlen($val) < 256){
+				$this->bind['types'][$key] = 's';
+			} else if(is_string($val)){
+				$this->bind['types'][$key] = 'b';
+				$this->blob[$key] = $val;
+				$this->bind['param'][$key] = '';
+			} else if(is_integer($val)){
+				$this->bind['types'][$key] = 'i';
+			} else if(is_float($val)){
+				$this->bind['types'][$key] = 'd';
+			} else {
+				$this->bind['types'][$key] = 's';
+			}
+			
+		}
+	}
+	
+	public function execute(){
+		if(is_null($this->statement)){
+			$this->statement = $this->instance->prepare($this->getQuery());
+		}
+		$bind = $this->bind['param'];
+		array_unshift($bind, implode('', $this->bind['types']));
+		call_user_func_array(array($this->statement, 'bind_param'), $bind);
+		
+		foreach ($this->blob as $key => $val){
+			$this->statement->send_long_data($key, $val);
+		}
+		
+		$this->statement->execute();
+		$this->error = $this->statement->error;
+		$this->errno = $this->statement->errno;
+		$this->insertid = $this->statement->insert_id;
+	}
+	
+	public function getNumRows(){
+		return $this->statement->num_rows;
+	}	
+	
+	public function getAffectedRows(){
+		return $this->statement->affected_rows;
+	}	
+	
+	public function fetchArray(){
+		return false;
+	}
+	
+	public function __destruct(){
+		$this->statement->close();
 	}
 }
 
@@ -181,19 +252,23 @@ class MySQLiTools {
 		}
 	}
 	
-	static public function makeInsertStatement($table, array $fields){
-		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
+	static public function makeInsertStatement($table, array $fields, $statement=false){
+		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields, $statement);
 	}
 	
-	static public function makeReplaceStatement($table, array $fields){
-		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
+	static public function makeReplaceStatement($table, array $fields, $statement=false){
+		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields, $statement);
 	}
 	
-	static public function makeUpdateStatement($table, array $fields, $where=''){
+	static public function makeUpdateStatement($table, array $fields, $where='', $statement=false){
 		$query = 'UPDATE '.$table."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
-			$qfields[] = ' '.$field.'='.$value.'';
+			if($statement){
+				$qfields[] = ' '.$value.'=?';
+			} else {
+				$qfields[] = ' '.$field.'='.$value.'';
+			}
 		}
 		return $query.' '.implode(', ', $qfields).' '.$where;
 	}
@@ -208,14 +283,20 @@ class MySQLiTools {
 		return 'IN('.implode(', ', $values).')';
 	}
 	
-	static protected function _makeInsertReplaceValues(array $fields){
+	static protected function _makeInsertReplaceValues(array $fields, $statement=false){
 		$qfields = array();
 		$qvalues = array();
 		foreach ($fields as $field => $value){
-			$qfields[] = $field;
-			$qvalues[] = $value;
+			if($statement){
+				$qfields[] = $value;
+				$qvalues[] = '?';
+			} else {
+				$qfields[] = $field;
+				$qvalues[] = $value;
+				
+			}
 		}
-		return '('.implode(', ', $qfields)."\n".')VALUES('.implode(', ', $qvalues).')';
+		return '('.implode(', ', $qfields).')VALUES('.implode(', ', $qvalues).')';
 	}
 } 
 ?>

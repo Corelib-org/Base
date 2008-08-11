@@ -62,6 +62,11 @@ class GenericOutput implements Output {
 		$this->xml = $xml;
 		return $this->xml;
 	}
+	
+	public function setXMLDocumentFile($filename){
+		self::$DOMDocument->load($filename);
+		$this->setXML(self::$DOMDocument->documentElement);
+	}
 
 	public function setString($string){
 		try {

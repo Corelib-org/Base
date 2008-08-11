@@ -365,9 +365,23 @@ abstract class ManagerPage extends PageBase {
 	protected $xsl = null;
 
 	final public function __construct(){
+		if(!defined('CORELIB_MANAGER_USERNAME')){
+			define('CORELIB_MANAGER_USERNAME', 'admin');
+		}
+		if(!defined('CORELIB_MANAGER_PASSWORD')){
+			define('CORELIB_MANAGER_PASSWORD', 'admin');
+		}
+		
+		if((!isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != CORELIB_MANAGER_USERNAME) && (!isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_PW'] != CORELIB_MANAGER_PASSWORD)){
+		    header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
+		    header('HTTP/1.0 401 Unauthorized');
+		    echo '<h1>Access Denied</h1>';
+		    exit;
+		}
+		
 		define('DOMXSL_TEMPLATE_XSL_PATH', CORELIB);
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
-		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
+		$this->xsl->addTemplate('Ba	se/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
 	}
 	

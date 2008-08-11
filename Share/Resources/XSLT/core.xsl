@@ -5,6 +5,7 @@
 	<xsl:template match="/">
 		<html>
 			<head>
+				<base href="{/page/settings/redirect_url}"/>
 				<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
 				<meta http-equiv="Content-language" content="en"/>
 				<meta http-equiv="Content-Script-Type" content="text/javascript"/>
@@ -16,10 +17,7 @@
 						var redirect_url = '<xsl:value-of select="/page/settings/redirect_url"/>';
 					//</xsl:comment>
 				</script>
-				<!-- <link rel="shortcut icon" href="/corelib/resource/Manager/images/favicon.ico" /> -->
-				<link rel="stylesheet" type="text/css" href="{/page/settings/redirect_url}/corelib/resource/manager/css/basic.css" />
-				<link rel="stylesheet" type="text/css" href="{/page/settings/redirect_url}/corelib/resource/manager/css/layout.css" />
-				<link rel="stylesheet" type="text/css" href="{/page/settings/redirect_url}/corelib/resource/manager/css/forms.css" />
+				<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/basic.css" />
 				<xsl:for-each select="/page/settings/stylesheet">
 					<link rel="stylesheet" type="text/css" href="{.}" />
 				</xsl:for-each>

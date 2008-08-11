@@ -13,50 +13,69 @@ website:	ZCMS
 	margin: 0px;
 	padding: 0px;
 }
+
 body {
-	font-family: Arial, Helvetica, Verdana, Sans serif;
-	text-align: center;
-	color: #5e5e5e;
-	font-size: 11px;
-	background-color: #ededed;
-}
-h1 {
-	font-family: Arial, Helvetica, Verdana, Sans serif;
-	font-size: 18px;
-	color: #000;
-	font-weight: normal;
-	margin: 10px 0 15px 0;
-}
-h2 {
-}
-h3 {
+	background-image: url('../images/background.gif');
+	margin: 19px 0px 0px 0px;
+	font-family: Arial;
+	color: #aaaaaa;
 }
 p {
-	font-family: Arial, Helvetica, Verdana, Sans serif;
-	font-size: 11px;
-	color: #5e5e5e;
-	font-weight: normal;  
+	margin-top: 0px;
+	margin-bottom: 25px;
+	font-size: 13px;
+	line-height: 16px;
 }
-small {
-}
-a:link, a:visited, a:active {
-	font-family: Arial, Helvetica, Verdana, Sans serif;
-	font-size: 11px;
-	color: #5cb7e1;
+h1 {
+	margin: 0px;
+	font-size: 30px;
+	margin-bottom: 10px;
 	font-weight: normal;
-	text-decoration: underline;
 }
-a:hover {
-	font-family: Arial, Helvetica, Verdana, Sans serif;
-	font-size: 11px;
-	color: #5cb7e1;
+h2 {
+	margin: 0px;
+	font-size: 25px;
+	margin-bottom: 10px;
 	font-weight: normal;
-	text-decoration: none;
 }
-
-hr {
-	background-color: #FFF;
-	border: 1px solid #cbc6bd;
-	border-width: 1px 0 0 0;
-	margin: 10px 0px 10px 0px;
+legend {
+	font-size: 25px;
+}
+input {
+	font-family: Arial;
+}
+form > div {
+	border: 1px solid #ececec;
+	background-color: #fbfbfb;
+	padding: 10px;
+	padding-bottom: 0px;
+	margin-bottom: 10px;
+}
+label {
+	float: left;
+	width: 225px;
+	padding-top: 7px;
+}
+table {
+	border-spacing: 0px;
+	width: 100%;
+	margin-bottom: 10px;
+}
+th {
+	border: 1px solid #ececec;
+	border-width: 3px 0px 3px 0px;
+	background-color: #f9f9f9;
+	text-align: left;
+	font-size: 15px;
+	font-weight: normal;
+	padding: 5px 0px 5px 0px;
+}
+td {
+	border: 1px solid #ececec;
+	border-width: 0px 0px 1px 0px;
+	font-size: 13px;
+	padding: 5px 0px 5px 0px;
+}
+tfoot td {
+	border-width: 2px 0px 0px 0px;
 }

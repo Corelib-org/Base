@@ -556,9 +556,7 @@ class InputValidatorRegex implements InputValidator {
 /**
  * @deprecated use InputValidatorRegex istead
  */
-class RegexInputValidator extends InputValidatorRegex {
-	
-}
+class RegexInputValidator extends InputValidatorRegex { }
 
 class InputValidatorEmail implements InputValidator {
 	public function validate($content){

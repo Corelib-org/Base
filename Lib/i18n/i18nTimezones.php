@@ -11,7 +11,7 @@ class i18nTimezones implements Output {
 			$this->timezones = timezone_identifiers_list();
 		}
 		$timezones = $xml->createElement('timezones');
-		while(list($key, $val) = each($this->timezones)){
+		foreach($this->timezones as $key => $val) {
 			if(is_array($val)){
 				$key = $val[0];
 				$val = $val[1];

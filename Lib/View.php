@@ -67,6 +67,10 @@ abstract class View implements Output {
 		return $xml->importNode($this->xml->documentElement, true);
 	}
 		
+	public function &getArray(){ 
+
+	}	
+	
 	protected function _getXML(){
 		return $this->xml->saveXML();
 	}

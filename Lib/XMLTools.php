@@ -1,6 +1,6 @@
 <?php
 class XMLTools {
-	static public function escapeXMLCharecters($string){
+	static public function escapeXMLCharacters($string){
 		return htmlspecialchars($string, null, 'UTF-8', false);
 	}
 	

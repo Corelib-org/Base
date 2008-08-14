@@ -300,7 +300,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 class PageFactoryDOMXSLDOMDocument extends DOMDocument {
 	public function createElement($name, $value=null){
 		if(!is_null($value)){
-			return parent::createElement($name, XMLTools::escapeXMLCharecters($value));
+			return parent::createElement($name, XMLTools::escapeXMLCharacters($value));
 		} else {
 			return parent::createElement($name);
 		}

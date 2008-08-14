@@ -438,7 +438,7 @@ class InputHandler implements Singleton,Output {
 					$this->_xmlArray($xml, $XMLArray, $val);
 					$XMLget->appendChild($XMLArray);
 				} else {
-					$XMLget->appendChild($xml->createElement($key, XMLTools::escapeXMLCharecters($val)));
+					$XMLget->appendChild($xml->createElement($key, $val));
 				}
 			}
 		}

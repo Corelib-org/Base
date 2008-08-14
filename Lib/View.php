@@ -53,8 +53,10 @@ abstract class View implements Output {
 	 * @return DOMElement
 	 */
 	abstract protected function _generate(DOMDocument $xml);
+	abstract protected function _getDAO($read=true);
 	
 	public function generate(){
+		$this->_getDAO(false);
 		if(is_null($this->xml)){
 			$this->xml = $this->_prepareDOMDocument();			
 		}

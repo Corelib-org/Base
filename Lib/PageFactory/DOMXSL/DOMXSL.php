@@ -188,7 +188,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	}
 
 	protected function _prepareXML(){
-		$this->xml = new DOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
+		$this->xml = new PageFactoryDOMXSLDOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$this->xml->preserveWhiteSpace = false;
 
 		$this->xsl = new DOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
@@ -265,6 +265,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		while (list(,$val) = each($stylesheets)) {
 			$val = $this->_relativeToPath($path, $val);
 			$xsl = new DOMDocument('1.0', 'UTF-8');
+			$xsl->createElement();
 			$xsl->load($val);
 			$templates = $this->_parseTemplates($xsl, $val, $call, $match);
 			$call = $templates[0];
@@ -292,6 +293,16 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			return '$'.trim($key).', $'.trim($val);
 		} else {
 			return ', $'.trim($as);
+		}
+	}
+}
+
+class PageFactoryDOMXSLDOMDocument extends DOMDocument {
+	public function createElement($name, $value=null){
+		if(!is_null($value)){
+			return parent::createElement($name, XMLTools::escapeXMLCharecters($value));
+		} else {
+			return parent::createElement($name);
 		}
 	}
 }

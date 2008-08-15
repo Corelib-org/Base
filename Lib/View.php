@@ -1,7 +1,7 @@
 <?php
-define('DATABASE_MYSQLI_VIEW_JOIN_TABLE', 'join_table');
-define('DATABASE_MYSQLI_VIEW_JOIN_KEY', 'join_key');
-define('DATABASE_MYSQLI_VIEW_WHERE', 'where');
+define('DATABASE_MYSQLI_VIEW_JOIN_TABLE', 'mysqli_view_join_table');
+define('DATABASE_MYSQLI_VIEW_JOIN_KEY', 'mysqli_view_join_key');
+define('DATABASE_MYSQLI_VIEW_WHERE', 'mysqli_view_where');
 
 define('DATABASE_VIEW_XML_FIELD', 'xml');
 
@@ -94,5 +94,4 @@ abstract class View implements Output {
 		return new DOMDocument('1.0', 'UTF-8');
 	}
 }
-
 ?>

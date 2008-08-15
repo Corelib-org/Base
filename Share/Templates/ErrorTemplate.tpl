@@ -7,7 +7,7 @@
 	</head data="ffffe0">
 	<body style="background: #ffffFF; margin: 20px">
 		!ERROR_TEMPLATE {
-			<table style="border: 1px solid #CCCCCC; background: #ffffe0; width: 80%; margin-bottom: 20px;" align="center">
+			<table style="border: 1px solid #CCCCCC; background: #ffffe0; width: 80%; margin-bottom: 20px; text-align: left;" align="center">
 				<tr>
 					<td>
 			 			<div style="margin-left: 10px; margin-right: 10px; margin-top: 10px;">

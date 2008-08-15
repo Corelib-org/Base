@@ -34,15 +34,16 @@ class MySQLiEngine implements DatabaseEngine {
 		} catch (BaseException $e){
 			echo $e;
 		}
+		/*
 		if(function_exists('posix_getpid')){
 			if($this->pid != posix_getpid() || is_null($this->connection)){
 				$this->_connect();
 			}
-		} else {
+		} else { */
 			if(is_null($this->connection)){
 				$this->_connect();
 			}			
-		}
+		// }
 		$query->setInstance($this->connection);
 		if($this->reconnect){
 			while(true){

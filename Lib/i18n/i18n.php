@@ -148,30 +148,34 @@ class i18n implements Singleton,Output {
 	
 	public function detectLanguage(){
 		if(!isset($_COOKIE[$this->cookie_name]) || !isset($this->languages[$_COOKIE[$this->cookie_name]])){
-			$locales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
-			while (list(,$val) = each($locales)){
-				if(strstr($val, ';')){
-					list($language, $priority) = explode(';', $val, 2);
-				} else {
-					$language = $val;
-					$priority = 1;
+			if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+				$locales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
+				while (list(,$val) = each($locales)){
+					if(strstr($val, ';')){
+						list($language, $priority) = explode(';', $val, 2);
+					} else {
+						$language = $val;
+						$priority = 1;
+					}
+					$languages[$language] = (float) str_replace('q=', '', $priority);
 				}
-				$languages[$language] = (float) str_replace('q=', '', $priority);
-			}
-			asort($languages);
-			$languages = array_keys($languages);
-			while(sizeof($languages) > 0){
-				$language = array_pop($languages);
-				if(isset($this->languages[$language])){
-					$this->setLanguage($language);
-					break;
-				} else if(strstr($language, '-')){
-					list($suffix,) = explode('-', $language);
-					if(isset($this->languages[$suffix])){
-						$this->setLanguage($suffix);
-						break;					
+				asort($languages);
+				$languages = array_keys($languages);
+				while(sizeof($languages) > 0){
+					$language = array_pop($languages);
+					if(isset($this->languages[$language])){
+						$this->setLanguage($language);
+						break;
+					} else if(strstr($language, '-')){
+						list($suffix,) = explode('-', $language);
+						if(isset($this->languages[$suffix])){
+							$this->setLanguage($suffix);
+							break;					
+						}
 					}
 				}
+			} else {
+				$this->setLanguage($this->getDefaultLanguage());
 			}
 		} else {
 			$this->setLanguage($_COOKIE[$this->cookie_name]);

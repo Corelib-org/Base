@@ -143,11 +143,14 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	public function __construct($query, $item=null /*, [$items...] */){
 		parent::__construct($query);
 		$bind = func_get_args();
-		array_shift($bind);
-		call_user_func_array(array($this, 'bind'), $bind);
+		if(sizeof($bind) > 0){
+			array_shift($bind);
+			call_user_func_array(array($this, 'bind'), $bind);
+		}
 	}
 	
 	public function bind($item=null /*, [$items...] */){
+		$this->bind = array();
 		$bind = func_get_args();
 		foreach ($bind as $key => $val) {
 			$this->bind['param'][$key] = $val;
@@ -203,7 +206,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	}
 	
 	public function __destruct(){
-		$this->statement->close();
+		@$this->statement->close();
 	}
 }
 

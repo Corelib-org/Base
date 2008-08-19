@@ -173,12 +173,14 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	
 	public function execute(){
 		if(is_null($this->statement)){
+			echo $this->query;
 			if(!$this->statement = $this->instance->prepare($this->getQuery())){
 				$this->error = $this->instance->error;
 				$this->errno = $this->instance->errno;
 				return false;
 			}
 		}
+		
 		$bind = $this->bind['param'];
 		array_unshift($bind, implode('', $this->bind['types']));
 		call_user_func_array(array($this->statement, 'bind_param'), $bind);

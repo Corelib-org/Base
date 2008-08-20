@@ -16,7 +16,7 @@ class MySQLiEngine implements DatabaseEngine {
 	private $reconnect = false;
 
 	const PREFIX = 'MySQLi';
-	
+
 	public function __construct($hostname, $username, $password, $database, $reconnect=false, $charset='utf8'){
 		$this->hostname = $hostname;
 		$this->username = $username;
@@ -42,11 +42,9 @@ class MySQLiEngine implements DatabaseEngine {
 		} else { */
 			if(is_null($this->connection)){
 				$this->_connect();
-			}
+			}			
 		// }
-		
 		$query->setInstance($this->connection);
-		
 		if($this->reconnect){
 			while(true){
 				$query->execute();
@@ -132,7 +130,6 @@ class MySQLiQuery extends Query {
 	public function __toString(){
 		return $this->getQuery();
 	}
-	
 }
 
 class MySQLiQueryStatement extends MySQLiQuery {
@@ -311,7 +308,7 @@ class MySQLiTools {
 		$qfields = array();
 		$qvalues = array();
 		foreach ($fields as $field => $value){
-			if($statement){
+			if($statement || is_integer($fields)){
 				$qfields[] = $value;
 				$qvalues[] = '?';
 			} else {

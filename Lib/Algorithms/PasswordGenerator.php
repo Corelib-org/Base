@@ -5,7 +5,7 @@ class PasswordGenerator {
 	static public function random($len){
 		$code = '';
 		for ($i = 1; $i <= $len; $i++){	
-			$code .= $this->characters{rand(0, (strlen($this->characters) -1 ))};
+			$code .= $this->characters{mt_rand(0, (strlen($this->characters) -1 ))};
 		}
 		return $code;
 	}	

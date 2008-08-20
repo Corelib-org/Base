@@ -5,13 +5,6 @@ define('DATABASE_GT', '>');
 define('DATABASE_LT', '<');
 define('DATABASE_EQUAL', '=');
 
-class myTest extends mysqli {
-		
-	public function __destruct(){
-		echo '<b>mysqli DIED</b><br/>';
-	}	
-}
-
 class MySQLiEngine implements DatabaseEngine {
 	private $connection = null;
 	private $hostname = null;
@@ -23,7 +16,6 @@ class MySQLiEngine implements DatabaseEngine {
 	private $reconnect = false;
 
 	const PREFIX = 'MySQLi';
-	
 	
 	public function __construct($hostname, $username, $password, $database, $reconnect=false, $charset='utf8'){
 		$this->hostname = $hostname;
@@ -68,10 +60,7 @@ class MySQLiEngine implements DatabaseEngine {
 				}
 			}
 		} else {
-			var_dump($this->connection);
-			$res = $query->execute();
-			var_dump($this->connection);
-			return $res;
+			return $query->execute();
 		}
 		return false;
 	}
@@ -89,7 +78,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	
 	private function _connect(){
-		$this->connection = new myTest($this->hostname, $this->username, $this->password, $this->database);
+		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
 			$this->connection->query('SET NAMES '.$this->charset);
 			$this->connection->query('SET CHARACTER SET '.$this->charset);
@@ -98,10 +87,6 @@ class MySQLiEngine implements DatabaseEngine {
 			return false;
 		}
 	}
-	
-	public function __destruct(){
-		echo '<b>ENGINE DIED</b><br/>';
-	}	
 }
 
 class MySQLiQuery extends Query {
@@ -119,7 +104,6 @@ class MySQLiQuery extends Query {
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;
 		$this->insertid = $this->instance->insert_id;
-		echo 'ERROR: '.$this->error;
 	}	
 	public function setInstance($instance){
 		$this->instance = $instance;
@@ -149,10 +133,6 @@ class MySQLiQuery extends Query {
 		return $this->getQuery();
 	}
 	
-	public function __destruct(){
-		echo '<br/>'.$this->getQuery().'<br/>';
-		echo '<b>QUERY DIED</b><br/><br/><br/>';
-	}		
 }
 
 class MySQLiQueryStatement extends MySQLiQuery {

@@ -155,6 +155,8 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	public function bind($item=null /*, [$items...] */){
 		$this->bind = array();
 		$bind = func_get_args();
+		
+		
 		foreach ($bind as $key => $val) {
 			$this->bind['param'][$key] = $val;
 			if(is_string($val) && strlen($val) < 256){
@@ -167,10 +169,12 @@ class MySQLiQueryStatement extends MySQLiQuery {
 				$this->bind['types'][$key] = 'i';
 			} else if(is_float($val)){
 				$this->bind['types'][$key] = 'd';
+			} else if(is_bool($val)){
+				$this->bind['param'][$key] = MySQLiTools::parseBooleanValue($val, false);
+				$this->bind['types'][$key] = 's';
 			} else {
 				$this->bind['types'][$key] = 's';
 			}
-			
 		}
 	}
 	
@@ -224,11 +228,19 @@ class MySQLiTools {
 		}
 		return $val;
 	}
-	static public function parseBooleanValue($val){
-		if($val === true){
-			$val = '\'TRUE\'';
+	static public function parseBooleanValue($val, $escape=true){
+		if($escape){
+			if($val === true){
+				$val = '\'TRUE\'';
+			} else {
+				$val = '\'FALSE\'';
+			}
 		} else {
-			$val = '\'FALSE\'';
+			if($val === true){
+				$val = 'TRUE';
+			} else {
+				$val = 'FALSE';
+			}
 		}
 		return $val;
 	}	

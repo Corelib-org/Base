@@ -180,7 +180,6 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	
 	public function execute(){
 		if(is_null($this->statement)){
-			echo $this->query;
 			if(!$this->statement = $this->instance->prepare($this->getQuery())){
 				$this->error = $this->instance->error;
 				$this->errno = $this->instance->errno;

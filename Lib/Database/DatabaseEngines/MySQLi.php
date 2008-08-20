@@ -288,7 +288,7 @@ class MySQLiTools {
 		$query = 'UPDATE '.$table."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
-			if($statement){
+			if($statement || is_integer($fields)){
 				$qfields[] = ' '.$value.'=?';
 			} else {
 				$qfields[] = ' '.$field.'='.$value.'';

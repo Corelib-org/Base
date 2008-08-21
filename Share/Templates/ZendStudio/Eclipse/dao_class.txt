@@ -1,0 +1,69 @@
+class MySQLi_${class_name} extends DatabaseDAO implements Singleton,DAO_${class_name} {
+	private static $$instance = null;
+	
+	const SELECT_COLUMNS = '';
+	
+	/**
+	 *	@return MySQLi_${class_name}
+	 */
+	public static function getInstance(){
+		if(is_null(self::$$instance)){
+			self::$$instance = new MySQLi_${class_name}();
+		}
+		return self::$$instance;	
+	}
+
+	public function create(){
+		$$this->startTransaction();
+		
+		$$query = 'INSERT INTO 
+			          VALUES()';
+		$$query = $$this->masterQuery(new MySQLiQuery($$query));
+			
+		if($$id = (int) $$query->getInsertID()){
+			$$this->commit();
+			return $$id;
+		} else {
+			$$this->rollback();	
+			return false;	 
+		}
+	}
+	
+	public function update($$id){
+		$$this->startTransaction();
+
+		$$query = 'UPDATE 
+		          SET
+		          WHERE '.${class_name}::FIELD_ID.'=\''.$$id.'\'';
+		$$query = $$this->masterQuery(new MySQLiQuery($$query));
+
+		if($$query->getAffectedRows() > 0){
+			$$this->commit();
+			return true;
+		} else {
+			$$this->rollback();	
+			return false;	 
+		}
+	}
+	public function read($$id){
+	
+		$$query = 'SELECT 
+		          FROM 
+		          WHERE '.${class_name}::FIELD_ID.'=\''.$$id.'\'';
+		$$query = $$this->slaveQuery(new MySQLiQuery($$query));
+		
+		return $$query->fetchArray();
+	}	
+	public function delete($$id){
+	
+		$$query = 'DELETE FROM 
+		          WHERE '.${class_name}::FIELD_ID.'=\''.$$id.'\'';
+		$$query = $$this->masterQuery(new MySQLiQuery($$query));
+			
+		if($$query->getAffectedRows() > 0){
+			return true;
+		} else {
+			return false;	 
+		}
+	}
+}

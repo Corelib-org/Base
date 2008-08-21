@@ -1,0 +1,150 @@
+abstract class ${class_name}ViewModify implements Event {
+	/**
+	 * @var ${class_name}
+	 */
+	protected $$controller;
+	
+	function __construct(${class_name}View $$controller){
+		$$this->controller = $$controller;
+	}
+		
+	public function getID(){
+		return $$this->controller->getID();
+	}
+	
+	public function getObj(){
+		return $$this->controller;
+	}
+}
+class ${class_name}ViewModifyBeforeCommit extends ${class_name}ViewModify  {
+	
+}
+class ${class_name}ViewModifyAfterCommit extends ${class_name}ViewModify  {
+	
+}
+
+interface DAO_${class_name}View {
+	/**
+	 * @return boolean true on success, else return false
+	 */	
+	public function update($$id, $$xml);
+	/**
+	 * @return array on success, else return false
+	 */
+	public function read($$id);
+	/**
+	 * @return boolean true on success, else return false
+	 */
+	public function delete($$id);
+}
+
+class ${class_name}View extends ${class}View {
+	private $$id = null;
+	
+	const FIELD_ID = '';
+	
+	const DAO = '${class_name}View';
+
+	public function __construct($$id = null, $$array = array()){
+		$$this->id = $$id;
+		if(sizeof($$array) > 0){
+			$$this->_setFromArray($$array);
+		}
+	}
+	
+	public function getID(){
+		return $$this->id;
+	}
+		
+	public function _generate(DOMDocument $$xml){		
+	
+	}
+		
+	public function read(){
+		$$this->_getDAO(false);
+		if($$array = $$this->dao->read($$this->id)){
+			$$this->_setFromArray($$array);
+			return true;
+		} else {
+			return false;
+		}
+	}
+		
+	public function commit(){
+		$$event = EventHandler::getInstance();
+		$$this->_getDAO();
+		try {
+			$$event->triggerEvent(new ${class_name}ViewModifyBeforeCommit($$this));
+			$$r = $$this->_update();
+			if($$r){
+				$$event->triggerEvent(new ${class_name}ViewModifyAfterCommit($$this));
+			}
+			return $$r;
+		} catch (BaseException $$e){
+			echo $$e;
+			exit;
+		}
+		return false;
+	}
+
+	protected function _getDAO($$read=true){
+		if(is_null($$this->dao)){
+			$$this->dao = Database::getDAO(self::DAO);
+			if($$read){
+				$$this->read();
+			}
+		}
+		return true;
+	}
+
+	protected function _update(){
+		if($$this->dao->update($$this->id, $$this->_getXML())){
+			$$this->read();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	protected function _setFromArray($$array){
+		parent::_setFromArray($$array);
+		if(isset($$array[self::FIELD_ID])){
+			$$this->id = (int) $$array[self::FIELD_ID];
+		} else if(isset($$array[${class}::FIELD_ID])){
+			$$this->id = (int) $$array[${class}::FIELD_ID];
+		}
+	}
+}
+
+class ${class_name}ViewList extends ${class}ViewList  {
+	public function getListHelper(){
+		$$dao = Database::getDAO(${class_name}View::DAO);
+		return $$dao->getListHelper();
+	}
+	
+	public function getViewXML($$id, array $$array = array(), DOMDocument $$xml){
+		$$view = new ${class_name}FullView($$id, $$array);
+		return $$view->getXML($$xml);
+	}
+	
+	public function getViewArray($$id, array $$array = array()){
+		
+	}
+}
+
+class ${class_name}View${class}Update implements EventTypeHandler,Observer  {
+	private $$subject = null;
+	
+	public function getEventType(){
+		return '${class}ModifyAfterCommit';	
+	}	
+	public function register(ObserverSubject $$subject){
+		$$this->subject = $$subject;
+	}
+	public function update($$update){
+		$$a = $$update->getObj();
+		$$v = new ${class_name}View($$a->getID());
+		$$v->generate();
+	}
+}
+EventHandler::getInstance()->registerObserver(new ${class_name}View${class}Update());

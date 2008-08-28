@@ -202,7 +202,7 @@ class BaseException extends Exception {
 				}
 					
 
-				$source[$i] = str_replace("\t", '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
+				$source[$i] = str_replace("\t", '&#160;&#160;&#160;&#160;', $source[$i]);
 				
 				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
 			}

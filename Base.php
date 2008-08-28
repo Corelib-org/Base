@@ -164,7 +164,14 @@ if(!defined('BASE_CLASS_CACHE_FILE')){
 	 * the script, and it can be overwritten any time before include
 	 * {@link Base.php}.
 	 */
-	define('BASE_CLASS_CACHE_FILE', 'var/db/class.db');
+	define('BASE_CLASS_CACHE_FILE', 'var/cache/class.db');
+}
+
+if(!defined('BASE_UMASK')){
+	/**
+	 * Define default umask
+	 */
+	define('BASE_UMASK', 0);
 }
 
 if(!defined('BASE_DEFAULT_TIMEZONE')){
@@ -280,6 +287,7 @@ class Base implements Singleton {
 	 */
 	private function __construct(){
 		mb_internal_encoding('UTF-8');
+		umask(BASE_UMASK);
 		if(php_sapi_name() == 'cli'){
 			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n");
 		} else {
@@ -476,8 +484,11 @@ class Base implements Singleton {
 				$content .= '$classes = array();';
 			}
 			$content .= ' ?>';
+			if(!is_dir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE))){
+				mkdir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE), 0777, true);
+			}
 			file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
-			@chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
+			// @chmod(BASE_CLASS_CACHE_FILE, 0666);
 		}
 	}
 }

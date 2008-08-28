@@ -285,7 +285,7 @@ class MySQLiTools {
 		$query = 'UPDATE '.$table."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
-			if($statement || is_integer($fields)){
+			if($statement || is_integer($field)){
 				$qfields[] = ' '.$value.'=?';
 			} else {
 				$qfields[] = ' '.$field.'='.$value.'';
@@ -308,13 +308,13 @@ class MySQLiTools {
 		$qfields = array();
 		$qvalues = array();
 		foreach ($fields as $field => $value){
-			if($statement || is_integer($fields)){
+			if($statement || is_integer($field)){
+
 				$qfields[] = $value;
 				$qvalues[] = '?';
 			} else {
 				$qfields[] = $field;
 				$qvalues[] = $value;
-				
 			}
 		}
 		return '('.implode(', ', $qfields).')VALUES('.implode(', ', $qvalues).')';

@@ -243,8 +243,20 @@ class MySQLiTools {
 	static public function parseWildcards($val){
 		return str_replace('*', '%', $val);
 	}
-	static public function parseUnixtimestamp($val){
-		return 'FROM_UNIXTIME(\''.$val.'\')';
+	static public function parseUnixtimestamp($val,$statement=false){
+		if($statement) {
+			if(!is_null($val)) {
+				return 'FROM_UNIXTIME(?)';
+			} else {
+				return null;
+			}
+		} else {
+			if(!is_null($val)) {
+				return 'FROM_UNIXTIME(\''.$val.'\')';
+			} else {
+				return 'NULL';
+			}
+		}
 	}
 	static public function prepareOrderStatement(DatabaseListHelperOrder $order){
 		$args = func_get_args();
@@ -309,7 +321,6 @@ class MySQLiTools {
 		$qvalues = array();
 		foreach ($fields as $field => $value){
 			if($statement || is_integer($field)){
-
 				$qfields[] = $value;
 				$qvalues[] = '?';
 			} else {

@@ -40,7 +40,6 @@ class URLParser implements Singleton,Output {
 		// return preg_match('/^[a-z0-9A-Z\.\s-_\0x00f8]*$/', $part);
 	}
 	
-	
 	public function getUrlPart($part){
 		if(isset($this->url_parts[$part])){
 			return addslashes($this->url_parts[$part]);

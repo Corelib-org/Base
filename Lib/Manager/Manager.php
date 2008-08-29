@@ -1,6 +1,6 @@
 <?php
 if(!defined('MANAGER_DATADIR')){
-	define('MANAGER_DATADIR', 'var/db/manager/');
+	define('MANAGER_DATADIR', 'var/cache/manager/');
 }
 if(!defined('MANAGER_DEVELOPER_MODE')){
 	define('MANAGER_DEVELOPER_MODE', false);
@@ -101,7 +101,7 @@ class Manager implements Singleton {
 
 	protected function __construct(){
 		if(!is_dir(MANAGER_DATADIR)){
-			mkdir(MANAGER_DATADIR, 0777);
+			mkdir(MANAGER_DATADIR, 0777, true);
 			@chmod(MANAGER_DATADIR, 0777);
 		}
 		try {
@@ -372,7 +372,7 @@ abstract class ManagerPage extends PageBase {
 			define('CORELIB_MANAGER_PASSWORD', 'admin');
 		}
 		
-		if((!isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] != CORELIB_MANAGER_USERNAME) && (!isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_PW'] != CORELIB_MANAGER_PASSWORD)){
+		if((!isset($_SERVER['PHP_AUTH_USER']) && @$_SERVER['PHP_AUTH_USER'] != CORELIB_MANAGER_USERNAME) && (!isset($_SERVER['PHP_AUTH_PW']) && @$_SERVER['PHP_AUTH_PW'] != CORELIB_MANAGER_PASSWORD)){
 		    header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
 		    header('HTTP/1.0 401 Unauthorized');
 		    echo '<h1>Access Denied</h1>';

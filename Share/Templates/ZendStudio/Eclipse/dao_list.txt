@@ -1,0 +1,56 @@
+class MySQLi_${class}List extends DatabaseDAO implements Singleton,DAO_${class}List {
+	private static $$instance = null;
+
+	
+	/**
+	 *	@return MySQLi_${class}List
+	 */
+	public static function getInstance(){
+		if(is_null(self::$$instance)){
+			self::$$instance = new MySQLi_${class}List();
+		}
+		return self::$$instance;	
+	}
+	
+	public function getList(DatabaseListHelperFilter $$filter, DatabaseListHelperOrder $$order, $$view, $$offset=null, $$limit=null){
+		$$order = MySQLiTools::prepareOrderStatement($$order, ${class}::FIELD_TITLE);
+		$$join = '';
+		$$columns = MySQLi_${class}::SELECT_COLUMNS;
+		
+		if(!$$limit = MySQLiTools::prepareLimitStatement($$offset, $$limit)){
+			$$limit = '';
+		}
+		
+		if($$view instanceof DatabaseViewHelper){
+			$$join .= ' LEFT JOIN '.$$view->get(DATABASE_MYSQLI_VIEW_JOIN_TABLE).' ON '.${class}::FIELD_ID.'='.$$view->get(DATABASE_MYSQLI_VIEW_JOIN_KEY).' ';
+			$$columns .= ', '.$$view->get(DATABASE_VIEW_XML_FIELD);
+		}	
+		
+		$$query = 'SELECT '.$$columns.'
+		          FROM 
+		          '.$$join.'
+		          '.$$this->_prepareWhereStatement($$filter).'
+		          '.$$order.'
+		          '.$$limit;
+		return $$this->query(new MySQLiQuery($$query));
+	}
+	
+	public function getListCount(DatabaseListHelperFilter $$filter){
+		$$query = 'SELECT COUNT('.${class}::FIELD_ID.') AS count
+		          FROM 
+		          '.$$this->_prepareWhereStatement($$filter);
+		$$query = $$this->query(new MySQLiQuery($$query));
+		$$query = $$query->fetchArray();
+		return $$query['count'];
+	}	
+	
+	private function _prepareWhereStatement(DatabaseListHelperFilter $$filter){
+		$$where = 'WHERE 1 ';
+		if($$filter->count() > 0){
+			if($$title = $$filter->get(${class}::FIELD_TITLE)){
+				$$where .= 'AND '.${class}::FIELD_HEADLINE.' LIKE \''.MySQLiTools::parseWildcards($$title).'\' ';
+			}
+		}
+		return $$where;
+	}
+}

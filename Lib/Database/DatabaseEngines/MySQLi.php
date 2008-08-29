@@ -34,15 +34,16 @@ class MySQLiEngine implements DatabaseEngine {
 		} catch (BaseException $e){
 			echo $e;
 		}
+		/*
 		if(function_exists('posix_getpid')){
 			if($this->pid != posix_getpid() || is_null($this->connection)){
 				$this->_connect();
 			}
-		} else {
+		} else { */
 			if(is_null($this->connection)){
 				$this->_connect();
 			}			
-		}
+		// }
 		$query->setInstance($this->connection);
 		if($this->reconnect){
 			while(true){
@@ -142,12 +143,17 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	public function __construct($query, $item=null /*, [$items...] */){
 		parent::__construct($query);
 		$bind = func_get_args();
-		array_shift($bind);
-		call_user_func_array(array($this, 'bind'), $bind);
+		if(sizeof($bind) > 0){
+			array_shift($bind);
+			call_user_func_array(array($this, 'bind'), $bind);
+		}
 	}
 	
 	public function bind($item=null /*, [$items...] */){
+		$this->bind = array();
 		$bind = func_get_args();
+		
+		
 		foreach ($bind as $key => $val) {
 			$this->bind['param'][$key] = $val;
 			if(is_string($val) && strlen($val) < 256){
@@ -160,10 +166,12 @@ class MySQLiQueryStatement extends MySQLiQuery {
 				$this->bind['types'][$key] = 'i';
 			} else if(is_float($val)){
 				$this->bind['types'][$key] = 'd';
+			} else if(is_bool($val)){
+				$this->bind['param'][$key] = MySQLiTools::parseBooleanValue($val, false);
+				$this->bind['types'][$key] = 's';
 			} else {
 				$this->bind['types'][$key] = 's';
 			}
-			
 		}
 	}
 	
@@ -175,6 +183,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 				return false;
 			}
 		}
+		
 		$bind = $this->bind['param'];
 		array_unshift($bind, implode('', $this->bind['types']));
 		call_user_func_array(array($this->statement, 'bind_param'), $bind);
@@ -202,7 +211,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	}
 	
 	public function __destruct(){
-		$this->statement->close();
+		@$this->statement->close();
 	}
 }
 
@@ -215,19 +224,39 @@ class MySQLiTools {
 		}
 		return $val;
 	}
-	static public function parseBooleanValue($val){
-		if($val === true){
-			$val = '\'TRUE\'';
+	static public function parseBooleanValue($val, $escape=true){
+		if($escape){
+			if($val === true){
+				$val = '\'TRUE\'';
+			} else {
+				$val = '\'FALSE\'';
+			}
 		} else {
-			$val = '\'FALSE\'';
+			if($val === true){
+				$val = 'TRUE';
+			} else {
+				$val = 'FALSE';
+			}
 		}
 		return $val;
 	}	
 	static public function parseWildcards($val){
 		return str_replace('*', '%', $val);
 	}
-	static public function parseUnixtimestamp($val){
-		return 'FROM_UNIXTIME(\''.$val.'\')';
+	static public function parseUnixtimestamp($val,$statement=false){
+		if($statement) {
+			if(!is_null($val)) {
+				return 'FROM_UNIXTIME(?)';
+			} else {
+				return null;
+			}
+		} else {
+			if(!is_null($val)) {
+				return 'FROM_UNIXTIME(\''.$val.'\')';
+			} else {
+				return 'NULL';
+			}
+		}
 	}
 	static public function prepareOrderStatement(DatabaseListHelperOrder $order){
 		$args = func_get_args();
@@ -268,7 +297,7 @@ class MySQLiTools {
 		$query = 'UPDATE '.$table."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
-			if($statement){
+			if($statement || is_integer($field)){
 				$qfields[] = ' '.$value.'=?';
 			} else {
 				$qfields[] = ' '.$field.'='.$value.'';
@@ -291,13 +320,12 @@ class MySQLiTools {
 		$qfields = array();
 		$qvalues = array();
 		foreach ($fields as $field => $value){
-			if($statement){
+			if($statement || is_integer($field)){
 				$qfields[] = $value;
 				$qvalues[] = '?';
 			} else {
 				$qfields[] = $field;
 				$qvalues[] = $value;
-				
 			}
 		}
 		return '('.implode(', ', $qfields).')VALUES('.implode(', ', $qvalues).')';

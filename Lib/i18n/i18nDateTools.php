@@ -1,6 +1,5 @@
 <?php
-abstract class i18nDateTools
-{
+abstract class i18nDateTools {
 	protected function _parseOffsetString($string) {
 		switch($string[0]){
 			case '-':

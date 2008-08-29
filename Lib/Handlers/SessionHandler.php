@@ -224,6 +224,7 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 		return isset($_SESSION[$name]);
 	}
 	public function remove($name){
+		session_unregister($name);
 		unset($_SESSION[$name]);
 	}
 	public function lock($name){

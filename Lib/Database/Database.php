@@ -13,8 +13,8 @@ class Database implements Singleton {
 	private $query_log = array();
 
 	private function __construct(){
-
 	}
+	
 	/**
 	 *	@return Database
 	 */
@@ -188,6 +188,10 @@ abstract class DatabaseDAO {
 	}
 	public function rollback(){
 		return $this->database->rollback();
+	}
+	
+	public function __wakeup(){
+		$this->__construct();
 	}
 }
 

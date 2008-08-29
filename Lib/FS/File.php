@@ -2,6 +2,7 @@
 class File {
 	private $filename = null;
 	private $mime_type = null;
+	private $pointer = null;
 	
 	public function __construct($file){
 		if(!is_file($file)){
@@ -27,6 +28,27 @@ class File {
 		return filesize($this->getFullName());
 	}
 	
+
+	public function fopen($mode = 'r'){
+		$this->pointer = fopen($this->getFullName(), $mode);
+	}
+	
+	public function fseek($offset, $whence=SEEK_SET){
+		return fseek($this->pointer, $offset, $whence);
+	}
+	public function feof(){
+		return feof($this->pointer);
+	}
+	public function fread($buffer=1024){
+		if(is_null($this->pointer)){
+			$this->fopen();
+		}
+		if($this->feof() !== true){
+			return fread($this->pointer, $buffer);
+		} else {
+			return false;
+		}
+	}
 	
 	public function cp($target){
 		$target = $this->_resolveTarget($target);

@@ -4,6 +4,7 @@ define('DATABASE_ORDER_ASC', 'ASC');
 define('DATABASE_GT', '>');
 define('DATABASE_LT', '<');
 define('DATABASE_EQUAL', '=');
+define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
 
 class MySQLiEngine implements DatabaseEngine {
 	private $connection = null;
@@ -151,8 +152,8 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	
 	public function bind($item=null /*, [$items...] */){
 		$this->bind = array();
+		$this->blob = array();
 		$bind = func_get_args();
-		
 		
 		foreach ($bind as $key => $val) {
 			$this->bind['param'][$key] = $val;

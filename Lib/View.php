@@ -91,7 +91,7 @@ abstract class View implements Output {
 	}
 	
 	private function _prepareDOMDocument(){
-		return new DOMDocument('1.0', 'UTF-8');
+		return new PageFactoryDOMXSLDOMDocument('1.0', 'UTF-8');
 	}
 }
 ?>

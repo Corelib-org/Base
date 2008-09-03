@@ -485,10 +485,17 @@ class Base implements Singleton {
 			}
 			$content .= ' ?>';
 			if(!is_dir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE))){
-				mkdir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE), 0777, true);
+				if(!is_writable(dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)))){
+					echo '<div style="margin: 20px;"><h1>Unable to create directory "'.dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE).'"</h1>';
+					echo '<p>Please make the directory <b>'.dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)).'</b> writable to the webuser.</p><br/>';
+					echo '<pre>$ chmod -R uga=+rwX '.dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)).'</pre></div>';
+					return false;
+				} else {
+					mkdir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE), 0777, true);
+				}
 			}
-			file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
-			// @chmod(BASE_CLASS_CACHE_FILE, 0666);
+			@file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
+			@chmod(BASE_CLASS_CACHE_FILE, 0666);
 		}
 	}
 }

@@ -34,6 +34,10 @@ abstract class CorelibManagerExtension implements Singleton {
 		
 	}
 	
+	public function install(){
+		
+	}
+	
 	public function getPropertyXML($property){
 		if(isset($this->properties[$property])){
 			return $this->properties[$property];
@@ -86,7 +90,6 @@ class Manager implements Singleton {
 	private static $instance = null;
 
 	const EXTENSIONS_FILE = 'extensions.xml';
-	// const EXTENSIONS_DATA_FILE = 'extensions.dat';
 
 	protected $extension_dirs = array(CORELIB, 
 	                                  'var/');
@@ -94,6 +97,7 @@ class Manager implements Singleton {
 	 * @var DOMDocument
 	 */
 	private $extensions = null;
+	
 	/**
 	 * @var array
 	 */
@@ -115,13 +119,8 @@ class Manager implements Singleton {
 		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
 			$this->_reloadManagerExtensions();
 		} else { 
-			$this->_loadExtensionsXML();
-		}
-		// if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_DATA_FILE) || MANAGER_DEVELOPER_MODE){
 			$this->_reloadManagerExtensionsData();
-		// }
-		
-
+		}
 	}
 
 	/**
@@ -211,24 +210,19 @@ class Manager implements Singleton {
 	}	
 		
 	
-	private function _reloadManagerExtensionsData(){
+	private function _reloadManagerExtensionsData($install = false){
 		$this->_loadExtensionsXML();
 		$event = EventHandler::getInstance();
 		$xpath = new DOMXPath($this->extensions);
 		$properties = $this->extensions->getElementsByTagName('extension');
 		for ($i = 0; $item = $properties->item($i); $i++){
-			$data = array();
 			if($setup = $item->getElementsByTagName('setup')->item(0)){
-				try {
-					$handler = $setup->getElementsByTagName('handler');
-					if($handler->length > 0){
-						eval('$handler = '.$handler->item(0)->nodeValue.'::getInstance();');
-					} else {
-						throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
-					}
-				} catch (BaseException $e){
-					echo $e;
-					exit;
+				
+				$handler = $setup->getElementsByTagName('handler');
+				if($handler->length > 0){
+					eval('$handler = '.$handler->item(0)->nodeValue.'::getInstance();');
+				} else {
+					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
 				}
 				
 				for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
@@ -243,29 +237,40 @@ class Manager implements Singleton {
 							$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
 					}
 				}
+				$this->extensions_data[] = array('handler' => $handler, 'node'=>$item);
+			}
+		}
 
-				$props = $xpath->query('//extensions/extension[@id = \''.$item->getAttribute('id').'\']/props/child::*');
-				for ($p = 0; $prop = $props->item($p); $p++){
-					$handler->addBaseProperty($prop);
-				}
-				$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$item->getAttribute('id').'\']/child::*');
-				for ($p = 0; $xitem = $xdata->item($p); $p++){
-					$handler->addProperty($xitem);
-				}
-				$handler->loaded();
+		foreach ($this->extensions_data as $extension){
+			$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
+			for ($p = 0; $prop = $props->item($p); $p++){
+				$extension['handler']->addBaseProperty($prop);
+			}
+			$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
+			for ($p = 0; $xitem = $xdata->item($p); $p++){
+				$extension['handler']->addProperty($xitem);
+			}			
+			
+			$extension['handler']->loaded();
+			if($install){
+				$extension['handler']->install();
+				if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
+					$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
+				}						
 			}
 		}
 	}
 	
-	private function _reloadManagerExtensions(){
+	protected function _reloadManagerExtensions(){
 		$this->extensions = new DOMDocument('1.0', 'UTF-8');
 		$this->extensions->appendChild($this->extensions->createElement('extensions'));
 		while (list(,$val) = each($this->extension_dirs)) {
 			$this->_searchDir($val);
 		}
 		reset($this->extension_dirs);
-		$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
 		@chmod(MANAGER_DATADIR.self::EXTENSIONS_FILE, 0666);
+		
+		$this->_reloadManagerExtensionsData(true);
 	}
 	private function _loadExtensionsXML(){
 		if(!$this->extensions instanceof DOMDocument){
@@ -318,6 +323,7 @@ class ManagerFileSearch implements Event {
 		}
 		$this->filename = $filename;
 	}
+	
 	public function getFilename(){
 		return $this->filename;
 	}

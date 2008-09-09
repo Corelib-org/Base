@@ -23,7 +23,7 @@
  */
 
 if(!defined('PAGE_FACTORY_ENGINE')){
-	if($_SERVER['REQUEST_METHOD'] == 'POST'){
+	if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
 		define('PAGE_FACTORY_ENGINE', 'PageFactoryPost');
 	} else {
 		define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');

@@ -286,19 +286,19 @@ class MySQLiTools {
 		}
 	}
 	
-	static public function makeInsertStatement($table, array $fields, $statement=false){
-		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields, $statement);
+	static public function makeInsertStatement($table, array $fields){
+		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
 	}
 	
-	static public function makeReplaceStatement($table, array $fields, $statement=false){
-		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields, $statement);
+	static public function makeReplaceStatement($table, array $fields){
+		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
 	}
 	
-	static public function makeUpdateStatement($table, array $fields, $where='', $statement=false){
+	static public function makeUpdateStatement($table, array $fields, $where=''){
 		$query = 'UPDATE '.$table."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
-			if($statement || is_integer($field)){
+			if(is_integer($field)){
 				$qfields[] = ' '.$value.'=?';
 			} else {
 				$qfields[] = ' '.$field.'='.$value.'';
@@ -317,11 +317,11 @@ class MySQLiTools {
 		return 'IN('.implode(', ', $values).')';
 	}
 	
-	static protected function _makeInsertReplaceValues(array $fields, $statement=false){
+	static protected function _makeInsertReplaceValues(array $fields){
 		$qfields = array();
 		$qvalues = array();
 		foreach ($fields as $field => $value){
-			if($statement || is_integer($field)){
+			if(is_integer($field)){
 				$qfields[] = $value;
 				$qvalues[] = '?';
 			} else {

@@ -41,8 +41,20 @@ if(!defined('HTTP_REDIRECT_BASE')){
 	 * 	Define Redirect Base URL
 	 */
 	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME']);
+} else {
+	try {
+		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
+	} catch (BaseException $e){
+		echo $e;
+	}
+	define('BASE_URL', HTTP_REDIRECT_BASE);
 }
-
+if(!defined('BASE_URL')){
+	/**
+	 * 	Define Redirect Base URL
+	 */
+	define('BASE_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');
+}
 
 abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $last_modified = null;
@@ -102,7 +114,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
-		$this->http_redirect_base = HTTP_REDIRECT_BASE;
+		$this->http_redirect_base = BASE_URL;
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$this->set_referer = false;
 		}
@@ -189,6 +201,8 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		} else {
 			$this->location = $this->http_redirect_base.$location.$param;
 		}
+		$this->location = str_ireplace('//', '/', $this->location);
+		$this->location = str_ireplace('http:/', 'http://', $this->location);
 	}
 	public function setMessageID($id){
 		try {
@@ -200,7 +214,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	}
 	public function setForceSSL(){
 		if(!isset($_SERVER['HTTPS'])){
-			$this->setLocation(str_replace('http://', 'https://', HTTP_REDIRECT_BASE).$_SERVER['REQUEST_URI']);
+			$this->setLocation(str_replace('http://', 'https://', BASE_URL).$_SERVER['REQUEST_URI']);
 		}
 	}
 

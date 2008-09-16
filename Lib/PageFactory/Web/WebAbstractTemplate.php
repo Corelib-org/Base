@@ -21,34 +21,6 @@
  *	@link http://www.bravura.dk/
  *	@version 1.0.0 ($Id$)
  */
-if(!defined('REDIRECT_URL')){
-	/**
-	 * Superceeded by {@link HTTP_REDIRECT_BASE}
-	 *
-	 * @deprecated Superceeded by HTTP_REDIRECT_BASE
-	 */
-	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME']);
-} else {
-	try {
-		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
-	} catch (BaseException $e){
-		echo $e;
-	}
-	define('HTTP_REDIRECT_BASE', REDIRECT_URL);
-}
-if(!defined('HTTP_REDIRECT_BASE')){
-	/**
-	 * 	Define Redirect Base URL
-	 */
-	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME']);
-} else {
-	try {
-		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
-	} catch (BaseException $e){
-		echo $e;
-	}
-	define('BASE_URL', HTTP_REDIRECT_BASE);
-}
 if(!defined('BASE_URL')){
 	/**
 	 * 	Define Redirect Base URL
@@ -269,6 +241,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function getHTTPRedirectBase(){
 		return $this->http_redirect_base;
 	}
+	 
 	public function getStatusMessage(){
 		$session = SessionHandler::getInstance();
 		if($session->check(self::MSGID)){

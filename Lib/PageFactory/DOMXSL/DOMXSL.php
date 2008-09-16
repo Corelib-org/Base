@@ -155,6 +155,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
 			$this->settings->appendChild($this->xml->createElement('remote_address', $this->template->getRemoteAddress()));
 			$this->settings->appendChild($this->xml->createElement('redirect_url', $this->template->getHTTPRedirectBase()));
+			$this->settings->appendChild($this->xml->createElement('base_url', $this->template->getHTTPRedirectBase()));
 
 			$stylesheets = $this->template->getStyleSheets();
 			while(list(,$val) = each($stylesheets)){

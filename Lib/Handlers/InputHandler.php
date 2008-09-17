@@ -612,7 +612,7 @@ class EqualsInputValidator extends InputValidatorEquals {
 	
 }
 
-class ArrayInputValidator implements InputValidator {
+class InputValidatorArray implements InputValidator {
 	private $validator;
 
 	public function __construct($validator=null){
@@ -635,7 +635,9 @@ class ArrayInputValidator implements InputValidator {
 /**
  * @deprecated use ArrayInputValidator instead
  */
+class ArrayInputValidator extends InputValidatorArray { }
 class IsArrayInputValidator extends ArrayInputValidator { }
+
 
 class InputValidatorIsSet implements InputValidator {
 	public function validate($content){

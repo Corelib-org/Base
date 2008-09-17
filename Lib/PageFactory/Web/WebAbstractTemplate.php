@@ -162,7 +162,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			$location = '/'.$location;
 		}
 		if(!is_null($param)){
-			if(strstr($this->location.$this->http_redirect_base, '?')){
+			if(strstr($this->http_redirect_base.$location, '?')){
 				$param = '&'.$param;
 			} else {
 				$param = '?'.$param;

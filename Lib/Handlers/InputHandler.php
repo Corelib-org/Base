@@ -584,7 +584,7 @@ class UrlInputValidator extends InputValidatorUrl {
 
 class InputValidatorPhone implements InputValidator {
 	public function validate($content){
-		return(preg_match('/^\+?[\-\s0-9]+$/',$content));
+		return(preg_match('/^\+?[\-\s0-9]{8,}$/',$content));
 	}
 }
 /**

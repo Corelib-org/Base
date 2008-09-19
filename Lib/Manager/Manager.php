@@ -221,40 +221,43 @@ class Manager implements Singleton {
 				$handler = $setup->getElementsByTagName('handler');
 				if($handler->length > 0){
 					eval('$handler = '.$handler->item(0)->nodeValue.'::getInstance();');
+					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
+						switch ($prop->nodeName){
+							case 'name':
+								$handler->setName($prop->nodeValue);
+								break;
+							case 'description':
+								$handler->setDescription($prop->nodeValue);
+								break;
+							default:
+								$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
+						}
+					}
 				} else {
-					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
+					$handler = null;
+//					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
 				}
 				
-				for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
-					switch ($prop->nodeName){
-						case 'name':
-							$handler->setName($prop->nodeValue);
-							break;
-						case 'description':
-							$handler->setDescription($prop->nodeValue);
-							break;
-						default:
-							$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
-					}
-				}
 				$this->extensions_data[] = array('handler' => $handler, 'node'=>$item);
 			}
 		}
-
+		
 		foreach ($this->extensions_data as $extension){
-			$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
-			for ($p = 0; $prop = $props->item($p); $p++){
-				$extension['handler']->addBaseProperty($prop);
-			}
-			
-			$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
-			for ($p = 0; $xitem = $xdata->item($p); $p++){
-				$extension['handler']->addProperty($xitem);
-			}
-
-			$extension['handler']->loaded();
-			if($install){
-				$extension['handler']->install();
+			if($extension['handler'] instanceof CorelibManagerExtension){
+				$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
+				for ($p = 0; $prop = $props->item($p); $p++){
+					$extension['handler']->addBaseProperty($prop);
+				}
+				
+				$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
+				for ($p = 0; $xitem = $xdata->item($p); $p++){
+					$extension['handler']->addProperty($xitem);
+				}
+	
+				$extension['handler']->loaded();
+				if($install){
+					$extension['handler']->install();
+				}
 			}
 		}
 	}

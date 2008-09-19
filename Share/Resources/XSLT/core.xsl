@@ -9,6 +9,8 @@
 				<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
 				<meta http-equiv="Content-language" content="en"/>
 				<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+				<script language="JavaScript" type="text/javascript" src="corelib/resource/manager/javascript/prototype.js" />
+				
 				<xsl:for-each select="/page/settings/javascript">
 					<script language="JavaScript" type="text/javascript" src="{.}" />
 				</xsl:for-each>

@@ -36,9 +36,14 @@ class ManagerDashboard implements Output {
 	 * @var ManagerConfig
 	 */
 	private $config = null;
+	/**
+	 * @var PageFactoryDOMXSLTemplate
+	 */
+	private $template = null;
 	
-	public function __construct(){
-		$this->config = ManagerConfig::getInstance(); 
+	public function __construct(PageFactoryDOMXSLTemplate $template){
+		$this->config = ManagerConfig::getInstance();
+		$this->template = $template; 
 	}
 	
 	public function getXML(DOMDocument $xml){
@@ -48,6 +53,7 @@ class ManagerDashboard implements Output {
 		for ($i = 0; $item = $dashboard->childNodes->item($i); $i++){
 			if($item->nodeName == 'widget'){
 				eval('$widget = new '.$item->getAttribute('handler').'();');
+				$widget->setTemplate($this->template);
 				$widget->setSettings($item); 
 				$widgets->appendChild($widget->getXML($xml));
 			}

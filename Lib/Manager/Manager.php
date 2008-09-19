@@ -54,7 +54,6 @@ abstract class CorelibManagerExtension implements Singleton {
 		} else {
 			return false;
 		}
-		
 	}
 	
 	public function addBaseProperty(DOMElement $property){
@@ -92,7 +91,8 @@ class Manager implements Singleton {
 	const EXTENSIONS_FILE = 'extensions.xml';
 
 	protected $extension_dirs = array(CORELIB, 
-	                                  'var/');
+	                                  'var/',
+	                                  'lib/');
 	/**
 	 * @var DOMDocument
 	 */
@@ -246,17 +246,15 @@ class Manager implements Singleton {
 			for ($p = 0; $prop = $props->item($p); $p++){
 				$extension['handler']->addBaseProperty($prop);
 			}
+			
 			$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
 			for ($p = 0; $xitem = $xdata->item($p); $p++){
 				$extension['handler']->addProperty($xitem);
-			}			
-			
+			}
+
 			$extension['handler']->loaded();
 			if($install){
 				$extension['handler']->install();
-				if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
-					$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
-				}						
 			}
 		}
 	}
@@ -264,12 +262,16 @@ class Manager implements Singleton {
 	protected function _reloadManagerExtensions(){
 		$this->extensions = new DOMDocument('1.0', 'UTF-8');
 		$this->extensions->appendChild($this->extensions->createElement('extensions'));
-		while (list(,$val) = each($this->extension_dirs)) {
+		foreach ($this->extension_dirs as $val){
 			$this->_searchDir($val);
 		}
 		reset($this->extension_dirs);
 		@chmod(MANAGER_DATADIR.self::EXTENSIONS_FILE, 0666);
 		
+		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
+			$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
+		} 
+				
 		$this->_reloadManagerExtensionsData(true);
 	}
 	private function _loadExtensionsXML(){
@@ -308,6 +310,7 @@ class Manager implements Singleton {
 			$dom = $this->extensions->importNode($dom->documentElement, true);
 			$this->extensions->documentElement->appendChild($dom);
 		}
+		return $dom;
 	}
 }
 
@@ -398,4 +401,6 @@ abstract class ManagerPage extends PageBase {
 		return true; */
 	}
 }
+
+
 ?>

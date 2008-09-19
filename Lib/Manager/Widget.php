@@ -5,6 +5,18 @@ abstract class ManagerWidget implements Output {
 	 */
 	protected $settings = null;
 	
+	private $template = null;
+	
+	public function __construct(){
+		
+	}
+	
+	final public function setTemplate(PageFactoryDOMXSLTemplate $template){
+		if(is_null($this->template)){
+			$this->template = $template;
+		}
+	}
+	
 	public function setSettings(DOMNode $settings){
 		$this->settings = $settings;
 	}
@@ -30,12 +42,24 @@ abstract class ManagerWidget implements Output {
 			return false;
 		}
 	}
+	
+	public function addTemplate($filename){
+		$this->template->addTemplate($filename);
+	}
+	public function addStyleSheet($filename){
+		$this->template->addStyleSheet($filename);
+	}
+	public function addJavaScript($filename){
+		$this->template->addJavaScript($filename);
+	}
+
 }
 
 class ManagerWidgetErrorLog extends ManagerWidget {
-	private $logfile = null;	
+	private $logfile = null;
 	
 	public function getXML(DOMDocument $xml){
+		$this->addTemplate('Base/Share/Resources/XSLT/Pages/manager/errorlog.xsl');
 		$errorlog = $xml->createElement('errorlog');
 		
 		$logentries = array();
@@ -52,9 +76,9 @@ class ManagerWidgetErrorLog extends ManagerWidget {
 						if(!isset($logentries[$current]['xml'])){
 							$logentries[$current]['xml'] = $errorlog->appendChild($xml->createElement('entry'));
 							$logentries[$current]['xml']->setAttribute('id', $current);
-							$logentries[$current]['tracelines'] = $logentries[$current]['xml']->appendChild($xml->createElement('tracelines'));							
-							$logentries[$current]['contentlines'] = $logentries[$current]['xml']->appendChild($xml->createElement('tracelines'));							
+							$logentries[$current]['contentlines'] = $logentries[$current]['xml']->appendChild($xml->createElement('contentlines'));
 							$logentries[$current]['dates'] = $logentries[$current]['xml']->appendChild($xml->createElement('dates'));
+							$logentries[$current]['tracelines'] = $logentries[$current]['xml']->appendChild($xml->createElement('tracelines'));														
 						}
 						$logentries[$current]['dates']->appendChild($xml->createElement('date', $matches[2]));
 					}

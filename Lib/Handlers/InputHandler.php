@@ -582,6 +582,30 @@ class UrlInputValidator extends InputValidatorUrl {
 	
 }
 
+class InputValidatorInteger implements InputValidator {
+	public function validate($content){
+		return(preg_match('/^[0-9]+$/',$content));
+	}
+}
+
+class InputValidatorEnum implements InputValidator {
+	private $values = array();
+	
+	public function __construct($item=null /*, [$items...] */){
+		$this->values = func_get_args();
+	}
+	
+	public function validate($content){
+		return(preg_match('/^('.implode('|', $this->values).')$/',$content));
+	}
+}
+
+class InputValidatorNotEmpty implements InputValidator {
+	public function validate($content){
+		return(preg_match('/^.+$/',$content));
+	}
+}
+
 class InputValidatorPhone implements InputValidator {
 	public function validate($content){
 		return(preg_match('/^\+?[\-\s0-9]{8,}$/',$content));

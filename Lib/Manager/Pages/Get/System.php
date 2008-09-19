@@ -4,6 +4,11 @@ class WebPage extends ManagerPage {
 
 	}
 
+	public function database(){
+		$this->addContent(new DatabaseTool());
+		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/system/database.xsl');
+	}
+	
 	public function configuration(){
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/system/configuration.xsl');
 

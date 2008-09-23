@@ -17,6 +17,7 @@ class MySQLi_DatabaseTool extends DatabaseDAO implements Singleton,DAO_DatabaseT
 	public function getObjectsAndRevisions(){
 		$query = 'SHOW TABLE STATUS';
 		$query = $this->masterQuery(new MySQLiQuery($query));
+		$status = array();
 		while ($res = $query->fetchArray()) {
 			if(preg_match('/Revision:\s+([0-9]+)/', $res['Comment'], $matches)){
 				$status[$res['Name']] = $matches[1];
@@ -30,6 +31,14 @@ class MySQLi_DatabaseTool extends DatabaseDAO implements Singleton,DAO_DatabaseT
 			$dependencies = array_merge($dependencies, $matches[1]);
 		}
 		return $dependencies;
+	}
+	
+	public function performUpdate($data){
+		foreach (preg_split('/;\s*$/m', $data) as $query){
+			if(!empty($query)){
+				$this->masterQuery(new MySQLiQuery($query));
+			}
+		}
 	}
 }
 ?>

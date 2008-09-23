@@ -116,6 +116,7 @@ class Manager implements Singleton {
 			echo $e;
 			exit;
 		}
+		define('MANAGER_EXTENSION_FILE', MANAGER_DATADIR.self::EXTENSIONS_FILE);
 		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
 			$this->_reloadManagerExtensions();
 		} else { 
@@ -139,7 +140,7 @@ class Manager implements Singleton {
 
 	public function setupPageRegistry(&$pages){
 		$xpath = new DOMXPath($this->extensions);
-		$pagelist = $xpath->query('//extensions/extension/pages/child::*');
+		$pagelist = $xpath->query('//extensions/extension/pages/'.strtolower($_SERVER['REQUEST_METHOD']).'/child::*');
 		for ($i = 0; $page = $pagelist->item($i); $i++){
 			$p = array();
 			try {
@@ -315,6 +316,10 @@ class Manager implements Singleton {
 		}
 		return $dom;
 	}
+	
+	private function __clone(){
+			
+	}
 }
 
 class ManagerFileSearch implements Event {
@@ -375,6 +380,7 @@ abstract class ManagerPage extends PageBase {
 	 * @var PageFactoryDOMXSLTemplate
 	 */
 	protected $xsl = null;
+	protected $post = null;
 
 	final public function __construct(){
 		if(!defined('CORELIB_MANAGER_USERNAME')){
@@ -395,6 +401,9 @@ abstract class ManagerPage extends PageBase {
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
+		
+		$this->post = new PageFactoryPostTemplate();
+		$this->addTemplateDefinition($this->post);
 	}
 	
 	protected function _selectMenuItem($tab, $item){

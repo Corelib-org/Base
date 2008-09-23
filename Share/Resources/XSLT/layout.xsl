@@ -41,7 +41,7 @@
 				</div>
 				<div class="left">
 					<div id="content">
-						<div id="breadcrumb" class="left clear">Settings Configuration</div>
+						<div id="breadcrumb" class="left clear">&#160;<!-- Settings Configuration --></div>
 						<div id="innercontent" class="left clear">
 							
 							<xsl:copy-of select="$content"/>							
@@ -55,6 +55,7 @@
 			</div>
 		</div>
 		<div class="clear"></div>
+		<br/>
 	</xsl:template>
 
 	<xsl:template name="h1">

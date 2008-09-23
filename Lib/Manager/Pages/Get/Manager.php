@@ -11,6 +11,9 @@ class WebPage extends ManagerPage {
 	public function about(){
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/manager/about.xsl');
 	}
+	public function markup(){
+		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/manager/markup.xsl');
+	}
 	
 	public function dashboard(){
 		$this->addContent(new ManagerDashboard($this->xsl));

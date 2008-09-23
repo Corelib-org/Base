@@ -7,7 +7,7 @@
 			<xsl:with-param name="content">
 
 				<xsl:call-template name="h1">
-					<xsl:with-param name="headline">Configuration</xsl:with-param>
+					<xsl:with-param name="headline">XHTML Markup</xsl:with-param>
 					<xsl:with-param name="nav">
 					<label for="view">Change view</label>
 						<select id="view" class="select">

@@ -84,6 +84,21 @@ abstract class CorelibManagerExtension implements Singleton {
 	}
 }
 
+class UnknownCorelibManagerExtension extends CorelibManagerExtension {
+	private static $instance = null;
+	
+	
+	/**
+	 *	@return UnknownCorelibManagerExtension
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new UnknownCorelibManagerExtension();
+		}
+		return self::$instance;
+	}	
+}
+
 
 class Manager implements Singleton {
 	private static $instance = null;
@@ -235,6 +250,9 @@ class Manager implements Singleton {
 						}
 					}
 				} else {
+					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
+						$event->triggerEvent(new ManagerUnknownSetupProperty(UnknownCorelibManagerExtension::getInstance(), $prop));
+					}
 					$handler = null;
 //					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
 				}

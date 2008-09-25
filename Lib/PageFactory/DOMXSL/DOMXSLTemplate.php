@@ -65,16 +65,15 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	public function getCoreXSLT(){
 		return $this->xsl_core;
 	}
+	public function setCoreXSLT($xslcore){
+		$this->xsl_core = $xslcore;
+	}
+	
 	public function getRegisteredPHPFunctions(){
 		return $this->registered_php_functions;
 	}
 	public function addTemplate($template_file){
-		try {
-			StrictTypes::isString($template_file);
-		} catch (BaseException $e){
-			echo $e;
-		}
-		if($template_file{0} == '/' || preg_match('/^[a-zA-Z]:/', $template_file)){
+		if($template_file{0} ==	'/' || preg_match('/^[a-zA-Z]:/', $template_file)){
 			$template = $template_file;
 		} else {
 			try {

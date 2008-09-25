@@ -110,10 +110,10 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
-define('CORELIB_BASE_VERSION', '4.4.0 Beta');
+define('CORELIB_BASE_VERSION', '4.5.2');
 define('CORELIB_BASE_VERSION_MAJOR', '4');
-define('CORELIB_BASE_VERSION_MINOR', '4');
-define('CORELIB_BASE_VERSION_PATCH', '0');
+define('CORELIB_BASE_VERSION_MINOR', '5');
+define('CORELIB_BASE_VERSION_PATCH', '2');
 /**
  * Define CoreLib Copyright owner
  */
@@ -306,14 +306,14 @@ class Base implements Singleton {
 		}
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
-		}else if(is_writeable(BASE_CLASS_CACHE_FILE) && is_readable(BASE_CLASS_CACHE_FILE)){
+		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
 			/**
 			 * @ignore
 			 */
 			include_once(BASE_CLASS_CACHE_FILE);
 			$this->class_cache = &$classes;
 		} else {
-			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
+			echo '<h1> Class Cache File is unreadable </h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
 		require_once(CORELIB.'/Base/Lib/StrictTypes.php');
@@ -383,11 +383,6 @@ class Base implements Singleton {
 	 * @uses Base::$class_cache_updated
 	 */
 	public function findClass($class){
-		try {
-			StrictTypes::isString($class);
-		} catch (BaseException $e){
-			echo $e;
-		}
 		
 		if(!isset($this->class_cache[$class])){
 			try {

@@ -606,6 +606,12 @@ class InputValidatorNotEmpty implements InputValidator {
 	}
 }
 
+class InputValidatorEmpty implements InputValidator {
+	public function validate($content){
+		return empty($content);
+	}
+}
+
 class InputValidatorPhone implements InputValidator {
 	public function validate($content){
 		return(preg_match('/^\+?[\-\s0-9]{8,}$/',$content));

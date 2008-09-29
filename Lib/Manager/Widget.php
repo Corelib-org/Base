@@ -94,11 +94,13 @@ class ManagerWidgetErrorLog extends ManagerWidget {
 							$logentries[$current]['xml']->appendChild($xml->createElement('line', trim(str_replace('Error Line: ', '', $line))));
 						} else if(strstr($line, 'Request URI:')){
 							$logentries[$current]['xml']->appendChild($xml->createElement('uri', trim(str_replace('Request URI: ', '', $line))));
+						} else if(strstr($line, 'HTTP Referer:')){
+							$logentries[$current]['xml']->appendChild($xml->createElement('uri', trim(str_replace('HTTP Referer: ', '', $line))));
 						} else if(preg_match('/^#([0-9]+)\s(.*)$/', $line, $matches)){
-							$logentries[$current]['tracelines']->appendChild($xml->createElement('traceline', $matches[2]));
+							$logentries[$current]['tracelines']->appendChild($xml->createElement('traceline', strip_tags($matches[2])));
 						} else {
 							if(!empty($line)){
-								$logentries[$current]['contentlines']->appendChild($xml->createElement('contentline', trim($line)));	
+								$logentries[$current]['contentlines']->appendChild($xml->createElement('contentline', trim(strip_tags(html_entity_decode($line)))));	
 							}
 						}
 						/*
@@ -107,7 +109,7 @@ Error File: /usr/home/webroot/corelib/Base/Lib/Handlers/ErrorHandler.php
 Error Line: 61
 Request URI: /corelib/manager/dashboard/?xml
 Remote Address: 10.37.129.2
-
+HTTP Referer: http://trunk.fremtidsvisioner.dk/
 Undefined variable: test 
  /usr/home/webroot/corelib/Base/Lib/Manager/Pages/Get/Manager.php at line 12
 

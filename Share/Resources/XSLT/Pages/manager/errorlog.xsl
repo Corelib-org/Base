@@ -9,8 +9,13 @@
 		
 		<xsl:for-each select="entry">
 			<div class="logentry" onclick="ManagerWidgetErrorLog.toggleTrace($('trace{@id}'))">
-				<h2><xsl:value-of select="contentlines/contentline[position() = 1]"/> (<xsl:value-of select="count(dates/date)"/>)&#160;<small><xsl:value-of select="@id"/></small></h2>
-				<xsl:value-of select="file"/>:<xsl:value-of select="line"/>
+				<h2><xsl:value-of select="code"/> (<xsl:value-of select="count(dates/date)"/>)&#160;<small><xsl:value-of select="@id"/></small></h2>
+				<xsl:value-of select="file"/>:<xsl:value-of select="line"/><br/>
+				<small>
+				<xsl:for-each select="contentlines/contentline">
+					<xsl:value-of select="."/><br/>
+				</xsl:for-each>
+				</small>
 				<ul class="trace" id="trace{@id}" style="display: none;">
 					<xsl:for-each select="tracelines/traceline">
 						<li>#<xsl:value-of select="position()"/>: <xsl:value-of select="."/></li>

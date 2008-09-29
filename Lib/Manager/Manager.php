@@ -68,6 +68,7 @@ abstract class CorelibManagerExtension implements Singleton {
 		}
 	}
 	protected function _mergeNodes(DOMElement $DOMTarget, DOMElement $DOMSource){
+		$this->_mergeAttributes($DOMTarget, $DOMSource);
 		for ($i = 0; $item = $DOMSource->childNodes->item($i); $i++){
 			if($item instanceof DOMElement && $item->getAttribute('id')){;
 				$list = $this->xpath->query('child::*[@id = \''.$item->getAttribute('id').'\']', $DOMTarget);
@@ -81,6 +82,14 @@ abstract class CorelibManagerExtension implements Singleton {
 			}
 		}
 		return true;
+	}
+	
+	private function _mergeAttributes(DOMElement $DOMTarget, DOMElement $DOMSource){
+		for ($ia = 0; $attribute = $DOMSource->attributes->item($ia); $ia++){
+			if(!$DOMTarget->getAttribute($attribute->nodeName) || $DOMSource->getAttribute('controller') == 'true'){
+				$DOMTarget->setAttribute($attribute->nodeName, $attribute->nodeValue);
+			}
+		}		
 	}
 }
 
@@ -261,13 +270,14 @@ class Manager implements Singleton {
 			}
 		}
 		
+
 		foreach ($this->extensions_data as $extension){
 			if($extension['handler'] instanceof CorelibManagerExtension){
 				$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
 				for ($p = 0; $prop = $props->item($p); $p++){
 					$extension['handler']->addBaseProperty($prop);
 				}
-				
+		
 				$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
 				for ($p = 0; $xitem = $xdata->item($p); $p++){
 					$extension['handler']->addProperty($xitem);

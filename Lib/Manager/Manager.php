@@ -415,13 +415,18 @@ abstract class ManagerPage extends PageBase {
 			define('CORELIB_MANAGER_USERNAME', 'admin');
 		}
 		if(!defined('CORELIB_MANAGER_PASSWORD')){
-			define('CORELIB_MANAGER_PASSWORD', sha1('admin'));
+			define('CORELIB_MANAGER_PASSWORD', sha1(rand(100000, 900000)));
+			$password_error = true;
 		}
 		
 		if((!isset($_SERVER['PHP_AUTH_USER']) && @$_SERVER['PHP_AUTH_USER'] != CORELIB_MANAGER_USERNAME) && (!isset($_SERVER['PHP_AUTH_PW']) && sha1(@$_SERVER['PHP_AUTH_PW']) != CORELIB_MANAGER_PASSWORD)){
 		    header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
 		    header('HTTP/1.0 401 Unauthorized');
 		    echo '<h1>Access Denied</h1>';
+		    if(isset($password_error) && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		    	echo '<p>Notice: Constant <b>CORELIB_MANAGER_PASSWORD</b> is not defined</p>';
+		    	echo '<p>Before you can log in this constant must be defined.</p>';
+		    }
 		    exit;
 		}
 		

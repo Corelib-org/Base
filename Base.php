@@ -110,10 +110,10 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
-define('CORELIB_BASE_VERSION', '4.5.2');
+define('CORELIB_BASE_VERSION', '4.6.0');
 define('CORELIB_BASE_VERSION_MAJOR', '4');
-define('CORELIB_BASE_VERSION_MINOR', '5');
-define('CORELIB_BASE_VERSION_PATCH', '2');
+define('CORELIB_BASE_VERSION_MINOR', '6');
+define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
  */

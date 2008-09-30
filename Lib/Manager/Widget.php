@@ -103,24 +103,6 @@ class ManagerWidgetErrorLog extends ManagerWidget {
 								$logentries[$current]['contentlines']->appendChild($xml->createElement('contentline', trim(strip_tags(html_entity_decode($line)))));	
 							}
 						}
-						/*
-					Error Code: Notice
-Error File: /usr/home/webroot/corelib/Base/Lib/Handlers/ErrorHandler.php
-Error Line: 61
-Request URI: /corelib/manager/dashboard/?xml
-Remote Address: 10.37.129.2
-HTTP Referer: http://trunk.fremtidsvisioner.dk/
-Undefined variable: test 
- /usr/home/webroot/corelib/Base/Lib/Manager/Pages/Get/Manager.php at line 12
-
-#0 /usr/home/webroot/corelib/Base/Lib/Manager/Pages/Get/Manager.php(12): BaseError(8, 'Undefined varia...', '/usr/home/webro...', 12, Array)
-#1 /usr/home/webroot/corelib/Base/Lib/PageFactory/PageFactory.php(82) : eval()'d code(1): WebPage->dashboard()
-#2 /usr/home/webroot/corelib/Base/Lib/PageFactory/PageFactory.php(82): eval()
-#3 /usr/home/webroot/corelib/Base/Lib/PageFactory/PageFactory.php(241): PageFactoryTemplateEngine->build(Object(WebPage), 'dashboard()')
-#4 /usr/home/webroot/backoffice/share/doc/Dummy/index.php(14) : eval()'d code(1): PageFactory->build(Object(WebPage))
-#5 /usr/home/webroot/backoffice/share/doc/Dummy/index.php(14): eval()
-#6 {main}					
-*/	
 					} else {
 						$logentries[$current]['complete'] = true;
 						$entry = false;

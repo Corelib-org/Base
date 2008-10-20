@@ -289,24 +289,21 @@ class MySQLiTools {
 	static public function makeInsertStatement($table, array $fields){
 		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
 	}
-	
 	static public function makeReplaceStatement($table, array $fields){
 		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
 	}
-	
 	static public function makeUpdateStatement($table, array $fields, $where=''){
 		$query = 'UPDATE '.$table."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
 			if(is_integer($field)){
-				$qfields[] = ' '.$value.'=?';
+				$qfields[] = ' `'.$value.'`=?';
 			} else {
-				$qfields[] = ' '.$field.'='.$value.'';
+				$qfields[] = ' `'.$field.'`='.$value.'';
 			}
 		}
 		return $query.' '.implode(', ', $qfields).' '.$where;
 	}
-	
 	static public function makeInStatement(array $values){
 		foreach ($values as $key => $val){
 			if(!is_numeric($val)){
@@ -322,10 +319,10 @@ class MySQLiTools {
 		$qvalues = array();
 		foreach ($fields as $field => $value){
 			if(is_integer($field)){
-				$qfields[] = $value;
+				$qfields[] = '`'.$value.'`';
 				$qvalues[] = '?';
 			} else {
-				$qfields[] = $field;
+				$qfields[] = '`'.$field.'`';
 				$qvalues[] = $value;
 			}
 		}

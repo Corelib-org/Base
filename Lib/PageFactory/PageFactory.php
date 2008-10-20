@@ -244,8 +244,12 @@ class PageFactory implements Singleton {
 		$this->engine->build($page, $this->callback);
 	}
 
-	public function draw(){
-		$this->engine->draw();
+	public function draw($return=false){
+		if($return){
+			return $this->engine->draw();
+		} else {
+			echo $this->engine->draw();
+		}
 		if($template = $this->engine->getTemplate()){
 			$template->cleanup();
 		}

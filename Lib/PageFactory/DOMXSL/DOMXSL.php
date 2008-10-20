@@ -89,7 +89,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			if($input->isSetGet('xml') && BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
 				$this->template->setContentType('text/xml');
 				$this->template->setContentCharset('UTF-8');
-				echo $this->xml->saveXML();
+				return $this->xml->saveXML();
 			} else {
 				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
 					$tranformToXML = false;
@@ -109,13 +109,11 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 					$page = file_get_contents($this->template_cache_file);
 				}
 				if(PAGE_FACTORY_CACHE_ENABLE){
-					echo PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
-					return true;
+					return PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
 				}
-				echo $page;
+				return $page;
 			}
 		}
-		return true;
 	}
 
 	public function addPageContent(Output $content){

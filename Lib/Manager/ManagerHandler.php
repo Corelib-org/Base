@@ -30,7 +30,7 @@ class ManagerConfig extends CorelibManagerExtension {
 		}
 	}
 	
-	public function getSystemCheckResultes(){
+	public function getSystemCheckResults(){
 		if($checks = $this->getPropertyXML('systemchecks')){
 			$i = 0;
 			while($check = $checks->childNodes->item($i++)){

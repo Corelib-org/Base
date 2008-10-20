@@ -587,6 +587,11 @@ class InputValidatorInteger implements InputValidator {
 		return(preg_match('/^[0-9]+$/',$content));
 	}
 }
+class InputValidatorIsFloat implements InputValidator {
+	public function validate($content){
+		return(preg_match('/^[0-9]+(\.[0-9]+)?$/',$content));
+	}
+}
 
 class InputValidatorEnum implements InputValidator {
 	private $values = array();
@@ -602,7 +607,7 @@ class InputValidatorEnum implements InputValidator {
 
 class InputValidatorNotEmpty implements InputValidator {
 	public function validate($content){
-		return(preg_match('/^.+$/',$content));
+		return !empty($content);
 	}
 }
 

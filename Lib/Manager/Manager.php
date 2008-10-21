@@ -54,7 +54,6 @@ abstract class CorelibManagerExtension implements Singleton {
 		} else {
 			return false;
 		}
-		
 	}
 	
 	public function addBaseProperty(DOMElement $property){
@@ -69,6 +68,7 @@ abstract class CorelibManagerExtension implements Singleton {
 		}
 	}
 	protected function _mergeNodes(DOMElement $DOMTarget, DOMElement $DOMSource){
+		$this->_mergeAttributes($DOMTarget, $DOMSource);
 		for ($i = 0; $item = $DOMSource->childNodes->item($i); $i++){
 			if($item instanceof DOMElement && $item->getAttribute('id')){;
 				$list = $this->xpath->query('child::*[@id = \''.$item->getAttribute('id').'\']', $DOMTarget);
@@ -83,6 +83,29 @@ abstract class CorelibManagerExtension implements Singleton {
 		}
 		return true;
 	}
+	
+	private function _mergeAttributes(DOMElement $DOMTarget, DOMElement $DOMSource){
+		for ($ia = 0; $attribute = $DOMSource->attributes->item($ia); $ia++){
+			if(!$DOMTarget->getAttribute($attribute->nodeName) || $DOMSource->getAttribute('controller') == 'true'){
+				$DOMTarget->setAttribute($attribute->nodeName, $attribute->nodeValue);
+			}
+		}		
+	}
+}
+
+class UnknownCorelibManagerExtension extends CorelibManagerExtension {
+	private static $instance = null;
+	
+	
+	/**
+	 *	@return UnknownCorelibManagerExtension
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new UnknownCorelibManagerExtension();
+		}
+		return self::$instance;
+	}	
 }
 
 
@@ -92,7 +115,8 @@ class Manager implements Singleton {
 	const EXTENSIONS_FILE = 'extensions.xml';
 
 	protected $extension_dirs = array(CORELIB, 
-	                                  'var/');
+	                                  'var/',
+	                                  'lib/');
 	/**
 	 * @var DOMDocument
 	 */
@@ -116,6 +140,7 @@ class Manager implements Singleton {
 			echo $e;
 			exit;
 		}
+		define('MANAGER_EXTENSION_FILE', MANAGER_DATADIR.self::EXTENSIONS_FILE);
 		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
 			$this->_reloadManagerExtensions();
 		} else { 
@@ -139,7 +164,7 @@ class Manager implements Singleton {
 
 	public function setupPageRegistry(&$pages){
 		$xpath = new DOMXPath($this->extensions);
-		$pagelist = $xpath->query('//extensions/extension/pages/child::*');
+		$pagelist = $xpath->query('//extensions/extension/pages/'.strtolower($_SERVER['REQUEST_METHOD']).'/child::*');
 		for ($i = 0; $page = $pagelist->item($i); $i++){
 			$p = array();
 			try {
@@ -221,42 +246,47 @@ class Manager implements Singleton {
 				$handler = $setup->getElementsByTagName('handler');
 				if($handler->length > 0){
 					eval('$handler = '.$handler->item(0)->nodeValue.'::getInstance();');
+					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
+						switch ($prop->nodeName){
+							case 'name':
+								$handler->setName($prop->nodeValue);
+								break;
+							case 'description':
+								$handler->setDescription($prop->nodeValue);
+								break;
+							default:
+								$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
+						}
+					}
 				} else {
-					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
+					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
+						$event->triggerEvent(new ManagerUnknownSetupProperty(UnknownCorelibManagerExtension::getInstance(), $prop));
+					}
+					$handler = null;
+//					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
 				}
 				
-				for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
-					switch ($prop->nodeName){
-						case 'name':
-							$handler->setName($prop->nodeValue);
-							break;
-						case 'description':
-							$handler->setDescription($prop->nodeValue);
-							break;
-						default:
-							$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
-					}
-				}
 				$this->extensions_data[] = array('handler' => $handler, 'node'=>$item);
 			}
 		}
+		
 
 		foreach ($this->extensions_data as $extension){
-			$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
-			for ($p = 0; $prop = $props->item($p); $p++){
-				$extension['handler']->addBaseProperty($prop);
-			}
-			$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
-			for ($p = 0; $xitem = $xdata->item($p); $p++){
-				$extension['handler']->addProperty($xitem);
-			}			
-			
-			$extension['handler']->loaded();
-			if($install){
-				$extension['handler']->install();
-				if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
-					$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
-				}						
+			if($extension['handler'] instanceof CorelibManagerExtension){
+				$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
+				for ($p = 0; $prop = $props->item($p); $p++){
+					$extension['handler']->addBaseProperty($prop);
+				}
+		
+				$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
+				for ($p = 0; $xitem = $xdata->item($p); $p++){
+					$extension['handler']->addProperty($xitem);
+				}
+	
+				$extension['handler']->loaded();
+				if($install){
+					$extension['handler']->install();
+				}
 			}
 		}
 	}
@@ -264,12 +294,16 @@ class Manager implements Singleton {
 	protected function _reloadManagerExtensions(){
 		$this->extensions = new DOMDocument('1.0', 'UTF-8');
 		$this->extensions->appendChild($this->extensions->createElement('extensions'));
-		while (list(,$val) = each($this->extension_dirs)) {
+		foreach ($this->extension_dirs as $val){
 			$this->_searchDir($val);
 		}
 		reset($this->extension_dirs);
 		@chmod(MANAGER_DATADIR.self::EXTENSIONS_FILE, 0666);
 		
+		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
+			$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
+		} 
+				
 		$this->_reloadManagerExtensionsData(true);
 	}
 	private function _loadExtensionsXML(){
@@ -308,6 +342,11 @@ class Manager implements Singleton {
 			$dom = $this->extensions->importNode($dom->documentElement, true);
 			$this->extensions->documentElement->appendChild($dom);
 		}
+		return $dom;
+	}
+	
+	private function __clone(){
+			
 	}
 }
 
@@ -369,19 +408,25 @@ abstract class ManagerPage extends PageBase {
 	 * @var PageFactoryDOMXSLTemplate
 	 */
 	protected $xsl = null;
+	protected $post = null;
 
 	final public function __construct(){
 		if(!defined('CORELIB_MANAGER_USERNAME')){
 			define('CORELIB_MANAGER_USERNAME', 'admin');
 		}
 		if(!defined('CORELIB_MANAGER_PASSWORD')){
-			define('CORELIB_MANAGER_PASSWORD', 'admin');
+			define('CORELIB_MANAGER_PASSWORD', sha1(rand(100000, 900000)));
+			$password_error = true;
 		}
 		
-		if((!isset($_SERVER['PHP_AUTH_USER']) && @$_SERVER['PHP_AUTH_USER'] != CORELIB_MANAGER_USERNAME) && (!isset($_SERVER['PHP_AUTH_PW']) && @$_SERVER['PHP_AUTH_PW'] != CORELIB_MANAGER_PASSWORD)){
+		if((!isset($_SERVER['PHP_AUTH_USER']) && @$_SERVER['PHP_AUTH_USER'] != CORELIB_MANAGER_USERNAME) && (!isset($_SERVER['PHP_AUTH_PW']) && sha1(@$_SERVER['PHP_AUTH_PW']) != CORELIB_MANAGER_PASSWORD)){
 		    header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
 		    header('HTTP/1.0 401 Unauthorized');
 		    echo '<h1>Access Denied</h1>';
+		    if(isset($password_error) && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		    	echo '<p>Notice: Constant <b>CORELIB_MANAGER_PASSWORD</b> is not defined</p>';
+		    	echo '<p>Before you can log in this constant must be defined.</p>';
+		    }
 		    exit;
 		}
 		
@@ -389,6 +434,9 @@ abstract class ManagerPage extends PageBase {
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
+		
+		$this->post = new PageFactoryPostTemplate();
+		$this->addTemplateDefinition($this->post);
 	}
 	
 	protected function _selectMenuItem($tab, $item){
@@ -398,4 +446,6 @@ abstract class ManagerPage extends PageBase {
 		return true; */
 	}
 }
+
+
 ?>

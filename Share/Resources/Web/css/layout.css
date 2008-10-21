@@ -40,6 +40,9 @@ tr.selected {
 tbody tr:hover {
 	background-color: #FFFFDD;
 }
+table.noborders td {
+	border-width: 0px;
+}
 /************************** Topbar *************************/
 #topbar {
 	background-image: url('../images/header/background.gif');
@@ -140,6 +143,16 @@ tbody tr:hover {
 	font-size: 15px;
 	margin-top: 0px;
 }
+
+#menu a:link, #menu a:visited, #menu a:active {
+	color: #AAAAAA;
+	text-decoration: none;
+}
+#menu a:hover {
+	color: #666666;
+	text-decoration: none;
+}
+
 #menu > ul {
 	border: 1px solid #ececec;
 	border-width: 0px 0px 0px 0px;

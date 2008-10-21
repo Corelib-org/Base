@@ -190,6 +190,9 @@ abstract class DatabaseDAO {
 		return $this->database->rollback();
 	}
 	
+	public function __sleep(){
+		return array();
+	}
 	public function __wakeup(){
 		$this->__construct();
 	}

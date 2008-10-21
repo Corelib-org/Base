@@ -582,9 +582,44 @@ class UrlInputValidator extends InputValidatorUrl {
 	
 }
 
+class InputValidatorInteger implements InputValidator {
+	public function validate($content){
+		return(preg_match('/^[0-9]+$/',$content));
+	}
+}
+class InputValidatorIsFloat implements InputValidator {
+	public function validate($content){
+		return(preg_match('/^[0-9]+(\.[0-9]+)?$/',$content));
+	}
+}
+
+class InputValidatorEnum implements InputValidator {
+	private $values = array();
+	
+	public function __construct($item=null /*, [$items...] */){
+		$this->values = func_get_args();
+	}
+	
+	public function validate($content){
+		return(preg_match('/^('.implode('|', $this->values).')$/',$content));
+	}
+}
+
+class InputValidatorNotEmpty implements InputValidator {
+	public function validate($content){
+		return !empty($content);
+	}
+}
+
+class InputValidatorEmpty implements InputValidator {
+	public function validate($content){
+		return empty($content);
+	}
+}
+
 class InputValidatorPhone implements InputValidator {
 	public function validate($content){
-		return(preg_match('/^\+?[\-\s0-9]+$/',$content));
+		return(preg_match('/^\+?[\-\s0-9]{8,}$/',$content));
 	}
 }
 /**
@@ -612,7 +647,7 @@ class EqualsInputValidator extends InputValidatorEquals {
 	
 }
 
-class ArrayInputValidator implements InputValidator {
+class InputValidatorArray implements InputValidator {
 	private $validator;
 
 	public function __construct($validator=null){
@@ -635,7 +670,9 @@ class ArrayInputValidator implements InputValidator {
 /**
  * @deprecated use ArrayInputValidator instead
  */
+class ArrayInputValidator extends InputValidatorArray { }
 class IsArrayInputValidator extends ArrayInputValidator { }
+
 
 class InputValidatorIsSet implements InputValidator {
 	public function validate($content){

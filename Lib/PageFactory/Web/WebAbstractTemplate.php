@@ -21,28 +21,12 @@
  *	@link http://www.bravura.dk/
  *	@version 1.0.0 ($Id$)
  */
-if(!defined('REDIRECT_URL')){
-	/**
-	 * Superceeded by {@link HTTP_REDIRECT_BASE}
-	 *
-	 * @deprecated Superceeded by HTTP_REDIRECT_BASE
-	 */
-	define('REDIRECT_URL', 'http://'.$_SERVER['SERVER_NAME']);
-} else {
-	try {
-		throw new BaseException('constant REDIRECT_URL is deprecated, it has been superceeded by HTTP_REDIRECT_BASE');
-	} catch (BaseException $e){
-		echo $e;
-	}
-	define('HTTP_REDIRECT_BASE', REDIRECT_URL);
-}
-if(!defined('HTTP_REDIRECT_BASE')){
+if(!defined('BASE_URL')){
 	/**
 	 * 	Define Redirect Base URL
 	 */
-	define('HTTP_REDIRECT_BASE', 'http://'.$_SERVER['SERVER_NAME']);
+	define('BASE_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');
 }
-
 
 abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $last_modified = null;
@@ -102,7 +86,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
-		$this->http_redirect_base = HTTP_REDIRECT_BASE;
+		$this->http_redirect_base = BASE_URL;
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$this->set_referer = false;
 		}
@@ -178,7 +162,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			$location = '/'.$location;
 		}
 		if(!is_null($param)){
-			if(strstr($this->location.$this->http_redirect_base, '?')){
+			if(strstr($this->http_redirect_base.$location, '?')){
 				$param = '&'.$param;
 			} else {
 				$param = '?'.$param;
@@ -189,6 +173,8 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		} else {
 			$this->location = $this->http_redirect_base.$location.$param;
 		}
+		$this->location = str_ireplace('//', '/', $this->location);
+		$this->location = str_ireplace('http:/', 'http://', $this->location);
 	}
 	public function setMessageID($id){
 		try {
@@ -200,7 +186,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	}
 	public function setForceSSL(){
 		if(!isset($_SERVER['HTTPS'])){
-			$this->setLocation(str_replace('http://', 'https://', HTTP_REDIRECT_BASE).$_SERVER['REQUEST_URI']);
+			$this->setLocation(str_replace('http://', 'https://', BASE_URL).$_SERVER['REQUEST_URI']);
 		}
 	}
 
@@ -255,6 +241,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function getHTTPRedirectBase(){
 		return $this->http_redirect_base;
 	}
+	 
 	public function getStatusMessage(){
 		$session = SessionHandler::getInstance();
 		if($session->check(self::MSGID)){

@@ -66,10 +66,6 @@ interface Observer {
 	public function update($update);
 }
 
-interface Converter {
-	public function convert($data);
-}
-
 interface Output {
 	public function getXML(DOMDocument $xml);
 	public function &getArray();

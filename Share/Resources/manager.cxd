@@ -6,44 +6,143 @@
 		<handler>ManagerConfig</handler>
 	</setup>
 	<pages>
-		<page>
-			<url>/corelib/</url>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
-			<exec>redirect</exec>
-		</page>
-		<page>
-			<url>/404/</url>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
-			<exec>redirect</exec>
-		</page>			
-		<page>
-			<url>/corelib/manager/dashboard/</url>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
-			<exec>dashboard</exec>
-		</page>
-		<page>
-			<url>/corelib/manager/extensions/</url>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
-			<exec>extensions</exec>
-		</page>
-		<page>
-			<url>/corelib/manager/configuration/</url>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
-			<exec>configuration</exec>
-		</page>
-		<page>
-			<url>/corelib/system/configuration/</url>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
-			<exec>configuration</exec>
-		</page>
-		<page type="regex">
-			<expr>/^\/corelib\/resource\/(.*?)\/(.*?)\/$/</expr>
-			<exec>getResource('\1', '\2')</exec>
-			<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
-		</page>
+		<get>
+			<page>
+				<url>/corelib/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>redirect</exec>
+			</page>
+			<page>
+				<url>/corelib/about/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>about</exec>
+			</page>
+			<page>
+				<url>/corelib/markup/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>markup</exec>
+			</page>
+			<!--
+			<page>
+				<url>/404/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>redirect</exec>
+			</page>
+			-->			
+			<page>
+				<url>/corelib/manager/dashboard/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>dashboard</exec>
+			</page>
+			<page>
+				<url>/corelib/manager/extensions/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>extensions</exec>
+			</page>
+			<!--
+			<page>
+				<url>/corelib/manager/configuration/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<exec>configuration</exec>
+			</page>
+			-->
+			<page>
+				<url>/corelib/system/configuration/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<exec>configuration</exec>
+			</page>
+			<page>
+				<url>/corelib/system/database/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<exec>database</exec>
+			</page>
+			<page>
+				<url>/corelib/system/check/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<exec>check</exec>
+			</page>
+			<page>
+				<url>/corelib/system/check/reload/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<exec>reload</exec>
+			</page>
+			<page type="regex">
+				<expr>/^\/corelib\/resource\/(.*?)\/(.*?)\/$/</expr>
+				<exec>getResource('\1', '\2')</exec>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+			</page>
+		</get>
+		<post>
+			<page>
+				<url>/corelib/system/database/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Post/System.php</file>
+				<exec>database</exec>
+			</page>			
+		</post>
 	</pages>	
 	<props>
+		<constants>
+			<group id="base" title="Base">
+				<constant>
+					<name>CORELIB</name>
+					<title>Corelib Path</title>
+					<desc>Path to where corelib is located</desc>
+					<value type="string" default="/path/to/corelib/"/>
+				</constant>
+				<constant>
+					<name>CURRENT_WORKING_DIR</name>
+					<title>Current Working Dir</title>
+					<desc>path to the current working dir, it is safe to leave this blank</desc>
+					<value fieldtype="string" type="string" default=""/>
+				</constant>
+				<constant>
+					<name>BASE_RUNLEVEL</name>
+					<title>Current Runlevel</title>
+					<desc>How much debugging should be displayed</desc>
+					<value fieldtype="select" type="constant" default="BASE_RUNLEVEL_DEVEL"/>
+				</constant>
+				<constant>
+					<name>BASE_CLASS_CACHE_FILE</name>
+					<title>class cache file</title>
+					<desc>where to store the class cache database, this file must be writable by the user running the script.</desc>
+					<value fieldtype="string" type="string" default="var/db/class.db"/>
+				</constant>
+				<constant>
+					<name>BASE_DEFAULT_TIMEZONE</name>
+					<title>Default timezone</title>
+					<desc>default timezone for use in php date functions.</desc>
+					<value fieldtype="string" type="string" default="CET"/>
+				</constant>
+				<constant>
+					<name>MANAGER_DEVELOPER_MODE</name>
+					<title>Manager Run Mode</title>
+					<desc>default timezone for use in php date functions.</desc>
+					<value fieldtype="string" type="string" default="CET"/>
+				</constant>
+				<constant readonly="true" bind="BASE_RUNLEVEL">
+					<name>BASE_RUNLEVEL_PROD</name>
+					<title>Default timezone</title>
+					<desc>default timezone for use in php date functions.</desc>
+				</constant>
+				<constant readonly="true" bind="BASE_RUNLEVEL">
+					<name>BASE_RUNLEVEL_DEVEL</name>
+					<title>Default timezone</title>
+					<desc>default timezone for use in php date functions.</desc>
+				</constant>
+			</group>
+		</constants>	
+		<systemchecks>
+			<check type="permission">
+				<folder readable="true" writable="true" folder="var/"/>
+				<file readable="true" writable="true" file="{MANAGER_EXTENSION_FILE}">
+					<links>
+						<link href="corelib/system/check/reload/">Reaload extension data</link>
+					</links>
+				</file>
+			</check>
+		</systemchecks>
 		<menu locked="false">
+			<!--
 			<group id="overview" title="Overview">
 				<item url="/corelib/manager/dashboard/">Dashboard</item>
 			</group>
@@ -51,12 +150,18 @@
 				<item url="/corelib/manager/extensions/">Extensions</item>
 				<item url="/corelib/manager/configuration/">Configuration</item>
 			</group>
+			
 			<group title="System">
 				<item url="/corelib/system/configuration/">Configuration</item>
+				<item url="/corelib/system/database/">Database Tool</item>
 			</group>
-			<group title="About" id="about" align="right">
-				<item url="/corelib/system/configuration/">Configuration</item>
-			</group>
+			-->
+			<group title="Dashboard" id="dashboard" url="/corelib/manager/dashboard/"/>
+			<group title="Configuration" id="configuration" url="/corelib/system/configuration/"/>
+			<group title="System Check" id="check" url="/corelib/system/check/"/>
+			<group title="Database Tool" id="database" url="/corelib/system/database/"/>
+			<group title="About" id="about" url="/corelib/about/"/>
+			<group title="Markup" id="markup" url="/corelib/markup/"/>
 		</menu>
 		<resources>
 			<resource handle="manager">{CORELIB}/Base/Share/Resources/Web/</resource>
@@ -64,5 +169,10 @@
 		<dashboard>
 			<widget handler="ManagerWidgetErrorLog"/>
 		</dashboard>
+		<database>
+			<!--
+			<engine id="MySQLi">
+			</engine> -->
+		</database>
 	</props>	
 </extension>

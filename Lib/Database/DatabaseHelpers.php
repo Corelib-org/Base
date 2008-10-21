@@ -1,6 +1,6 @@
 <?php
-abstract class DatabaseListHelper {
-	private $settings = array();
+abstract class DatabaseHelper {
+	protected $settings = array();
 	
 	public function set($column, $setting){
 		$this->settings[$column] = $setting;
@@ -14,6 +14,9 @@ abstract class DatabaseListHelper {
 		}
 	}
 	
+}
+
+abstract class DatabaseListHelper extends DatabaseHelper {
 	public function count(){
 		return sizeof($this->settings);
 	}
@@ -35,5 +38,11 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 
 class DatabaseListHelperFilter extends DatabaseListHelper {
 	
+}
+
+class DatabaseDataHandler extends DatabaseHelper {
+	public function getUpdatedColumns(){
+		return $this->settings;
+	}
 }
 ?>

@@ -5,6 +5,18 @@ abstract class ManagerWidget implements Output {
 	 */
 	protected $settings = null;
 	
+	private $template = null;
+	
+	public function __construct(){
+		
+	}
+	
+	final public function setTemplate(PageFactoryDOMXSLTemplate $template){
+		if(is_null($this->template)){
+			$this->template = $template;
+		}
+	}
+	
 	public function setSettings(DOMNode $settings){
 		$this->settings = $settings;
 	}
@@ -30,12 +42,24 @@ abstract class ManagerWidget implements Output {
 			return false;
 		}
 	}
+	
+	public function addTemplate($filename){
+		$this->template->addTemplate($filename);
+	}
+	public function addStyleSheet($filename){
+		$this->template->addStyleSheet($filename);
+	}
+	public function addJavaScript($filename){
+		$this->template->addJavaScript($filename);
+	}
+
 }
 
 class ManagerWidgetErrorLog extends ManagerWidget {
-	private $logfile = null;	
+	private $logfile = null;
 	
 	public function getXML(DOMDocument $xml){
+		$this->addTemplate('Base/Share/Resources/XSLT/Pages/manager/errorlog.xsl');
 		$errorlog = $xml->createElement('errorlog');
 		
 		$logentries = array();
@@ -52,9 +76,9 @@ class ManagerWidgetErrorLog extends ManagerWidget {
 						if(!isset($logentries[$current]['xml'])){
 							$logentries[$current]['xml'] = $errorlog->appendChild($xml->createElement('entry'));
 							$logentries[$current]['xml']->setAttribute('id', $current);
-							$logentries[$current]['tracelines'] = $logentries[$current]['xml']->appendChild($xml->createElement('tracelines'));							
-							$logentries[$current]['contentlines'] = $logentries[$current]['xml']->appendChild($xml->createElement('tracelines'));							
+							$logentries[$current]['contentlines'] = $logentries[$current]['xml']->appendChild($xml->createElement('contentlines'));
 							$logentries[$current]['dates'] = $logentries[$current]['xml']->appendChild($xml->createElement('dates'));
+							$logentries[$current]['tracelines'] = $logentries[$current]['xml']->appendChild($xml->createElement('tracelines'));														
 						}
 						$logentries[$current]['dates']->appendChild($xml->createElement('date', $matches[2]));
 					}
@@ -70,31 +94,15 @@ class ManagerWidgetErrorLog extends ManagerWidget {
 							$logentries[$current]['xml']->appendChild($xml->createElement('line', trim(str_replace('Error Line: ', '', $line))));
 						} else if(strstr($line, 'Request URI:')){
 							$logentries[$current]['xml']->appendChild($xml->createElement('uri', trim(str_replace('Request URI: ', '', $line))));
+						} else if(strstr($line, 'HTTP Referer:')){
+							$logentries[$current]['xml']->appendChild($xml->createElement('uri', trim(str_replace('HTTP Referer: ', '', $line))));
 						} else if(preg_match('/^#([0-9]+)\s(.*)$/', $line, $matches)){
-							$logentries[$current]['tracelines']->appendChild($xml->createElement('traceline', $matches[2]));
+							$logentries[$current]['tracelines']->appendChild($xml->createElement('traceline', strip_tags($matches[2])));
 						} else {
 							if(!empty($line)){
-								$logentries[$current]['contentlines']->appendChild($xml->createElement('contentline', trim($line)));	
+								$logentries[$current]['contentlines']->appendChild($xml->createElement('contentline', trim(strip_tags(html_entity_decode($line)))));	
 							}
 						}
-						/*
-					Error Code: Notice
-Error File: /usr/home/webroot/corelib/Base/Lib/Handlers/ErrorHandler.php
-Error Line: 61
-Request URI: /corelib/manager/dashboard/?xml
-Remote Address: 10.37.129.2
-
-Undefined variable: test 
- /usr/home/webroot/corelib/Base/Lib/Manager/Pages/Get/Manager.php at line 12
-
-#0 /usr/home/webroot/corelib/Base/Lib/Manager/Pages/Get/Manager.php(12): BaseError(8, 'Undefined varia...', '/usr/home/webro...', 12, Array)
-#1 /usr/home/webroot/corelib/Base/Lib/PageFactory/PageFactory.php(82) : eval()'d code(1): WebPage->dashboard()
-#2 /usr/home/webroot/corelib/Base/Lib/PageFactory/PageFactory.php(82): eval()
-#3 /usr/home/webroot/corelib/Base/Lib/PageFactory/PageFactory.php(241): PageFactoryTemplateEngine->build(Object(WebPage), 'dashboard()')
-#4 /usr/home/webroot/backoffice/share/doc/Dummy/index.php(14) : eval()'d code(1): PageFactory->build(Object(WebPage))
-#5 /usr/home/webroot/backoffice/share/doc/Dummy/index.php(14): eval()
-#6 {main}					
-*/	
 					} else {
 						$logentries[$current]['complete'] = true;
 						$entry = false;

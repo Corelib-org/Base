@@ -137,6 +137,12 @@ if(!defined('CORELIB')){
 	define('CORELIB', '/path/to/corelib/');
 }
 
+if(!defined('ENABLE_XDEBUG') && ENABLE_XDEBUG){
+	if(is_callable('xdebug_start_code_coverage')){
+		// xdebug_start_code_coverage();
+	}
+}
+
 if(!defined('CURRENT_WORKING_DIR')){
 	/**
 	 *	Current Working Dir Constant
@@ -484,7 +490,6 @@ class Base implements Singleton {
 					echo '<div style="margin: 20px;"><h1>Unable to create directory "'.dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE).'"</h1>';
 					echo '<p>Please make the directory <b>'.dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)).'</b> writable to the webuser.</p><br/>';
 					echo '<pre>$ chmod -R uga=+rwX '.dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)).'</pre></div>';
-					return false;
 				} else {
 					mkdir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE), 0777, true);
 				}

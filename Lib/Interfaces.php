@@ -68,7 +68,6 @@ interface Observer {
 
 interface Output {
 	public function getXML(DOMDocument $xml);
-	public function &getArray();
 }
 
 /**

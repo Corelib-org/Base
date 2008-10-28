@@ -89,7 +89,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			if($input->isSetGet('xml') && BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
 				$this->template->setContentType('text/xml');
 				$this->template->setContentCharset('UTF-8');
-				echo $this->xml->saveXML();
+				return $this->xml->saveXML();
 			} else {
 				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
 					$tranformToXML = false;
@@ -109,13 +109,17 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 					$page = file_get_contents($this->template_cache_file);
 				}
 				if(PAGE_FACTORY_CACHE_ENABLE){
-					echo PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
-					return true;
+					return PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
 				}
-				echo $page;
+				
+				$converter = $this->template->getOutputConverter();
+				if(!is_null($converter)){
+					return $converter->convert($page);
+				} else {
+					return $page;
+				}
 			}
 		}
-		return true;
 	}
 
 	public function addPageContent(Output $content){
@@ -155,6 +159,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
 			$this->settings->appendChild($this->xml->createElement('remote_address', $this->template->getRemoteAddress()));
 			$this->settings->appendChild($this->xml->createElement('redirect_url', $this->template->getHTTPRedirectBase()));
+			$this->settings->appendChild($this->xml->createElement('base_url', $this->template->getHTTPRedirectBase()));
 
 			$stylesheets = $this->template->getStyleSheets();
 			while(list(,$val) = each($stylesheets)){

@@ -73,10 +73,11 @@
 //**                3. addClassPath() ......................     **//
 //**                3. loadClass() .........................     **//
 //**                4. findClass() .........................     **//
-//**                5. _classSearch() ......................     **//
-//**                6. _searchDir() ........................     **//
-//**                7. __clone() ...........................     **//
-//**                8. __destruct() ........................     **//
+//**                5. getClassPaths() .....................     **//
+//**                6. _classSearch() ......................     **//
+//**                7. _searchDir() ........................     **//
+//**                8. __clone() ...........................     **//
+//**                9. __destruct() ........................     **//
 //**    5. Base Functions ..................................     **//
 //**        1. __autoload() ................................     **//
 //**    6. Instanciate Base ................................     **//
@@ -110,9 +111,9 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base
  */
-define('CORELIB_BASE_VERSION', '4.4.0 Beta');
+define('CORELIB_BASE_VERSION', '4.6.0');
 define('CORELIB_BASE_VERSION_MAJOR', '4');
-define('CORELIB_BASE_VERSION_MINOR', '4');
+define('CORELIB_BASE_VERSION_MINOR', '6');
 define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
@@ -135,6 +136,12 @@ if(!defined('CORELIB')){
 	 * 	This constanst holds the path to the corelib
 	 */
 	define('CORELIB', '/path/to/corelib/');
+}
+
+if(!defined('ENABLE_XDEBUG') && ENABLE_XDEBUG){
+	if(is_callable('xdebug_start_code_coverage')){
+		// xdebug_start_code_coverage();
+	}
 }
 
 if(!defined('CURRENT_WORKING_DIR')){
@@ -306,14 +313,14 @@ class Base implements Singleton {
 		}
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
-		}else if(is_writeable(BASE_CLASS_CACHE_FILE) && is_readable(BASE_CLASS_CACHE_FILE)){
+		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
 			/**
 			 * @ignore
 			 */
 			include_once(BASE_CLASS_CACHE_FILE);
 			$this->class_cache = &$classes;
 		} else {
-			echo '<h1> Class Cache File is unreadable or write-protected</h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
+			echo '<h1> Class Cache File is unreadable </h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
 		require_once(CORELIB.'/Base/Lib/StrictTypes.php');
@@ -383,11 +390,6 @@ class Base implements Singleton {
 	 * @uses Base::$class_cache_updated
 	 */
 	public function findClass($class){
-		try {
-			StrictTypes::isString($class);
-		} catch (BaseException $e){
-			echo $e;
-		}
 		
 		if(!isset($this->class_cache[$class])){
 			try {
@@ -409,6 +411,15 @@ class Base implements Singleton {
 		}
 	}
 
+	/**
+	 * Get registered class paths
+	 * 
+	 * @return array registered class path's
+	 */
+	public function getClassPaths(){
+		return $this->class_paths;	
+	}
+	
 	/**
 	 * Search for class in directories
 	 *
@@ -489,7 +500,6 @@ class Base implements Singleton {
 					echo '<div style="margin: 20px;"><h1>Unable to create directory "'.dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE).'"</h1>';
 					echo '<p>Please make the directory <b>'.dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)).'</b> writable to the webuser.</p><br/>';
 					echo '<pre>$ chmod -R uga=+rwX '.dirname(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE)).'</pre></div>';
-					return false;
 				} else {
 					mkdir(dirname(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE), 0777, true);
 				}

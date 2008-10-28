@@ -1,0 +1,23 @@
+.logentry {
+	margin-bottom: 20px;
+	font-size: 10pt;
+}
+
+.logentry h2 {
+	font-size: 12pt;
+	margin: 0px;
+}
+.logentry small {
+	font-size: 7pt;
+}
+.logentry .trace {
+	margin-top: 5px;
+	border: 1px solid #CDCDCD;
+	border-width: 1px 0px 1px 0px;
+}
+.logentry .trace li {
+	font-family: monospace;
+	font-size: 8pt;
+	list-style: none;
+	margin-bottom: 5px;
+}

@@ -164,10 +164,13 @@ class PageFactory implements Singleton {
 		if(substr($_GET[PAGE_FACTORY_GET_TOKEN], -1) != '/'){
 			$_GET[PAGE_FACTORY_GET_TOKEN] .= '/';
 		}
+		
 		if(preg_match('/^\/corelib/', $_GET[PAGE_FACTORY_GET_TOKEN])){
 			$manager = Manager::getInstance();
+			$manager->init();
 			$manager->setupPageRegistry($pages);
 		}
+		
 		if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]])){
 			if(isset($pages)){
 				foreach($pages as $val){
@@ -244,10 +247,17 @@ class PageFactory implements Singleton {
 		$this->engine->build($page, $this->callback);
 	}
 
-	public function draw(){
-		$this->engine->draw();
+	public function draw($return=false){
+		if($return){
+			$content = $this->engine->draw();
+		} else {
+			echo $this->engine->draw();
+		}
 		if($template = $this->engine->getTemplate()){
 			$template->cleanup();
+		}
+		if($return){
+			return $content;
 		}
 	}
 }

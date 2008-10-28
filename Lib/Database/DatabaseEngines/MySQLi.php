@@ -155,25 +155,40 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		$this->blob = array();
 		$bind = func_get_args();
 		
-		foreach ($bind as $key => $val) {
-			$this->bind['param'][$key] = $val;
-			if(is_string($val) && strlen($val) < 256){
-				$this->bind['types'][$key] = 's';
-			} else if(is_string($val)){
-				$this->bind['types'][$key] = 'b';
-				$this->blob[$key] = $val;
-				$this->bind['param'][$key] = '';
-			} else if(is_integer($val)){
-				$this->bind['types'][$key] = 'i';
-			} else if(is_float($val)){
-				$this->bind['types'][$key] = 'd';
-			} else if(is_bool($val)){
-				$this->bind['param'][$key] = MySQLiTools::parseBooleanValue($val, false);
-				$this->bind['types'][$key] = 's';
+		foreach ($bind as $val) {
+			if(is_array($val)){
+				foreach ($val as $subval){
+					$this->_bindValue($subval);
+				}
 			} else {
-				$this->bind['types'][$key] = 's';
+				$this->_bindValue($val);
 			}
 		}
+	}
+	
+	private function _bindValue($val){
+		if(isset($this->bind['param'])){
+			$key = sizeof($this->bind['param']);
+		} else {
+			$key = 0;
+		}
+		$this->bind['param'][$key] = $val;
+		if(is_string($val) && strlen($val) < 256){
+			$this->bind['types'][$key] = 's';
+		} else if(is_string($val)){
+			$this->bind['types'][$key] = 'b';
+			$this->blob[$key] = $val;
+			$this->bind['param'][$key] = '';
+		} else if(is_integer($val)){
+			$this->bind['types'][$key] = 'i';
+		} else if(is_float($val)){
+			$this->bind['types'][$key] = 'd';
+		} else if(is_bool($val)){
+			$this->bind['param'][$key] = MySQLiTools::parseBooleanValue($val, false);
+			$this->bind['types'][$key] = 's';
+		} else {
+			$this->bind['types'][$key] = 's';
+		}		
 	}
 	
 	public function execute(){
@@ -265,7 +280,7 @@ class MySQLiTools {
 		array_shift($args);
 		while (list(,$val) = each($args)) {
 			if($arg = $order->get($val)){
-				$fields[] = $arg;
+				$fields[] = ''.$arg.'';
 			}
 		}
 		if(sizeof($fields) > 0){
@@ -287,26 +302,23 @@ class MySQLiTools {
 	}
 	
 	static public function makeInsertStatement($table, array $fields){
-		return 'INSERT INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
+		return 'INSERT INTO `'.$table.'` '.self::_makeInsertReplaceValues($fields);
 	}
-	
 	static public function makeReplaceStatement($table, array $fields){
-		return 'REPLACE INTO '.$table.' '.self::_makeInsertReplaceValues($fields);
+		return 'REPLACE INTO `'.$table.'` '.self::_makeInsertReplaceValues($fields);
 	}
-	
 	static public function makeUpdateStatement($table, array $fields, $where=''){
-		$query = 'UPDATE '.$table."\n".' SET';
+		$query = 'UPDATE `'.$table.'`'."\n".' SET';
 		$qfields = array();
 		foreach ($fields as $field => $value){
 			if(is_integer($field)){
-				$qfields[] = ' '.$value.'=?';
+				$qfields[] = ' `'.$value.'`=?';
 			} else {
-				$qfields[] = ' '.$field.'='.$value.'';
+				$qfields[] = ' `'.$field.'`='.$value.'';
 			}
 		}
 		return $query.' '.implode(', ', $qfields).' '.$where;
 	}
-	
 	static public function makeInStatement(array $values){
 		foreach ($values as $key => $val){
 			if(!is_numeric($val)){
@@ -322,10 +334,10 @@ class MySQLiTools {
 		$qvalues = array();
 		foreach ($fields as $field => $value){
 			if(is_integer($field)){
-				$qfields[] = $value;
+				$qfields[] = '`'.$value.'`';
 				$qvalues[] = '?';
 			} else {
-				$qfields[] = $field;
+				$qfields[] = '`'.$field.'`';
 				$qvalues[] = $value;
 			}
 		}

@@ -40,6 +40,8 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 
 	private $registered_php_functions = false;
 	
+	private $output_converter = null;
+	
 	const TEMPLATE_ENGINE = 'PageFactoryDOMXSL';
 
 	const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
@@ -65,16 +67,15 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	public function getCoreXSLT(){
 		return $this->xsl_core;
 	}
+	public function setCoreXSLT($xslcore){
+		$this->xsl_core = $xslcore;
+	}
+	
 	public function getRegisteredPHPFunctions(){
 		return $this->registered_php_functions;
 	}
 	public function addTemplate($template_file){
-		try {
-			StrictTypes::isString($template_file);
-		} catch (BaseException $e){
-			echo $e;
-		}
-		if($template_file{0} == '/' || preg_match('/^[a-zA-Z]:/', $template_file)){
+		if($template_file{0} ==	'/' || preg_match('/^[a-zA-Z]:/', $template_file)){
 			$template = $template_file;
 		} else {
 			try {
@@ -126,7 +127,13 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		return true;
 	}
 
-
+	public function setOutputConverter(Converter $converter){
+		$this->output_converter = $converter;
+	}
+	public function getOutputConverter(){
+		return $this->output_converter;
+	}
+	
 	public function getPageCacheString(){
 		if(is_null($this->custom_cache_string)){
 			$this->custom_cache_string = sha1($this->getScriptUri().serialize($this->xsl_templates).$this->xsl_core);

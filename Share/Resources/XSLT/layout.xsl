@@ -14,13 +14,25 @@
 				<div class="left">
 					<div id="menu" class="left">
 						<ul>
-							<li>Overview</li>
-							<li>Settings</li>
-							<ul>
-								<li>Extensions</li>
-								<li>Configuration</li>
-							</ul>
-							<li>Maintenance</li>
+							<xsl:for-each select="/page/settings/menu/group">
+								<li>
+									<xsl:choose>
+										<xsl:when test="@url = true()">
+											<a href="{@url}"><xsl:value-of select="@title"/></a>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="@title"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</li>
+								<xsl:if test="count(item) > 0">
+									<ul>
+										<xsl:for-each select="item">
+											<li><xsl:value-of select="."/></li>
+										</xsl:for-each>
+									</ul>
+								</xsl:if>
+							</xsl:for-each>
 						</ul>
 						<div class="shadow"></div>
 					</div>
@@ -29,7 +41,7 @@
 				</div>
 				<div class="left">
 					<div id="content">
-						<div id="breadcrumb" class="left clear">Settings Configuration</div>
+						<div id="breadcrumb" class="left clear">&#160;<!-- Settings Configuration --></div>
 						<div id="innercontent" class="left clear">
 							
 							<xsl:copy-of select="$content"/>							
@@ -43,6 +55,7 @@
 			</div>
 		</div>
 		<div class="clear"></div>
+		<br/>
 	</xsl:template>
 
 	<xsl:template name="h1">

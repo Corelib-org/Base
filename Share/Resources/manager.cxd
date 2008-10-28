@@ -71,6 +71,13 @@
 				<exec>getResource('\1', '\2')</exec>
 				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
 			</page>
+			
+			<page>
+				<url>/corelib/generator/</url>
+				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Generator.php</file>
+				<exec>build</exec>
+			</page>
+			
 		</get>
 		<post>
 			<page>
@@ -160,6 +167,7 @@
 			<group title="Configuration" id="configuration" url="/corelib/system/configuration/"/>
 			<group title="System Check" id="check" url="/corelib/system/check/"/>
 			<group title="Database Tool" id="database" url="/corelib/system/database/"/>
+			<group title="Code generation Tool" id="database" url="/corelib/generator/"/>
 			<group title="About" id="about" url="/corelib/about/"/>
 			<group title="Markup" id="markup" url="/corelib/markup/"/>
 		</menu>
@@ -174,5 +182,19 @@
 			<engine id="MySQLi">
 			</engine> -->
 		</database>
+		<codewriter>
+		</codewriter>
+		<!-- 
+		<codewriter>
+			<class name="Demo" table="tbl_demo" path="lib/">
+				<generators>
+					<generator name="CodeGeneratorModel"/>
+					<generator name="CodeGeneratorModelList"/>
+					<generator name="CodeGeneratorModelDAOMySQLi"/>
+					<generator name="CodeGeneratorModelListDAOMySQLi"/>
+				</generators>
+			</class>
+		</codewriter>
+		-->
 	</props>	
 </extension>

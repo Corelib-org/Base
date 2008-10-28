@@ -73,10 +73,11 @@
 //**                3. addClassPath() ......................     **//
 //**                3. loadClass() .........................     **//
 //**                4. findClass() .........................     **//
-//**                5. _classSearch() ......................     **//
-//**                6. _searchDir() ........................     **//
-//**                7. __clone() ...........................     **//
-//**                8. __destruct() ........................     **//
+//**                5. getClassPaths() .....................     **//
+//**                6. _classSearch() ......................     **//
+//**                7. _searchDir() ........................     **//
+//**                8. __clone() ...........................     **//
+//**                9. __destruct() ........................     **//
 //**    5. Base Functions ..................................     **//
 //**        1. __autoload() ................................     **//
 //**    6. Instanciate Base ................................     **//
@@ -410,6 +411,15 @@ class Base implements Singleton {
 		}
 	}
 
+	/**
+	 * Get registered class paths
+	 * 
+	 * @return array registered class path's
+	 */
+	public function getClassPaths(){
+		return $this->class_paths;	
+	}
+	
 	/**
 	 * Search for class in directories
 	 *

@@ -12,7 +12,7 @@ class WebPage extends ManagerPage {
 	
 	public function check(){
 		$config = ManagerConfig::getInstance();
-		$this->addContent($config->getSystemCheckResultes());
+		$this->addContent($config->getSystemCheckResults());
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/system/check.xsl');
 	}
 	

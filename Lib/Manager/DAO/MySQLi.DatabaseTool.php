@@ -2,8 +2,6 @@
 class MySQLi_DatabaseTool extends DatabaseDAO implements Singleton,DAO_DatabaseTool {
 	private static $instance = null;
 	
-	const SELECT_COLUMNS = '';
-	
 	/**
 	 *	@return MySQLi_DatabaseTool
 	 */

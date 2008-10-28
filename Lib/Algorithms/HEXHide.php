@@ -53,7 +53,6 @@
  * 
  * @todo Describe how the HEXHide encoding process works
  * @package corelib 
- * @subpackage Base
  */
 class HEXHide {
 	//*****************************************************************//

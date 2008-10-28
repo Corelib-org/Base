@@ -111,7 +111,13 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				if(PAGE_FACTORY_CACHE_ENABLE){
 					return PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
 				}
-				return $page;
+				
+				$converter = $this->template->getOutputConverter();
+				if(!is_null($converter)){
+					return $converter->convert($page);
+				} else {
+					return $page;
+				}
 			}
 		}
 	}

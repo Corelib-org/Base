@@ -122,29 +122,30 @@ class Manager implements Singleton {
 	 */
 	private $extensions = null;
 	
+	private $datadir = MANAGER_DATADIR;
+	private $extension_file = '';
+	
 	/**
 	 * @var array
 	 */
 	private $extensions_data = array();
 
-	protected function __construct(){
-		if(!is_dir(MANAGER_DATADIR)){
-			mkdir(MANAGER_DATADIR, 0777, true);
-			@chmod(MANAGER_DATADIR, 0777);
+	protected function __construct($datadir=null){
+		if(!is_null($datadir)){
+			$this->datadir = $datadir;	
+		}
+		
+		if(!is_dir($this->datadir)){
+			mkdir($this->datadir, 0777, true);
+			@chmod($this->datadir, 0777);
 		}
 		try {
-			if(!is_writeable(MANAGER_DATADIR)){
-				throw new BaseException(MANAGER_DATADIR.' is read-only');
+			if(!is_writeable($this->datadir)){
+				throw new BaseException($this->datadir.' is read-only');
 			}
 		} catch (BaseException $e){
 			echo $e;
 			exit;
-		}
-		define('MANAGER_EXTENSION_FILE', MANAGER_DATADIR.self::EXTENSIONS_FILE);
-		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
-			$this->_reloadManagerExtensions();
-		} else { 
-			$this->_reloadManagerExtensionsData();
 		}
 	}
 
@@ -158,6 +159,15 @@ class Manager implements Singleton {
 		return self::$instance;
 	}
 
+	public function init(){
+		$this->extension_file = $this->datadir.self::EXTENSIONS_FILE;
+		if(!is_file($this->extension_file) || MANAGER_DEVELOPER_MODE){
+			$this->_reloadManagerExtensions();
+		} else { 
+			$this->_reloadManagerExtensionsData();
+		}
+	}
+	
 	public function addExtensionDir($dir){
 		$this->extension_dirs[] = $dir;
 	}
@@ -224,6 +234,10 @@ class Manager implements Singleton {
 		}
 		return $filename;
 	}	
+	
+	public function getDatadir(){
+		return $this->datadir;
+	}
 	
 	public function getExtensionsXML(){
 		return $this->extensions->documentElement;
@@ -298,10 +312,10 @@ class Manager implements Singleton {
 			$this->_searchDir($val);
 		}
 		reset($this->extension_dirs);
-		@chmod(MANAGER_DATADIR.self::EXTENSIONS_FILE, 0666);
+		@chmod($this->extension_file, 0666);
 		
-		if(!is_file(MANAGER_DATADIR.self::EXTENSIONS_FILE) || MANAGER_DEVELOPER_MODE){
-			$this->extensions->save(MANAGER_DATADIR.self::EXTENSIONS_FILE);
+		if(!is_file($this->extension_file) || MANAGER_DEVELOPER_MODE){
+			$this->extensions->save($this->extension_file);
 		} 
 				
 		$this->_reloadManagerExtensionsData(true);
@@ -309,7 +323,7 @@ class Manager implements Singleton {
 	private function _loadExtensionsXML(){
 		if(!$this->extensions instanceof DOMDocument){
 			$this->extensions = new DOMDocument('1.0', 'UTF-8');
-			$this->extensions->load(MANAGER_DATADIR.self::EXTENSIONS_FILE);
+			$this->extensions->load($this->extension_file);
 		}
 	}
 	protected function _searchDir($dir){

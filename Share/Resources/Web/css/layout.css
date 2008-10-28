@@ -208,3 +208,14 @@ table.noborders td {
 	border: 1px solid #ececec;
 	border-width: 0px 0px 0px 1px;
 }
+.GeneratorLineAdd {
+	background-color: #EEFFEE;
+	font-weight: bold;
+	color: #00CC00;
+	
+}
+.GeneratorLineRemove {
+	background-color: #FFEEEE;
+	font-weight: bold;
+	color: #CC0000;
+}

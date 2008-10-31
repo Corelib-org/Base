@@ -73,7 +73,7 @@ class StringConverterSubstring implements Converter {
 		if($this->wordsafe){
 			while($string{$length} != ' '){
 				$length++;
-				if($length > strlen($string)){
+				if($length > strlen($string) || (strlen($string) - 1) < $length){
 					break;
 				}
 			}

@@ -67,9 +67,9 @@ class CodeGeneratorModelListDAOMySQLi extends CodeGeneratorPlugin {
 							$conditions[$before] = $code;
 						}
 						$after = $condition.'.\'_after\'';
-						if(!isset($conditions[$before])){
-							$code .= "\t\t\t".'if($'.$field['property'].'_after = $filter->get('.$this->_getClassName().'::'.$field['constant'].'.\'_after\')){'."\n";
-							$code .= "\t\t\t\t".'$filters[\'where\'] .= \'AND `\'.'.$this->_getClassName().'::'.$field['constant'].'.\'` <= FROM_UNIXTIME(\\\'\'.mysql_escape_string($'.$field['property'].'_before).\'\\\') \';'."\n";
+						if(!isset($conditions[$after])){
+							$code = "\t\t\t".'if($'.$field['property'].'_after = $filter->get('.$this->_getClassName().'::'.$field['constant'].'.\'_after\')){'."\n";
+							$code .= "\t\t\t\t".'$filters[\'where\'] .= \'AND `\'.'.$this->_getClassName().'::'.$field['constant'].'.\'` >= FROM_UNIXTIME(\\\'\'.mysql_escape_string($'.$field['property'].'_after).\'\\\') \';'."\n";
 							$code .= "\t\t\t".'}';
 							$conditions[$after] = $code;
 						}

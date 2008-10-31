@@ -27,6 +27,7 @@ class MySQLiEngine implements DatabaseEngine {
 		$this->reconnect = $reconnect;;
 		$this->charset = $charset;
 	}
+	
 	public function query(Query $query){
 		try {
 			if(!$query instanceof MySQLiQuery){
@@ -35,16 +36,9 @@ class MySQLiEngine implements DatabaseEngine {
 		} catch (BaseException $e){
 			echo $e;
 		}
-		/*
-		if(function_exists('posix_getpid')){
-			if($this->pid != posix_getpid() || is_null($this->connection)){
-				$this->_connect();
-			}
-		} else { */
-			if(is_null($this->connection)){
-				$this->_connect();
-			}			
-		// }
+		if(is_null($this->connection)){
+			$this->_connect();
+		}			
 		$query->setInstance($this->connection);
 		if($this->reconnect){
 			while(true){

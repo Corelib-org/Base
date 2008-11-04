@@ -66,6 +66,11 @@ class MySQLi_${classname}List extends DatabaseDAO implements Singleton,DAO_${cla
 	public function getList(DatabaseListHelperFilter $filter, DatabaseListHelperOrder $order, $view=null, $offset=null, $limit=null){
 		/* Order statement */
 		/* Order statement end */
+		if(!$order){
+			$order = '';
+		} else {
+			$order = 'ORDER BY '.$order;
+		}		
 		
 		$filters = $this->_prepareFilterStatements($filter);
 		$join = $filters['join'];

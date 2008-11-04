@@ -1,8 +1,9 @@
 <?php
-class CodeGeneratorModelList extends CodeGeneratorModel {
-	public function __construct($classname, $class){
-		$class['path'] .= 'Lib/';
-		parent::__construct($classname, $class);
+class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
+	public function __construct($path, $classname, $table, $fields){
+		$path .= 'Lib/';
+		parent::__construct($path, $classname, $table, $fields);
+		
 		$this->_setFilename($classname.'List.php');
 		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelList.php');
 	}

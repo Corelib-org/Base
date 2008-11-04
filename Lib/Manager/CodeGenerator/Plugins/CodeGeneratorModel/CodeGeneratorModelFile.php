@@ -1,7 +1,7 @@
 <?php
-class CodeGeneratorModel extends CodeGeneratorPlugin {
-	public function __construct($classname, $class){
-		parent::__construct($classname, $class);
+class CodeGeneratorModelFile extends CodeGeneratorFile {
+	public function __construct($path, $classname, $table, $fields){
+		parent::__construct($path, $classname, $table, $fields);
 		$this->_setFilename($classname.'.php');
 		$this->_loadContent(CORELIB.'/Base/Share/Generator/Model.php');
 	}

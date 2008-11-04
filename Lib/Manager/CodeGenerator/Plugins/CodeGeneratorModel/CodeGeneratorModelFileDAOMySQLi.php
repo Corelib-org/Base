@@ -1,8 +1,8 @@
 <?php
-class CodeGeneratorModelDAOMySQLi extends CodeGeneratorPlugin {
-	public function __construct($classname, $class){
-		$class['path'] .= 'Lib/DAO/';
-		parent::__construct($classname, $class);
+class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFile {
+	public function __construct($path, $classname, $table, $fields){
+		$path .= 'Lib/DAO/';
+		parent::__construct($path, $classname, $table, $fields);
 		$this->_setFilename('MySQLi.'.$classname.'.php');
 		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelDAOMySQLi.php');
 	}	

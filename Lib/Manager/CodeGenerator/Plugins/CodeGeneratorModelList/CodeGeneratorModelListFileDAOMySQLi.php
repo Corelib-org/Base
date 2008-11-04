@@ -1,17 +1,18 @@
 <?php
-class CodeGeneratorModelListDAOMySQLi extends CodeGeneratorPlugin {
-	public function __construct($classname, $class){
-		$class['path'] .= 'Lib/DAO/';
-		parent::__construct($classname, $class);
+class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorFile {
+	public function __construct($path, $classname, $table, $fields){
+		$path .= 'Lib/DAO/';
+		parent::__construct($path, $classname, $table, $fields);
 		$this->_setFilename('MySQLi.'.$classname.'List.php');
 		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelListDAOMySQLi.php');
 	}	
 	
 	public function generate(){
-		$this->_writeOrderStatement($this->content);
+/*		$this->_writeOrderStatement($this->content);
 		$this->_writeFilterStatement($this->content);
 		$this->_writeTableName($this->content);
 		$this->_writeClassName($this->content);
+*/
 	}
 	
 	private function _writeOrderStatement(&$content){
@@ -35,7 +36,7 @@ class CodeGeneratorModelListDAOMySQLi extends CodeGeneratorPlugin {
 			if(sizeof($order) > 0){
 				$order_code = "\t\t".'$order = \' ORDER BY \'.MySQLiTools::prepareOrderStatement($order, '.implode(', ', $order).');'."\n";	
 			} else {
-				$order_code = '$order = \'\'';
+				$order_code = '$order = \'\';'."\n";
 			}
 			$this->_writeCodeBlock($content, 'Order statement', $order_code);
 		}

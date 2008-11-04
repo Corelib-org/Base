@@ -34,12 +34,11 @@ class CodeGenerator implements Output {
 	public function getXML(DOMDocument $xml){
 		$codewriter = $xml->createElement('codewriter');
 		foreach ($this->classes as $classname => $classinfo){
-			$actions = $xml->createElement('actions');
+			$actions = $codewriter->appendChild($xml->createElement('class'));
 			$actions->setAttribute('name', $classname);
 			$actions->setAttribute('table', $classinfo['table']);
 			foreach ($classinfo['generators'] as $generator){
 				$actions->appendChild($generator->getXML($xml));
-				$codewriter->appendChild($actions);
 			}
 		}
 		return $codewriter;
@@ -77,7 +76,11 @@ class CodeGenerator implements Output {
 	
 	private function _loadClass(DOMElement $class, $path = null){
 		$classname = $class->getAttribute('name');
-
+		if($class->parentNode->nodeName == 'subclasses'){
+			$this->classes[$classname]['subclass'] = $class->parentNode->parentNode->getAttribute('name');
+		} else {
+			$this->classes[$classname]['subclass'] = false;
+		}
 		$this->classes[$classname]['table'] = $class->getAttribute('table');
 		$this->classes[$classname]['fields'] = $this->dao->analyseTable($class->getAttribute('table'));
 
@@ -87,7 +90,7 @@ class CodeGenerator implements Output {
 			$foldername = $classname.'s';
 		} 
 		if(!$class->getAttribute('path')){
-			$this->classes[$classname]['path'] = $path.'lib/'.$foldername.'/';
+			$this->classes[$classname]['path'] = $path.'Lib/'.$foldername.'/';
 		} else {
 			$this->classes[$classname]['path'] = $class->getAttribute('path').$foldername.'/';
 		}
@@ -96,7 +99,10 @@ class CodeGenerator implements Output {
 		$generators = $xpath->query('generators/generator', $class);
 		for ($i = 0; $i < $generators->length; $i++){
 			$class = $generators->item($i)->getAttribute('name');
-  			$this->classes[$classname]['generators'][] = new $class($classname, $this->classes[$classname], $generators->item($i));
+  			$generator = new $class($classname, $this->classes[$classname], $generators->item($i));
+  			$generator->init();
+  			$this->classes[$classname]['generators'][] = $generator;
+  			
 		}
 		$this->resolver->addClass($this->_convertTableToKey($this->classes[$classname]['table']), $classname);
 		

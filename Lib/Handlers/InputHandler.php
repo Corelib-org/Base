@@ -61,7 +61,7 @@ class InputHandler implements Singleton,Output {
 			$this->get = $this->_stripslashes($this->get);			
 			$this->post = $this->_stripslashes($this->post);			
 		}
-		$this->addslashes = true;
+		$this->addslashes = false;
 	}
 
 	public function addslashes($boolean=null){

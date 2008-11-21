@@ -80,6 +80,8 @@ class MySQLi_${classname} extends DatabaseDAO implements Singleton,DAO_${classna
 		$query = $this->masterQuery(new MySQLiQueryStatement($query, $values));
 			
 		if($id = (int) $query->getInsertID()){
+			/* After create actions */
+			/* After create actions end */
 			return $id;
 		} else {
 			return false;	 
@@ -100,6 +102,9 @@ class MySQLi_${classname} extends DatabaseDAO implements Singleton,DAO_${classna
 
 		$query = $this->masterQuery(new MySQLiQueryStatement($query, $values, $id));
 
+		/* After edit actions */
+		/* After edit actions end */
+		
 		if($query->getAffectedRows() > 0){
 			return true;
 		} else {
@@ -123,6 +128,9 @@ class MySQLi_${classname} extends DatabaseDAO implements Singleton,DAO_${classna
 	 * @see DAO_${classname}::delete()
 	 */
 	public function delete($id){
+		/* Delete actions */
+		/* Delete actions end */		
+		
 		$query = 'DELETE FROM `${tablename}`
 		          WHERE `'.${classname}::FIELD_ID.'`=\''.$id.'\'';
 		$query = $this->masterQuery(new MySQLiQuery($query));

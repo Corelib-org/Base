@@ -63,7 +63,7 @@ class MySQLi_${classname}List extends DatabaseDAO implements Singleton,DAO_${cla
 	 * @see DAO_${classname}List::getList()
 	 * @return MySQLiQuery
 	 */
-	public function getList(DatabaseListHelperFilter $filter, DatabaseListHelperOrder $order, $view=null, $offset=null, $limit=null){
+	public function getList(DatabaseListHelperFilter $filter, DatabaseListHelperOrder $order, $offset=null, $limit=null, $view=null){
 		/* Order statement */
 		/* Order statement end */
 		if(!$order){
@@ -82,12 +82,12 @@ class MySQLi_${classname}List extends DatabaseDAO implements Singleton,DAO_${cla
 		}
 		
 		if($view instanceof DatabaseViewHelper){
-			$join .= ' LEFT JOIN '.$view->get(DATABASE_MYSQLI_VIEW_JOIN_TABLE).' ON '.${classname}::FIELD_ID.'='.$view->get(DATABASE_MYSQLI_VIEW_JOIN_KEY).' ';
-			$columns .= ', '.$view->get(DATABASE_VIEW_XML_FIELD);
+			$join .= ' LEFT JOIN `'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_TABLE).'` ON `'.${classname}::FIELD_ID.'`=`'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_KEY).'` ';
+			$columns .= ', `'.$view->get(DATABASE_VIEW_XML_FIELD).'`';
 		}
 
 		$query = 'SELECT '.$columns.'
-		          FROM ${tablename}
+		          FROM `${tablename}`
 		          '.$join.'
 		          '.$where.'
 		          '.$order.'
@@ -103,8 +103,8 @@ class MySQLi_${classname}List extends DatabaseDAO implements Singleton,DAO_${cla
 		$join = $filters['join'];
 		$where = $filters['where'];
 		
-		$query = 'SELECT COUNT('.${classname}::FIELD_ID.') AS count
-		          FROM ${tablename}
+		$query = 'SELECT COUNT(`'.${classname}::FIELD_ID.'`) AS `count`
+		          FROM `${tablename}`
 		          '.$join.'
 		          '.$where;
 		$query = $this->slaveQuery(new MySQLiQuery($query));

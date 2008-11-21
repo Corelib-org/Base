@@ -43,6 +43,7 @@ class DatabaseListHelperFilter extends DatabaseListHelper {
 class DatabaseDataHandler extends DatabaseHelper {
 	private $special_values = array();
 	private $updated_columns = array();
+	private $special_exclude = array();
 	
 	public function set($column, $setting){
 		parent::set($column, $setting);
@@ -53,10 +54,12 @@ class DatabaseDataHandler extends DatabaseHelper {
 		$special_values = array();
 		
 		foreach ($this->settings as $key => $val){
-			if(isset($this->special_values[$key])){
+			
+			if(isset($this->special_values[$key]) && !in_array($key, $this->special_exclude)){
+				
 				$special_values[$key] = $val;
 				unset($this->settings[$key]);
-			} else {
+			} else if(!in_array($key, $this->special_exclude)){
 				$columns[] = $key;
 			}
 		}
@@ -75,7 +78,13 @@ class DatabaseDataHandler extends DatabaseHelper {
 		return $columns;
 	}
 	public function getUpdatedColumnValues(){
-		return $this->settings;
+		$values = array();
+		foreach ($this->settings as $key => $val){
+			if(!in_array($key, $this->special_exclude)){
+				$values[$key] = $val;
+			}
+		}
+		return $values;
 	}
 	
 	public function isChanged($column){
@@ -84,6 +93,10 @@ class DatabaseDataHandler extends DatabaseHelper {
 	
 	public function setSpecialValue($column, $value){
 		$this->special_values[$column] = $value;
+	}
+	
+	public function addExcludeField($column){
+		$this->special_exclude[] = $column;
 	}
 }
 ?>

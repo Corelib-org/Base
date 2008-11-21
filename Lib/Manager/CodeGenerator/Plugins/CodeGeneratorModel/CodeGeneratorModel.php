@@ -1,8 +1,18 @@
 <?php
 class CodeGeneratorModel extends CodeGeneratorPlugin {
 	public function init(){
-		$this->_addFile(new CodeGeneratorModelFile($this->getPath(), $this->getClassName(), $this->getTable(), $this->fields));
-		$this->_addFile(new CodeGeneratorModelFileDAOMySQLi($this->getPath(), $this->getClassName(), $this->getTable(), $this->fields));
+		$file = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFile'));
+		$dao = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFileDAOMySQLi'));
+		
+		$content = $this->settings->getElementsByTagName('content');
+		$analyser = Database::getDAO('CodeGenerator');
+		for ($i = 0; $i < $content->length; $i++){
+			if($table = $content->item($i)->getAttribute('table')){
+				$data = $analyser->analyseTable($table);
+				$file->addContentTable($table, $data);
+				$dao->addContentTable($table, $data);
+			}
+		}
 	}
 }
 ?>

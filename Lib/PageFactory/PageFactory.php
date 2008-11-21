@@ -24,6 +24,9 @@
 
 if(!defined('PAGE_FACTORY_ENGINE')){
 	if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+		/**
+		 * @ignore
+		 */
 		define('PAGE_FACTORY_ENGINE', 'PageFactoryPost');
 	} else {
 		define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
@@ -51,6 +54,9 @@ if(!defined('PAGE_FACTORY_GET_TOKEN')){
 	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
 }
 
+/**
+ * @todo Implement a redirect resolver based on regular expressions
+ */
 interface PageFactoryPageResolver {
 	public function resolve($expr, $exec);
 	public function getExpression();

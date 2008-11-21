@@ -21,11 +21,16 @@ class CodeGeneratorClassResolver implements Singleton {
 	}		
 	
 	public function __construct(){
-		$this->_buildLookupTable();		
+		$this->_buildLookupTable();
 	}
 	
 	public function getClass($key){
-		return $this->lookup_table[$key];
+		
+		if(isset($this->lookup_table[$key])){
+			return $this->lookup_table[$key];
+		} else {
+			return false;
+		}
 	}
 	
 	public function addClass($key, $class){

@@ -15,6 +15,10 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 		$this->_writeOrders($this->content);
 		$this->_writeFilters($this->content);
 		$this->_writeListElement($this->content);
+		
+		if($this->_isNMRelationTable()){
+			$this->_writeNMRelatoionChanges($this->content);
+		}		
 	}	
 	
 	
@@ -132,17 +136,23 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 						$code  = '$this->filter->set('.$this->_getClassName().'::'.$field['constant'].'.\'_before\', $before);'."\n";
 						$code .= '$this->filter->set('.$this->_getClassName().'::'.$field['constant'].'.\'_after\', $after);';
 					} else {
+						if(isset($field['class']) && $field['class'] !== false){
+							$param .= $field['class'].' ';
+							// $code = '$this->filter->set('.$this->_getClassName().'::'.$field['constant'].', $'.$field['property'].');';
+							$code = '$this->filter->set('.$this->_getClassName().'::'.$field['constant'].', $'.$field['property'].'->getID());';
+							$docblock .= "\t".' * @param '.$field['class'].' $'.$field['property']."\n";
+						} else {
+							$code = '$this->filter->set('.$this->_getClassName().'::'.$field['constant'].', $'.$field['property'].');';
+							$docblock .= "\t".' * Wildcard: *'."\n";
+							$docblock .= "\t".' *'."\n";
+							$docblock .= "\t".' * @param string $'.$field['property']."\n";
+						}
+						
 						$param .= '$'.$field['property'];
 						
 						if(isset($field['values'])){
 							$param .= '='.$this->_getClassName().'::'.$this->_makeEnumConstantName($field['field'], $field['default']);
-						} else {
-							$docblock .= "\t".' * Wildcard: *'."\n";
-							$docblock .= "\t".' *'."\n";
 						}	
-						$docblock .= "\t".' * @param string $'.$field['property']."\n";
-						
-						$code = '$this->filter->set('.$this->_getClassName().'::'.$field['constant'].', $'.$field['property'].');';
 					}
 					
 					$docblock .= "\t".' */'."\n";
@@ -159,11 +169,24 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 	}		
 	protected function _writeListElement(&$content){
 		$classvar = $this->_getClassVar();
-		if(!preg_match('/s$/', $classvar)){
+		if(!preg_match('/[syQq]$/', $classvar)){
 			$classvar .= 's';
 		}
 		$content = str_replace('${listelement}', $classvar, $content);
 	}
 
+	
+	private function _writeNMRelatoionChanges(&$content){
+		$fields = $this->_getPrimaryFields();
+		
+		$param_read = array();
+		foreach ($fields as $field){
+			$param_read[] = '$out['.$this->_getClassName().'::'.$field['constant'].']';
+		}
+		$param_read = implode(', ', $param_read);
+		$content = str_replace('$out['.$this->_getClassName().'::FIELD_ID]', $param_read, $content);
+		
+
+	}	
 }
 ?>

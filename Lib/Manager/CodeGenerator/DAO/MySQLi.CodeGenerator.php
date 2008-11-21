@@ -23,12 +23,17 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 		
 		$table_name = preg_replace('/^tbl_/', '', $table);
 		while($out = $columns->fetchArray()){
-			$field = array('sortable' => false,
+			$field = array('table' => $table,
+			               'sortable' => false,
 			               'unique' => false,
 			               'readonly' => false,
 			               'default' => null,
+			               'maxlength' => null,
 			               'converter' => false);
 			
+			if(preg_match('/\(([0-9]+)\)/', $out['Type'], $match)){
+				$field['maxlength'] = (int) $match[1];
+			}
 			
 			$match = array();
 			if(preg_match('/^(tiny|small|medium|big)?int/', $out['Type'])){
@@ -73,6 +78,18 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 			if($out['Key'] == 'UNI'){
 				$field['unique'] = true;
 			}
+			switch ($out['Key']){
+				case 'PRI':
+					$field['keytype'] = 'primary';
+					break;			
+				case 'UNI':
+					$field['keytype'] = 'unique';
+					break;			
+				case 'MUL':
+					$field['keytype'] = 'index';
+					break;			
+			}
+			
 			if(!empty($out['Default'])){
 				switch($out['Default']){
 					case 'TRUE':	
@@ -105,9 +122,44 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 			}
 			
 			$field['field'] = $out['Field'];
-			$fields[] = $field;		
+
+			
+			if($field['field'] == $this->_convertTableToKey($table)){
+				$const = 'FIELD_ID';
+				$property = 'id';
+				$field['readonly'] = true;
+			} else if(preg_match('/^fk_/', $field['field'])){
+				$const = preg_replace('/^fk(_'.$table_name.')*_(.*?)/i', '\\3', $field['field']);
+
+				$const = preg_replace('/ies$/', 'y', $const);
+				$const = preg_replace('/s$/', '', $const);
+								
+				$property = $const;
+				$const = 'FIELD_'.$const.'_ID';
+				
+				$class = preg_replace('/^fk_/', 'pk_', $field['field']);
+				if(preg_match('/_(.*?)_parent/', $class, $match)){
+					$class = 'pk_'.$match[1];
+				}
+				
+				if(!$field['class'] = CodeGeneratorClassResolver::getInstance()->getClass($class)){
+					if(preg_match('/\bfk_(.*?)\b/', $out['Comment'], $match)){
+						$field['class'] = CodeGeneratorClassResolver::getInstance()->getClass('pk_'.$match[1]);
+					}
+				}
+			} else {
+				$const = 'FIELD_'.$field['field'];
+				$property = strtolower($field['field']);
+			}
+			$field['constant'] = strtoupper($const);
+			$field['property'] = $property;
+			$fields[$field['field']] = $field;
 		}
 		return $fields;
 	}
+	
+	private function _convertTableToKey($table){
+		return preg_replace('/^tbl_/', 'pk_', $table);
+	}	
 }
 ?>

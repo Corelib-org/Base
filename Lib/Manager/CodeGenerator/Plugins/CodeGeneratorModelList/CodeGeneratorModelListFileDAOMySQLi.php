@@ -8,11 +8,13 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorFile {
 	}	
 	
 	public function generate(){
-/*		$this->_writeOrderStatement($this->content);
+		$this->_writeOrderStatement($this->content);
 		$this->_writeFilterStatement($this->content);
 		$this->_writeTableName($this->content);
 		$this->_writeClassName($this->content);
-*/
+		if($this->_isNMRelationTable()){
+			$this->_writeNMRelatoionChanges($this->content);
+		}
 	}
 	
 	private function _writeOrderStatement(&$content){
@@ -34,7 +36,7 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorFile {
 				}
 			}
 			if(sizeof($order) > 0){
-				$order_code = "\t\t".'$order = \' ORDER BY \'.MySQLiTools::prepareOrderStatement($order, '.implode(', ', $order).');'."\n";	
+				$order_code = "\t\t".'$order = MySQLiTools::prepareOrderStatement($order, '.implode(', ', $order).');'."\n";	
 			} else {
 				$order_code = '$order = \'\';'."\n";
 			}
@@ -95,6 +97,20 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorFile {
 			}			
 			$this->_writeCodeBlock($content, 'Filter statement', $condition_code);		
 		}		
+	}
+
+	private function _writeNMRelatoionChanges(&$content){
+		/*	public function getListCount(DatabaseListHelperFilter $filter){
+		$filters = $this->_prepareFilterStatements($filter);
+		$join = $filters['join'];
+		$where = $filters['where'];
+		
+		$query = 'SELECT COUNT(`'.QuestionRelation::FIELD_ID.'`) AS `count`
+*/
+		if(preg_match('/function getListCount(.*?)AS `count`/s', $content, $match)){
+			$result = preg_replace('/(SELECT COUNT\()(.*?)(\) AS `count`)/s', '\\1*\\3', $match[0]);
+			$content = str_replace($match[0], $result, $content);
+		}
 	}
 }
 ?>

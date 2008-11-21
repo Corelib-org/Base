@@ -43,10 +43,6 @@ class CodeGenerator implements Output {
 		}
 		return $codewriter;
 	}
-		
-	public function &getArray(){
-		
-	}
 	
 	public function _generateCode(){
 		foreach ($this->classes as $classname => $classinfo){
@@ -72,6 +68,28 @@ class CodeGenerator implements Output {
 				$this->_loadClass($subclasses->item($si), $this->classes[$classname]['path']);
 			}
 		}
+		
+		foreach ($this->classes as $classname => $class){
+			$this->classes[$classname]['fields'] = $this->_lookupClassNames($class['fields']);
+			foreach ($class['generators'] as $key => $generator){
+				$generator = new $generator[0]($classname, $this->classes[$classname], $generator[1]);
+				$generator->init();	
+				$this->classes[$classname]['generators'][$key] = $generator;
+			}
+		}
+	}
+	
+	private function _lookupClassNames($fields){
+		foreach ($fields as $key => $field){
+			if(!isset($fields[$key]['class'])){
+				if(!preg_match('/^pk_/', $field['field'])){
+					$fields[$key]['class'] = CodeGeneratorClassResolver::getInstance()->getClass($this->_convertFerignKeyToKey($field['field']));
+				} else {
+					$fields[$key]['class'] = false;
+				}
+			}
+		}
+		return $fields;
 	}
 	
 	private function _loadClass(DOMElement $class, $path = null){
@@ -83,12 +101,14 @@ class CodeGenerator implements Output {
 		}
 		$this->classes[$classname]['table'] = $class->getAttribute('table');
 		$this->classes[$classname]['fields'] = $this->dao->analyseTable($class->getAttribute('table'));
-
-		$this->_generateFieldConstants($classname);
 		
-		if(!preg_match('/s$/', $classname)){
+		// $this->_generateFieldConstants($classname);
+		
+		if(!preg_match('/[syQ]$/', $classname)){
 			$foldername = $classname.'s';
-		} 
+		} else {
+			$foldername = $classname;
+		}
 		if(!$class->getAttribute('path')){
 			$this->classes[$classname]['path'] = $path.'Lib/'.$foldername.'/';
 		} else {
@@ -99,10 +119,7 @@ class CodeGenerator implements Output {
 		$generators = $xpath->query('generators/generator', $class);
 		for ($i = 0; $i < $generators->length; $i++){
 			$class = $generators->item($i)->getAttribute('name');
-  			$generator = new $class($classname, $this->classes[$classname], $generators->item($i));
-  			$generator->init();
-  			$this->classes[$classname]['generators'][] = $generator;
-  			
+  			$this->classes[$classname]['generators'][] = array($class, $generators->item($i));
 		}
 		$this->resolver->addClass($this->_convertTableToKey($this->classes[$classname]['table']), $classname);
 		
@@ -142,6 +159,9 @@ class CodeGenerator implements Output {
 	
 	private function _convertTableToKey($table){
 		return preg_replace('/^tbl_/', 'pk_', $table);
+	}
+	private function _convertFerignKeyToKey($field){
+		return preg_replace('/^fk_/', 'pk_', $field);
 	}
 	
 	private function _getDAO(){

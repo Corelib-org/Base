@@ -7,6 +7,10 @@ abstract class CodeGeneratorFile implements Output {
 	
 	private $write_result = null;
 	
+	private $template = null;
+	
+	private $is_nm_table = null;
+	
 	protected $content = null;
 	protected $fields = null;
 	
@@ -20,9 +24,12 @@ abstract class CodeGeneratorFile implements Output {
 	abstract public function generate();
 	
 	public function write(){
+		$this->_loadContent();
+		$this->generate();
+		
 		$this->content = trim($this->content);
-		if(!is_dir($this->path)){
-			mkdir($this->path, 0777, true);
+		if(!is_dir(dirname($this->getFilename()))){
+			mkdir(dirname($this->getFilename()), 0777, true);
 		}
 		if(is_file($this->getFilename())){
 			if(md5_file($this->getFilename()) != md5($this->content)){
@@ -82,7 +89,7 @@ abstract class CodeGeneratorFile implements Output {
 	
 	protected function _writeClassName(&$content){
 		$content = str_replace('${classname}', $this->classname, $content);
-	}	
+	}
 	protected function _writeTableName(&$content){
 		$content = str_replace('${tablename}', $this->table, $content);
 	}	
@@ -96,6 +103,10 @@ abstract class CodeGeneratorFile implements Output {
 	protected function _getClassName(){
 		return $this->classname;
 	}	
+	
+	protected function _getTableName(){
+		return $this->table;
+	}
 	
 	protected function _getCommentBlock(array $source, $offset){
 		$comment = '';
@@ -113,15 +124,16 @@ abstract class CodeGeneratorFile implements Output {
 		}
 		return $comment;
 	}
-	protected function _getCodeBlock(&$source, $block){
-		if(preg_match('/\/\* '.$block.' \*\/\n(.*?)\t\/\* '.$block.' end \*\//s', $source, $match)){
+	protected function _getCodeBlock(&$source, $block, $prefix='/*', $suffix='*/'){
+		$pcre = '/'.preg_quote($prefix,'/').'\s*'.$block.'\s*'.preg_quote($suffix,'/').'\n(.*?)\t'.preg_quote($prefix,'/').'\s*'.$block.' end\s*'.preg_quote($suffix,'/').'/s';
+		if(preg_match($pcre, $source, $match)){
 			return $match[1]."\n";
 		} else {
 			return false;
 		}
 	}
-	protected function _writeCodeBlock(&$source, $block, $code){
-		$source = preg_replace('/(\/\* '.$block.' \*\/\n)(.*?)(\t*\/\* '.$block.' end \*\/)/s', '\\1'.$code.'\\3', $source);
+	protected function _writeCodeBlock(&$source, $block, $code, $prefix='/*', $suffix='*/'){
+		$source = preg_replace('/('.preg_quote($prefix,'/').'\s*'.$block.'\s*'.preg_quote($suffix,'/').'\n)(.*?)(\t*'.preg_quote($prefix,'/').'\s*'.$block.' end\s*'.preg_quote($suffix,'/').')/s', '\\1'.$code.'\\3', $source);
 	}
 	protected function _createMethodName($prefix, $field){
 		$field = explode('_', $field);
@@ -132,12 +144,12 @@ abstract class CodeGeneratorFile implements Output {
 		}
 		return $prefix.$field;
 	}
-	protected function _makeMethod($name, $source, $docblock=null, $param=''){
+	protected function _makeMethod($name, $source, $docblock=null, $param='', $visibility='public'){
 		$method = '';
 		if(!is_null($docblock)){
 			$method .= "\t".$docblock;
 		}
-		$method .= "\t".'public function '.$name.'('.$param.'){'."\n";
+		$method .= "\t".$visibility.' function '.$name.'('.$param.'){'."\n";
 		$source = explode("\n", $source);
 		foreach ($source as $line){
 			$method .= "\t\t".$line."\n";
@@ -146,12 +158,42 @@ abstract class CodeGeneratorFile implements Output {
 		return $method;
 	}
 
-	protected function _loadContent($filename){
+	protected function _loadContent($filename=null){
+		if(!is_null($filename)){
+			$this->template = $filename;
+		}
+		$filename = $this->template;
+		
 		if(is_file($this->getFilename())){
 			$this->content = file_get_contents($this->getFilename());
 		} else {
 			$this->content = file_get_contents($filename);
 		}
+	}
+	
+	protected function _isNMRelationTable(){
+		if(is_null($this->is_nm_table)){
+			foreach ($this->fields as $field){
+				if(preg_match('/^pk_/', $field['field'])){
+					$this->is_nm_table = false;
+					break;
+				}
+			}
+			if(is_null($this->is_nm_table)){
+				$this->is_nm_table = true;
+			}
+		}
+		return $this->is_nm_table;
+	}
+	
+	protected function _getPrimaryFields(){
+		$fields = array();
+		foreach ($this->fields as $field){
+			if(isset($field['keytype']) && $field['keytype'] == 'primary'){
+				$fields[] = $field;
+			}
+		}
+		return $fields;
 	}
 }
 ?>

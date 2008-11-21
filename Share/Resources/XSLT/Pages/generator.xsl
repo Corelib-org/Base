@@ -13,13 +13,32 @@
 					The code generation tool allow you to update or create class'es based on specific database layout.
 				</p>
 				
+				<xsl:call-template name="h1">
+					<xsl:with-param name="headline">Select another class tree</xsl:with-param>
+					<xsl:with-param name="backtitle">Select another class</xsl:with-param>
+				</xsl:call-template>				
+				<form method="get">								
+					<div>
+						<label for="field">Select class tree</label>
+						<select class="select" name="name">
+							<option value="">[Select class tree]</option>
+							<xsl:for-each select="codewriter[1]/class">
+								<option value="{@name}"><xsl:value-of select="@name"/> (<xsl:value-of select="@table"/>)</option>
+							</xsl:for-each>
+						</select>
+						<div class="fielddesc"><p>Select which class tree you would like to create or update.</p></div>						
+					</div>
+					<input type="submit" value="Continue and review actions" class="button submit right"/>
+				</form>		
+				<div class="clear"></div>	
+				
 				<xsl:if test="/page/settings/get/name != ''">
 					<form method="get">
 						<input type="hidden" name="name" value="{/page/settings/get/name}"/>
 						<input type="hidden" name="write" value="true"/>
-						<xsl:for-each select="codewriter/actions">
+						<xsl:for-each select="codewriter/class[count(files/file) > 0]">
 							<b><xsl:value-of select="@name"/> (<xsl:value-of select="@table"/>)</b><br/>
-							<xsl:for-each select="action">
+							<xsl:for-each select="files/file">
 								<xsl:choose>
 									<xsl:when test="@action = 'create'">
 										+&#160;
@@ -44,25 +63,9 @@
 					</form>
 					<div class="clear"><br/></div>
 					
-					<xsl:call-template name="h1">
-						<xsl:with-param name="headline">Select another class tree</xsl:with-param>
-						<xsl:with-param name="backtitle">Select another class</xsl:with-param>
-					</xsl:call-template>
+
 				</xsl:if>
-				
-				<form method="get">								
-					<div>
-						<label for="field">Select class tree</label>
-						<select class="select" name="name">
-							<option value="">[Select class tree]</option>
-							<xsl:for-each select="codewriter/class">
-								<option value="{@name}"><xsl:value-of select="@name"/> (<xsl:value-of select="@table"/>)</option>
-							</xsl:for-each>
-						</select>
-						<div class="fielddesc"><p>Select which class tree you would like to create or update.</p></div>						
-					</div>
-					<input type="submit" value="Continue and review actions" class="button submit right"/>
-				</form>
+
 				<div class="clear"></div>				
 			</xsl:with-param>
 		</xsl:call-template>

@@ -52,7 +52,7 @@ interface DAO_${classname}List {
 	public function getList(DatabaseListHelperFilter $filter, DatabaseListHelperOrder $order, $offset=null, $limit=null, $view=null);
 	
 	/**
-	 * Count the number of object according to the current listing criteria
+	 * Count the number of objects according to the current listing criteria
 	 * 
 	 * @param DatabaseListHelperFilter $filter
 	 * @return integer number of objects in the list

@@ -276,7 +276,8 @@ class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
 }
 class PageFactoryPost extends PageFactoryTemplateEngine {
 	public function draw(){ 
-		return $this->page->draw($this);
+		$this->page->draw($this);
+		return '';
 	 }
 	public function getSupportedTemplateDefinition(){ return __CLASS__; }
 	public function addPageContent(Output $content){ return true; }

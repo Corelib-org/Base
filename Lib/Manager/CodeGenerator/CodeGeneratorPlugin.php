@@ -8,14 +8,17 @@ abstract class CodeGeneratorPlugin implements Output {
 	
 	private $write_result = null;
 	
+	protected $settings = null;
+	
 	protected $content = null;
 	protected $fields = null;
 	
-	public function __construct($classname, $class){
+	public function __construct($classname, $class, $settings){
 		$this->path = $class['path'];
 		$this->table = $class['table'];
 		$this->classname = $classname;
 		$this->fields = &$class['fields'];
+		$this->settings = $settings;
 	}
 	
 	public function generate(){
@@ -32,8 +35,12 @@ abstract class CodeGeneratorPlugin implements Output {
 	
 	abstract public function init();
 	
+	protected function _createFileInstance($class){
+		return new $class($this->getPath(), $this->getClassName(), $this->getTable(), $this->fields);
+	}
 	protected function _addFile(CodeGeneratorFile $file){
-		$this->files[] = $file;
+		$this->files[] = $file;	
+		return $file;
 	}
 	
 	public function getClassName(){
@@ -47,12 +54,6 @@ abstract class CodeGeneratorPlugin implements Output {
 	}
 	
 	public function getXML(DOMDocument $xml){
-		/*
-		echo '<pre>';
-		print_r($this->files);
-		echo '</pre>';
-		exit;
-		*/
 		$files = $xml->createElement('files');
 		foreach ($this->files as $file){
 			$files->appendChild($file->getXML($xml));

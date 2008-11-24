@@ -158,7 +158,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		return $this->content_charset = $charset;
 	}
 	public function setLocation($location, $param=null){
-		if($location{0} != '/'){
+		if($location{0} != '/' && !preg_match('/^http:/', $location)){
 			$location = '/'.$location;
 		}
 		if(!is_null($param)){
@@ -168,11 +168,12 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 				$param = '?'.$param;
 			}
 		}
-		if(preg_match('(^(http:\/\/))', $location) || preg_match('(^(https:\/\/))', $location)){
+		if(preg_match('/^http:\/\//', $location) || preg_match('/^https:\/\//', $location)){
 			$this->location = $location;
 		} else {
 			$this->location = $this->http_redirect_base.$location.$param;
 		}
+		
 		$this->location = str_ireplace('//', '/', $this->location);
 		$this->location = str_ireplace('http:/', 'http://', $this->location);
 	}

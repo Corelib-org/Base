@@ -44,10 +44,22 @@ class DatabaseDataHandler extends DatabaseHelper {
 	private $special_values = array();
 	private $updated_columns = array();
 	private $special_exclude = array();
+	private $history_values = array();
 	
-	public function set($column, $setting){
+	public function set($column, $setting, $history=null){
 		parent::set($column, $setting);
 		$this->updated_columns[$column] = $column;
+		if(!is_null($history)){
+			$this->history_values[$column] = $history;
+		}
+	}
+	
+	public function getHistoryValue($column){
+		if(isset($this->history_values[$column])){
+			return $this->history_values[$column];
+		} else {
+			return false;
+		}
 	}
 	
 	public function getUpdatedColumns(){

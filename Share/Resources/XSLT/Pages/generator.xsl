@@ -37,29 +37,30 @@
 						<input type="hidden" name="name" value="{/page/settings/get/name}"/>
 						<input type="hidden" name="write" value="true"/>
 						<xsl:for-each select="codewriter/class[count(files/file) > 0]">
-							<b><xsl:value-of select="@name"/> (<xsl:value-of select="@table"/>)</b><br/>
-							<xsl:for-each select="files/file">
-								<xsl:choose>
-									<xsl:when test="@action = 'create'">
-										+&#160;
-									</xsl:when>
-									<xsl:when test="@action = 'patch'">
-										P&#160;
-									</xsl:when>
-									<xsl:otherwise>
-										N&#160;
-									</xsl:otherwise>
-								</xsl:choose>
-								<xsl:value-of select="@filename"/><br/>
-								<xsl:if test="@action = 'patch'">
-									<div style="font-size: 11px; white-space: pre; font-family: monospace;"><xsl:value-of select="." disable-output-escaping="yes"/></div>
-								</xsl:if>
-							</xsl:for-each>
+							<xsl:if test="count(files/file[@action != 'none']) > 0">
+								<b><xsl:value-of select="@name"/> (<xsl:value-of select="@table"/>)</b><br/>
+								<xsl:for-each select="files/file">
+									<xsl:choose>
+										<xsl:when test="@action = 'create'">
+											+&#160;
+										</xsl:when>
+										<xsl:when test="@action = 'patch'">
+											P&#160;
+										</xsl:when>
+									</xsl:choose>
+									<xsl:if test="@action != 'none'">
+										<xsl:value-of select="@filename"/><br/>
+									</xsl:if>
+									<xsl:if test="@action = 'patch'">
+										<div style="font-size: 11px; white-space: pre; font-family: monospace;"><xsl:value-of select="." disable-output-escaping="yes"/></div>
+									</xsl:if>
+								</xsl:for-each>
+							</xsl:if>
 						</xsl:for-each>
 						<xsl:if test="/page/settings/get/write != true()">
 							<input type="submit" value="Write changes" class="button submit right"/>
 						</xsl:if>
-						<small>+ = Create new file, P = Patch excisting file, N = No action required</small>
+						<small>+ = Create new file, P = Patch excisting file</small>
 					</form>
 					<div class="clear"><br/></div>
 					

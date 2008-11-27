@@ -60,7 +60,7 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorFile {
 			}
 			foreach ($this->fields as $field){
 				$condition = $field['constant'];
-				if($field['constant'] != 'FIELD_ID' && !isset($conditions[$condition]) && (isset($field['sortable']) && $field['sortable'] === true)){
+				if($field['constant'] != 'FIELD_ID' && !isset($conditions[$condition]) && (isset($field['sortable']) && $field['sortable'] === true) && !strstr($block, $this->_getClassName().'::'.$field['constant'])){
 					if(strstr($field['smarttype'], 'timestamp')){
 						$before = $condition.'.\'_before\'';
 						if(!isset($conditions[$before])){

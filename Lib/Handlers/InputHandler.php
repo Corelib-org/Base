@@ -676,7 +676,7 @@ class IsArrayInputValidator extends ArrayInputValidator { }
 
 class InputValidatorIsSet implements InputValidator {
 	public function validate($content){
-		$regex = new RegexInputValidator('/^.*$/');
+		$regex = new RegexInputValidator('/^.*$/s');
 		return $regex->validate($content);
 	}
 }

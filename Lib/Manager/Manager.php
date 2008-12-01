@@ -287,12 +287,12 @@ class Manager implements Singleton {
 
 		foreach ($this->extensions_data as $extension){
 			if($extension['handler'] instanceof CorelibManagerExtension){
-				$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\']/props/child::*');
+				$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\' and @enabled = \'true\']/props/child::*');
 				for ($p = 0; $prop = $props->item($p); $p++){
 					$extension['handler']->addBaseProperty($prop);
 				}
 		
-				$xdata = $xpath->query('//extensions/extension/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
+				$xdata = $xpath->query('//extensions/extension[@enabled = \'true\']/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
 				for ($p = 0; $xitem = $xdata->item($p); $p++){
 					$extension['handler']->addProperty($xitem);
 				}

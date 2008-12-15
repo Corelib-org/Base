@@ -91,26 +91,26 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				$this->template->setContentCharset('UTF-8');
 				return $this->xml->saveXML();
 			} else {
-				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
+//				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
 					$tranformToXML = false;
 					if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
 						$tranformToXML = true;
 					}
 					$doc = $proc->transformToDoc($this->xml);
-					if(PAGE_FACTORY_CACHE_ENABLE){
+/*					if(PAGE_FACTORY_CACHE_ENABLE){
 						$page = $this->_xslRewrite($doc, $tranformToXML);
-					} else {
+					} else { */
 						$page = $this->_transformPage($doc, $tranformToXML);
-					}
+					/* }
 					if(!PAGE_FACTORY_CACHE_DEBUG){
 						file_put_contents($this->template_cache_file, $page);
-					}
-				} else {
+					} */
+	/*			} else {
 					$page = file_get_contents($this->template_cache_file);
 				}
 				if(PAGE_FACTORY_CACHE_ENABLE){
 					return PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
-				}
+				} */
 				
 				$converter = $this->template->getOutputConverter();
 				if(!is_null($converter)){
@@ -123,21 +123,21 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	}
 
 	public function addPageContent(Output $content){
-		if(PAGE_FACTORY_CACHE_ENABLE){
+/*		if(PAGE_FACTORY_CACHE_ENABLE){
 			$this->content_array[] = $content->getArray();
 		}
-		if(!$this->template_cache_file){
+		if(!$this->template_cache_file){ */
 			$this->content->appendChild($content->getXML($this->xml));
-		}
+	//	}
 	}
 
 	public function addPageSettings(Output $settings){
-		if(PAGE_FACTORY_CACHE_ENABLE){
+/*		if(PAGE_FACTORY_CACHE_ENABLE){
 			$this->settings_array[] = $settings->getArray();
 		}
-		if(!$this->template_cache_file){
+		if(!$this->template_cache_file){ */
 			$this->settings->appendChild($settings->getXML($this->xml));
-		}
+		// }
 	}
 
 	public function getSupportedTemplateDefinition(){
@@ -146,14 +146,15 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 	public function setTemplate(PageFactoryTemplate $template){
 		$return = parent::setTemplate($template);
-		if(PAGE_FACTORY_CACHE_ENABLE && is_file(PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString())){
+/*		if(PAGE_FACTORY_CACHE_ENABLE && is_file(PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString())){
 			$this->template_cache_file = PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString();
-		} else {
+		} else { */
 			$this->_prepareXML();
 
 			$this->settings->appendChild($this->xml->createElement('script_uri', $this->template->getScriptUri()));
 			$this->settings->appendChild($this->xml->createElement('script_url', $this->template->getScriptUrl()));
 			$this->settings->appendChild($this->xml->createElement('request_url', str_replace('&', '&amp;', $this->template->getRequestUri())));
+			$this->settings->appendChild($this->xml->createElement('http_referer', str_replace('&', '&amp;', $this->template->getHTTPReferer())));
 
 			$this->settings->appendChild($this->xml->createElement('server_name', $this->template->getServerName()));
 			$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
@@ -176,7 +177,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			if($message = $this->template->getStatusMessage()){
 				$this->settings->appendChild($this->xml->importNode($message, true));
 			}
-		}
+		// }
 		return $return;
 	}
 
@@ -270,7 +271,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		while (list(,$val) = each($stylesheets)) {
 			$val = $this->_relativeToPath($path, $val);
 			$xsl = new DOMDocument('1.0', 'UTF-8');
-			$xsl->createElement();
+			$xsl->createElement('stylesheet');
 			$xsl->load($val);
 			$templates = $this->_parseTemplates($xsl, $val, $call, $match);
 			$call = $templates[0];

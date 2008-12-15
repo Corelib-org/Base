@@ -33,7 +33,7 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 	}
 }
 if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
-	define('PAGE_FACTORY_CACHE_ENABLE', false);
+	define('PAGE_FACTORY_CACHE_ENABLE', true);
 }
 if(!defined('PAGE_FACTORY_CLASS_NAME')){
 	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
@@ -51,8 +51,12 @@ if(!defined('PAGE_FACTORY_POST_FILE')){
 	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
 }
 if(!defined('PAGE_FACTORY_GET_TOKEN')){
-	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
+	define('PAGE_FACTORY_GET_TOKEN', 'SCRIPT_URL');
 }
+
+define('PAGE_FACTORY_CACHE_STATIC', 1);
+define('PAGE_FACTORY_CACHE_DYNAMIC', 2);
+define('PAGE_FACTORY_CACHE_DISABLED', 3);
 
 /**
  * @todo Implement a redirect resolver based on regular expressions
@@ -126,10 +130,28 @@ class PageFactory implements Singleton {
 
 	private $resolvers = array();
 
+	private $url = null;
+	
+	private $cache = array('type' => PAGE_FACTORY_CACHE_DISABLED);
+	
+	private $cache_file = null;
+	
+	private $write_to_cache = false;
+	
 	private function __construct(){
 		$engine = '$this->engine = new '.PAGE_FACTORY_ENGINE.'();';
 		eval($engine);
 		$this->addResolver('meta', new MetaResolver());
+		
+		if(!isset($_SERVER[PAGE_FACTORY_GET_TOKEN])){
+			$this->url = '/';
+		} else {
+			$this->url = $_SERVER[PAGE_FACTORY_GET_TOKEN];
+		}
+		if(substr($this->url, -1) != '/'){
+			$this->url .= '/';
+		}
+		$this->cache_file = 'var/cache/pages/'.str_replace('/', '_', $_SERVER['REQUEST_URI']);
 	}
 
 	/**
@@ -152,42 +174,39 @@ class PageFactory implements Singleton {
 	}
 
 	public function resolvePageObject(){
-		if(!isset($_GET[PAGE_FACTORY_GET_TOKEN])){
-			$_GET[PAGE_FACTORY_GET_TOKEN] = '/';
-		}
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once(PAGE_FACTORY_POST_FILE);
 		} else {
-			// TODO finish cache implementation
-/*			if(PAGE_FACTORY_CACHE_ENABLE){
-				include_once(CORELIB.'/Base/Lib/PageFactory/CacheManager.php');
+			if(PAGE_FACTORY_CACHE_ENABLE && is_file($this->cache_file)){
+				if(!is_executable($this->cache_file)){
+					$this->cache = array('type' => PAGE_FACTORY_CACHE_STATIC,
+					                     'file' => $this->cache_file);
+				} else {
+					$this->cache = array('type' => PAGE_FACTORY_CACHE_DYNAMIC,
+					                     'file' => $this->cache_file);
+				}
 				return true;
-			} else { */
+			} else {
 				include_once(PAGE_FACTORY_GET_FILE);
-			// }
+			}
 		}
 
-		if(substr($_GET[PAGE_FACTORY_GET_TOKEN], -1) != '/'){
-			$_GET[PAGE_FACTORY_GET_TOKEN] .= '/';
-		}
-		
-		if(preg_match('/^\/corelib/', $_GET[PAGE_FACTORY_GET_TOKEN])){
+		if(preg_match('/^\/corelib/', $this->url)){
 			$manager = Manager::getInstance();
 			$manager->init();
 			$manager->setupPageRegistry($pages);
 		}
 		
-		if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]])){
+		if(!isset($pages[$this->url])){
 			if(isset($pages)){
 				foreach($pages as $val){
 					if(is_array($val)){
-						if( isset($val['type']) && $val['type'] != 'regex' ){
-							var_dump($val);
+						if(isset($val['type']) && $val['type'] != 'regex' ){
 							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']); 
 							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
 							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 						}
-						if( isset($val['expr']) && preg_match($val['expr'], $_GET[PAGE_FACTORY_GET_TOKEN]) ){
+						if( isset($val['expr']) && preg_match($val['expr'], $this->url) ){
 							try {
 								if(!is_file($val['page'])){
 									throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
@@ -196,13 +215,19 @@ class PageFactory implements Singleton {
 								echo $e;
 								exit;
 							}
-							$this->callback = preg_replace($val['expr'], $val['exec'], $_GET[PAGE_FACTORY_GET_TOKEN]);
+							if(isset($val['cache']) && $val['cache'] == PAGE_FACTORY_CACHE_STATIC){
+								$this->write_to_cache = true;
+							}
+							
+							$this->callback = preg_replace($val['expr'], $val['exec'], $this->url);
 							require_once($val['page']);
 							return true;
 						}
 					}
 				}
 			}
+			
+			
 			try {
 				if(!isset($pages['/404/'])){
 					throw new BaseException('404 Error unspecified!', E_USER_ERROR);;
@@ -216,25 +241,30 @@ class PageFactory implements Singleton {
 			} else {
 				require_once($pages['/404/']);	
 			}
-			
 			return true;
 		} else {
-			if(is_array($pages[$_GET[PAGE_FACTORY_GET_TOKEN]])){
+			if(is_array($pages[$this->url])){
 				try {
-					if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['page'])){
+					if(!isset($pages[$this->url]['page'])){
 						throw new BaseException('file not set.', E_USER_ERROR);
 					}
-					if(!isset($pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['exec'])){
+					if(!isset($pages[$this->url]['exec'])){
 						throw new BaseException('exec not set.', E_USER_ERROR);
 					}
 				} catch (BaseException $e){
 					echo $e;
 					exit;
 				}
-				$page = $pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['page'];
-				$this->callback = $pages[$_GET[PAGE_FACTORY_GET_TOKEN]]['exec'].'()';
+				$page = $pages[$this->url]['page'];
+				$this->callback = $pages[$this->url]['exec'].'()';
+				
+				if(isset($pages[$this->url]['cache']) && $pages[$this->url]['cache'] == PAGE_FACTORY_CACHE_STATIC){
+					$this->write_to_cache = true;
+				}
+				
+				
 			} else {
-				$page = $pages[$_GET[PAGE_FACTORY_GET_TOKEN]];
+				$page = $pages[$this->url];
 			}
 			try {
 				if(!is_file($page)){
@@ -249,21 +279,37 @@ class PageFactory implements Singleton {
 		}
 	}
 
+	public function getCacheType(){
+		return $this->cache['type'];
+	}
+	
 	public function build(PageBase $page){
 		$this->engine->build($page, $this->callback);
 	}
 
 	public function draw($return=false){
-		if($return){
-			$content = $this->engine->draw();
+		if($this->cache['type'] == PAGE_FACTORY_CACHE_STATIC){
+			if($return){				
+				return file_get_contents($this->cache['file']);
+			} else {
+				echo file_get_contents($this->cache['file']);
+			}
 		} else {
-			echo $this->engine->draw();
-		}
-		if($template = $this->engine->getTemplate()){
-			$template->cleanup();
-		}
-		if($return){
-			return $content;
+			$content = $this->engine->draw();
+			if($template = $this->engine->getTemplate()){
+				$template->cleanup();
+			}
+			if(PAGE_FACTORY_CACHE_ENABLE && $this->write_to_cache){
+				if(!is_dir(dirname($this->cache_file))){
+					mkdir(dirname($this->cache_file), 0777, true);
+				}
+				file_put_contents($this->cache_file, $content);
+			}
+			if($return){				
+				return $content;
+			} else {
+				echo $content;
+			}
 		}
 	}
 }

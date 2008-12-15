@@ -215,9 +215,6 @@ class i18n implements Singleton,Output {
 		reset($this->language_files);
 		return $language;
 	}
-	public function &getArray(){
-		
-	}
 }
 
 

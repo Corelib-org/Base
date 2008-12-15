@@ -99,8 +99,13 @@ class CodeGenerator implements Output {
 		} else {
 			$this->classes[$classname]['subclass'] = false;
 		}
+		
 		$this->classes[$classname]['table'] = $class->getAttribute('table');
-		$this->classes[$classname]['fields'] = $this->dao->analyseTable($class->getAttribute('table'));
+		if($class->getAttribute('analyse') != 'false'){
+			$this->classes[$classname]['fields'] = $this->dao->analyseTable($class->getAttribute('table'));
+		} else {
+			$this->classes[$classname]['fields'] = array();
+		}
 		
 		// $this->_generateFieldConstants($classname);
 		
@@ -117,6 +122,7 @@ class CodeGenerator implements Output {
 		
 		$xpath = new DOMXPath($class->ownerDocument);
 		$generators = $xpath->query('generators/generator', $class);
+		$this->classes[$classname]['generators'] = array();
 		for ($i = 0; $i < $generators->length; $i++){
 			$class = $generators->item($i)->getAttribute('name');
   			$this->classes[$classname]['generators'][] = array($class, $generators->item($i));

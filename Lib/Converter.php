@@ -17,6 +17,4 @@ class ConverterChain implements Converter {
 		return $data;
 	}
 }
-
-
 ?>

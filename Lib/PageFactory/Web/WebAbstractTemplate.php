@@ -47,6 +47,8 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $script_uri = null;
 
 	private $request_uri = null;
+	
+	private $http_referer = null;
 
 	private $remote_addr = null;
 
@@ -84,8 +86,14 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		if(isset($_SERVER['HTTP_USER_AGENT'])){
 			$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		}
+		
+		if(isset($_SERVER['HTTP_REFERER'])){
+			$this->http_referer = $_SERVER['HTTP_REFERER'];
+		}
+		
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
+		
 		$this->http_redirect_base = BASE_URL;
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$this->set_referer = false;
@@ -243,6 +251,10 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		return $this->http_redirect_base;
 	}
 	 
+	public function getHTTPReferer(){
+		return $this->http_referer;
+	}
+	
 	public function getStatusMessage(){
 		$session = SessionHandler::getInstance();
 		if($session->check(self::MSGID)){

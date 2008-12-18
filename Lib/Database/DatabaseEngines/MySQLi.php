@@ -226,6 +226,20 @@ class MySQLiQueryStatement extends MySQLiQuery {
 }
 
 class MySQLiTools {
+	static public function spliceFields($field=null /*, [$field..] */){
+		$fields = func_get_args();
+		foreach ($fields as $val) {
+			if(is_array($val)){
+				foreach ($val as $subval){
+					$freturn[] = $subval;
+				}
+			} else {
+				$freturn[] = $val;
+			}
+		}
+		return $freturn;
+	}
+	
 	static public function parseNullValue($val){
 		if(is_null($val)){
 			$val = 'NULL';

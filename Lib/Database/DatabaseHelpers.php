@@ -62,45 +62,73 @@ class DatabaseDataHandler extends DatabaseHelper {
 		}
 	}
 	
-	public function getUpdatedColumns(){
+	public function getUpdatedColumns($column=null /*[,$column..]*/){
+		$columns = array();
 		$special_values = array();
 		
+		$arg = func_get_args();
+		if(count($arg) == 0){
+			$arg = false;
+		}
 		foreach ($this->settings as $key => $val){
-			
 			if(isset($this->special_values[$key]) && !in_array($key, $this->special_exclude)){
-				
 				$special_values[$key] = $val;
 				unset($this->settings[$key]);
 			} else if(!in_array($key, $this->special_exclude)){
-				$columns[] = $key;
+				if(!$arg || in_array($key, $arg)){
+					$columns[] = $key;
+				}
 			}
 		}
 		
 		$special_keys = $this->special_values;
 		foreach ($special_values as $key => $val){
 			$this->settings[$key] = $val;
-			$columns[$key] =  $special_keys[$key];
+			if(!$arg || in_array($key, $arg)){
+				$columns[$key] =  $special_keys[$key];
+			}
 			unset($special_keys[$key]);
 		}
 		
 		foreach ($special_keys as $key => $val){
-			$columns[$key] = $val;
+			if(!$arg || in_array($key, $arg)){
+				$columns[$key] = $val;
+			}
 		}
-		
 		return $columns;
 	}
-	public function getUpdatedColumnValues(){
+	public function getUpdatedColumnValues($column=null /*[,$column..]*/){
 		$values = array();
+		
+		if(!is_array($column)){
+			$arg = func_get_args();
+			if(count($arg) == 0){
+				$arg = false;
+			}
+		} else {
+			$arg = $column;
+		}
+		
 		foreach ($this->settings as $key => $val){
 			if(!in_array($key, $this->special_exclude)){
-				$values[$key] = $val;
+				if(!$arg || in_array($key, $arg)){
+					$values[$key] = $val;
+				}
 			}
 		}
 		return $values;
 	}
 	
-	public function isChanged($column){
-		return isset($this->settings[$column]);
+	public function isChanged($column = null){
+		if(is_null($column)){
+			if(count($this->settings) > 0){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return isset($this->settings[$column]);
+		}
 	}
 	
 	public function setSpecialValue($column, $value){

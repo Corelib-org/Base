@@ -115,9 +115,9 @@ class CodeGenerator implements Output {
 			$foldername = $classname;
 		}
 		if(!$class->getAttribute('path')){
-			$this->classes[$classname]['path'] = $path.'Lib/'.$foldername.'/';
+			$this->classes[$classname]['path'] = Manager::parseConstantTags($path.'Lib/'.$foldername.'/');
 		} else {
-			$this->classes[$classname]['path'] = $class->getAttribute('path').$foldername.'/';
+			$this->classes[$classname]['path'] = Manager::parseConstantTags($class->getAttribute('path').$foldername.'/');
 		}
 		
 		$xpath = new DOMXPath($class->ownerDocument);

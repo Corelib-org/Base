@@ -151,6 +151,9 @@ class PageFactory implements Singleton {
 		if(substr($this->url, -1) != '/'){
 			$this->url .= '/';
 		}
+		var_dump(dirname($_SERVER['SCRIPT_NAME']));
+		$this->url = str_replace(dirname($_SERVER['SCRIPT_NAME']), '/', $this->url);
+		var_dump($this->url);
 		$this->cache_file = 'var/cache/pages/'.str_replace('/', '_', $_SERVER['REQUEST_URI']);
 	}
 

@@ -33,7 +33,7 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 	}
 }
 if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
-	define('PAGE_FACTORY_CACHE_ENABLE', true);
+	define('PAGE_FACTORY_CACHE_ENABLE', false);
 }
 if(!defined('PAGE_FACTORY_CLASS_NAME')){
 	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');

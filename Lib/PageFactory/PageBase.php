@@ -65,6 +65,7 @@ abstract class PageBase {
 		return $this->function;
 	}
 
+	
 	public function draw(PageFactoryTemplateEngine $engine){
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
 			$event = EventHandler::getInstance();

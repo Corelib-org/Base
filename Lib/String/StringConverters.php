@@ -5,22 +5,32 @@ class StringConverterNl2br implements Converter {
 	}
 }
 
+class StringConverterAddCSlashes implements Converter {
+	
+	private $charlist = null;
+	
+	public function __construct($charlist='\''){
+		$this->charlist = $charlist;
+	}
+	
+	public function convert($data) {
+		return addcslashes($data, $this->charlist);
+	}
+}
+
+
 class StringConverterHTMLEntities implements Converter {
 	/**
 	 * @param Converter $converter If converter is set, this will be applies after
 	 *                             data has been ran through htmlentities.
 	 */
-	public function __construct(Converter $converter = null, $qoutestyle = null, $charset = 'UTF-8') {
-		$this->converter = $converter;
+	public function __construct($qoutestyle = null, $charset = 'UTF-8') {
 		$this->charset = $charset;
 		$this->quotestyle = $qoutestyle;
 	}
 	
 	public function convert($data) {
 		$data = htmlentities($data,$this->quotestyle,$this->charset);
-		if($this->converter) {
-			$data = $this->converter->convert($data);
-		}
 
 		// double the htmlentities xsl parser.
 		return htmlentities($data,$this->quotestyle,$this->charset);

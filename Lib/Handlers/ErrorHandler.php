@@ -257,7 +257,12 @@ class BaseException extends Exception {
 
 	static function IsErrorThrown(){
 		$base = Base::getInstance();
+		if(self::$buffer !== false){
+			header('HTTP/1.1 503 Internal Server Error');
+			header('Status: 503');
+		}
 		if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
+			
 			return self::$buffer;
 		} else {
 			return false;

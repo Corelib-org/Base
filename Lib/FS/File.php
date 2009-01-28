@@ -49,6 +49,16 @@ class File {
 			return false;
 		}
 	}
+	public function fgetcsv($buffer=1024){
+		if(is_null($this->pointer)){
+			$this->fopen();
+		}
+		if($this->feof() !== true){
+			return fgetcsv($this->pointer, $buffer);
+		} else {
+			return false;
+		}
+	}
 	
 	public function cp($target){
 		$target = $this->_resolveTarget($target);

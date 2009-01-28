@@ -35,10 +35,11 @@ if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === fals
 if(!defined('BASE_ERROR_LOGFILE')){
 	define('BASE_ERROR_LOGFILE','var/log/errors');
 }
-
+/*
 if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
 	define('BASE_ERROR_FATAL_REDIRECT','http://'.$_SERVER['SERVER_NAME'].'/corelib/report/');
 }
+*/
 
 /**
  * 	PHP error handler
@@ -76,12 +77,17 @@ function BaseFatalError($buffer){
 			$buffer = str_replace($result[0][$key], '', $buffer);
 			$e = BaseError(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
 			$buffer .= $e->__toString();
-			$checksum = md5($result[3][$key].$result[4][$key]);
-			if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && BASE_ADMIN_EMAIL !== false){
-				mail(BASE_ADMIN_EMAIL, '[ Corelib Error Handler:  '.$result[2][$key].' ] '.$checksum, $e->writeToLog(true));
-			}
+			
+			$checksum = $e->getChecksum();
 			if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
-				$buffer = '<html><head><META http-equiv="refresh" content="30;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
+				if(BASE_ADMIN_EMAIL !== false){
+					mail(BASE_ADMIN_EMAIL, '[Corelib Error Handler] '.$result[2][$key], $e->writeToLog(true));	
+				}
+				if(defined('BASE_ERROR_FATAL_REDIRECT')){
+					$buffer = '<html><head><meta http-equiv="refresh" content="999;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
+				} else {
+					$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib</a></i></body></html>';
+				}
 			}
 		}
 		return $buffer;
@@ -92,10 +98,12 @@ class BaseException extends Exception {
 	private static $buffer = false;
 	private static $template = null;
 	private static $template_desc = null;
+	
 	private $errstr = null;
 	private $errfile = null;
 	private $errline = null;
 	private $errorcontext = null;
+	private $checksum = null;
 
 	const SOURCE_LINES = 12;
 
@@ -105,6 +113,7 @@ class BaseException extends Exception {
 		$this->errfile = $errfile;
 		$this->errline = $errline;
 		$this->errorcontext = $errorcontext;
+		$this->checksum = md5($this->getFile().$this->getLine());
 		if(!self::$buffer){
 			self::$buffer = true;
 			self::$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
@@ -145,7 +154,11 @@ class BaseException extends Exception {
 			return $this->getMessage();
 		}
 	}
-
+	public function getChecksum(){
+		return $this->checksum;
+	}
+	
+	
 	function htmlError(){
 		$return = str_replace('!ERROR_NAME!', ($this->getCode().': '.$this->myGetCode()), self::$template_desc);
 		$return = str_replace('!ERROR_DESC!', $this->myGetMessage(), $return);
@@ -211,7 +224,7 @@ class BaseException extends Exception {
 	}
 
 	function WriteToLog($return = false){
-		$content = '--====MD5 '.md5($this->getFile().$this->getLine()).' Time: '.date('r')."\n";
+		$content = '--====MD5 '.$this->checksum.' Time: '.date('r')."\n";
 		$content .= 'Error Code: '.$this->myGetCode()."\n";
 		$content .= 'Error File: '.$this->getFile()."\n";
 		$content .= 'Error Line: '.$this->getLine()."\n";

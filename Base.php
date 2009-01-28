@@ -525,9 +525,8 @@ class Base implements Singleton {
  * @uses Base::findClass()
  */
 function __autoload($class){
-	$base = Base::getInstance();
-	if($base->findClass($class)){
-		include_once($base->findClass($class));
+	if($filename = Base::getInstance()->findClass($class)){
+		include_once($filename);
 		return true;
 	} else {
 		return false;

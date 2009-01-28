@@ -33,7 +33,7 @@ if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === fals
 }
 
 if(!defined('BASE_ERROR_LOGFILE')){
-	define('BASE_ERROR_LOGFILE','var/log/errors');
+	define('BASE_ERROR_LOGFILE','var/log/error.log');
 }
 /*
 if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){

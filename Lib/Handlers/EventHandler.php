@@ -36,7 +36,9 @@ class EventHandler implements Singleton,ObserverSubject {
 	private static $instance = null;
 	
 	private $handlers = array();
+	private $instance_handlers = null;
 	
+	private $counter = 0;
 	
 	private function __construct(){
 		
@@ -51,13 +53,22 @@ class EventHandler implements Singleton,ObserverSubject {
 		return self::$instance;	
 	}
 	
-	public function registerObserver(Observer $observer){
-		try {
-			if(!$observer instanceof EventTypeHandler){
-				throw new BaseException('Invalid InputTypeHandler given');	
+	public function registerInstanceObserver(Observer $observer){
+		if(!$observer instanceof EventInstanceHandler){
+			throw new BaseException('Invalid EventInstanceHandler given');	
+		}
+		if(is_array($instances = $observer->getInstanceType())){
+			foreach ($instances as $instance){ 
+				$this->instance_handlers[$instance][get_class($observer)] = $observer;	
 			}
-		} catch (Exception $e){
-			echo $e;
+		} else {
+			$this->instance_handlers[$instances][get_class($observer)] = $observer;
+		}
+	}
+	
+	public function registerObserver(Observer $observer){
+		if(!$observer instanceof EventTypeHandler){
+			throw new BaseException('Invalid InputTypeHandler given');	
 		}
 		if(is_array($events = $observer->getEventType())){
 			foreach ($events as $event){ 
@@ -82,12 +93,25 @@ class EventHandler implements Singleton,ObserverSubject {
 				$val->update($event);
 			}
 		}
+		if(is_array($this->instance_handlers)){
+			foreach ($this->instance_handlers as $instance => $handlers){
+				if($event instanceof $instance){
+					foreach ($handlers as $handler){
+						$handler->update($event);
+					}
+				}
+			}
+		}
 		return $event;
 	}
 }
 
 interface EventTypeHandler {
 	public function getEventType();	
+}
+
+interface EventInstanceHandler {
+	public function getInstanceType();	
 }
 
 interface Event {

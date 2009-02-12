@@ -139,7 +139,9 @@ class i18n implements Singleton,Output {
 		//echo I18N_DEFAULT_TIMEZONE;
 		$default_timezone = timezone_open(I18N_DEFAULT_TIMEZONE);
 		// echo $timezone;
-		$timezone = timezone_open($timezone);
+		if(!$timezone = @timezone_open($timezone)){
+			$timezone = $default_timezone;
+		}
 		$date = date_create(null, $default_timezone);
 		//echo date('r', $default_timezone->getOffset($date))."\n";
 		//echo date('r', $timezone->getOffset($date)),"\n";

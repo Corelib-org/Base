@@ -37,10 +37,12 @@ abstract class PageBase {
 	abstract public function build();
 
 	public function addContent(Output $content, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
-		return $this->content[] = $content;
+		$this->content[] = array('content' => $content, 'cache'=>$cache, 'expire'=>$expire);
+		return $content;
 	}
 	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
-		return $this->settings[] = $settings;
+		$this->settings[] = array('settings' => $settings, 'cache'=>$cache, 'expire'=>$expire);
+		return $settings;
 	}
 	/**
 	 * @param PageFactoryTemplate $template
@@ -72,10 +74,10 @@ abstract class PageBase {
 			$event->triggerEvent(new EventApplyDefaultSettings($this));
 
 			while(list(,$val) = each($this->content)){
-				$engine->addPageContent($val);
+				$engine->addPageContent($val['content']);
 			}
 			while(list(,$val) = each($this->settings)){
-				$engine->addPageSettings($val);
+				$engine->addPageSettings($val['settings']);
 			}
 			return true;
 		} else {

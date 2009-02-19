@@ -33,7 +33,7 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 	}
 }
 if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
-	define('PAGE_FACTORY_CACHE_ENABLE', true);
+	define('PAGE_FACTORY_CACHE_ENABLE', false);
 }
 if(!defined('PAGE_FACTORY_CLASS_NAME')){
 	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
@@ -150,6 +150,10 @@ class PageFactory implements Singleton {
 		}
 		if(substr($this->url, -1) != '/'){
 			$this->url .= '/';
+		}
+		$dirname = dirname($_SERVER['SCRIPT_NAME']);
+		if($dirname != '/'){
+			$this->url = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $this->url);
 		}
 		$this->cache_file = 'var/cache/pages/'.str_replace('/', '_', $_SERVER['REQUEST_URI']);
 	}

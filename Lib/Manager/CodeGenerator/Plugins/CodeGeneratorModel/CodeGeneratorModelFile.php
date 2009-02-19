@@ -484,7 +484,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 		$indent = '';
 		if(isset($field['unique']) && $field['unique'] === true){
 			$codeleft  = '$this->_getDAO();'."\n";
-			$codeleft .= 'if($this->dao->isUsernameAvailable($this->id, $'.$field['property'].')){'."\n";
+			$codeleft .= 'if($this->dao->'.$this->_createMethodName('is', $field['property']).'Available($this->id, $'.$field['property'].')){'."\n";
 			
 			$indent .= "\t";
 			

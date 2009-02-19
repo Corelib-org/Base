@@ -36,7 +36,7 @@ abstract class CodeGeneratorFile implements Output {
 				$tempname = tempnam('var/tmp', 'diff');
 				file_put_contents($tempname, $this->createPatch());
 				chmod($tempname, 0666);
-				$command = 'patch -i '.$tempname.' 2>&1';
+				$command = 'patch '.$this->getFilename().' -i '.$tempname.' 2>&1';
 				exec($command, $result);
 				$this->write_result = implode("\n", $result);
 				unlink($tempname);
@@ -81,7 +81,7 @@ abstract class CodeGeneratorFile implements Output {
 	protected function createPatch(){
 		$tempfile = tempnam('var/tmp', 'diff');
 		file_put_contents($tempfile, $this->content);
-		$diff = 'diff -usN '.$this->getFilename().' '.$tempfile;
+		$diff = 'diff -usN '.str_replace('//', '/', $this->getFilename()).' '.$tempfile;
 		$diff = trim(`$diff`);
 		unlink($tempfile);
 		return $diff;

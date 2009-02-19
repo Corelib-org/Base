@@ -269,12 +269,17 @@ class Manager implements Singleton {
 								$handler->setDescription($prop->nodeValue);
 								break;
 							default:
-								$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
+								if($prop->nodeType != XML_TEXT_NODE){
+									$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
+								}
+								break;
 						}
 					}
 				} else {
 					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
-						$event->triggerEvent(new ManagerUnknownSetupProperty(UnknownCorelibManagerExtension::getInstance(), $prop));
+						if($prop->nodeType != XML_TEXT_NODE){
+							$event->triggerEvent(new ManagerUnknownSetupProperty(UnknownCorelibManagerExtension::getInstance(), $prop));
+						}
 					}
 					$handler = null;
 //					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);

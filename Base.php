@@ -190,14 +190,6 @@ if(!defined('BASE_DEFAULT_TIMEZONE')){
 	define('BASE_DEFAULT_TIMEZONE', 'CET');
 }
 
-if(!defined('BASE_ADMIN_EMAIL')){
-	/**
-	 * Define Admin Email
-	 *
-	 * Define the admin email, for sending runtime informations about erros etc.
-	 */
-	define('BASE_ADMIN_EMAIL', false);
-}
 if(!defined('TEMPORARY_DIR')){
 	/**
 	 * Define Admin Email
@@ -214,16 +206,6 @@ if(!defined('TEMPORARY_DIR')){
  * 	Load Interfaces File
  */
 require_once(CORELIB.'/Base/Lib/Interfaces.php');
-/**
- *	Load Error Handler
- *
- *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
- * 	and set it to true
- * 
- * @see BASE_DISABLE_ERROR_HANDLER
- */
-require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
-
 
 //*****************************************************************//
 //************************* Base Classes **************************//
@@ -303,6 +285,14 @@ class Base implements Singleton {
 		if(is_callable('date_default_timezone_set')){
 			date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
 		}
+		if(!defined('BASE_ADMIN_EMAIL')){
+			/**
+			 * Define Admin Email
+			 *
+			 * Define the admin email, for sending runtime informations about erros etc.
+			 */
+			define('BASE_ADMIN_EMAIL', false);
+		}		
 		if(!defined('BASE_RUNLEVEL')){
 			/**
 			 * Current Runlevel
@@ -311,6 +301,16 @@ class Base implements Singleton {
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 		}
+		/**
+		 *	Load Error Handler
+		 *
+		 *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
+		 * 	and set it to true
+		 * 
+		 * @see BASE_DISABLE_ERROR_HANDLER
+		 */
+		require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
+				
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
 		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
@@ -525,9 +525,8 @@ class Base implements Singleton {
  * @uses Base::findClass()
  */
 function __autoload($class){
-	$base = Base::getInstance();
-	if($base->findClass($class)){
-		include_once($base->findClass($class));
+	if($filename = Base::getInstance()->findClass($class)){
+		include_once($filename);
 		return true;
 	} else {
 		return false;

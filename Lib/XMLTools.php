@@ -14,5 +14,12 @@ class XMLTools {
 		}
 		return $pager;
 	}
+
+	static public function getElementsByTagNameFromOutput(Output $output, $elements){
+		$list = new DOMDocument('1.0', 'UTF-8');
+		$list->appendChild($output->getXML($list));
+		return $list->getElementsByTagName($elements);
+	}
+	
 }
 ?>

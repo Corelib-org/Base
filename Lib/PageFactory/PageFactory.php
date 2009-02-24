@@ -149,6 +149,7 @@ class PageFactory implements Singleton {
 		if(!isset($_SERVER[PAGE_FACTORY_SERVER_TOKEN])){
 			if(isset($_GET[PAGE_FACTORY_GET_TOKEN])){
 				$this->url = $_GET[PAGE_FACTORY_GET_TOKEN];
+				$_SERVER[PAGE_FACTORY_SERVER_TOKEN] = $_GET[PAGE_FACTORY_GET_TOKEN];
 			} else {
 				$this->url = '/';
 			}

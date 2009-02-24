@@ -50,8 +50,11 @@ if(!defined('PAGE_FACTORY_GET_FILE')){
 if(!defined('PAGE_FACTORY_POST_FILE')){
 	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
 }
+if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
+	define('PAGE_FACTORY_SERVER_TOKEN', 'SCRIPT_URL');
+}
 if(!defined('PAGE_FACTORY_GET_TOKEN')){
-	define('PAGE_FACTORY_GET_TOKEN', 'SCRIPT_URL');
+	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
 }
 
 define('PAGE_FACTORY_CACHE_STATIC', 1);
@@ -143,10 +146,14 @@ class PageFactory implements Singleton {
 		eval($engine);
 		$this->addResolver('meta', new MetaResolver());
 		
-		if(!isset($_SERVER[PAGE_FACTORY_GET_TOKEN])){
-			$this->url = '/';
+		if(!isset($_SERVER[PAGE_FACTORY_SERVER_TOKEN])){
+			if(isset($_GET[PAGE_FACTORY_GET_TOKEN])){
+				$this->url = $_GET[PAGE_FACTORY_GET_TOKEN];
+			} else {
+				$this->url = '/';
+			}
 		} else {
-			$this->url = $_SERVER[PAGE_FACTORY_GET_TOKEN];
+			$this->url = $_SERVER[PAGE_FACTORY_SERVER_TOKEN];
 		}
 		if(substr($this->url, -1) != '/'){
 			$this->url .= '/';

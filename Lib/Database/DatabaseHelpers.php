@@ -108,10 +108,11 @@ class DatabaseDataHandler extends DatabaseHelper {
 		} else {
 			$arg = $column;
 		}
-		
+
 		foreach ($this->settings as $key => $val){
 			if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){
-				if(!$arg || in_array($key, $arg)){
+				
+				if(!$arg || in_array($key, $arg) || isset($arg[$key])){
 					$values[$key] = $val;
 				}
 			}

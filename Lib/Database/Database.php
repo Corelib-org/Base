@@ -171,8 +171,6 @@ abstract class DatabaseDAO {
 		return $this->database->masterQuery($query);
 	}
 	/**
-	 * Enter description here...
-	 *
 	 * @param Query $query
 	 * @return Query
 	 */

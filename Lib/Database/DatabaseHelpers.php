@@ -71,10 +71,10 @@ class DatabaseDataHandler extends DatabaseHelper {
 			$arg = false;
 		}
 		foreach ($this->settings as $key => $val){
-			if(isset($this->special_values[$key]) && !in_array($key, $this->special_exclude)){
+			if(isset($this->special_values[$key]) && (!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg)))){
 				$special_values[$key] = $val;
 				unset($this->settings[$key]);
-			} else if(!in_array($key, $this->special_exclude)){
+			} else if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){ 
 				if(!$arg || in_array($key, $arg)){
 					$columns[] = $key;
 				}
@@ -108,10 +108,11 @@ class DatabaseDataHandler extends DatabaseHelper {
 		} else {
 			$arg = $column;
 		}
-		
+
 		foreach ($this->settings as $key => $val){
-			if(!in_array($key, $this->special_exclude)){
-				if(!$arg || in_array($key, $arg)){
+			if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){
+				
+				if(!$arg || in_array($key, $arg) || isset($arg[$key])){
 					$values[$key] = $val;
 				}
 			}

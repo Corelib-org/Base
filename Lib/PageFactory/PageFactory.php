@@ -33,7 +33,7 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 	}
 }
 if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
-	define('PAGE_FACTORY_CACHE_ENABLE', true);
+	define('PAGE_FACTORY_CACHE_ENABLE', false);
 }
 if(!defined('PAGE_FACTORY_CLASS_NAME')){
 	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
@@ -50,8 +50,11 @@ if(!defined('PAGE_FACTORY_GET_FILE')){
 if(!defined('PAGE_FACTORY_POST_FILE')){
 	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
 }
+if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
+	define('PAGE_FACTORY_SERVER_TOKEN', 'SCRIPT_URL');
+}
 if(!defined('PAGE_FACTORY_GET_TOKEN')){
-	define('PAGE_FACTORY_GET_TOKEN', 'SCRIPT_URL');
+	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
 }
 
 define('PAGE_FACTORY_CACHE_STATIC', 1);
@@ -143,13 +146,22 @@ class PageFactory implements Singleton {
 		eval($engine);
 		$this->addResolver('meta', new MetaResolver());
 		
-		if(!isset($_SERVER[PAGE_FACTORY_GET_TOKEN])){
-			$this->url = '/';
+		if(!isset($_SERVER[PAGE_FACTORY_SERVER_TOKEN])){
+			if(isset($_GET[PAGE_FACTORY_GET_TOKEN])){
+				$this->url = $_GET[PAGE_FACTORY_GET_TOKEN];
+				$_SERVER[PAGE_FACTORY_SERVER_TOKEN] = $_GET[PAGE_FACTORY_GET_TOKEN];
+			} else {
+				$this->url = '/';
+			}
 		} else {
-			$this->url = $_SERVER[PAGE_FACTORY_GET_TOKEN];
+			$this->url = $_SERVER[PAGE_FACTORY_SERVER_TOKEN];
 		}
 		if(substr($this->url, -1) != '/'){
 			$this->url .= '/';
+		}
+		$dirname = dirname($_SERVER['SCRIPT_NAME']);
+		if($dirname != '/'){
+			$this->url = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $this->url);
 		}
 		$this->cache_file = 'var/cache/pages/'.str_replace('/', '_', $_SERVER['REQUEST_URI']);
 	}
@@ -236,47 +248,39 @@ class PageFactory implements Singleton {
 				echo $e;
 				exit;
 			}
-			if(is_array($pages['/404/'])){
-				require_once($pages['/404/']['page']);
-			} else {
-				require_once($pages['/404/']);	
-			}
-			return true;
-		} else {
-			if(is_array($pages[$this->url])){
-				try {
-					if(!isset($pages[$this->url]['page'])){
-						throw new BaseException('file not set.', E_USER_ERROR);
-					}
-					if(!isset($pages[$this->url]['exec'])){
-						throw new BaseException('exec not set.', E_USER_ERROR);
-					}
-				} catch (BaseException $e){
-					echo $e;
-					exit;
-				}
-				$page = $pages[$this->url]['page'];
-				$this->callback = $pages[$this->url]['exec'].'()';
-				
-				if(isset($pages[$this->url]['cache']) && $pages[$this->url]['cache'] == PAGE_FACTORY_CACHE_STATIC){
-					$this->write_to_cache = true;
-				}
-				
-				
-			} else {
-				$page = $pages[$this->url];
-			}
+			$this->url = '/404/';
+		}
+		if(is_array($pages[$this->url])){
 			try {
-				if(!is_file($page)){
-					throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
+				if(!isset($pages[$this->url]['page'])){
+					throw new BaseException('file not set.', E_USER_ERROR);
+				}
+				if(!isset($pages[$this->url]['exec'])){
+					throw new BaseException('exec not set.', E_USER_ERROR);
 				}
 			} catch (BaseException $e){
 				echo $e;
 				exit;
 			}
-			require_once($page);
-			return true;
+			$page = $pages[$this->url]['page'];
+			$this->callback = $pages[$this->url]['exec'].'()';
+			
+			if(isset($pages[$this->url]['cache']) && $pages[$this->url]['cache'] == PAGE_FACTORY_CACHE_STATIC){
+				$this->write_to_cache = true;
+			}
+		} else {
+			$page = $pages[$this->url];
 		}
+		try {
+			if(!is_file($page)){
+				throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
+			}
+		} catch (BaseException $e){
+			echo $e;
+			exit;
+		}
+		require_once($page);
+		return true;
 	}
 
 	public function getCacheType(){

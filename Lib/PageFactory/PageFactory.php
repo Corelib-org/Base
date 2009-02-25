@@ -248,47 +248,39 @@ class PageFactory implements Singleton {
 				echo $e;
 				exit;
 			}
-			if(is_array($pages['/404/'])){
-				require_once($pages['/404/']['page']);
-			} else {
-				require_once($pages['/404/']);	
-			}
-			return true;
-		} else {
-			if(is_array($pages[$this->url])){
-				try {
-					if(!isset($pages[$this->url]['page'])){
-						throw new BaseException('file not set.', E_USER_ERROR);
-					}
-					if(!isset($pages[$this->url]['exec'])){
-						throw new BaseException('exec not set.', E_USER_ERROR);
-					}
-				} catch (BaseException $e){
-					echo $e;
-					exit;
-				}
-				$page = $pages[$this->url]['page'];
-				$this->callback = $pages[$this->url]['exec'].'()';
-				
-				if(isset($pages[$this->url]['cache']) && $pages[$this->url]['cache'] == PAGE_FACTORY_CACHE_STATIC){
-					$this->write_to_cache = true;
-				}
-				
-				
-			} else {
-				$page = $pages[$this->url];
-			}
+			$this->url = '/404/';
+		}
+		if(is_array($pages[$this->url])){
 			try {
-				if(!is_file($page)){
-					throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
+				if(!isset($pages[$this->url]['page'])){
+					throw new BaseException('file not set.', E_USER_ERROR);
+				}
+				if(!isset($pages[$this->url]['exec'])){
+					throw new BaseException('exec not set.', E_USER_ERROR);
 				}
 			} catch (BaseException $e){
 				echo $e;
 				exit;
 			}
-			require_once($page);
-			return true;
+			$page = $pages[$this->url]['page'];
+			$this->callback = $pages[$this->url]['exec'].'()';
+			
+			if(isset($pages[$this->url]['cache']) && $pages[$this->url]['cache'] == PAGE_FACTORY_CACHE_STATIC){
+				$this->write_to_cache = true;
+			}
+		} else {
+			$page = $pages[$this->url];
 		}
+		try {
+			if(!is_file($page)){
+				throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
+			}
+		} catch (BaseException $e){
+			echo $e;
+			exit;
+		}
+		require_once($page);
+		return true;
 	}
 
 	public function getCacheType(){

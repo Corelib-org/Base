@@ -37,7 +37,6 @@ class DatabaseDAOView extends DatabaseDAO {
 
 interface ViewList {
 	public function getViewXML($id, array $array = array(), DOMDocument $xml);
-	public function getViewArray($id, array $array = array());
 	public function getListHelper();
 }
 

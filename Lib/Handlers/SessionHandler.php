@@ -45,13 +45,17 @@ define('SESSION_INIT_BY_GET_INSTANCE', 2);
 
 class SessionHandler implements Singleton,Output {
 	private static $instance = null;
-	
+	/**
+	 * @var SessionHandlerEngine
+	 */
 	private $engine = null;
 	private $domain = '';
 	private $lifetime = 0;
 	private $path = '/';
 	private $secure = false;
 
+	private $converters = array();
+	
 	private function __construct(){
 		if(!defined('SESSION_INIT_METHOD')){
 			/**
@@ -156,6 +160,9 @@ class SessionHandler implements Singleton,Output {
 		return $this->engine->getId();
 	}
 
+	public function setConverter($name, Converter $converter){
+		$this->engine->setConverter($name, $converter);
+	}
 
 	/**
 	 *	@return SessionHandler
@@ -182,6 +189,7 @@ class SessionHandler implements Singleton,Output {
 
 interface SessionHandlerEngine {
 	public function set($name, $content);
+	public function setConverter($name, Converter $converter);
 	public function get($name);
 	public function check($name);
 	public function remove($name);
@@ -200,6 +208,8 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	private $lifetime = 0;
 	private $path = '/';
 	private $secure = false;
+	
+	private $converters = array();
 
 	private function __construct(){
 	}
@@ -213,6 +223,11 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	public function set($name, $content){
 		$_SESSION[$name] = $content;
 	}
+	
+	public function setConverter($name, Converter $converter){
+		$this->converters[$name] = $converter;
+	}	
+	
 	public function get($name){
 		if(isset($_SESSION[$name])){
 			return $_SESSION[$name];
@@ -278,6 +293,9 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 				$key = $parent->appendChild($parent->ownerDocument->createElement($key));
 				$this->_getXMLArray($key, $val);
 			} else {
+				if(isset($this->converters[$key])){
+					$val = $this->converters[$key]->convert($val);
+				}
 				$parent->appendChild($parent->ownerDocument->createElement($key, htmlspecialchars($val)));
 			}
 		}

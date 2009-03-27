@@ -286,7 +286,7 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	
 	private function _getXMLArray(DOMElement $parent, array $array){
 		while(list($key, $val) = each($array)){
-			if(is_numeric($key)){
+			if(preg_match('/(^[0-9])|(,)/', $key)){
 				$key = 'item';
 			}
 			if(is_array($val)){

@@ -70,6 +70,29 @@ class MySQLiEngine implements DatabaseEngine {
 		$this->query(new MySQLiQuery('ROLLBACK'));
 	}
 	
+	public function analyse(Query $query){
+		$query = new MySQLiQuery('EXPLAIN '.$query->getQuery());
+		$this->query($query);
+		
+		
+		if($fieldsObj = $query->fetchFields()){
+			foreach ($fieldsObj as $field){
+				$fields[] = $field->name;
+			}
+			
+			$i = 0;
+			while($out = $query->fetchArray()){
+				foreach ($fields as $field){
+					$rows[$i][] = $out[$field];
+				}
+				$i++;
+			}
+			return array('columns'=>$fields, 'rows'=>$rows);
+		} else {
+			return false;
+		}
+	}
+	
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
@@ -118,6 +141,14 @@ class MySQLiQuery extends Query {
 	}
 	public function fetchArray(){
 		return $this->result->fetch_array();
+	}
+	
+	public function fetchFields(){
+		if($this->result){
+			return $this->result->fetch_fields();
+		} else {
+			return false;
+		}
 	}
 	public function getAffectedRows(){
 		return $this->instance->affected_rows;

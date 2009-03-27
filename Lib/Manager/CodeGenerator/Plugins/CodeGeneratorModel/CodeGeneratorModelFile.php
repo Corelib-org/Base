@@ -39,7 +39,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if(!isset($constants[$field['constant']]) && $field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						$constants[$field['constant']] = $field['field'];
 					}
 				}
@@ -73,7 +73,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if(!isset($properties[$field['property']]) && $field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						$properties[$field['property']] = 'null';
 					}
 				}
@@ -110,7 +110,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 			}
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						$method = $this->_createMethodName('get', $field['property']);
 						if(!isset($methods[$method])){
 							$methods[] = $this->_createGetMethod($method, $field);
@@ -153,7 +153,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						$method = $this->_createMethodName('set', $field['property']);
 						if(!isset($methods[$method])){
 							if(!isset($field['readonly']) || $field['readonly'] !== true){
@@ -249,7 +249,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						if(!isset($loops[$field['constant']])){
 							$loops[$field['constant']] = $this->_createArrayReader($field);
 						}
@@ -373,7 +373,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
 					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
-						if(!isset($properties[$field['property']])){
+						if(!isset($properties[$field['property']]) && isset($field['class']) && $field['class'] != $this->_getClassName()){
 							$properties[$field['property']] = $this->_writeXMLOutputItem($field);
 						}
 					}

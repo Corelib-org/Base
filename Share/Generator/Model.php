@@ -305,7 +305,7 @@ class ${classname} implements Output {
 	 * @param boolean $read if true, then read data from database
 	 * @return boolean true
 	 */	
-	protected function _getDAO($read=true){
+	private function _getDAO($read=true){
 		if(is_null($this->dao)){
 			$this->dao = Database::getDAO(self::DAO);
 			if($read){
@@ -319,7 +319,7 @@ class ${classname} implements Output {
 	 * 
 	 * @return boolean true on success, else return false
 	 */
-	protected function _create(){
+	private function _create(){
 		if($this->id = $this->dao->create($this->datahandler)){
 			$this->read();
 			return true;
@@ -332,7 +332,7 @@ class ${classname} implements Output {
 	 * 
 	 * @return boolean true on success, else return false
 	 */
-	protected function _update(){
+	private function _update(){
 		if($this->dao->update($this->id, $this->datahandler)){
 			$this->read();
 			return true;

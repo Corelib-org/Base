@@ -87,7 +87,9 @@ class Database implements Singleton {
 			                           'error' => array('code' => $query->getErrno(),
 			                                            'message' => $query->getError()),
 			                           'time' => round(microtime(true) - $start, 5),
-			                           'backtrace' => $e->__toString());
+			                           'backtrace' => $e->__toString(),
+			                           'analysis' => $instance->analyse($query));
+			
 		} else {
 			$instance->query($query);
 		}
@@ -131,6 +133,7 @@ interface DatabaseEngine {
 	public function startTransaction();
 	public function commit();
 	public function rollback();
+	public function analyse(Query $query);
 }
 
 abstract class Query {
@@ -148,6 +151,7 @@ abstract class Query {
 	abstract public function getNumRows();
 	abstract public function getInsertID();
 	abstract public function fetchArray();
+	abstract public function fetchFields();
 	abstract public function getAffectedRows();
 }
 
@@ -229,6 +233,27 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 			}
 			
 			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.$line['query'].'</pre><br/>';
+			
+			
+			if(is_array($line['analysis'])){
+				$result .= '<h3>Analysis</h3><table style="width: 100%; border-spacing: 0px; font-size: 11px;"><thead><tr>';
+				foreach ($line['analysis']['columns'] as $column){
+					$result .= '<th style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$column.'</th>';
+				}
+				$result .= '<tr></thead>';
+				foreach ($line['analysis']['rows'] as $rows){
+					$result .= '<tr>';
+					print_r($rows);
+					foreach ($rows as $columns){
+						
+						$result .= '<td style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$columns.'</td>';
+					}
+					$result .= '</tr>';
+				}
+				
+				
+				$result .= '</table><br/>';
+			}
 			$result .= '<h3>Backtrace</h3><pre>'.$line['backtrace'].'</pre><br/>';
 			$result .= '<hr/><br/></div></div>';
 		}

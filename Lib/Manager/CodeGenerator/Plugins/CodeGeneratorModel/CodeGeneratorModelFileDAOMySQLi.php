@@ -104,7 +104,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(isset($field['class']) && $field['class'] != $this->_getClassName()){
 						if(!isset($conditions[$field['constant']])){
 							$conditions[$field['constant']] = "\t\t".'$data->addExcludeField('.$this->_getClassName().'::'.$field['constant'].');';
 						}
@@ -161,7 +161,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						if(!isset($conditions[$field['constant']])){
 							$conditions[$field['constant']] = "\t\t".'$data->addExcludeField('.$this->_getClassName().'::'.$field['constant'].');';
 						}
@@ -249,13 +249,13 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorModelFileBase {
 					}
 				} else if(preg_match('/'.$this->_getClassName().'::([A-Z0-9_]+)\b/', $line, $condition)){
 					$conditions[$condition[1]] = $this->_getCommentBlock($lines, $key).rtrim($line)."\n";
-					$in_condition = $condition[1];
+					// $in_condition = $condition[1];
 				}
 			}
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						if(!isset($conditions[$field['constant']])){
 							$method = $this->_createMethodName('_update', $field['property']);
 							$conditions[$field['constant']] = "\t\t".$indent.'$this->'.$method.'($id, $data->get('.$this->_getClassName().'::'.$field['constant'].'));';
@@ -449,7 +449,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorModelFileBase {
 			
 			foreach ($this->content_tables as $table => $fields){
 				foreach ($fields as $field){
-					if($field['constant'] != strtoupper('FIELD_'.$this->_getClassName().'_ID')){
+					if(!isset($field['class']) || $field['class'] != $this->_getClassName()){
 						if(!isset($conditions[$field['constant']])){
 							$method = $this->_createMethodName('_update', $field['property']);
 							

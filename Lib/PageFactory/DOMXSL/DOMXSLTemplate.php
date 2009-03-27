@@ -50,7 +50,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		parent::__construct();
 		if(is_null($xslcore)){
 			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.'base/core.xsl';
-		}else {
+		} else if ($xslcore{0} != '/'){
 			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$xslcore;
 		}
 		try {

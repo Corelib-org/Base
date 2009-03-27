@@ -82,7 +82,8 @@ class MySQLi_${classname}List extends DatabaseDAO implements Singleton,DAO_${cla
 		}
 		
 		if($view instanceof DatabaseViewHelper){
-			$join .= ' LEFT JOIN `'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_TABLE).'` ON `'.${classname}::FIELD_ID.'`=`'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_KEY).'` ';
+			$join .= ' LEFT JOIN `'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_TABLE).'` 
+			                  ON `'.${classname}::FIELD_ID.'`=`'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_TABLE).'`.`'.$view->get(DATABASE_MYSQLI_VIEW_JOIN_KEY).'` ';
 			$columns .= ', `'.$view->get(DATABASE_VIEW_XML_FIELD).'`';
 		}
 

@@ -17,7 +17,7 @@ abstract class CodeGeneratorPlugin implements Output {
 		$this->path = $class['path'];
 		$this->table = $class['table'];
 		$this->classname = $classname;
-		$this->fields = &$class['fields'];
+		$this->fields = $class['fields'];
 		$this->settings = $settings;
 	}
 	

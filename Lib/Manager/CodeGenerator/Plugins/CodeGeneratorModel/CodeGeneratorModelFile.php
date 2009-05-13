@@ -174,9 +174,9 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 	protected function _writeConverters(&$content){
 		$properties = array();
 		if($block = $this->_getCodeBlock($content, 'Converter properties')){
-			preg_match_all('/private\s*\$(.*?)\s*=\s*[\'"]*(.*?)[\'"]*;/', $block, $matches);
-			foreach ($matches[1] as $key => $property){
-				$properties[$property] = $matches[2][$key];
+			preg_match_all('/(private|protected)\s*\$(.*?)\s*=\s*[\'"]*(.*?)[\'"]*;/', $block, $matches);
+			foreach ($matches[2] as $key => $property){
+				$properties[$property] = array('type' => $matches[1][$key], 'value' => $matches[3][$key]);
 			}
 			foreach ($this->fields as $field){
 				$field['property'] = $field['property'].'_converter';
@@ -187,12 +187,12 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 					} else if(isset($field['default']) && $field['default'] === false){
 						$value = 'false';
 					}
-					$properties[$field['property']] = $value;
+					$properties[$field['property']] = array('type' => 'private', 'value'=>$value);
 				}
 			}
 			$property_code = '';
 			foreach ($properties as $property => $value){
-				$property_code .= "\t".'private $'.$property.' = '.$value.';'."\n";
+				$property_code .= "\t".$value['type'].' $'.$property.' = '.$value['value'].';'."\n";
 			}
 			$this->_writeCodeBlock($content, 'Converter properties', $property_code);
 		}
@@ -528,6 +528,7 @@ class CodeGeneratorModelFile extends CodeGeneratorModelFileBase {
 		$param_read = array();
 		$param_construct = array();
 		$param_construct_cmd = array();
+		$param_dao_update = array();
 		foreach ($fields as $field){
 			$param_read[] = '$this->'.$field['property'].'->getID()';
 			$param_construct[] = '$'.$field['property'].' = null';

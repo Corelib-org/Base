@@ -49,12 +49,12 @@ class File {
 			return false;
 		}
 	}
-	public function fgetcsv($buffer=1024){
+	public function fgetcsv($buffer=1024, $delimiter=',', $enclosure='"', $escape='\\'){
 		if(is_null($this->pointer)){
 			$this->fopen();
 		}
 		if($this->feof() !== true){
-			return fgetcsv($this->pointer, $buffer);
+			return fgetcsv($this->pointer, $buffer, $delimiter, $enclosure);
 		} else {
 			return false;
 		}

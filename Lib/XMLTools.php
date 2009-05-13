@@ -1,7 +1,11 @@
 <?php
 class XMLTools {
 	static public function escapeXMLCharacters($string){
-		return htmlspecialchars($string, null, 'UTF-8', false);
+		if(version_compare(PHP_VERSION, '5.2.3') > -1){
+			return htmlspecialchars($string, null, 'UTF-8', false);
+		} else {
+			return htmlspecialchars($string, null, 'UTF-8');
+		}
 	}
 	
 	static public function makePagerXML(DOMDocument $xml, $count, $per_page_count=20, $current_page){

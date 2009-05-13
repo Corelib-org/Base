@@ -24,6 +24,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorModelFileBase {
 	}
 	
 	public function _writeSelectColumns(&$content){
+		$select_colums = array();
 		foreach ($this->fields as $field){
 			$field['field'] = '`'.$field['field'].'`';
 			if(strstr($field['smarttype'], 'timestamp')){
@@ -529,6 +530,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorModelFileBase {
 		$param_read = array();
 		$param_construct = array();
 		$param_construct_cmd = array();
+		$param_dao_update = array();
 		foreach ($fields as $field){ 
 			$param_dao_update[] = '$'.$field['property'];
 			$param_read[] = '`\'.'.$this->_getClassName().'::'.$field['constant'].'.\'`=\\\'\'.mysql_escape_string($'.$field['property'].').\'\\\'';

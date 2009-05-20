@@ -237,6 +237,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		$this->error = $this->statement->error;
 		$this->errno = $this->statement->errno;
 		$this->insertid = $this->statement->insert_id;
+		return true;
 	}
 	
 	public function getNumRows(){

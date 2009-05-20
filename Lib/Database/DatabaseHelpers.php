@@ -23,7 +23,7 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * test
+ * test   
  * 
  * @author Steffen Soerensen <ss@corelib.org>
  * @copyright Copyright (c) 2009 Steffen Soerensen

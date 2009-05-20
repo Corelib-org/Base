@@ -33,7 +33,9 @@
  * @filesource
  */
 
-
+//*****************************************************************//
+//**************** DatabaseHelper abstract classes ****************//
+//*****************************************************************//
 /**
  * DatabaseHelper class
  *
@@ -98,6 +100,10 @@ abstract class DatabaseListHelper extends DatabaseHelper {
 		return sizeof($this->settings);
 	}
 }
+
+//*****************************************************************//
+//********************* DatabaseHelper classes ********************//
+//*****************************************************************//
 
 /**
  * DatabaseListHelperOrder class

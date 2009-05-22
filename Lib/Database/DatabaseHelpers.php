@@ -331,7 +331,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	 * 
 	 * Prevent a column from being retrieved when using
 	 * {@link DatabaseDataHandler::getUpdatedColumnValues()} and
-	 * {@link DatabaseDataHandler::getUpdatedColumns}.
+	 * {@link DatabaseDataHandler::getUpdatedColumns()}.
 	 * 
 	 * @uses DatabaseDataHandler::$special_exclude
 	 * @param string $column

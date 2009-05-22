@@ -29,7 +29,7 @@
  * @package corelib
  * @subpackage Database
  * @link http://www.corelib.org/
- * @version 4.0.0 ($Id: Database.php 5008 2009-05-19 14:29:10Z wayland $)
+ * @version 4.0.0 ($Id$)
  * @filesource
  */
 

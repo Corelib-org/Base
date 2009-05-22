@@ -295,7 +295,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 		return $values;
 	}
 	
-	/*
+	/**
 	 * check to se if there have been any changes made
 	 * 
 	 * 

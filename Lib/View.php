@@ -1,4 +1,7 @@
 <?php
+/**
+ * @todo maybe this should be moved to a sublibrary
+ */
 define('DATABASE_MYSQLI_VIEW_JOIN_TABLE', 'mysqli_view_join_table');
 define('DATABASE_MYSQLI_VIEW_JOIN_KEY', 'mysqli_view_join_key');
 define('DATABASE_MYSQLI_VIEW_WHERE', 'mysqli_view_where');

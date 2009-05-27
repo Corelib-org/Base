@@ -31,6 +31,9 @@
  * @link http://www.corelib.org/
  * @version 1.1.0 ($Id$)
  * @filesource
+ * @todo Observer pattern is only used with Eventhandler, maybe it should be merged
+ * @todo Output interface is used by PageFactory and shouldbe moved there
+ * @todo Decorator and Component pattern is outdated and should be removed or rewritten
  */
 
 /**

@@ -42,35 +42,93 @@ define('DATABASE_LT', '<');
 define('DATABASE_EQUAL', '=');
 define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
 
+/**
+ * MySQLi Database engine
+ *
+ * The Database class provides all basic functionality,
+ * for communicating with a mysql database using PHP's
+ * mysqli extension.
+ *
+ * @package corelib
+ * @subpackage Database
+ */
 class MySQLiEngine implements DatabaseEngine {
+	/**
+	 * @var mysqli database connection
+	 */
 	private $connection = null;
+	/**
+	 * @var string hostname
+	 */
 	private $hostname = null;
+	/**
+	 * @var string username
+	 */
 	private $username = null;
+	/**
+	 * @var string password
+	 */
 	private $password = null;
+	/**
+	 * @var string database
+	 */
 	private $database = null;
+	/**
+	 * @var string connection encoding
+	 */
 	private $charset = 'utf8';
-	private $pid = null;
+	/**
+	 * @var boolean reconnect if connection is lost
+	 */
 	private $reconnect = false;
 
+	/**
+	 * MySQLi engine DAO class prefix
+	 */
 	const PREFIX = 'MySQLi';
 
+	/**
+	 * Create new connection
+	 *
+	 * @uses  MySQLiEngine::$hostname
+	 * @uses  MySQLiEngine::$username
+	 * @uses  MySQLiEngine::$password
+	 * @uses  MySQLiEngine::$database
+	 * @uses  MySQLiEngine::$reconnect
+	 * @uses  MySQLiEngine::$charset
+	 * @uses  MySQLiEngine::$pid
+	 * @param string $hostname
+	 * @param string $username
+	 * @param string $password
+	 * @param string $database
+	 * @param boolean $reconnect false if no reconnect should be done, else true
+	 * @param string $charset connection encoding
+	 */
 	public function __construct($hostname, $username, $password, $database, $reconnect=false, $charset='utf8'){
 		$this->hostname = $hostname;
 		$this->username = $username;
 		$this->password = $password;
 		$this->database = $database;
-		$this->pid = posix_getpid();
-		$this->reconnect = $reconnect;;
+		$this->reconnect = $reconnect;
 		$this->charset = $charset;
 	}
 	
+	/**
+	 * Execute query
+	 * 
+	 * @uses BaseException
+	 * @uses MySQLiEngine::$connection
+	 * @uses MySQLiEngine::_connect()
+	 * @uses MySQLiEngine::$reconnect
+	 * @uses MySQLiQuery::setInstance()
+	 * @uses MySQLiQuery::execute()
+	 * @uses MySQLiQuery::getErrno()
+	 * @param Query {@link MySQLiQuery mysqli query object}
+	 * @return true on success, else return false
+	 */
 	public function query(Query $query){
-		try {
-			if(!$query instanceof MySQLiQuery){
-				throw new BaseException('Invalid Query Object, object must be instance of MySQLiQuery');
-			}
-		} catch (BaseException $e){
-			echo $e;
+		if(!$query instanceof MySQLiQuery){
+			throw new BaseException('Invalid Query Object, object must be instance of MySQLiQuery');
 		}
 		if(is_null($this->connection)){
 			$this->_connect();
@@ -93,19 +151,59 @@ class MySQLiEngine implements DatabaseEngine {
 		}
 		return false;
 	}
+
+	/**
+	 * Get dao class prefix
+	 * 
+	 * @see DatabaseEngine::getPrefix()
+	 * @return string
+	 */
 	public function getPrefix(){
 		return self::PREFIX;
 	}
+	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery
+	 * @uses MySQLiEngine::query()
+	 * @see DatabaseEngine::startTransaction()
+	 */
 	public function startTransaction(){
 		$this->query(new MySQLiQuery('START TRANSACTION'));
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery
+	 * @uses MySQLiEngine::query()
+	 * @see DatabaseEngine::commit()
+	 */
 	public function commit(){
 		$this->query(new MySQLiQuery('COMMIT'));
 	}
+	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery
+	 * @uses MySQLiEngine::query()
+	 * @see DatabaseEngine::rollback()
+	 */
 	public function rollback(){
 		$this->query(new MySQLiQuery('ROLLBACK'));
 	}
 	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @see DatabaseEngine::analyse()
+	 * @uses MySQLiQuery
+	 * @uses MySQLiQuery::getQuery()
+	 * @uses MySQLiEngine::query()
+	 * @param Query $query {@link MySQLiQuery mysqli query object}
+	 * @return array
+	 */
 	public function analyse(Query $query){
 		$query = new MySQLiQuery('EXPLAIN '.$query->getQuery());
 		$this->query($query);
@@ -129,6 +227,17 @@ class MySQLiEngine implements DatabaseEngine {
 		}
 	}
 	
+	/**
+	 * Connect to database
+	 * 
+	 * @uses MySQLiEngine::$hostname
+	 * @uses MySQLiEngine::$username
+	 * @uses MySQLiEngine::$password
+	 * @uses MySQLiEngine::$database
+	 * @uses MySQLiEngine::$connection
+	 * @uses MySQLiEngine::$charset
+	 * @return true on success, else return false
+	 */
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->errno === 0){
@@ -141,44 +250,124 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 }
 
+/**
+ * mysqli query
+ * 
+ * @package corelib
+ * @subpackage Database
+ */
 class MySQLiQuery extends Query {
+	/**
+	 * @var mysqli
+	 */
 	protected $instance = null;
+	/**
+	 * @var mysqli_result
+	 */
 	protected $result = null;
+	/**
+	 * @var string query error
+	 */
 	protected $error = null;
+	/**
+	 * @var integer query error number
+	 */
 	protected $errno = null;
+	/**
+	 * @var integer last insert id
+	 */
 	protected $insertid = null;
 
+	/**
+	 * {@inheritdoc}
+	 */
 	public function __construct($query){
 		parent::__construct($query);
 	}
+	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$instance
+	 * @uses MySQLiQuery::$result
+	 * @uses MySQLiQuery::$error
+	 * @uses MySQLiQuery::$errno
+	 * @uses MySQLiQuery::$insertid
+	 * @uses MySQLiQuery::getQuery()
+	 */
 	public function execute(){
 		$this->result = $this->instance->query($this->getQuery());
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;
 		$this->insertid = $this->instance->insert_id;
 	}	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$instance
+	 */
 	public function setInstance($instance){
 		$this->instance = $instance;
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$query
+	 */
 	public function getQuery(){
 		return $this->query;
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$error
+	 * @uses MySQLiQuery::$query
+	 * @return string error
+	 */
 	public function getError(){
 		return $this->error."\n<br/><br/>".$this->query;
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$errno
+	 * @return integer mysql error code
+	 */
 	public function getErrno(){
 		return $this->errno;
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$result
+	 */
 	public function getNumRows(){
 		return $this->result->num_rows;
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$insertid
+	 * @return integer last insert id
+	 */
 	public function getInsertID(){
 		return $this->insertid;
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$result
+	 * @return array
+	 */
 	public function fetchArray(){
 		return $this->result->fetch_array();
 	}
-	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$result
+	 * @return array|boolean if succesfull return array else return false
+	 */
 	public function fetchFields(){
 		if($this->result){
 			return $this->result->fetch_fields();
@@ -186,9 +375,20 @@ class MySQLiQuery extends Query {
 			return false;
 		}
 	}
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$instance
+	 * return integer
+	 */
 	public function getAffectedRows(){
 		return $this->instance->affected_rows;
 	}
+	
+	/**
+	 * @see MySQLiQuery::getQuery()
+	 * @return string query
+	 */
 	public function __toString(){
 		return $this->getQuery();
 	}

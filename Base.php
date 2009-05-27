@@ -169,7 +169,9 @@ if(!defined('BASE_CLASS_CACHE_FILE')){
 	 * This constants holds the path, on where to store the class
 	 * cache database, this file must be writable by the user running
 	 * the script, and it can be overwritten any time before include
-	 * {@link Base.php}.
+	 * Base.php .
+	 * 
+	 * @see Base.php
 	 */
 	define('BASE_CLASS_CACHE_FILE', 'var/cache/class.db');
 }
@@ -271,6 +273,11 @@ class Base implements Singleton {
 	 * 	@uses CORELIB_COPYRIGHT_YEAR
 	 * 	@uses CORELIB_COPYRIGHT
 	 * 	@uses CORELIB_BASE_VERSION
+	 * 	@uses BASE_DEFAULT_TIMEZONE
+	 * 	@uses BASE_CLASS_CACHE_FILE
+	 * 	@uses BASE_CLASS_CACHE_FILE
+	 * 	@uses BASE_UMASK
+	 * 	@uses CORELIB
 	 * 	@uses Base::$class_cache
 	 * 	@uses Base::$class_cache_updated
 	 */
@@ -323,7 +330,6 @@ class Base implements Singleton {
 			echo '<h1> Class Cache File is unreadable </h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
-		require_once(CORELIB.'/Base/Lib/StrictTypes.php');
 		$GLOBALS['base'] = $this;
 	}
 
@@ -334,6 +340,7 @@ class Base implements Singleton {
 	 * 	description.
 	 *
 	 * 	@see Singleton
+	 *  @uses Base::$instance
 	 *	@return Base
 	 */
 	public static function getInstance(){
@@ -350,11 +357,6 @@ class Base implements Singleton {
 	 * @uses Base::$class_paths
 	 */
 	public function addClassPath($path){
-		try {
-			StrictTypes::isString($path);
-		} catch (BaseException $e){
-			echo $e;
-		}
 		$this->class_paths[] = $path;
 	}
 
@@ -366,6 +368,7 @@ class Base implements Singleton {
 	 *
 	 * @param string $class Class name
 	 * @return boolean always returns true
+	 * @uses __autoload()
 	 */
 	public function loadClass($class){
 		try {
@@ -397,7 +400,7 @@ class Base implements Singleton {
 					$this->class_cache[$class] = $file;
 					$this->class_cache_updated = true;
 				} else {
-		//			throw new BaseException('File containing class '.$class.' could not be found');
+					throw new BaseException('File containing class '.$class.' could not be found');
 				}
 			} catch (BaseException $e){
 				echo $e->htmlError();

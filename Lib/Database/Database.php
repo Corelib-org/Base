@@ -54,7 +54,6 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
 //*****************************************************************//
 //*********************** Database Classes ************************//
 //*****************************************************************//
-
 /**
  * Database class
  *
@@ -362,7 +361,7 @@ interface DatabaseEngine {
 	 * The return array is a multi dimensional array
 	 * 
 	 * @todo add output array example
-	 * @return array()
+	 * @return array
 	 */
 	public function analyse(Query $query);
 }

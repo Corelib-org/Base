@@ -1,4 +1,7 @@
 <?php
+/**
+ * @todo This should be a part of PageFactory
+ */
 class XMLTools {
 	static public function escapeXMLCharacters($string){
 		if(version_compare(PHP_VERSION, '5.2.3') > -1){

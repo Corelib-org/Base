@@ -164,12 +164,10 @@
 			</group>
 			-->
 			<group title="Dashboard" id="dashboard" url="/corelib/manager/dashboard/"/>
-			<group title="Configuration" id="configuration" url="/corelib/system/configuration/"/>
-			<group title="System Check" id="check" url="/corelib/system/check/"/>
+			<!--  group title="Configuration" id="configuration" url="/corelib/system/configuration/"/ --> 
 			<group title="Database Tool" id="database" url="/corelib/system/database/"/>
 			<group title="Code generation Tool" id="database" url="/corelib/generator/"/>
-			<group title="About" id="about" url="/corelib/about/"/>
-			<group title="Markup" id="markup" url="/corelib/markup/"/>
+			<!--  group title="Markup" id="markup" url="/corelib/markup/"/ -->
 		</menu>
 		<resources>
 			<resource handle="manager">{CORELIB}/Base/Share/Resources/Web/</resource>

@@ -1,4 +1,7 @@
 <?php
+/**
+ * @TODO Debugger should be renamed to CLIDebugger and moved to the CLI Library
+ */
 define('CORELIB_DEBUGGER_VERSION', '1.0.0');
 
 class Debugger implements Singleton {

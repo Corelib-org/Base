@@ -1,4 +1,8 @@
 <?php
+/**
+ * @todo add proper documentation
+ * @todo should be moved to it's own module
+ */
 class StrictTypes {
 	static public function isString($subject, $length=null){
 		$error = false;

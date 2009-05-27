@@ -1,4 +1,7 @@
 <?php
+/**
+ * @todo move in with PageFactory, maybe this should be deprecated
+ */
 class URLParser implements Singleton,Output {
 	private static $instance = null;
 	

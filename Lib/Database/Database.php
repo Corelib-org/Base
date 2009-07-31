@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Database abstraction layer
+ * Corelib Database abstraction layer.
  *
  * <i>No Description</i>
  *
@@ -39,7 +39,7 @@
 //*****************************************************************//
 if(!defined('DATABASE_SHOW_QUERY_LOG')){
 	/**
-	 * Enable and disable query log
+	 * Enable and disable query log.
 	 * 
 	 * if this is set to false, no logging will be performed, 
 	 * if set to true a query log will apear at the end of 
@@ -55,7 +55,7 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
 //*********************** Database Classes ************************//
 //*****************************************************************//
 /**
- * Database class
+ * Database class.
  *
  * The Database class provides all basic functionality,
  * for communicating with varios databases, as well as
@@ -66,7 +66,7 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
  */
 class Database implements Singleton {
 	/**
-	 * Singleton Object Reference
+	 * Singleton Object Reference.
 	 * 
 	 * @var Database
 	 */
@@ -88,7 +88,7 @@ class Database implements Singleton {
 	private $master = null;
 	
 	/**
-	 * Query log
+	 * Query log.
 	 * 
 	 * Array containing a liste of executed queries
 	 * 
@@ -102,7 +102,7 @@ class Database implements Singleton {
 	private function __construct(){ }
 	
 	/**
-	 * Return instance of Database
+	 * Return instance of Database.
 	 *
 	 * Please refer to the {@link Singleton} interface for complete
 	 * description.
@@ -118,7 +118,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Get instance of specified DAO object
+	 * Get instance of specified DAO object.
 	 * 
 	 * @uses Database::$dao_prefix
 	 * @return DatabaseDAO
@@ -129,7 +129,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Connect to the master database
+	 * Connect to the master database.
 	 * 
 	 * @uses Database::$dao_prefix
 	 * @uses Database::$master
@@ -146,7 +146,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Connect to a slave database
+	 * Connect to a slave database.
 	 * 
 	 * @uses Database::$slave
 	 * @param DatabaseEngine Database connection i use
@@ -156,7 +156,7 @@ class Database implements Singleton {
 	}
 	
 	/**
-	 * Execute a query
+	 * Execute a query.
 	 * 
 	 * When function is called it will detect if the statemant
 	 * is a selecting or modifying statement and the execute
@@ -181,7 +181,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Execute a query using the master connection
+	 * Execute a query using the master connection.
 	 * 
 	 * @uses Database::$query
 	 * @uses Database::_runQuery()
@@ -194,7 +194,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Execute a query using the slave connection
+	 * Execute a query using the slave connection.
 	 * 
 	 * WARNING: Do not send modifying queries using the connection.
 	 * 
@@ -209,7 +209,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Run query on a specific data connection
+	 * Run query on a specific data connection.
 	 * 
 	 * if a error occurs while running the 
 	 * query {@link Database::_error()} is called
@@ -246,7 +246,7 @@ class Database implements Singleton {
 	}
 	
 	/**
-	 * Handle database errors
+	 * Handle database errors.
 	 * 
 	 * @uses BaseException
 	 * @uses Query::getError()
@@ -267,7 +267,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Get DAO class prefix
+	 * Get DAO class prefix.
 	 * 
 	 * @uses Database::$dao_prefix
 	 * @return string DAO class prefix
@@ -277,7 +277,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Start database transaction
+	 * Start database transaction.
 	 * 
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::startTransaction()
@@ -287,7 +287,7 @@ class Database implements Singleton {
 	}
 
 	/**
-	 * Commit database transaction
+	 * Commit database transaction.
 	 * 
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::commit()
@@ -297,7 +297,7 @@ class Database implements Singleton {
 	}
 	
 	/**
-	 * Rollback database transaction
+	 * Rollback database transaction.
 	 * 
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::rollback()
@@ -307,7 +307,7 @@ class Database implements Singleton {
 	}
 	
 	/**
-	 * Get query log
+	 * Get query log.
 	 * 
 	 * @uses Database::$query_log
 	 * @return array Content of {@link Database::$query_log}
@@ -322,7 +322,7 @@ class Database implements Singleton {
 //********************** Database interfaces **********************//
 //*****************************************************************//
 /**
- * Database Engine interface
+ * Database Engine interface.
  *
  * This defines how a DatabaseEngine is implemented
  *
@@ -331,31 +331,31 @@ class Database implements Singleton {
  */
 interface DatabaseEngine {
 	/**
-	 * Execute query
+	 * Execute query.
 	 * 
 	 * @param Query $query 
 	 */
 	public function query(Query $query);
 	/**
-	 * Get DAO class prefix
+	 * Get DAO class prefix.
 	 * 
 	 * @return string
 	 */
 	public function getPrefix();
 	/**
-	 * Start transaction
+	 * Start transaction.
 	 */
 	public function startTransaction();
 	/**
-	 * Commit transaction
+	 * Commit transaction.
 	 */
 	public function commit();
 	/**
-	 * Rollback transaction
+	 * Rollback transaction.
 	 */
 	public function rollback();
 	/**
-	 * Analyse Query
+	 * Analyse Query.
 	 * 
 	 * Analyses a query and return a array with the results
 	 * The return array is a multi dimensional array
@@ -371,7 +371,7 @@ interface DatabaseEngine {
 //******************* Database abstract classes *******************//
 //*****************************************************************//
 /**
- * Database Query abstract class
+ * Database Query abstract class.
  *
  * This defines how a Query is implemented
  *
@@ -384,7 +384,7 @@ abstract class Query {
 	 */
 	protected $query = null;
 	/**
-	 * Create new query object instance
+	 * Create new query object instance.
 	 * 
 	 * @param string $query 
 	 */
@@ -392,31 +392,31 @@ abstract class Query {
 		$this->query = $query;
 	}
 	/**
-	 * Execute query
+	 * Execute query.
 	 * 
 	 * @return true on success, else return false
 	 */
 	abstract public function execute();
 	/**
-	 * Get query
+	 * Get query.
 	 * 
 	 * @return string query
 	 */
 	abstract public function getQuery();
 	/**
-	 * Get error description
+	 * Get error description.
 	 * 
 	 * @return string error description
 	 */
 	abstract public function getError();
 	/**
-	 * Get error code
+	 * Get error code.
 	 * 
 	 * @return integer error code, else return false or 0
 	 */
 	abstract public function getErrno();
 	/**
-	 * Set database instance
+	 * Set database instance.
 	 * 
 	 * Set database engine by passing the database connection resource
 	 * 
@@ -424,31 +424,31 @@ abstract class Query {
 	 */
 	abstract public function setInstance($instance);
 	/**
-	 * Get number of rows of select query
+	 * Get number of rows of select query.
 	 * 
 	 * @return integer
 	 */
 	abstract public function getNumRows();
 	/**
-	 * Get last insert ID
+	 * Get last insert ID.
 	 * 
 	 * @return integer row id, else return false
 	 */
 	abstract public function getInsertID();
 	/**
-	 * Fetch row as array from result
+	 * Fetch row as array from result.
 	 * 
 	 * @return array row
 	 */
 	abstract public function fetchArray();
 	/**
-	 * Fetch fields from result
+	 * Fetch fields from result.
 	 * 
 	 * @return array fields
 	 */
 	abstract public function fetchFields();
 	/**
-	 * Get affected rows
+	 * Get affected rows.
 	 * 
 	 * return integer affected rows
 	 */
@@ -458,7 +458,7 @@ abstract class Query {
 
 
 /**
- * Database DAO abstract class
+ * Database DAO abstract class.
  *
  * This defines how a DAO class is implemented
  *
@@ -479,7 +479,7 @@ abstract class DatabaseDAO {
 	}
 
 	/**
-	 * Execute a query
+	 * Execute a query.
 	 * 
 	 * @see Database::query()
 	 * @uses DatabaseDAO::$database
@@ -488,7 +488,7 @@ abstract class DatabaseDAO {
 		return $this->database->query($query);
 	}
 	/**
-	 * Execute a query using the master connection
+	 * Execute a query using the master connection.
 	 * 
 	 * @see Database::masterQuery()
 	 * @uses DatabaseDAO::$database
@@ -497,7 +497,7 @@ abstract class DatabaseDAO {
 		return $this->database->masterQuery($query);
 	}
 	/**
-	 * Execute a query using the slave connection
+	 * Execute a query using the slave connection.
 	 * 
 	 * @see Database::slaveQuery();
 	 * @uses DatabaseDAO::$database
@@ -506,7 +506,7 @@ abstract class DatabaseDAO {
 		return $this->database->slaveQuery($query);
 	}
 	/**
-	 * Start transaction
+	 * Start transaction.
 	 * 
 	 * @uses DatabaseDAO::$database
 	 * @see Database::startTransaction()
@@ -515,7 +515,7 @@ abstract class DatabaseDAO {
 		return $this->database->startTransaction();
 	}
 	/**
-	 * Commit transaction
+	 * Commit transaction.
 	 * 
 	 * @uses DatabaseDAO::$database
 	 * @see Database::commit()
@@ -524,7 +524,7 @@ abstract class DatabaseDAO {
 		return $this->database->commit();
 	}
 	/**
-	 * Rollback transaction
+	 * Rollback transaction.
 	 * 
 	 * @uses DatabaseDAO::$database
 	 * @see Database::rollback()
@@ -552,7 +552,7 @@ abstract class DatabaseDAO {
 //************************ Database events ************************//
 //*****************************************************************//
 /**
- * Database print stats even
+ * Database print stats even.
  *
  * Draw query log when request ends
  * 
@@ -580,7 +580,7 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 		$this->subject = $subject;
 	}
 	/**
-	 * Echo query log
+	 * Echo query log.
 	 * 
 	 * @see EventTypeHandler::update(); 
 	 */

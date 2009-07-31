@@ -266,7 +266,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 				if($DOMMessage->length > 1){
 					throw new BaseException('Message Collission for messsage('.$session->get(self::MSGID).') ,in message file '.HTTP_STATUS_MESSAGE_FILE);
 				} else if ($DOMMessage->length < 1) {
-					throw new BaseException('Non-excisting message('.$session->get(self::MSGID).'), in message file '.HTTP_STATUS_MESSAGE_FILE);
+					// throw new BaseException('Non-excisting message('.$session->get(self::MSGID).'), in message file '.HTTP_STATUS_MESSAGE_FILE);
 				} else {
 					$session->remove(self::MSGID);
 					return $DOMMessage->item(0);

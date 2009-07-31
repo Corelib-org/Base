@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Database helpers
+ * Corelib Database helpers.
  *
  * <i>No Description</i>
  *
@@ -37,7 +37,7 @@
 //**************** DatabaseHelper abstract classes ****************//
 //*****************************************************************//
 /**
- * DatabaseHelper class
+ * DatabaseHelper class.
  *
  * The DatabaseHelper class is the fundament of
  * various DatabaseHelpers
@@ -52,7 +52,7 @@ abstract class DatabaseHelper {
 	protected $settings = array();
 	
 	/**
-	 * Set value of a column
+	 * Set value of a column.
 	 * 
 	 * @uses DatabaseHelper::$settings
 	 * @param string $column database (table) column
@@ -65,7 +65,7 @@ abstract class DatabaseHelper {
 	}
 	
 	/**
-	 * Get value of a column
+	 * Get value of a column.
 	 *
 	 * @uses DatabaseHelper::$settings
 	 * @param string $column database (table) column
@@ -82,7 +82,7 @@ abstract class DatabaseHelper {
 }
 
 /**
- * DatabaseListHelper class
+ * DatabaseListHelper class.
  *
  * The DatabaseListHelper class is the fundament of
  * various DatabaseListHelpers
@@ -92,7 +92,7 @@ abstract class DatabaseHelper {
  */
 abstract class DatabaseListHelper extends DatabaseHelper {
 	/**
-	 * Count number settings
+	 * Count number settings.
 	 * 
 	 * @return integer number of settings
 	 */
@@ -106,7 +106,7 @@ abstract class DatabaseListHelper extends DatabaseHelper {
 //*****************************************************************//
 
 /**
- * DatabaseListHelperOrder class
+ * DatabaseListHelperOrder class.
  *
  * The DatabaseListHelperOrder class manages the
  * sorting should be applied on select queries
@@ -116,7 +116,7 @@ abstract class DatabaseListHelper extends DatabaseHelper {
  */
 class DatabaseListHelperOrder extends DatabaseListHelper {
 	/**
-	 * Set sort order for column
+	 * Set sort order for column.
 	 * 
 	 * @see DatabaseHelper::set()
 	 */
@@ -125,7 +125,7 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 	}
 
 	/**
-	 * Get sort order for column
+	 * Get sort order for column.
 	 * 
 	 * @return string column with sort order, if no sort isset return false
 	 */
@@ -139,7 +139,7 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 }
 
 /**
- * DatabaseListHelperFilter class
+ * DatabaseListHelperFilter class.
  *
  * The DatabaseListHelperFilter class manages the
  * filters that should be applied on select queries
@@ -152,7 +152,7 @@ class DatabaseListHelperFilter extends DatabaseListHelper {
 }
 
 /**
- * DatabaseDataHandler class
+ * DatabaseDataHandler class.
  *
  * The DatabaseDataHandler class manages the changes
  * made when modififying data
@@ -161,6 +161,16 @@ class DatabaseListHelperFilter extends DatabaseListHelper {
  * @subpackage Database
  */
 class DatabaseDataHandler extends DatabaseHelper {
+	/**
+	 * Set no history break charecter.
+	 * 
+	 * Since null is used for representing null
+	 * in the database another character should
+	 * be used to ignore changes if no history values
+	 * apper. For this ASCII C0 Cancel is used
+	 */
+	const NO_HISTORY = "\024";
+	
 	/**
 	 * @see DatabaseDataHandler::setSpecialValue()
 	 * @var array list of special columns
@@ -187,7 +197,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	private $history_values = array();
 	
 	/**
-	 * Set column value
+	 * Set column value.
 	 * 
 	 * @uses DatabaseDataHandler::$updated_columns
 	 * @uses DatabaseDataHandler::$history_values
@@ -196,31 +206,31 @@ class DatabaseDataHandler extends DatabaseHelper {
 	 * @param mixed $history value of the column before the change
 	 * @return boolean true
 	 */
-	public function set($column, $setting, $history=null){
+	public function set($column, $setting, $history=self::NO_HISTORY){
 		$this->updated_columns[$column] = $column;
-		if(!is_null($history)){
+		if($history !== self::NO_HISTORY){
 			$this->history_values[$column] = $history;
 		}
 		return parent::set($column, $setting);
 	}
 	
 	/**
-	 * Get historic value of column
+	 * Get historic value of column.
 	 * 
 	 * @uses DatabaseDataHandler::$history_values
 	 * @param string column
 	 * @return mixed historic value of column, if none available then return false;
 	 */
 	public function getHistoryValue($column){
-		if(isset($this->history_values[$column])){
+		if(array_key_exists($column, $this->history_values)){
 			return $this->history_values[$column];
 		} else {
-			return false;
+			return self::NO_HISTORY;
 		}
 	}
 	
 	/**
-	 * Get updated columns
+	 * Get updated columns.
 	 * 
 	 * @uses DatabaseHelper::$settings
 	 * @uses DatabaseDataHandler::$special_values
@@ -265,7 +275,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	}
 	
 	/**
-	 * Get updated values
+	 * Get updated values.
 	 * 
 	 * @uses DatabaseHelper::$settings
 	 * @uses DatabaseDataHandler::$special_exclude
@@ -296,7 +306,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	}
 	
 	/**
-	 * check to se if there have been any changes made
+	 * check to se if there have been any changes made.
 	 * 
 	 * 
 	 * @param string $column if column is specified the check is only made on that column
@@ -315,7 +325,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	}
 	
 	/**
-	 * Set special column value
+	 * Set special column value.
 	 * 
 	 * @uses DatabaseDataHandler::$special_values
 	 * @param string $column
@@ -327,7 +337,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	}
 	
 	/**
-	 * Add a exclude filter
+	 * Add a exclude filter.
 	 * 
 	 * Prevent a column from being retrieved when using
 	 * {@link DatabaseDataHandler::getUpdatedColumnValues()} and

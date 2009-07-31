@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Database MySQLi Connector
+ * Corelib Database MySQLi Connector.
  *
  * <i>No Description</i>
  *
@@ -43,7 +43,7 @@ define('DATABASE_EQUAL', '=');
 define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
 
 /**
- * MySQLi Database engine
+ * MySQLi Database engine.
  *
  * The Database class provides all basic functionality,
  * for communicating with a mysql database using PHP's
@@ -83,12 +83,12 @@ class MySQLiEngine implements DatabaseEngine {
 	private $reconnect = false;
 
 	/**
-	 * MySQLi engine DAO class prefix
+	 * MySQLi engine DAO class prefix.
 	 */
 	const PREFIX = 'MySQLi';
 
 	/**
-	 * Create new connection
+	 * Create new connection.
 	 *
 	 * @uses  MySQLiEngine::$hostname
 	 * @uses  MySQLiEngine::$username
@@ -114,7 +114,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	
 	/**
-	 * Execute query
+	 * Execute query.
 	 * 
 	 * @uses BaseException
 	 * @uses MySQLiEngine::$connection
@@ -153,7 +153,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 
 	/**
-	 * Get dao class prefix
+	 * Get dao class prefix.
 	 * 
 	 * @see DatabaseEngine::getPrefix()
 	 * @return string
@@ -228,7 +228,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 	
 	/**
-	 * Connect to database
+	 * Connect to database.
 	 * 
 	 * @uses MySQLiEngine::$hostname
 	 * @uses MySQLiEngine::$username
@@ -251,7 +251,7 @@ class MySQLiEngine implements DatabaseEngine {
 }
 
 /**
- * mysqli query
+ * mysqli query.
  * 
  * @package corelib
  * @subpackage Database
@@ -379,7 +379,7 @@ class MySQLiQuery extends Query {
 	 * {@inheritdoc}
 	 * 
 	 * @uses MySQLiQuery::$instance
-	 * return integer
+	 * @return integer
 	 */
 	public function getAffectedRows(){
 		return $this->instance->affected_rows;
@@ -394,14 +394,36 @@ class MySQLiQuery extends Query {
 	}
 }
 
+/**
+ * mysqli query statement.
+ * 
+ * mysqli query object used for prepared statements
+ * 
+ * @package corelib
+ * @subpackage Database
+ */
 class MySQLiQueryStatement extends MySQLiQuery {
 	/**
 	 * @var mysqli_stmt
 	 */
 	private $statement = null;
+	/**
+	 * @var array query values
+	 */
 	private $bind = array();
+	/**
+	 * @var array query values larger than 256 bytes
+	 */
 	private $blob = array();
 	
+	/**
+	 * Construct object and optionally pass data.
+	 * 
+	 * @uses MySQLiQuery::__construct()
+	 * @uses MySQLiQueryStatement::bind()
+	 * @param string $query mysql query
+	 * @param mixed $item,... values to pass to the statement 
+	 */
 	public function __construct($query, $item=null /*, [$items...] */){
 		parent::__construct($query);
 		$bind = func_get_args();
@@ -411,6 +433,14 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		}
 	}
 	
+	/**
+	 * Bind values to statement.
+	 * 
+	 * @uses MySQLiQueryStatement::_bindValue()
+	 * @uses MySQLiQueryStatement::$bind
+	 * @uses MySQLiQueryStatement::$blob
+	 * @param mixed $item,... values to pass to the statement
+	 */
 	public function bind($item=null /*, [$items...] */){
 		$this->bind = array();
 		$this->blob = array();
@@ -427,6 +457,14 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		}
 	}
 	
+	/**
+	 * Prepare a value for binding.
+	 * 
+	 * @uses MySQLiQueryStatement::$bind
+	 * @uses MySQLiQueryStatement::$blob
+	 * @uses MySQLiTools::parseBooleanValue()
+	 * @param mixed $val Value to bind
+	 */
 	private function _bindValue($val){
 		if(isset($this->bind['param'])){
 			$key = sizeof($this->bind['param']);
@@ -451,7 +489,20 @@ class MySQLiQueryStatement extends MySQLiQuery {
 			$this->bind['types'][$key] = 's';
 		}		
 	}
-	
+
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQuery::$instance
+	 * @uses MySQLiQueryStatement::$statement
+	 * @uses MySQLiQuery::$error
+	 * @uses MySQLiQuery::$errno
+	 * @uses MySQLiQuery::$insertid
+	 * @uses MySQLiQueryStatement::$bind
+	 * @uses MySQLiQueryStatement::$blob 
+	 * @uses MySQLiQuery::getQuery()
+	 * @return true on success, else return false 
+	 */	
 	public function execute(){
 		if(is_null($this->statement)){
 			if(!$this->statement = $this->instance->prepare($this->getQuery())){
@@ -476,18 +527,41 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		return true;
 	}
 	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQueryStatement::$statement
+	 */
 	public function getNumRows(){
 		return $this->statement->num_rows;
 	}	
-	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * @uses MySQLiQueryStatement::$statement
+	 * @return integer
+	 */
 	public function getAffectedRows(){
 		return $this->statement->affected_rows;
 	}	
 	
+	/**
+	 * {@inheritdoc}
+	 * 
+	 * This method have not been implemented yet
+	 * 
+	 * @todo Implement method
+	 * @return boolean false
+	 */	
 	public function fetchArray(){
 		return false;
 	}
 	
+	/**
+	 * Destroy object.
+	 * 
+	 * @uses MySQLiQueryStatement::$statement
+	 */
 	public function __destruct(){
 		@$this->statement->close();
 	}

@@ -21,7 +21,7 @@
  *	@link http://www.bravura.dk/
  *	@version 1.0.0 ($Id$)
  */
-error_reporting(E_ALL);
+error_reporting(E_ALL | E_STRICT);
 
 if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
 	if(!defined('BASE_DISABLE_ERROR_HANDLER')){
@@ -59,7 +59,9 @@ if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
 function BaseError($errno, $errstr, $errfile, $errline, $errorcontext){
 	try {
 		if(error_reporting() != 0){
-			throw new BaseException(htmlentities($errstr).' <br/><i> '.$errfile.' at line '.$errline.'</i>', $errno, $errstr, $errfile, $errline, $errorcontext);
+			if($errno != E_STRICT || !version_compare('5.2.10', phpversion()) === 0){
+				throw new BaseException(htmlentities($errstr).' <br/><i> '.$errfile.' at line '.$errline.'</i>', $errno, $errstr, $errfile, $errline, $errorcontext);
+			}
 		}
 	} catch (BaseException $e){
 		echo $e;
@@ -174,8 +176,6 @@ class BaseException extends Exception {
 	}
 
 	function getSource(){
-		//$source = highlight_file($this->myGetFile(), true);
-		//$source = highlight_file($this->myGetFile(), true);
 		$source = file_get_contents($this->myGetFile());
 		$source = explode('<br />', $source);
 		$source = file($this->myGetFile());
@@ -192,7 +192,6 @@ class BaseException extends Exception {
 		$instring = false;
 		for ($i = $offset; $i <= $offset + (self::SOURCE_LINES * 2); $i++){
 			if(isset($source[$i])){
-				// $source[$i] = preg_replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;', $source[$i]);
 				$source[$i] = htmlspecialchars($source[$i]);
 				if($this->mygetLine() == ($i + 1)){
 					$style="background-color: #FFCCCC;";
@@ -259,9 +258,14 @@ class BaseException extends Exception {
 			case E_USER_WARNING:
 				return 'Warning';
 				break;
-			case E_USER_NOTICE || E_NOTICE:
+			case E_USER_NOTICE:
 				return 'Notice';
 				break;
+			case E_NOTICE:
+				return 'Notice';
+				break;
+			case E_STRICT:
+				return 'Strict';
 			default:
 				return "Unknown Error";
 				break;
@@ -275,7 +279,6 @@ class BaseException extends Exception {
 			header('Status: 503');
 		}
 		if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
-			
 			return self::$buffer;
 		} else {
 			return false;

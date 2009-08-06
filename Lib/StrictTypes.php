@@ -5,20 +5,24 @@
  */
 class StrictTypes {
 	static public function isString($subject, $length=null){
-		$error = false;
-		if(!is_string($subject)){
-			$error = true;
-		} 
-		if(!is_null($length)){
-			if(self::isInteger($length)){
-				if(strlen($subject) > $length){
-					$error = true;
+		if(BASE_RUNLEVEL != BASE_RUNLEVEL_PROD){
+			$error = false;
+			if(!is_string($subject)){
+				$error = true;
+			} 
+			if(!is_null($length)){
+				if(self::isInteger($length)){
+					if(strlen($subject) > $length){
+						$error = true;
+					}
 				}
 			}
-		}
-		if($error){
-			throw new StrictTypeStringException($subject, $length);
-			return false;
+			if($error){
+				throw new StrictTypeStringException($subject, $length);
+				return false;
+			} else {
+				return true;
+			}
 		} else {
 			return true;
 		}

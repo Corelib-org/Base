@@ -59,7 +59,7 @@ if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
 function BaseError($errno, $errstr, $errfile, $errline, $errorcontext){
 	try {
 		if(error_reporting() != 0){
-			if($errno != E_STRICT || !version_compare('5.2.10', phpversion()) === 0){
+			if($errno != E_STRICT || !(version_compare(PHP_VERSION, '5.2') == 1 && version_compare(PHP_VERSION, '5.3') == -1)){
 				throw new BaseException(htmlentities($errstr).' <br/><i> '.$errfile.' at line '.$errline.'</i>', $errno, $errstr, $errfile, $errline, $errorcontext);
 			}
 		}

@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Base Functions and Classes
+ * Corelib Base Functions and Classes.
  *
  * <i>No Description</i>
  *
@@ -89,27 +89,27 @@
 //*********************** Define Contants *************************//
 //*****************************************************************//
 /**
- *	Define Base Terminal Debug Runlevel Constant
+ *	Define Base Terminal Debug Runlevel Constant.
  */
 define('BASE_RUNLEVEL_TERM_DEBUG', 30);
 /**
- *	Define Base Terminal Notice Runlevel Constant
+ *	Define Base Terminal Notice Runlevel Constant.
  */
 define('BASE_RUNLEVEL_TERM_NOTICE', 20);
 /**
- *	Define Base Terminal Warning Runlevel Constant
+ *	Define Base Terminal Warning Runlevel Constant.
  */
 define('BASE_RUNLEVEL_TERM_WARN', 10);
 /**
- *	Define Base Development Runlevel Constant
+ *	Define Base Development Runlevel Constant.
  */
 define('BASE_RUNLEVEL_DEVEL', 2);
 /**
- *	Define Base Production Runlevel Constant
+ *	Define Base Production Runlevel Constant.
  */
 define('BASE_RUNLEVEL_PROD', 1);
 /**
- *	Define current version of corelib Base
+ *	Define current version of corelib Base.
  */
 define('CORELIB_BASE_VERSION', '4.6.0');
 define('CORELIB_BASE_VERSION_MAJOR', '4');
@@ -131,7 +131,7 @@ define('CORELIB_COPYRIGHT_YEAR', '2005-2008');
 if(!defined('CORELIB')){
 	trigger_error('CORELIB Constant Undefined', E_USER_ERROR);
 	/**
-	 * 	Corelib Path Constant
+	 * 	Corelib Path Constant.
 	 *
 	 * 	This constanst holds the path to the corelib
 	 */
@@ -146,7 +146,7 @@ if(!defined('ENABLE_XDEBUG') && ENABLE_XDEBUG){
 
 if(!defined('CURRENT_WORKING_DIR')){
 	/**
-	 *	Current Working Dir Constant
+	 *	Current Working Dir Constant.
 	 *
 	 * 	This constant holds the path to the current working dir
 	 */
@@ -155,7 +155,7 @@ if(!defined('CURRENT_WORKING_DIR')){
 
 if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentation purposes
 	/**
-	 * Current Runlevel
+	 * Current Runlevel.
 	 *
 	 * This constant holds the current runlevel
 	 */
@@ -164,7 +164,7 @@ if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentatio
 
 if(!defined('BASE_CLASS_CACHE_FILE')){
 	/**
-	 * Define class cache file
+	 * Define class cache file.
 	 *
 	 * This constants holds the path, on where to store the class
 	 * cache database, this file must be writable by the user running
@@ -178,14 +178,14 @@ if(!defined('BASE_CLASS_CACHE_FILE')){
 
 if(!defined('BASE_UMASK')){
 	/**
-	 * Define default umask
+	 * Define default umask.
 	 */
 	define('BASE_UMASK', 0);
 }
 
 if(!defined('BASE_DEFAULT_TIMEZONE')){
 	/**
-	 * Define default timezone
+	 * Define default timezone.
 	 *
 	 * Define the default timezone for use in php date functions
 	 */
@@ -194,7 +194,7 @@ if(!defined('BASE_DEFAULT_TIMEZONE')){
 
 if(!defined('TEMPORARY_DIR')){
 	/**
-	 * Define Admin Email
+	 * Define Admin Email.
 	 * 
 	 * Define the admin email, for sending runtime informations about erros etc.
 	 */
@@ -205,7 +205,7 @@ if(!defined('TEMPORARY_DIR')){
 //******************* Load Base Support Files *********************//
 //*****************************************************************//
 /**
- * 	Load Interfaces File
+ * 	Load Interfaces File.
  */
 require_once(CORELIB.'/Base/Lib/Interfaces.php');
 
@@ -213,7 +213,7 @@ require_once(CORELIB.'/Base/Lib/Interfaces.php');
 //************************* Base Classes **************************//
 //*****************************************************************//
 /**
- *	Base Class
+ *	Base Class.
  *
  *	The base class provides all basic functionality, it is also
  *	responsible for controlling some basic PHP features, but the main
@@ -227,13 +227,13 @@ class Base implements Singleton {
 	//********************* Base Class Properties *********************//
 	//*****************************************************************//
 	/**
-	 *	Singleton Object Reference
+	 *	Singleton Object Reference.
 	 *
 	 *	@var Base
 	 */
 	private static $instance = null;
 	/**
-	 *	Class Cache
+	 *	Class Cache.
 	 *
 	 *	Array containing references about in which files
 	 * 	the different classes are located.
@@ -242,7 +242,7 @@ class Base implements Singleton {
 	 */
 	private $class_cache = array();
 	/**
-	 *	Class Cache Change Status
+	 *	Class Cache Change Status.
 	 *
 	 *	Holds informations wether the class cache have been update
 	 *	true if the class cache file should be rewritten, false if no
@@ -253,7 +253,7 @@ class Base implements Singleton {
 	 */
 	private $class_cache_updated = false;
 	/**
-	 *	Class Paths
+	 *	Class Paths.
 	 *
 	 * 	Holds informations about where classes are stored.
 	 *
@@ -267,7 +267,7 @@ class Base implements Singleton {
 	//*********************** Base Class Methods **********************//
 	//*****************************************************************//
 	/**
-	 *	Base Constructor
+	 *	Base Constructor.
 	 *
 	 * 	@uses BASE_CLASS_CACHE_FILE
 	 * 	@uses CORELIB_COPYRIGHT_YEAR
@@ -294,7 +294,7 @@ class Base implements Singleton {
 		}
 		if(!defined('BASE_ADMIN_EMAIL')){
 			/**
-			 * Define Admin Email
+			 * Define Admin Email.
 			 *
 			 * Define the admin email, for sending runtime informations about erros etc.
 			 */
@@ -302,14 +302,14 @@ class Base implements Singleton {
 		}		
 		if(!defined('BASE_RUNLEVEL')){
 			/**
-			 * Current Runlevel
+			 * Current Runlevel.
 			 *
 			 * This constant holds the current runlevel
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 		}
 		/**
-		 *	Load Error Handler
+		 *	Load Error Handler.
 		 *
 		 *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
 		 * 	and set it to true
@@ -317,7 +317,7 @@ class Base implements Singleton {
 		 * @see BASE_DISABLE_ERROR_HANDLER
 		 */
 		require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
-				
+		
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
 		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
@@ -334,7 +334,7 @@ class Base implements Singleton {
 	}
 
 	/**
-	 * 	Return instance of Base
+	 * 	Return instance of Base.
 	 *
 	 * 	Please refer to the {@link Singleton} interface for complete
 	 * 	description.
@@ -351,7 +351,7 @@ class Base implements Singleton {
 	}
 
 	/**
-	 * Add Class Search Path
+	 * Add Class Search Path.
 	 *
 	 * @param string $path Relative or complete path, to search for classes
 	 * @uses Base::$class_paths
@@ -361,7 +361,7 @@ class Base implements Singleton {
 	}
 
 	/**
-	 * Force Loading of class
+	 * Force Loading of class.
 	 *
 	 * Force corelib to load a specific class, this is very
 	 * usefull for event classes which always needs to be loaded.
@@ -369,19 +369,16 @@ class Base implements Singleton {
 	 * @param string $class Class name
 	 * @return boolean always returns true
 	 * @uses __autoload()
+	 * @uses StrictTypes::isString()
 	 */
 	public function loadClass($class){
-		try {
-			StrictTypes::isString($class);
-		} catch (BaseException $e){
-			echo $e;
-		}
+		StrictTypes::isString($class);
 		__autoload($class);
 		return true;
 	}
 	
 	/**
-	 * Find Class
+	 * Find Class.
 	 *
 	 * Search for a specific class and save it in the class cache.
 	 *
@@ -415,7 +412,7 @@ class Base implements Singleton {
 	}
 
 	/**
-	 * Get registered class paths
+	 * Get registered class paths.
 	 * 
 	 * @return array registered class path's
 	 */
@@ -424,7 +421,7 @@ class Base implements Singleton {
 	}
 	
 	/**
-	 * Search for class in directories
+	 * Search for class in directories.
 	 *
 	 * @param string $class Name of the class
 	 * @return string File containing the class, else return false
@@ -443,12 +440,12 @@ class Base implements Singleton {
 	}
 
 	/**
-	 * Recursive search files for a class
+	 * Recursive search files for a class.
 	 *
 	 * @param string $dir Directory to look for class in
 	 * @param string $class Name of the class to find
 	 * @uses Base::_searchDir()
-	 * @return string containing the filename, else return false
+	 * @return string filename containing the class, else return false
 	 */
 	private function _searchDir($dir, $class){
 		$fp = dir($dir);
@@ -468,7 +465,7 @@ class Base implements Singleton {
 	}
 
 	/**
-	 * Clone function
+	 * Clone function.
 	 * 
 	 * Declared private to prevent cloning
 	 * 
@@ -479,7 +476,7 @@ class Base implements Singleton {
 	}
 	
 	/**
-	 * Base Destructor
+	 * Base Destructor.
 	 *
 	 * The base destructor saves the current class cache, if changed
 	 *
@@ -518,7 +515,7 @@ class Base implements Singleton {
 //************************ Base Functions *************************//
 //*****************************************************************//
 /**
- * PHP autoload function
+ * PHP autoload function.
  *
  * When a unknown class is used, this function is called.
  * It will then intruct the {@link Base} class to find the

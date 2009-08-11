@@ -38,7 +38,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $content_location = null;
 	private $content_type = 'text/html';
 	private $content_charset = 'UTF-8';
-	private $content_length = null;
 
 	private $location = null;
 	private $message_id = null;
@@ -117,10 +116,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 
 			header('Content-Location: '. $this->request_uri);
 
-			if(is_null($this->content_length)){
-				$this->content_length = ob_get_length();
-			}
-			header('Content-Lenght: '.$this->content_length);
 			$type = $this->content_type;
 			if(!is_null($this->content_charset)){
 				$type .= '; charset='.$this->content_charset;

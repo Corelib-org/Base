@@ -432,7 +432,7 @@ class InputHandler implements Singleton,Output {
 	public function getXML(DOMDocument $xml){
 		$XMLget = $xml->createElement('get');
 		while(list($key, $val) = each($this->get)){
-			if(preg_match('/^[a-zA-Z0-9_]*$/', $key)){
+			if(preg_match('/^[a-zA-Z0-9_-]*$/', $key)){
 				if(is_array($val)) {
 					$XMLArray = $xml->createElement($key);
 					$this->_xmlArray($xml, $XMLArray, $val);

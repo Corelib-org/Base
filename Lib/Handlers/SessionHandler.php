@@ -252,6 +252,7 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 		return true;
 	}
 	public function destroy(){
+		setcookie(session_name(), '', time()-42000, '/');
 		session_destroy();
 	}
 	public function getId(){

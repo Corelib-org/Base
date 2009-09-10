@@ -67,8 +67,14 @@ abstract class PageBase {
 		return $this->function;
 	}
 
-	
-	public function draw(PageFactoryTemplateEngine $engine){
+
+	/**
+	 * Draw all elements on page.
+	 *
+	 * @param PageFactoryTemplateEngine $engine
+	 * @return boolean true on success else return false
+	 */
+	final public function draw(PageFactoryTemplateEngine $engine){
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
 			$event = EventHandler::getInstance();
 			$event->triggerEvent(new EventApplyDefaultSettings($this));

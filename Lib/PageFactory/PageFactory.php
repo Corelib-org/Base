@@ -13,13 +13,13 @@
  *	license@bravura.dk so we can mail you a copy immediately.
  *
  *
- *	@author Steffen Sørensen <ss@corelib.org>
- *	@copyright Copyright (c) 2006 Back in five minutes
- * 	@license http://www.bravura.dk/licence/corelib_1_0/
- *	@package corelib
- *	@subpackage Base
- *	@link http://www.corelib.org/
- *	@version 1.0.0 ($Id$)
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2006 Back in five minutes
+ * @license http://www.bravura.dk/licence/corelib_1_0/
+ * @package corelib
+ * @subpackage Base
+ * @link http://www.corelib.org/
+ * @version 1.0.0 ($Id$)
  */
 
 if(!defined('PAGE_FACTORY_ENGINE')){
@@ -56,6 +56,10 @@ if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
 if(!defined('PAGE_FACTORY_GET_TOKEN')){
 	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
 }
+if(!defined('PAGE_FACTORY_CACHE_DIR')){
+	define('PAGE_FACTORY_CACHE_DIR', 'var/cache/pages/');
+}
+
 
 define('PAGE_FACTORY_CACHE_STATIC', 1);
 define('PAGE_FACTORY_CACHE_DYNAMIC', 2);
@@ -95,7 +99,8 @@ abstract class PageFactoryTemplateEngine {
 			if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL && isset($_GET['CALLBACK'])){
 				echo $callback;
 			}
-			eval('$this->page->'.$callback.';');
+			$eval = '$this->page->'.$callback.';';
+			eval($eval);
 		} else {
 			$this->page->build();
 		}
@@ -119,6 +124,9 @@ abstract class PageFactoryTemplateEngine {
 }
 
 
+/**
+ * @author Steffen Sørensen <ss@corelib.org>
+ */
 class PageFactory implements Singleton {
 	/**
 	 *	@var PageFactory
@@ -133,19 +141,28 @@ class PageFactory implements Singleton {
 
 	private $resolvers = array();
 
+	/**
+	 * @var string requested page url.
+	 */
 	private $url = null;
-	
+
 	private $cache = array('type' => PAGE_FACTORY_CACHE_DISABLED);
-	
+
 	private $cache_file = null;
-	
+
 	private $write_to_cache = false;
-	
+
+	const TTL_FILE_SUFFIX = '.ttl';
+
+	/**
+	 * @return void
+	 */
 	private function __construct(){
+
 		$engine = '$this->engine = new '.PAGE_FACTORY_ENGINE.'();';
 		eval($engine);
 		$this->addResolver('meta', new MetaResolver());
-		
+
 		if(!isset($_SERVER[PAGE_FACTORY_SERVER_TOKEN])){
 			if(isset($_GET[PAGE_FACTORY_GET_TOKEN])){
 				$this->url = $_GET[PAGE_FACTORY_GET_TOKEN];
@@ -156,17 +173,20 @@ class PageFactory implements Singleton {
 		} else {
 			$this->url = $_SERVER[PAGE_FACTORY_SERVER_TOKEN];
 		}
+
 		if(substr($this->url, -1) != '/'){
 			$this->url .= '/';
 		}
 		$dirname = dirname($_SERVER['SCRIPT_NAME']);
 		if($dirname != '/'){
-			$this->url = str_replace(dirname($_SERVER['SCRIPT_NAME']), '', $this->url);
+			$this->url = preg_replace('/^'.str_replace('/', '\/', preg_quote($dirname)).'/', '', $this->url);
 		}
-		$this->cache_file = 'var/cache/pages/'.str_replace('/', '_', $_SERVER['REQUEST_URI']);
+		$this->cache_file = PAGE_FACTORY_CACHE_DIR.str_replace('/', '_', $_SERVER['REQUEST_URI']);
 	}
 
 	/**
+	 * Get PageFactory instance.
+	 *
 	 *	@return PageFactory
 	 */
 	public static function getInstance(){
@@ -176,6 +196,70 @@ class PageFactory implements Singleton {
 		return self::$instance;
 	}
 
+	/**
+	 * Bootstrap page.
+	 *
+	 * If param $return is set to false the boostrapping process will
+	 * echo the result returned from the page drawing process and
+	 * return true. if $return is true the result will be returned instead.
+	 * Please note that if a PHP have occured during the draw process the
+	 * will return false.
+	 *
+	 * @param $return boolean
+	 * @return mixed string or boolean
+	 */
+	public static function bootstrap($return=false){
+		if(isset($_GET['parsetime'])){
+			$parsetime = microtime(true);
+		}
+
+		$eventHandler = EventHandler::getInstance();
+		$eventHandler->triggerEvent(new EventRequestStart());
+
+		$page = PageFactory::getInstance();
+		$page->resolvePageObject();
+
+		if($page->getCacheType() != PAGE_FACTORY_CACHE_STATIC){
+			try {
+				if(class_exists(PAGE_FACTORY_CLASS_NAME, false)){
+					eval('$page->build(new '.PAGE_FACTORY_CLASS_NAME.'());');
+				} else {
+					throw new BaseException('Could not find WebPage Class.');
+				}
+			} catch (BaseException $e) {
+				echo $e;
+			}
+		}
+
+		$data = false;
+		if(BaseException::IsErrorThrown()){
+			echo BaseException::getErrorPage();
+			$data = false;
+		} else {
+			if($return){
+				$data = $page->draw($return);
+			} else {
+				$page->draw($return);
+				$data = true;
+			}
+		}
+
+		$eventHandler->triggerEvent(new EventRequestEnd());
+
+		// XXX Implement this feature as a modular event in order for devlopers to expand this feature more easily (Bug: #26)
+		if(isset($parsetime)){
+			$parsetime = microtime(true) - $parsetime;
+			echo '<div style="position: fixed; top: 0px; background-color: #fbfec3; width: 100%; opacity: 0.7;  border-bottom: 1px solid #000000; text-align: center;">Parsetime: '.round($parsetime, 4).' seconds</div>';
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param string $ident
+	 * @param PageFactoryPageResolver $resolver
+	 * @return PageFactoryPageResolver on success else return boolean false
+	 */
 	public function addResolver($ident, PageFactoryPageResolver $resolver){
 		try {
 			StrictTypes::isString($ident);
@@ -183,6 +267,7 @@ class PageFactory implements Singleton {
 			echo $e;
 		}
 		$this->resolvers[$ident] = $resolver;
+		return $resolver;
 	}
 
 	public function resolvePageObject(){
@@ -190,14 +275,26 @@ class PageFactory implements Singleton {
 			include_once(PAGE_FACTORY_POST_FILE);
 		} else {
 			if(PAGE_FACTORY_CACHE_ENABLE && is_file($this->cache_file)){
-				if(!is_executable($this->cache_file)){
-					$this->cache = array('type' => PAGE_FACTORY_CACHE_STATIC,
-					                     'file' => $this->cache_file);
-				} else {
-					$this->cache = array('type' => PAGE_FACTORY_CACHE_DYNAMIC,
-					                     'file' => $this->cache_file);
+				if(is_file($this->cache_file.self::TTL_FILE_SUFFIX)){
+					$ttl = (int) file_get_contents($this->cache_file.self::TTL_FILE_SUFFIX);
+
+					if(time() > (filemtime($this->cache_file) + $ttl)){
+						unlink($this->cache_file);
+					}
 				}
-				return true;
+
+				if(is_file($this->cache_file)){
+					if(!is_executable($this->cache_file)){
+						$this->cache = array('type' => PAGE_FACTORY_CACHE_STATIC,
+						                     'file' => $this->cache_file);
+					} else {
+						$this->cache = array('type' => PAGE_FACTORY_CACHE_DYNAMIC,
+						                     'file' => $this->cache_file);
+					}
+					return true;
+				} else {
+					include_once(PAGE_FACTORY_GET_FILE);
+				}
 			} else {
 				include_once(PAGE_FACTORY_GET_FILE);
 			}
@@ -208,13 +305,14 @@ class PageFactory implements Singleton {
 			$manager->init();
 			$manager->setupPageRegistry($pages);
 		}
-		
+
+
 		if(!isset($pages[$this->url])){
 			if(isset($pages)){
 				foreach($pages as $val){
 					if(is_array($val)){
 						if(isset($val['type']) && $val['type'] != 'regex' ){
-							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']); 
+							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']);
 							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
 							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 						}
@@ -227,19 +325,15 @@ class PageFactory implements Singleton {
 								echo $e;
 								exit;
 							}
-							if(isset($val['cache']) && $val['cache'] == PAGE_FACTORY_CACHE_STATIC){
-								$this->write_to_cache = true;
-							}
-							
-							$this->callback = preg_replace($val['expr'], $val['exec'], $this->url);
+							$this->_setCacheSettings($val);
+							$this->callback = preg_replace($val['expr'], $val['exec'], addcslashes($this->url, '\''));
 							require_once($val['page']);
 							return true;
 						}
 					}
 				}
 			}
-			
-			
+
 			try {
 				if(!isset($pages['/404/'])){
 					throw new BaseException('404 Error unspecified!', E_USER_ERROR);;
@@ -251,34 +345,24 @@ class PageFactory implements Singleton {
 			$this->url = '/404/';
 		}
 		if(is_array($pages[$this->url])){
-			try {
-				if(!isset($pages[$this->url]['page'])){
-					throw new BaseException('file not set.', E_USER_ERROR);
-				}
-				if(!isset($pages[$this->url]['exec'])){
-					throw new BaseException('exec not set.', E_USER_ERROR);
-				}
-			} catch (BaseException $e){
-				echo $e;
-				exit;
+			if(!isset($pages[$this->url]['page'])){
+				throw new BaseException('file not set.', E_USER_ERROR);
+			}
+			if(!isset($pages[$this->url]['exec'])){
+				$pages[$this->url]['exec'] = 'build';
 			}
 			$page = $pages[$this->url]['page'];
 			$this->callback = $pages[$this->url]['exec'].'()';
-			
-			if(isset($pages[$this->url]['cache']) && $pages[$this->url]['cache'] == PAGE_FACTORY_CACHE_STATIC){
-				$this->write_to_cache = true;
-			}
+
+			$this->_setCacheSettings($pages[$this->url]);
 		} else {
 			$page = $pages[$this->url];
 		}
-		try {
-			if(!is_file($page)){
-				throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
-			}
-		} catch (BaseException $e){
-			echo $e;
-			exit;
+
+		if(!is_file($page)){
+			throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
 		}
+
 		require_once($page);
 		return true;
 	}
@@ -286,14 +370,39 @@ class PageFactory implements Singleton {
 	public function getCacheType(){
 		return $this->cache['type'];
 	}
-	
+
+
+	/**
+	 * @param array $page
+	 * @return void
+	 */
+	private function _setCacheSettings(array $page){
+		if(isset($page['cache']) && $page['cache'] == PAGE_FACTORY_CACHE_STATIC){
+			if(!is_dir(dirname($this->cache_file))){
+				mkdir(dirname($this->cache_file), 0777, true);
+			}
+			$this->write_to_cache = true;
+			if(isset($page['ttl'])){
+				file_put_contents($this->cache_file.self::TTL_FILE_SUFFIX, $page['ttl']);
+			}
+		}
+	}
+
+	/**
+	 * @param PageBase $page
+	 * @return void
+	 */
 	public function build(PageBase $page){
 		$this->engine->build($page, $this->callback);
 	}
 
+	/**
+	 * @param boolean $return
+	 * @return mixed
+	 */
 	public function draw($return=false){
 		if($this->cache['type'] == PAGE_FACTORY_CACHE_STATIC){
-			if($return){				
+			if($return){
 				return file_get_contents($this->cache['file']);
 			} else {
 				echo file_get_contents($this->cache['file']);
@@ -303,16 +412,14 @@ class PageFactory implements Singleton {
 			if($template = $this->engine->getTemplate()){
 				$template->cleanup();
 			}
-			if(PAGE_FACTORY_CACHE_ENABLE && $this->write_to_cache){
-				if(!is_dir(dirname($this->cache_file))){
-					mkdir(dirname($this->cache_file), 0777, true);
-				}
+			if($this->write_to_cache){
 				file_put_contents($this->cache_file, $content);
 			}
-			if($return){				
+			if($return){
 				return $content;
 			} else {
 				echo $content;
+				return true;
 			}
 		}
 	}

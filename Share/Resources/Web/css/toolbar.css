@@ -1,0 +1,17 @@
+/*-----------------------------------------------------------------
+Developer toolbar StyleSheet
+
+Version:	1.0
+Author: 	Steffen Sørensen
+Email: 		ss@zornig.dk
+website:	Corelib - Base 
+-----------------------------------------------------------------*/
+
+#developer-toolbar {
+	width: 100%;
+	top: 0px;
+	position: fixed;
+	background-color: #ffffe0;
+	opacity: .8;
+	border-bottom: 1px solid #666680;
+}

@@ -21,11 +21,21 @@ if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
 	define('ABSTRACTS_ENABLE_DATABASE', false);
 }
 
-abstract class DummyPage extends PageBase {
+abstract class DummyPage extends PageBase { }
+
+abstract class DummyPageGet extends DummyPage {
 	protected $xsl = null;
 
 	function __construct() {
 		$this->xsl = new PageFactoryDOMXSLTemplate();
+	}
+}
+
+abstract class DummyPagePost extends DummyPage {
+	protected $post = null;
+
+	function __construct() {
+		$this->post = new PageFactoryPostTemplate();
 	}
 }
 ?>

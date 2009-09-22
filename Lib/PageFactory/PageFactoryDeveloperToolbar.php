@@ -89,9 +89,8 @@ class PageFactoryDeveloperToolbar implements Singleton {
 	public function __toString(){
 		$toolbar = '';
 		foreach($this->items as $item){
-
 			if(!$content = $item->getContent()){
-				$toolbar .= $item->getToolbarItem();
+				$toolbar .= $item->getToolbarItem().' ';
 			}
 		}
 

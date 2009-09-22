@@ -15,3 +15,11 @@ website:	Corelib - Base
 	opacity: .8;
 	border-bottom: 1px solid #666680;
 }
+
+#developer-toolbar .toolbar {
+	line-height: 16px;	
+}
+
+#developer-toolbar .toolbar img {
+	vertical-align: text-bottom;
+}

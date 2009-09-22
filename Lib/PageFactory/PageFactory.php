@@ -436,7 +436,7 @@ class PageFactoryDeveloperToolbarItemParseTimeCalculator extends PageFactoryDeve
 	}
 
 	public function getToolbarItem(){
-		return 'Parsetime: '.round((microtime(true) - $this->start), 4).' s.';
+		return '<img src="corelib/resource/manager/images/page/icons/toolbar/parsetime.png" alt="parsetime" title="Page parsetime"/> '.round((microtime(true) - $this->start), 4).' s.';
 	}
 
 	public function getContent(){

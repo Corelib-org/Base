@@ -158,6 +158,9 @@ class PageFactory implements Singleton {
 	 * @return void
 	 */
 	private function __construct(){
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemParseTimeCalculator());
+		}
 
 		$engine = '$this->engine = new '.PAGE_FACTORY_ENGINE.'();';
 		eval($engine);
@@ -209,10 +212,6 @@ class PageFactory implements Singleton {
 	 * @return mixed string or boolean
 	 */
 	public static function bootstrap($return=false){
-		if(isset($_GET['parsetime'])){
-			$parsetime = microtime(true);
-		}
-
 		$eventHandler = EventHandler::getInstance();
 		$eventHandler->triggerEvent(new EventRequestStart());
 
@@ -246,12 +245,9 @@ class PageFactory implements Singleton {
 
 		$eventHandler->triggerEvent(new EventRequestEnd());
 
-		// XXX Implement this feature as a modular event in order for devlopers to expand this feature more easily (Bug: #26)
-		if(isset($parsetime)){
-			$parsetime = microtime(true) - $parsetime;
-			echo '<div style="position: fixed; top: 0px; background-color: #fbfec3; width: 100%; opacity: 0.7;  border-bottom: 1px solid #000000; text-align: center;">Parsetime: '.round($parsetime, 4).' seconds</div>';
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+			echo PageFactoryDeveloperToolbar::getInstance();
 		}
-
 		return $data;
 	}
 
@@ -422,6 +418,29 @@ class PageFactory implements Singleton {
 				return true;
 			}
 		}
+	}
+}
+
+/**
+ * Parsetime calculator toolbox item.
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @package corelib
+ * @subpackage Base
+ */
+class PageFactoryDeveloperToolbarItemParseTimeCalculator extends PageFactoryDeveloperToolbarItem {
+	private $start = null;
+
+	public function __construct(){
+		$this->start = microtime(true);
+	}
+
+	public function getToolbarItem(){
+		return 'Parsetime: '.round((microtime(true) - $this->start), 4).' s.';
+	}
+
+	public function getContent(){
+		return false;
 	}
 }
 ?>

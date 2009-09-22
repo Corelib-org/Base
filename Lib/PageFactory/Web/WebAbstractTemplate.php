@@ -46,7 +46,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $script_uri = null;
 
 	private $request_uri = null;
-	
+
 	private $http_referer = null;
 
 	private $remote_addr = null;
@@ -85,14 +85,14 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		if(isset($_SERVER['HTTP_USER_AGENT'])){
 			$this->user_agent = $_SERVER['HTTP_USER_AGENT'];
 		}
-		
+
 		if(isset($_SERVER['HTTP_REFERER'])){
 			$this->http_referer = $_SERVER['HTTP_REFERER'];
 		}
-		
+
 		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 		$this->server_name = $_SERVER['SERVER_NAME'];
-		
+
 		$this->http_redirect_base = BASE_URL;
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$this->set_referer = false;
@@ -176,10 +176,11 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		} else {
 			$this->location = $this->http_redirect_base.$location.$param;
 		}
-		
+
 		$this->location = str_ireplace('//', '/', $this->location);
 		$this->location = str_ireplace('http:/', 'http://', $this->location);
 	}
+
 	public function setMessageID($id){
 		try {
 			StrictTypes::isInteger($id);
@@ -245,11 +246,11 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function getHTTPRedirectBase(){
 		return $this->http_redirect_base;
 	}
-	 
+
 	public function getHTTPReferer(){
 		return $this->http_referer;
 	}
-	
+
 	public function getStatusMessage(){
 		$session = SessionHandler::getInstance();
 		if($session->check(self::MSGID)){
@@ -277,13 +278,13 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 
 class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
 	const TEMPLATE_ENGINE = 'PageFactoryPost';
-	
+
 	public function getSupportedTemplateEngineName(){
 		return self::TEMPLATE_ENGINE;
 	}
 }
 class PageFactoryPost extends PageFactoryTemplateEngine {
-	public function draw(){ 
+	public function draw(){
 		$this->page->draw($this);
 		return '';
 	 }

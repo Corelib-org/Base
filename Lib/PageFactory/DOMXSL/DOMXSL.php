@@ -79,7 +79,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 			$proc = new XsltProcessor();
 			$proc->importStylesheet($this->xsl);
-			
+
 			if($functions = $this->template->getRegisteredPHPFunctions()){
 				$proc->registerPHPFunctions($functions);
 			}
@@ -111,7 +111,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				if(PAGE_FACTORY_CACHE_ENABLE){
 					return PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
 				} */
-				
+
 				$converter = $this->template->getOutputConverter();
 				if(!is_null($converter)){
 					return $converter->convert($page);
@@ -123,21 +123,11 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	}
 
 	public function addPageContent(Output $content){
-/*		if(PAGE_FACTORY_CACHE_ENABLE){
-			$this->content_array[] = $content->getArray();
-		}
-		if(!$this->template_cache_file){ */
-			$this->content->appendChild($content->getXML($this->xml));
-	//	}
+		$this->content->appendChild($content->getXML($this->xml));
 	}
 
 	public function addPageSettings(Output $settings){
-/*		if(PAGE_FACTORY_CACHE_ENABLE){
-			$this->settings_array[] = $settings->getArray();
-		}
-		if(!$this->template_cache_file){ */
-			$this->settings->appendChild($settings->getXML($this->xml));
-		// }
+		$this->settings->appendChild($settings->getXML($this->xml));
 	}
 
 	public function getSupportedTemplateDefinition(){

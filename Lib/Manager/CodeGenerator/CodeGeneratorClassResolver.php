@@ -4,12 +4,12 @@ class CodeGeneratorClassResolver implements Singleton {
 	 * @var CodeGeneratorClassResolver
 	 */
 	private static $instance;
-	
+
 	/**
 	 * @var array
 	 */
 	private $lookup_table = array();
-	
+
 	/**
 	 *	@return CodeGeneratorClassResolver
 	 */
@@ -18,32 +18,33 @@ class CodeGeneratorClassResolver implements Singleton {
 			self::$instance = new CodeGeneratorClassResolver();
 		}
 		return self::$instance;
-	}		
-	
+	}
+
 	public function __construct(){
+		set_time_limit(0);
 		$this->_buildLookupTable();
 	}
-	
+
 	public function getClass($key){
-		
+
 		if(isset($this->lookup_table[$key])){
 			return $this->lookup_table[$key];
 		} else {
 			return false;
 		}
 	}
-	
+
 	public function addClass($key, $class){
 		$this->lookup_table[$key] = $class;
 	}
-	
+
 	private function _buildLookupTable(){
 		$array = Base::getInstance()->getClassPaths();
 		foreach ($array as $dir){
 			$this->_searchDir($dir);
 		}
 	}
-	
+
 	private function _searchDir($dir){
 		$fp = dir($dir);
 		while($entry = $fp->read()){
@@ -61,7 +62,7 @@ class CodeGeneratorClassResolver implements Singleton {
 						$this->lookup_table[$match[1]] = $inclass;
 						$inclass = false;
 					}
-					
+
 				}
 			}
 		}

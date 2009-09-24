@@ -1,25 +1,35 @@
 <?php
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- *	Error Handling Functions and Classes
+ * Error Handling Functions and Classes
  *
- *	<i>No Description</i>
+ * <i>No Description</i>
  *
- *	LICENSE: This source file is subject to version 1.0 of the
- *	Bravura Distribution license that is available through the
- *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to
- *	license@bravura.dk so we can mail you a copy immediately.
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
  *
- *	@author Steffen Sørensen <steffen@bravura.dk>
- *	@copyright Copyright (c) 2006 Bravura ApS
- * 	@license http://www.bravura.dk/licence/corelib_1_0/
- *	@package corelib
- *	@subpackage Base
- *	@link http://www.bravura.dk/
- *	@version 1.0.0 ($Id$)
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @author Steffen Sørensen <steffen@bravura.dk>
+ * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
+ * @package corelib
+ * @subpackage Base
+ * @link http://www.bravura.dk/
+ * @version 1.0.0 ($Id$)
  */
 error_reporting(E_ALL | E_STRICT);
 
@@ -27,6 +37,15 @@ if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === fals
 	if(!defined('BASE_DISABLE_ERROR_HANDLER')){
 		define('BASE_DISABLE_ERROR_HANDLER', false);
 	}
+
+	if(BASE_RUNLEVEL > BASE_RUNLEVEL_PROD){
+		assert_options(ASSERT_ACTIVE, true);
+		assert_options(ASSERT_BAIL, true);
+		assert_options(ASSERT_WARNING, true);
+	} else {
+		assert_options(ASSERT_ACTIVE, false);
+	}
+
 	ini_set('html_errors',true);
 	set_error_handler('BaseError');
 	ob_start('BaseFatalError');
@@ -83,11 +102,11 @@ function BaseFatalError($buffer){
 			$buffer = str_replace($result[0][$key], '', $buffer);
 			$e = BaseError(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
 			$buffer .= $e->__toString();
-			
+
 			$checksum = $e->getChecksum();
 			if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
 				if(BASE_ADMIN_EMAIL !== false){
-					mail(BASE_ADMIN_EMAIL, '[Corelib Error Handler] '.$result[2][$key], $e->writeToLog(true));	
+					mail(BASE_ADMIN_EMAIL, '[Corelib Error Handler] '.$result[2][$key], $e->writeToLog(true));
 				}
 				if(defined('BASE_ERROR_FATAL_REDIRECT')){
 					$buffer = '<html><head><meta http-equiv="refresh" content="999;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
@@ -104,7 +123,7 @@ class BaseException extends Exception {
 	private static $buffer = false;
 	private static $template = null;
 	private static $template_desc = null;
-	
+
 	private $errstr = null;
 	private $errfile = null;
 	private $errline = null;
@@ -163,8 +182,8 @@ class BaseException extends Exception {
 	public function getChecksum(){
 		return $this->checksum;
 	}
-	
-	
+
+
 	function htmlError(){
 		$return = str_replace('!ERROR_NAME!', ($this->getCode().': '.$this->myGetCode()), self::$template_desc);
 		$return = str_replace('!ERROR_DESC!', $this->myGetMessage(), $return);
@@ -202,7 +221,7 @@ class BaseException extends Exception {
 				} else {
 					$style="";
 				}
-				
+
 				if(!$instring){
 					if(preg_match('/[\'"].*?\n/s', $source[$i]) && !preg_match('/[\'"].*?[\'"\n]/s', $source[$i])){
 						$instring = true;
@@ -216,10 +235,10 @@ class BaseException extends Exception {
 					}
 					$source[$i] = preg_replace('/.*?[\'"\n]/', '<span style="color: #008200">\\0</span>', $source[$i]);
 				}
-					
+
 
 				$source[$i] = str_replace("\t", '&#160;&#160;&#160;&#160;', $source[$i]);
-				
+
 				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
 			}
 		}

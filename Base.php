@@ -5,7 +5,7 @@
  *
  * <i>No Description</i>
  *
- * This script is part of the corelib project. The corelib project is 
+ * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -137,13 +137,13 @@ if(!defined('CORELIB')){
 	 */
 	define('CORELIB', '/path/to/corelib/');
 }
-
+/*
 if(!defined('ENABLE_XDEBUG') && ENABLE_XDEBUG){
 	if(is_callable('xdebug_start_code_coverage')){
 		// xdebug_start_code_coverage();
 	}
 }
-
+*/
 if(!defined('CURRENT_WORKING_DIR')){
 	/**
 	 *	Current Working Dir Constant.
@@ -170,7 +170,7 @@ if(!defined('BASE_CLASS_CACHE_FILE')){
 	 * cache database, this file must be writable by the user running
 	 * the script, and it can be overwritten any time before include
 	 * Base.php .
-	 * 
+	 *
 	 * @see Base.php
 	 */
 	define('BASE_CLASS_CACHE_FILE', 'var/cache/class.db');
@@ -195,7 +195,7 @@ if(!defined('BASE_DEFAULT_TIMEZONE')){
 if(!defined('TEMPORARY_DIR')){
 	/**
 	 * Define Admin Email.
-	 * 
+	 *
 	 * Define the admin email, for sending runtime informations about erros etc.
 	 */
 	define('TEMPORARY_DIR', 'var/tmp/');
@@ -299,7 +299,7 @@ class Base implements Singleton {
 			 * Define the admin email, for sending runtime informations about erros etc.
 			 */
 			define('BASE_ADMIN_EMAIL', false);
-		}		
+		}
 		if(!defined('BASE_RUNLEVEL')){
 			/**
 			 * Current Runlevel.
@@ -313,11 +313,11 @@ class Base implements Singleton {
 		 *
 		 *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
 		 * 	and set it to true
-		 * 
+		 *
 		 * @see BASE_DISABLE_ERROR_HANDLER
 		 */
 		require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
-		
+
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
 		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
@@ -357,6 +357,8 @@ class Base implements Singleton {
 	 * @uses Base::$class_paths
 	 */
 	public function addClassPath($path){
+		assert('is_string($path)');
+
 		$this->class_paths[] = $path;
 	}
 
@@ -372,11 +374,13 @@ class Base implements Singleton {
 	 * @uses StrictTypes::isString()
 	 */
 	public function loadClass($class){
+		assert('is_string($class)');
+
 		StrictTypes::isString($class);
 		__autoload($class);
 		return true;
 	}
-	
+
 	/**
 	 * Find Class.
 	 *
@@ -390,7 +394,9 @@ class Base implements Singleton {
 	 * @uses Base::$class_cache_updated
 	 */
 	public function findClass($class){
-		
+		assert('is_string($class)');
+
+
 		if(!isset($this->class_cache[$class])){
 			try {
 				if($file = $this->_classSearch($class)){
@@ -413,13 +419,13 @@ class Base implements Singleton {
 
 	/**
 	 * Get registered class paths.
-	 * 
+	 *
 	 * @return array registered class path's
 	 */
 	public function getClassPaths(){
-		return $this->class_paths;	
+		return $this->class_paths;
 	}
-	
+
 	/**
 	 * Search for class in directories.
 	 *
@@ -466,15 +472,15 @@ class Base implements Singleton {
 
 	/**
 	 * Clone function.
-	 * 
+	 *
 	 * Declared private to prevent cloning
-	 * 
+	 *
 	 * @return false
 	 */
 	private function __clone(){
 		return false;
 	}
-	
+
 	/**
 	 * Base Destructor.
 	 *

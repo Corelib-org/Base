@@ -97,7 +97,7 @@ class i18n implements Singleton,Output {
 	public function addLanguageFile($filename){
 		$this->addLanguageFilePath(I18N_LANGUAGE_BASE.$this->getLanguage().'/'.$filename);
 	}
-	public function addLangaugeFilePath($filename){
+	public function addLanguageFilePath($filename){
 		$this->language_files[] = $filename;
 	}
 	

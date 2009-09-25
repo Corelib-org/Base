@@ -1,4 +1,39 @@
 <?php
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * Corelib Internationalization Functions and Classes.
+ *
+ * <i>No Description</i>
+ *
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @author Steffen Soerensen <ss@corelib.org>
+ * @copyright Copyright (c) 2009 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
+ * @package corelib
+ * @subpackage Base
+ * @link http://www.corelib.org/
+ * @version 1.0.0 ($Id: Base.php 5066 2009-09-24 09:32:09Z wayland $)
+ * @filesource
+ */
+
+
 if(!defined('I18N_COOKIE_NAME')){
 	define('I18N_COOKIE_NAME', 'i18n');
 }
@@ -23,23 +58,23 @@ class i18n implements Singleton,Output {
 	 * @var i18n
 	 */
 	private static $instance = null;
-	
+
 	private $languages = array();
 	private $date_formats = array();
 	private $date_default_format = '%D %T';
-	
+
 	private $timezone = null;
 	private $timezone_offset = 0;
-	
+
 	private $current_locale = null;
 	private $current_language = null;
-	
+
 	private $default_language = null;
 
 	private $language_files = array();
-	
+
 	protected $cookie_name = null;
-	
+
 	/**
 	 *	@return i18n
 	 */
@@ -49,7 +84,7 @@ class i18n implements Singleton,Output {
 		}
 		return self::$instance;
 	}
-	
+
 	protected function __construct(){
 		if(is_null($this->cookie_name)){
 			$this->cookie_name = I18N_COOKIE_NAME;
@@ -61,11 +96,11 @@ class i18n implements Singleton,Output {
 		} else {
 			$this->setTimezone($_COOKIE[$this->cookie_name.'_timezone']);
 		}
-	}	
-	
+	}
+
 	/**
 	 * Add new locale
-	 * 
+	 *
 	 * @param $language string ISO-639 language abbreviation and any two-letter initial subtag defined by ISO-3166
 	 * @param $locale string RFC 1766 valid locale string
 	 * @return boolean true on success, else return false
@@ -78,11 +113,11 @@ class i18n implements Singleton,Output {
 		}
 		$this->languages[$language] = $locale;
 	}
-	
+
 	public function addDateFormat($language, $id, $format='%D %T'){
 		$this->date_formats[$language][$id] = $format;
 	}
-	
+
 	public function getDateFormat($id){
 	//	echo '<pre style="text-align: left">';
 	//	print_r($this);
@@ -93,14 +128,32 @@ class i18n implements Singleton,Output {
 			return new i18nDateConverter($this->date_default_format, $this->getTimezoneOffset());
 		}
 	}
-	
+
 	public function addLanguageFile($filename){
+		assert('is_string($filename)');
 		$this->addLanguageFilePath(I18N_LANGUAGE_BASE.$this->getLanguage().'/'.$filename);
 	}
+
 	public function addLanguageFilePath($filename){
+		assert('is_string($filename) && is_file($filename)');
 		$this->language_files[] = $filename;
 	}
-	
+
+	/**
+	 * Add a language file based on the full file path.
+	 *
+	 * This function is an alias of {@link i18n::addLanguageFilePath()}
+	 *
+	 * @see i18n::addLanguageFilePath()
+	 * @deprecated use i18n::addLanguageFilePath() instead
+	 * @uses i18n::addLanguageFilePath()
+	 * @param string $filename language file full filename and path
+	 * @return mixed same as {@link i18n::addLanguageFilePath()}
+	 */
+	public function addLangaugeFilePath($filename){
+		return $this->addLanguageFilePath($filename);
+	}
+
 	public function getLanguage(){
 		return $this->current_language;
 	}
@@ -119,7 +172,7 @@ class i18n implements Singleton,Output {
 	public function getFileBase(){
 		return I18N_LANGUAGE_BASE.$this->getLanguage();
 	}
-	
+
 	public function setLanguage($language){
 		if(isset($this->languages[$language])){
 			$this->current_locale = $this->languages[$language];
@@ -130,7 +183,7 @@ class i18n implements Singleton,Output {
 			return false;
 		}
 	}
-	
+
 	public function setTimezone($timezone){
 		$this->timezone = $timezone;
 		setcookie($this->cookie_name.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
@@ -145,9 +198,9 @@ class i18n implements Singleton,Output {
 		$date = date_create(null, $default_timezone);
 		//echo date('r', $default_timezone->getOffset($date))."\n";
 		//echo date('r', $timezone->getOffset($date)),"\n";
-		$this->timezone_offset = $default_timezone->getOffset($date) - $timezone->getOffset($date);		
+		$this->timezone_offset = $default_timezone->getOffset($date) - $timezone->getOffset($date);
 	}
-	
+
 	public function detectLanguage(){
 		if(!isset($_COOKIE[$this->cookie_name]) || !isset($this->languages[$_COOKIE[$this->cookie_name]])){
 			if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
@@ -172,7 +225,7 @@ class i18n implements Singleton,Output {
 						list($suffix,) = explode('-', $language);
 						if(isset($this->languages[$suffix])){
 							$this->setLanguage($suffix);
-							break;					
+							break;
 						}
 					}
 				}
@@ -184,13 +237,13 @@ class i18n implements Singleton,Output {
 		}
 		return true;
 	}
-	
+
 	public function getXML(DOMDocument $xml){
 		$language = $xml->createElement('language');
 		$language->setAttribute('language', $this->getLanguage());
 		$language->setAttribute('locale', $this->getLocale());
 		$language->setAttribute('timezone', $this->getTimezone());
-		
+
 		while (list(,$val) = each($this->language_files)){
 			try {
 				if(!is_file($val)){
@@ -218,6 +271,4 @@ class i18n implements Singleton,Output {
 		return $language;
 	}
 }
-
-
 ?>

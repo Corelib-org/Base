@@ -87,6 +87,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			$input = InputHandler::getInstance();
 
 			if($input->isSetGet('xml') && BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
+				define('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR', false);
 				$this->template->setContentType('text/xml');
 				$this->template->setContentCharset('UTF-8');
 				return $this->xml->saveXML();

@@ -245,7 +245,7 @@ class PageFactory implements Singleton {
 
 		$eventHandler->triggerEvent(new EventRequestEnd());
 
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
 			echo PageFactoryDeveloperToolbar::getInstance();
 		}
 		return $data;

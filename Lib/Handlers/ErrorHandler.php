@@ -23,12 +23,12 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Sørensen <steffen@bravura.dk>
- * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2009
  * @license http://www.gnu.org/copyleft/gpl.html
  * @package corelib
  * @subpackage Base
- * @link http://www.bravura.dk/
+ * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
  */
 error_reporting(E_ALL | E_STRICT);
@@ -109,7 +109,7 @@ function BaseFatalError($buffer){
 					mail(BASE_ADMIN_EMAIL, '[Corelib Error Handler] '.$result[2][$key], $e->writeToLog(true));
 				}
 				if(defined('BASE_ERROR_FATAL_REDIRECT')){
-					$buffer = '<html><head><meta http-equiv="refresh" content="999;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
+					$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
 				} else {
 					$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib</a></i></body></html>';
 				}

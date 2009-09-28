@@ -151,6 +151,7 @@ class i18n implements Singleton,Output {
 	 * @return mixed same as {@link i18n::addLanguageFilePath()}
 	 */
 	public function addLangaugeFilePath($filename){
+
 		return $this->addLanguageFilePath($filename);
 	}
 

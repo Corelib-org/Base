@@ -135,7 +135,7 @@ class i18n implements Singleton,Output {
 	}
 
 	public function addLanguageFilePath($filename){
-		assert('is_string($filename) && is_file($filename)');
+		// assert('is_string($filename) && is_file($filename)');
 		$this->language_files[] = $filename;
 	}
 

@@ -318,6 +318,8 @@ class Base implements Singleton {
 		 */
 		require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
 
+		require_once(CORELIB.'/Base/Lib/LoopbackStream.php');
+
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
 		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
@@ -376,7 +378,6 @@ class Base implements Singleton {
 	public function loadClass($class){
 		assert('is_string($class)');
 
-		StrictTypes::isString($class);
 		__autoload($class);
 		return true;
 	}

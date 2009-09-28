@@ -26,6 +26,8 @@ if(!defined('BASE_URL')){
 	 * 	Define Redirect Base URL
 	 */
 	define('BASE_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');
+
+	Base::getInstance()->loadClass('WebInteralLoopbackStream');
 }
 
 abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {

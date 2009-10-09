@@ -1,0 +1,17 @@
+<?xml version='1.0'?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<title>Coding standards</title>
+	<para>
+		It helps if the standard annoys everyone in some way so everyone
+		feels they are on the same playing field. 
+		The proposal here has evolved over many projects, many companies, 
+		and literally a total of many weeks spent arguing. 
+		It is no particular person's style and is certainly open to local amendments.	
+	</para>
+	<xi:include href="php.xml"/>	
+	<xi:include href="xml.xml"/>	
+	<xi:include href="xslt.xml"/>	
+	<xi:include href="xhtml.xml"/>	
+	<xi:include href="css.xml"/>	
+</section>

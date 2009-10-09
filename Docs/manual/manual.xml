@@ -1,0 +1,239 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<title>Corelib documentation/Manual Outline</title>
+	<info>
+		<author>
+			<personname>
+				<firstname>Steffen</firstname>
+				<surname>Sørensen</surname>
+			</personname>
+		</author>
+		<copyright>
+			<year>2009</year>
+		</copyright>
+		<edition>1</edition>
+	</info>
+	<toc>
+		<title>Table of contents</title>
+	</toc>
+	<preface>
+		<title>Preface</title>
+		<section>
+			<title>Who should read this</title>
+		</section>
+		<section>
+			<title>Conventions</title>
+		</section>
+		<!-- xi:include href="coding-standards/coding-standards.xml"/ -->
+	</preface>
+	<part>
+		<title>Getting Started</title>
+		<chapter>
+			<title>Introduction</title>
+			<section>
+				<title>What is corelib</title>
+				<para>
+					Corelib is a framework build i <glossterm linkend="php">PHP</glossterm> and designed with 
+					the aim to create a very stable and extensible <glossterm linkend="framework">framework</glossterm>,
+					and low error rate. This is done by standardizing the the development process and structure, as well
+					as by encapsulating the process into several enclosed processes.
+				</para>
+			</section>
+			<section>
+				<title>What can corelib do?</title>
+			</section>
+		</chapter>
+		<chapter>
+			<title>How does it work?</title>
+		</chapter>
+		<chapter>
+			<title>A simple tutorial</title>
+			<section>
+				<title>Database connections</title>
+			</section>			
+		</chapter>
+	</part>
+	<chapter>
+		<title>Installation and configuration</title>
+		<section>
+			<title>Requirements</title>
+			<itemizedlist>
+				<listitem>
+					<para><glossterm linkend="php">PHP</glossterm> 5.x - and the following extensions installed</para>
+					<itemizedlist>
+						<listitem>XSL</listitem>
+						<listitem>PCRE</listitem>
+					</itemizedlist>
+					<para>Optional <glossterm linkend="php">PHP</glossterm> extensions</para>
+					<itemizedlist>
+						<listitem>OpenSSL</listitem>
+					</itemizedlist>
+				</listitem>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Getting corelib</title>
+			<para>
+				<emphasis>Not available for public download yet</emphasis>
+			</para>
+		</section>
+		<section>
+			<title>Starting your first project</title>
+		</section>
+		<section>
+			<title>Hierachy</title>
+			<section>
+				<title>Dummy WWW Direcotry Hierachy</title>
+				<table>
+					<thead>
+						<tr>
+							<th colspan="2">Dummy WWW Direcotry Hierachy</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr><td>/</td><td>root directory of the directory hierachy</td></tr>
+						<tr><td>/bin/</td><td>user utilities fundamental to both single-user and multi-user environments</td></tr>
+						<tr><td>/etc/</td><td>system configuration files and scripts</td></tr>
+						<tr><td>/etc/dist/</td><td>Default Configuration Files</td></tr>
+						<tr><td>/lib/</td><td>critical system libraries</td></tr>
+						<tr><td>/lib/class/</td><td>Class Libraries</td></tr>
+						<tr><td>/lib/class/dao/</td><td>Data Access Objects</td></tr>
+						<tr><td>/lib/http/</td><td>Normal HTTP Related Requests (WebDummy)</td></tr>
+						<tr><td>/lib/http/get/</td><td>HTTP Get Method related files (WebDummy)</td></tr>
+						<tr><td>/lib/http/post/</td><td>HTTP Post Method related files (WebDummy)</td></tr>
+						<tr><td>/lib/http/rpc/</td><td>Remote Procedure Calls (WebDummy)</td></tr>
+						<tr><td>/share/</td><td>Various Indepedent files, like javascript, xml etc.</td></tr>
+						<tr><td>/share/doc/</td><td>Site Documentation</td></tr>
+						<tr><td>/share/lang/</td><td>Language Files (WebDummy)</td></tr>
+						<tr><td>/share/xsl/</td><td>XSLT Stylesheets (WebDummy)</td></tr>
+						<tr><td>/share/web/</td><td>Web related Documents (WebDummy)</td></tr>
+						<tr><td>/share/web/style/</td><td>CSS Files (WebDummy)</td></tr>
+						<tr><td>/share/web/javascript/</td><td>JavaScript Files (WebDummy)</td></tr>
+						<tr><td>/share/web/flash/</td><td>Macromedia Flash Files (WebDummy)</td></tr>
+						<tr><td>/share/web/images/</td><td>Various Image Files (WebDummy)</td></tr>
+						<tr><td>/var/</td><td>multi-purpose logs, databases etc.</td></tr>
+						<tr><td>/var/db/</td><td>miscellaneous automatically generated system-specific database files </td></tr>
+						<tr><td>/var/log/</td><td>miscellaneous system log files</td></tr>
+						<tr><td>/var/cache/</td><td>miscellaneous cached files</td></tr>
+						<tr><td>/tmp/</td><td>temporary files that are not guaranteed to persist</td></tr>
+					</tbody>
+				</table>
+			</section>			
+		</section>
+	</chapter>
+	
+	<chapter>
+		<title>Features</title>
+		<section>
+			<title>Database abstraction layer</title>
+		</section>
+		<section>
+			<title>PageFactory template engine</title>
+		</section>
+		<section>
+			<title>Code generator</title>
+		</section>
+		<section>
+			<title>Webbased configuration and administration interface</title>
+		</section>
+		<section>
+			<title>Online Extension library</title>
+		</section>
+	</chapter>
+	
+	<chapter>
+		<title>Tutorials and howto's</title>
+		<section>
+			<title>Registering pages</title>
+			<section>
+				<title>Simple page looukup</title>
+				<para>
+					<programlisting language="php">
+						<![CDATA[
+// Simple
+$pages['/'] = 'lib/http/get/corelib/about.php';
+						]]>	
+					</programlisting>
+					
+					<programlisting language="php">
+						<![CDATA[
+// Static
+$pages['/manager/ajax/page/create/'] = array('page'=>'lib/ajax/get/manager/page.php',
+                                             'exec'=>'create');
+						]]>
+					</programlisting>
+				</para>
+			</section>
+			<section>
+				<title>Advanced page lookup</title>
+				<para>
+					<programlisting language="php">
+						<![CDATA[
+// Dynamix regex
+$rpages[] = array('type'=>'regex',
+                  'expr'=>'/^\/manager\/(test)\/([0-9]+)\/$/',
+                  'exec'=>'\\1(\\2)',
+                  'page'=>'lib/http/get/test.php');
+                  		]]>
+					</programlisting>				
+				</para>
+			</section>
+			<section>
+				<title>Meta type page lookup</title>
+				<para>
+					<programlisting language="php">
+						<![CDATA[
+// Dynamic Meta format
+$rpages[] = array('type'=>'PageFactoryMetaPageResolver',
+                  'expr'=>'/manager/(function)/(int:id)/(string:somestring)/',
+                  'exec'=>'id, somestring',
+                  'page'=>'lib/http/get/test.php');
+
+// Dynamic Meta format with a static function
+$rpages[] = array('type'=>'PageFactoryMetaPageResolver',
+                  'expr'=>'/manager/(int:id)/(string:somestring)/',
+                  'exec'=>'function: id, somestring',
+                  'page'=>'lib/http/get/test.php');
+                  		]]>
+					</programlisting>
+				</para>
+			</section>
+			<section>
+				<title>Custom lookup engines</title>
+			</section>
+		</section>
+		<section>
+			<title>Using the SOAP services and XSLT</title>
+		</section>
+	</chapter>
+	
+	<reference>
+		<title>FAQ</title>
+	</reference>	
+	<reference>
+		<title>Function reference</title>
+	</reference>	
+	<glossary>
+		<glossentry xml:id="php">
+			<glossterm>PHP: Hypertext Preprocessor</glossterm>
+			<acronym>PHP</acronym>
+			<glossdef>
+				<para><acronym>PHP</acronym> (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used open source general-purpose scripting language that is especially suited for web development and can be embedded into <acronym>HTML</acronym>.</para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="html">
+			<glossterm>Hyper Text Markup Language</glossterm>
+			<acronym>HTML</acronym>
+			<glossdef>
+				<para>Missing.</para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="framework">
+			<glossterm>Framework</glossterm>
+			<glossdef>
+				<para>Missing.</para>
+			</glossdef>
+		</glossentry>
+	</glossary>
+</book>

@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+<!DOCTYPE info PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<info xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<author>
+		<personname>
+			<firstname>Steffen</firstname>
+			<surname>Sørensen</surname>
+		</personname>
+	</author>
+	<copyright>
+		<year>2009</year>
+	</copyright>
+	<edition>1</edition>
+	<legalnotice>
+		<para>
+			This product is made available subject to the terms of 
+			GNU General Public License Version 3. A copy of the GPL 
+			license can be found at <link xlink:href="http://www.gnu.org/copyleft/gpl.html">http://www.gnu.org/copyleft/gpl.html</link>
+		</para>
+	</legalnotice>
+</info>

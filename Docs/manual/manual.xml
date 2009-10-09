@@ -1,19 +1,8 @@
 <?xml version='1.0'?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
-<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<title>Corelib documentation/Manual Outline</title>
-	<info>
-		<author>
-			<personname>
-				<firstname>Steffen</firstname>
-				<surname>Sørensen</surname>
-			</personname>
-		</author>
-		<copyright>
-			<year>2009</year>
-		</copyright>
-		<edition>1</edition>
-	</info>
+	<xi:include href="info.xml"/>
 	<toc>
 		<title>Table of contents</title>
 	</toc>
@@ -86,9 +75,11 @@
 			<section>
 				<title>Dummy WWW Direcotry Hierachy</title>
 				<table>
+					<caption>Dummy webroot directory hierachy</caption>
 					<thead>
 						<tr>
-							<th colspan="2">Dummy WWW Direcotry Hierachy</th>
+							<th>Folder</th>
+							<th>Description</th>
 						</tr>
 					</thead>
 					<tbody>

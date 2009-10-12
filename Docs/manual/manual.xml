@@ -57,6 +57,8 @@
 					<para>Optional <glossterm linkend="php">PHP</glossterm> extensions</para>
 					<itemizedlist>
 						<listitem>OpenSSL</listitem>
+						<listitem>MySQLi</listitem>
+						<listitem>Session</listitem>
 					</itemizedlist>
 				</listitem>
 			</itemizedlist>

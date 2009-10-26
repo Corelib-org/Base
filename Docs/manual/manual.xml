@@ -10,11 +10,23 @@
 		<title>Preface</title>
 		<section>
 			<title>Who should read this</title>
+			<para>
+				Developers who wish to developer applications using the corelib framework
+			</para>
 		</section>
 		<section>
 			<title>Conventions</title>
+			<para>
+				Code examples:
+			</para>
+			<para>
+				<programlisting language="php">
+					<![CDATA[
+define('CORELIB_MANAGER_PASSWORD', 'YOURPASSWORD'); ]]>
+				</programlisting>
+			</para>			
 		</section>
-		<!-- xi:include href="coding-standards/coding-standards.xml"/ -->
+		<xi:include href="coding-standards/coding-standards.xml"/>
 	</preface>
 	<part>
 		<title>Getting Started</title>
@@ -26,15 +38,82 @@
 					Corelib is a framework build i <glossterm linkend="php">PHP</glossterm> and designed with 
 					the aim to create a very stable and extensible <glossterm linkend="framework">framework</glossterm>,
 					and low error rate. This is done by standardizing the the development process and structure, as well
-					as by encapsulating the process into several enclosed processes.
+					as by encapsulating the process into several enclosed and abstract processes.
 				</para>
 			</section>
 			<section>
 				<title>What can corelib do?</title>
+				<para>
+					Corelib can be used to a number of different things:
+				</para>
+				<itemizedlist>
+					<listitem>Generating HTML pages</listitem>
+					<listitem>Generating PDF Documents <emphasis>(Requires a XSL:FO converter)</emphasis></listitem>
+				</itemizedlist>
 			</section>
 		</chapter>
 		<chapter>
 			<title>How does it work?</title>
+			<para>
+				Corelib has different kind of layers but the large many would sau that it implements a <glossterm linkend="mvc">MVC</glossterm> pattern.
+				However it actualy implements a less know pattern called <glossterm linkend="mva">MVA</glossterm>.
+				This works pretty much the same way a <glossterm linkend="mvc">MVC</glossterm> pattern works, however it allows us to change the the models and change the way a view
+				is rendered.
+			</para>
+			<para>
+				Below the differenct processes is listed
+			</para>
+			<itemizedlist>
+				<listitem>
+					<para>Model (<glossterm linkend="arp">Active record pattern / ARP</glossterm>)</para>
+					<orderedlist>
+						<listitem>Model instance</listitem>
+						<listitem>Abstract database layer (<glossterm linkend="dal">Data access Layer / DAL</glossterm>)</listitem>
+						<listitem>DAO (<glossterm linkend="dao">Data access object / DAO</glossterm>)</listitem>
+						<listitem>Database</listitem>
+					</orderedlist>
+				</listitem>
+				<listitem>
+					<para>Adapter / Controller</para>
+					<orderedlist>
+						<listitem>Detect request type</listitem>
+						<listitem>load GET/POST lookup reference</listitem>
+						<listitem>Resolve and load page object</listitem>
+						<listitem>Execute action</listitem>
+						<listitem>Activate template engine / redirect (if post request)</listitem>
+					</orderedlist>
+				</listitem>
+				<listitem>
+					<para>View</para>
+					<itemizedlist>
+						<listitem>
+							<para>Using the XSLT Template engine</para>
+							<para>When the XSLT Template engine is in use differenct actions are made in the following order:</para>
+							<orderedlist>
+								<listitem>Activate template engine</listitem>
+								<listitem>Send HTTP Headers</listitem>
+								<listitem>Build XML Document</listitem>
+								<listitem>Apply XSLT Stylesheets</listitem>
+								<listitem>Send output to client</listitem>
+							</orderedlist>							
+						</listitem>
+					</itemizedlist>
+				</listitem>
+			</itemizedlist>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="figures/mvc.eps" format="EPS"/>
+				</imageobject>
+				<imageobject>
+					<imagedata fileref="figures/mvc.png" format="PNG"/>
+				</imageobject>
+				<caption>
+					<para>
+						This figures show grafically how the different corelib layers work.
+					</para>
+				</caption>
+			</mediaobject>
+			
 		</chapter>
 		<chapter>
 			<title>A simple tutorial</title>
@@ -120,6 +199,10 @@
 		<title>Features</title>
 		<section>
 			<title>Database abstraction layer</title>
+			<para>
+				Active record pattern
+					Data access layer return the Data access object
+			</para>
 		</section>
 		<section>
 			<title>PageFactory template engine</title>
@@ -129,18 +212,50 @@
 		</section>
 		<section>
 			<title>Webbased configuration and administration interface</title>
+			<para>
+				Corelib comes with a standard configuration utlility which, once enabled,
+				can be accessed on the url <code>${BASE_URL}/corelib/</code>
+			</para>
+			<section>
+				<title>How to enable the webbased configuration and administration interface.</title>
+				<para>
+					In order to enable the webbased configuration and administration interface at least one
+					constant in your configuration file <code>CORELIB_MANAGER_PASSWORD</code>.
+					<programlisting language="php">
+						<![CDATA[
+define('CORELIB_MANAGER_PASSWORD', 'YOURPASSWORD'); ]]>
+					</programlisting>
+				</para>
+				<para>
+					Optional you can change the username as well using the constant named <code>CORELIB_MANAGER_USERNAME</code>
+					<programlisting language="php">
+						<![CDATA[
+define('CORELIB_MANAGER_USERNAME', 'admin'); ]]>	
+					</programlisting>
+				</para>
+			</section>
 		</section>
 		<section>
 			<title>Online Extension library</title>
+			<para>
+				<emphasis>Not available for public download yet</emphasis>
+			</para>
 		</section>
 	</chapter>
 	
 	<chapter>
 		<title>Tutorials and howto's</title>
+		<xi:include href="codegenerator/creating-modules.xml"/>
+		<xi:include href="codegenerator/module-file.xml"/>
 		<section>
 			<title>Registering pages</title>
 			<section>
 				<title>Simple page looukup</title>
+				<para>
+					The simple way is a one url only, when corelib receives a new request it looks in the etc/get.php 
+					file for an array key that exactly matches the requested url. If i then want to register the root 
+					url / it would look like this.
+				</para>
 				<para>
 					<programlisting language="php">
 						<![CDATA[
@@ -148,7 +263,15 @@
 $pages['/'] = 'lib/http/get/corelib/about.php';
 						]]>	
 					</programlisting>
-					
+				</para>
+			</section>
+			<section>
+				<title>Simple with custom method</title>
+				<para>
+					This is pretty much the same as the simple way above, however it allows you to use another method for 
+					handling the request (This is explained below)
+				</para>
+				<para>
 					<programlisting language="php">
 						<![CDATA[
 // Static
@@ -158,13 +281,17 @@ $pages['/manager/ajax/page/create/'] = array('page'=>'lib/ajax/get/manager/page.
 					</programlisting>
 				</para>
 			</section>
-			<section>
+			<section xml:id="advanced-page-lookup">
 				<title>Advanced page lookup</title>
+				<para>
+					This method allows for registering dynamic urls, however this feature has a lower priority when resolving pages. 
+					the way this is done is by adding a new $pages entry. This entry could look something like this:
+				</para>
 				<para>
 					<programlisting language="php">
 						<![CDATA[
 // Dynamix regex
-$rpages[] = array('type'=>'regex',
+$pages[] = array('type'=>'regex',
                   'expr'=>'/^\/manager\/(test)\/([0-9]+)\/$/',
                   'exec'=>'\\1(\\2)',
                   'page'=>'lib/http/get/test.php');
@@ -178,18 +305,24 @@ $rpages[] = array('type'=>'regex',
 					<programlisting language="php">
 						<![CDATA[
 // Dynamic Meta format
-$rpages[] = array('type'=>'PageFactoryMetaPageResolver',
+$pages[] = array('type'=>'PageFactoryMetaPageResolver',
                   'expr'=>'/manager/(function)/(int:id)/(string:somestring)/',
                   'exec'=>'id, somestring',
                   'page'=>'lib/http/get/test.php');
 
 // Dynamic Meta format with a static function
-$rpages[] = array('type'=>'PageFactoryMetaPageResolver',
+$pages[] = array('type'=>'PageFactoryMetaPageResolver',
                   'expr'=>'/manager/(int:id)/(string:somestring)/',
                   'exec'=>'function: id, somestring',
                   'page'=>'lib/http/get/test.php');
                   		]]>
 					</programlisting>
+					<tip>
+						<para>
+							If you are familiar with regular expressions it is recommended to use
+							the "<link linkend="advanced-page-lookup">Advanced lookup method</link>" instead, since it provides better performance.
+						</para>
+					</tip>
 				</para>
 			</section>
 			<section>
@@ -213,6 +346,41 @@ $rpages[] = array('type'=>'PageFactoryMetaPageResolver',
 			<acronym>PHP</acronym>
 			<glossdef>
 				<para><acronym>PHP</acronym> (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used open source general-purpose scripting language that is especially suited for web development and can be embedded into <acronym>HTML</acronym>.</para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="mva">
+			<glossterm>Model-view-adapter</glossterm>
+			<acronym>mva</acronym>
+			<glossdef>
+				<para><link xlink:href="http://en.wikipedia.org/wiki/Model-view-adapter">Model-view-adapter on wikipedia</link></para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="mvc">
+			<glossterm>Model-view-controller</glossterm>
+			<acronym>mvc</acronym>
+			<glossdef>
+				<para><link xlink:href="http://en.wikipedia.org/wiki/Model-view-controller">Model-view-controller on wikipedia</link></para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="arp">
+			<glossterm>Active record pattern</glossterm>
+			<acronym>arp</acronym>
+			<glossdef>
+				<para><link xlink:href="http://en.wikipedia.org/wiki/Active_record_pattern">Active record pattern on wikipedia</link></para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="dal">
+			<glossterm>Data access Layer</glossterm>
+			<acronym>dal</acronym>
+			<glossdef>
+				<para><link xlink:href="http://en.wikipedia.org/wiki/Data_access_layer">Data access Layer on wikipedia</link></para>
+			</glossdef>
+		</glossentry>
+		<glossentry xml:id="dao">
+			<glossterm>Data access object</glossterm>
+			<acronym>dao</acronym>
+			<glossdef>
+				<para><link xlink:href="http://en.wikipedia.org/wiki/Data_access_object">Data access objects on wikipedia</link></para>
 			</glossdef>
 		</glossentry>
 		<glossentry xml:id="html">

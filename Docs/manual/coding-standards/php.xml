@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<title>PHP</title>
 	<section id="{@id php_comments}">
 		<title>Comments</title>
@@ -9,25 +9,19 @@
 		</para>
 		
 		<para>
-			Non-documentation comments are strongly encouraged.
-			A general rule of thumb is that if you look at a section of code and think 
-			"Wow, I don't want to try and describe that", 
-			you need to comment it before you forget how it works.
+			Non-documentation comments are strongly encouraged. A general rule of thumb is that if you look at a section of 
+			code and think "Wow, I don't want to try and describe that", you need to comment it before you forget how it works.
 		</para>
-		<para>
-			<itemizedlist>
-				<listitem>C++ style comments (/* */) and standard C comments (//) are both acceptable.</listitem>
-				<listitem>Use of perl/shell style comments (#) is prohibited.</listitem>
-			</itemizedlist>
-		</para>
+		<itemizedlist>
+			<listitem>C++ style comments (/* */) and standard C comments (//) are both acceptable.</listitem>
+			<listitem>Use of perl/shell style comments (#) is prohibited.</listitem>
+		</itemizedlist>
 		<section id="{@id php_comments_phpdoctags}">
 			<title>PHPdoc Tags</title>
 			<para>
 				Inline documentation for classes should follow the PHPDoc convention, 
-				similar to Javadoc. More information about PHPDoc can be found here:
-			</para>
-			<para>
-				{@link http://www.phpdoc.org/}
+				similar to Javadoc. More information about PHPDoc can be found here: 
+				<link xlink:href="http://www.phpdoc.org/">http://www.phpdoc.org/</link>
 			</para>
 		</section>	
 		<section id="{@id php_comments_filecomments}">
@@ -36,9 +30,7 @@
 				Every file should start with a comment block describing its purpose,
 				version, author, package, subpackage, license and a copyright 
 				message. The comment block should be a block comment in standard 
-				JavaDoc format along with a SVN Id tag. While all JavaDoc tags are 
-				allowed, only the tags in the examples below will be parsed by 
-				PHPdoc.				
+				PHPdoc format along with a SVN Id tag.
 			</para>
 			<para>
 				corelib contains a mixed copyright. For files which contains
@@ -65,11 +57,10 @@
 			</para>
 		</section>
 		<section id="{@id php_comments_classcomments}">
-			<title>Function and Class Comments</title>
+			<title>Method and class comments</title>
 			<para>
-				Similarly, every function should have a block comment 
-				specifying name, parameters, return values, and last 
-				change date, etc.				
+				Similarly, every method and class should have a block comment 
+				specifying name, parameters, return values, and last change date, etc.				
 			</para>
 			<para>
 			    <programlisting language="php">
@@ -85,7 +76,7 @@
 			    </programlisting>
 			</para>				
 		</section>			
-		<section>
+		<note>
 			<title>Note</title>
 			<para>
 				The placement of periods in the short and long descriptions is important to the PHPdoc parser.
@@ -93,7 +84,7 @@
 				All future periods are part of the long description, ending with a blank comment line. 
 				The long comment is optional.
 			</para>
-		</section>			
+		</note>			
 	</section>
 	
 	<!--
@@ -421,32 +412,25 @@ $string .= baz();
 	
 	<section id="{@id php_e_all_code}">
 		<title>Write E_ALL compliant code</title>
-		<para>
-			This document is a very recent addition to the coding guidelines, and is still subject to discussion among developers. 
-			Do NOT post comments on this page yet. One issue will be created for each point introduced here. 
-			Those issues will be used for discussion and patch submission. I'll keep updating this page as the discussion progresses. 
-			When a consensus has been reached on each point, this introduction will be deleted. Eventually, when everything has been 
-			patched up, I'll delete the mention about Drupal not being E_STRICT compliant.
-		</para>
 		<section id="{@id php_e_all_code_better_practice}">
 			<title>E_ALL: a better practice</title>
 			<para>
-				Currently, the Drupal code is not E_STRICT compliant. When running a Drupal site with E_ALL, 
+				Currently, the Corelib code is not E_ALL compliant. When running a Corelib site with E_ALL, 
 				each page view creates scores of error notices messages. Many developers agree that it would be 
-				good if the source of Drupal could be brought up to par with commonly accepted good practice.
+				good if the source of Corelib could be brought up to par with commonly accepted good practice.
 			</para>
 			<para>
 				The purpose of this document is twofold:
 			</para>
 			<para>
 				<itemizedlist>
-					<listitem>to show common coding mistakes that prevent Drupal from being E_STRICT compliant.</listitem>
+					<listitem>to show common coding mistakes that prevent Corelib from being E_STRICT compliant.</listitem>
 					<listitem>to set better coding guidelines to use in new code and patches.</listitem>
 				</itemizedlist>
 			</para>	
 			<para>
 				Once those guidelines are accepted, it is only a matter of time and some developers' efforts before all the 
-				previous coding mistakes are patched up. Then, we will be able to run Drupal with the E_ALL directive.
+				previous coding mistakes are patched up. Then, we will be able to run Corelib with the E_ALL directive.
 			</para>
 		</section>
 	</section>

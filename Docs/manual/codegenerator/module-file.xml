@@ -35,11 +35,14 @@
 		<title>Menu:</title>
 		<para>The menu tag is where the menu structure for the module is created. A top level item is defined using the group tag, and a 2nd level item is then put in under it using the tag item (see example below). </para>
 		<para>The group tag has 3 attributes. Id, which defines an identifier for the menu group. Title, which contains the displayed text of in the menu item on your page. Weight is used to order the top level menus, the higher number being furthest to the right in the menu.</para>
-		<para>&lt;menu&gt;</para>
-		<para>        &lt;group id="BroadbandTv" title="BroadbandTv" weight=”20”&gt;        </para>
-		<para>        &lt;item id="broadbandtvleads" url="backoffice/modules/BroadbandTv/broadbandtvleads/" default="true"&gt;broadbandtvleads&lt;/item&gt;</para>
-		<para>        &lt;/group&gt;</para>
-		<para>&lt;/menu&gt;</para>
+		<programlisting language="xml">
+<![CDATA[
+<menu>
+       <group id="BroadbandTv" title="BroadbandTv" weight=”20”>       
+       <item id="broadbandtvleads" url="backoffice/modules/BroadbandTv/broadbandtvleads/" default="true">broadbandtvleads</item>
+       </group>
+</menu> ]]>		
+		</programlisting>
 	</section>
 	
 </section>

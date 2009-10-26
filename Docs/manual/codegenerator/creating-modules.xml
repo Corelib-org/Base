@@ -74,7 +74,7 @@
 			<para>
 				1. CodeGeneratorBackofficeModel:
 				Creates the modelling classes for the backoffice module classes. These classes are for singular objects, based on the table on which the code generator is 
-				generating the classes. The model classes contain functionality such as loading data objects form the database, saving data and modifying data. 
+				generating the classes. The model classes contain functionality such as loading data objects from the database, saving data and modifying data. 
 			</para>
 			
 			<para>

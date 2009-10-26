@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section>
+	<title>Module.xml</title>
+	<para>The module.xml file, for each extension, is the same format as the CXD files, and it goes as follows. An example module.xml file can be found in the appendix (X.X.X).</para>
+	<section>
+		<title>Extension:</title>
+		<para>The extension tag marks the beginning of the extension definitions. The tag contains two attributes namely id and enabled. The id must always be unique, and as such we suggest you generate the id using the unix command uuidgen or a similar functionality. The enabled attribute signifies wether or not the extension is usable and should be read. It can be true or false.</para>
+	</section>
+	<section>
+		<title>Module:</title>
+		<para>The module tag is where the page definitions begin, and it has only one attribute namely Name. The name attribute is the module name as identified by the system, which enables it to faster find all definitions pertaining to one module.</para>
+		<section>
+			<title>Submodules:</title>
+			<para>Sub extensions for the extension, where the actual functionality of the extension can be distributed over multiple pages.</para>
+		</section>
+		<section>
+			<title>Submodule:</title>
+			<para>@name is used againt to identify the page to the site. </para>
+		</section>
+		<section>
+			<title>Actions:</title>
+   			<para>Actions are the outline of the functionality. </para>
+			<para>The @name identifies a function under the given file.</para>
+  			<para>The @file gives the relative filepath to the file in which the method is called. The file must contain a BackofficeModulePage class  and the method (as defined by the name attribute) wether or not its a get or a post method. </para>
+		    <para>The default attribute define an action as the default, so if no action is chosen, this action will be called by default.</para>
+		</section>
+	</section>
+	<section>
+		<title>Messages:</title>
+		<para>Backoffice has a built in messaging system, which means you can give messages to the user. The messages themselves are stored in an XML file, and under the messages tag, in module.xml, you can add them to your system using:</para>
+		<para>&lt;file lang="en" name="share/lang/en/messages.xml" /&gt;</para>
+		<para>Where the lang attribute is the shortname for the language the file is in, and the name attribute defines the relative path to the  file itself, in the extensions directory.</para>
+	</section>
+	<section>
+		<title>Menu:</title>
+		<para>The menu tag is where the menu structure for the module is created. A top level item is defined using the group tag, and a 2nd level item is then put in under it using the tag item (see example below). </para>
+		<para>The group tag has 3 attributes. Id, which defines an identifier for the menu group. Title, which contains the displayed text of in the menu item on your page. Weight is used to order the top level menus, the higher number being furthest to the right in the menu.</para>
+		<para>&lt;menu&gt;</para>
+		<para>        &lt;group id="BroadbandTv" title="BroadbandTv" weight=”20”&gt;        </para>
+		<para>        &lt;item id="broadbandtvleads" url="backoffice/modules/BroadbandTv/broadbandtvleads/" default="true"&gt;broadbandtvleads&lt;/item&gt;</para>
+		<para>        &lt;/group&gt;</para>
+		<para>&lt;/menu&gt;</para>
+	</section>
+	
+</section>

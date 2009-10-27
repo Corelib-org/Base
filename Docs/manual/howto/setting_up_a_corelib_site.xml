@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section>
+	<title>Setting up a corelib site.</title>
+	 <para>To set up a corelib site, you need a distribution of corelib and a webserver of your choice. Unpack the distribution and put it on your server, and make sure you have administrative permissions. Next you take a copy of the config.php.dist file located in etc/dist/, and put it in the etc/ folder. You need to rename it to config.php for the system to recognize it.</para>
+	 <section>
+	 	<title>The config file in details:</title>
+	 	<para>The config file contains the site specific configuration, which can be anything from function calls, constant definitions, and class loads. In the config file you need to define the CORELIB constant, which must contain the full path to the corelib library. Following this you must include the Base.php file from the corelib/Base folder. The code looks as follows:</para>
+	 	<programlisting language="php">
+	 	<![CDATA[
+if(!defined('CORELIB')){
+	define('CORELIB', '/Users/webroot/corelib/');
+}
+include_once(CORELIB.'/Base/Base.php');
+	 	]]>
+	 	</programlisting>
+	 	<para>After including the Base.php file, you should include the lib folder of your site, in order for corelib to be able to automatically include your page classes, custom classes and extensions as you have created them. Its important to note that corelib finds your classes where you've put them, but in order to keep some sort of structure on your site you should follow the folder structure guidelines as defined in chapter Y.Y. To include your lib/ folder, you get an instance of the Base class, and add a classpath. The code for this is as follows:</para>
+	 	<programlisting language="php">
+	 	<![CDATA[
+$base = Base::getInstance();
+$base->addClassPath('lib/');
+	 	]]>
+	 	</programlisting>
+	 	<para>Corelib has different runlevels, in order to allow easier debugging during the development and to make sure the user never see's an actual error message on a production site, but only a stylized apology site. The runlevel of your site is defined using the BASE_RUNLEVEL constant, and the most common values are:</para>
+  		<para>BASE_RUNLEVEL_DEVEL: for development use. Here the system shows you all errors as your webserver is defined to show. Usually this means all errors and notices.</para>
+   		<para>BASE_RUNLEVEL_PROD: for production sites. In this runlevel no errors are shown to the user, only a stylized apology page.</para>
+	 	<para>Choosing your runlevel is made easy then, where you merely have to choose if your running a production site, or a development site. The definition of the BASE_RUNLEVEL constant is as follows:</para>
+	 	<programlisting language="php">
+	 	<![CDATA[
+define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
+	 	]]>
+	 	</programlisting>
+	 	<para>If you are using a database on your site, you should also define the database access in the config.php file. This is done through the four database constants; DATABASE_MASTER_HOSTNAME which should contain the hostname of your database server (usually localhost), DATABASE_MASTER_USERNAME which should contain the username for your database, DATABASE_MASTER_PASSWORD which should contain the password for your database, and DATABASE_MASTER_DATABASE which should contain the name of the database you wish to use. The definition of the constants should look as follows, but with your own values:</para>
+	  	<programlisting language="php">
+	  	<![CDATA[
+define('DATABASE_MASTER_HOSTNAME', 'database_server_hostname');
+define('DATABASE_MASTER_USERNAME', 'username');
+define('DATABASE_MASTER_PASSWORD', 'password');
+define('DATABASE_MASTER_DATABASE', 'database_name');
+	 	]]>
+	 	</programlisting>
+	 </section>
+
+</section>

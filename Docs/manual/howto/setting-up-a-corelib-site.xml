@@ -39,5 +39,9 @@ define('DATABASE_MASTER_DATABASE', 'database_name');
 	 	]]>
 	 	</programlisting>
 	 </section>
+	 <section>
+	 	<title>Folder permissions.</title>
+	 	<para>In the corelib folder structure the folder called var and all subfolders should be writable. This is because this folder is used for multiple things including cache of various sorts and fileuploads. Usually, if you get an error saying that permissions are missing, its a good bet that this is due to the webserver not having permissions to something in the var/ folder. Its good practice to only give write permissions to the folders which you need write permissions too, but your webserver should always be able to read all files in your corelib site. If you dont know how to change or check the permissions of your site, we suggest you contact an administrator or consult your operating systems documentation on the subject.</para>
+	 </section>
 
 </section>

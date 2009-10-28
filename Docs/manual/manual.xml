@@ -35,9 +35,9 @@ define('CORELIB_MANAGER_PASSWORD', 'YOURPASSWORD'); ]]>
 			<section>
 				<title>What is corelib</title>
 				<para>
-					Corelib is a framework build i <glossterm linkend="php">PHP</glossterm> and designed with 
+					Corelib is a framework build in <glossterm linkend="php">PHP</glossterm> and designed with 
 					the aim to create a very stable and extensible <glossterm linkend="framework">framework</glossterm>,
-					and low error rate. This is done by standardizing the the development process and structure, as well
+					and low error rate. This is done by standardizing the development process and structure, as well
 					as by encapsulating the process into several enclosed and abstract processes.
 				</para>
 			</section>
@@ -55,7 +55,7 @@ define('CORELIB_MANAGER_PASSWORD', 'YOURPASSWORD'); ]]>
 		<chapter>
 			<title>How does it work?</title>
 			<para>
-				Corelib has different kind of layers but the large many would sau that it implements a <glossterm linkend="mvc">MVC</glossterm> pattern.
+				Corelib has different kind of layers but the large many would say that it implements a <glossterm linkend="mvc">MVC</glossterm> pattern.
 				However it actualy implements a less know pattern called <glossterm linkend="mva">MVA</glossterm>.
 				This works pretty much the same way a <glossterm linkend="mvc">MVC</glossterm> pattern works, however it allows us to change the the models and change the way a view
 				is rendered.
@@ -247,6 +247,7 @@ define('CORELIB_MANAGER_USERNAME', 'admin'); ]]>
 		<title>Tutorials and howto's</title>
 		<xi:include href="codegenerator/creating-modules.xml"/>
 		<xi:include href="codegenerator/module-file.xml"/>
+		<xi:include href="howto/setting-up-a-corelib-site.xml"/>
 		<section>
 			<title>Registering pages</title>
 			<section>

@@ -453,6 +453,13 @@ abstract class Query {
 	 * return integer affected rows
 	 */
 	abstract public function getAffectedRows();
+	/**
+	 * Adjusts the result pointer to an arbitary row in the result.
+	 *
+	 * @param integer $offset The field offset. Must be between zero and the total number of rows minus one
+	 * @return boolean true on success, else return false
+	 */
+	abstract public function dataSeek($offset);
 }
 
 

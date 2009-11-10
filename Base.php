@@ -44,9 +44,6 @@
 //**        4. BASE_RUNLEVEL_DEVEL .........................     **//
 //**        5. BASE_RUNLEVEL_PROD ..........................     **//
 //**        6. CORELIB_BASE_VERSION ........................     **//
-//**        7. CORELIB_BASE_VERSION_MAJOR ..................     **//
-//**        8. CORELIB_BASE_VERSION_MINOR ..................     **//
-//**        9. CORELIB_BASE_VERSION_PATCH ..................     **//
 //**       10. CORELIB_COPYRIGHT ...........................     **//
 //**       11. CORELIB_COPYRIGHT_YEAR ......................     **//
 //**    2. Basic Configuration Checks ......................     **//
@@ -112,9 +109,6 @@ define('BASE_RUNLEVEL_PROD', 1);
  *	Define current version of corelib Base.
  */
 define('CORELIB_BASE_VERSION', '4.6.0');
-define('CORELIB_BASE_VERSION_MAJOR', '4');
-define('CORELIB_BASE_VERSION_MINOR', '6');
-define('CORELIB_BASE_VERSION_PATCH', '0');
 /**
  * Define CoreLib Copyright owner
  */
@@ -122,7 +116,7 @@ define('CORELIB_COPYRIGHT', 'Steffen Soerensen - http://www.corelib.org/');
 /**
  * Define CoreLib Copyright year
  */
-define('CORELIB_COPYRIGHT_YEAR', '2005-2008');
+define('CORELIB_COPYRIGHT_YEAR', '2009');
 
 
 //*****************************************************************//
@@ -397,7 +391,6 @@ class Base implements Singleton {
 	public function findClass($class){
 		assert('is_string($class)');
 
-
 		if(!isset($this->class_cache[$class])){
 			try {
 				if($file = $this->_classSearch($class)){
@@ -421,6 +414,7 @@ class Base implements Singleton {
 	/**
 	 * Get registered class paths.
 	 *
+	 * @uses Base::$class_paths
 	 * @return array registered class path's
 	 */
 	public function getClassPaths(){
@@ -512,7 +506,7 @@ class Base implements Singleton {
 				}
 			}
 			@file_put_contents(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, $content);
-			@chmod(BASE_CLASS_CACHE_FILE, 0666);
+			@chmod(CURRENT_WORKING_DIR.BASE_CLASS_CACHE_FILE, 0666);
 		}
 	}
 }
@@ -525,15 +519,18 @@ class Base implements Singleton {
  * PHP autoload function.
  *
  * When a unknown class is used, this function is called.
- * It will then intruct the {@link Base} class to find the
- * file containing the missing class
+ * It will then instruct the {@link Base} class to find the
+ * file containing the missing class, and include the file.
  *
  * @param string $class Missing class name
  * @uses Base::findClass()
  */
 function __autoload($class){
 	if($filename = Base::getInstance()->findClass($class)){
-		include_once($filename);
+		/**
+		 * @ignore
+		 */
+		require_once($filename);
 		return true;
 	} else {
 		return false;

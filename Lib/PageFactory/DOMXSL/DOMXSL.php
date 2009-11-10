@@ -33,6 +33,8 @@ if(!defined('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT')){
 }
 
 class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
+	const CACHE_PAGE_XSL = 'Base/Share/Cache.xsl';
+
 	/**
 	 *	@var DOMDocument
 	 */
@@ -87,22 +89,23 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			$input = InputHandler::getInstance();
 
 			if($input->isSetGet('xml') && BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
-				define('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR', false);
 				$this->template->setContentType('text/xml');
 				$this->template->setContentCharset('UTF-8');
 				return $this->xml->saveXML();
 			} else {
+
 //				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
 					$tranformToXML = false;
 					if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
 						$tranformToXML = true;
 					}
 					$doc = $proc->transformToDoc($this->xml);
-/*					if(PAGE_FACTORY_CACHE_ENABLE){
-						$page = $this->_xslRewrite($doc, $tranformToXML);
-					} else { */
+					if($this->_getCacheType() == PAGE_FACTORY_CACHE_DYNAMIC){
+						$page = $this->_transformCachedPage($doc, $tranformToXML);
+					} else {
 						$page = $this->_transformPage($doc, $tranformToXML);
-					/* }
+					}
+					/*
 					if(!PAGE_FACTORY_CACHE_DEBUG){
 						file_put_contents($this->template_cache_file, $page);
 					} */
@@ -184,6 +187,53 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		}
 	}
 
+	private function _transformCachedPage(DOMDocument $dom, $tranformToXML=true){
+		$xsl = new DOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
+		$xsl->preserveWhiteSpace = false;
+		$xsl->load(CORELIB.'/'.self::CACHE_PAGE_XSL);
+
+		$proc = new XsltProcessor();
+		$proc->importStylesheet($xsl);
+		$proc->registerPHPFunctions(__CLASS__.'::_rewriteCPath');
+
+		$doc = $proc->transformToDoc($dom);
+		$doc = $this->_transformPage($doc, $tranformToXML);
+		$code = preg_replace('/^(.*?)\n/s', '<?php echo \'\\1\'."\n"; ?>', $doc);
+		return $code;
+
+	}
+
+	public static function _rewriteCPath($path){
+		if(is_array($path)){
+			$path = $path[0];
+		}
+		if($path instanceof DOMAttr){
+			$path = $path->value;
+		}
+
+		$return = '';
+		$path = explode('/', $path);
+		if(empty($path[0])){
+			if(preg_match('/\[([0-9]+)\]/', $path[2], $match)){
+				$location = $match[1];
+			} else {
+				$location = 0;
+			}
+			$return .= '$this->'.$path[1].'[\''.preg_replace('/\[[0-9]+\]/', '', $path[2]).'\']['.$location.']';
+			array_shift($path);
+			array_shift($path);
+			array_shift($path);
+		} else {
+			$return .= '$current';
+		}
+		foreach($path as $item){
+			$return .= '->get'.$item.'()';
+		}
+
+
+		return $return;
+	}
+
 	protected function _prepareXML(){
 		$this->xml = new PageFactoryDOMXSLDOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$this->xml->preserveWhiteSpace = false;
@@ -197,101 +247,6 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		return true;
 	}
 
-	private function _xslRewrite(DOMDocument $dom, $transformToXML=true){
-		$this->_xslRewriteTemplates($dom);
-
-		$this->addParseToken(new PageFactoryDOMXSLParseTokenTemplate());
-		$this->addParseToken(new PageFactoryDOMXSLParseTokenDump());
-		$this->addParseToken(new PageFactoryDOMXSLParseTokenControlStructure());
-
-		$dom->formatOutput = true;
-		$page = $this->_transformPage($dom, true);
-
-		// remove un needed xmlns attributes
-		$page = preg_replace('/\s*xmlns:c=".*?"/',
-		                     '', $page);
-
-		// Rewrite xml version declaration to a valid php tag
-		$page = preg_replace('/\<\?xml(.*?)\?\>/',
-		                     '<?php echo \'<?xml\\1?>\'."\n"; ?>', $page);
-
-		while (list(,$val) = each($this->parse_tokens)) {
-			$page = $val->parse($page);
-		}
-		return $page;
-	}
-
-	private function _xslRewriteTemplates(DOMDocument $xml){
-		$templates = $this->_parseTemplates($this->xsl);
-		while (list(,$val) = each($templates[0])) {
-			$xml->documentElement->insertBefore($xml->importNode($val, true), $xml->documentElement->firstChild);
-		}
-		while (list(,$val) = each($templates[1])) {
-			$xml->documentElement->insertBefore($xml->importNode($val, true), $xml->documentElement->firstChild);
-		}
-	}
-	private function _parseTemplates(DOMDocument $xsl, $path=null, $call=array(), $match=array()){
-		if(is_null($path)){
-			$path = getcwd();
-		}
-
-		$imports = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_XSL_XMLNS, 'import');
-		$includes = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_XSL_XMLNS, 'include');
-		$templates = $xsl->documentElement->getElementsByTagNameNS(PAGE_FACTORY_DOMXSL_CACHE_XMLNS, 'template');
-
-		$stylesheets = array();
-		$templateElm = array('match'=>array(), 'name'=>array());
-
-		for ($i = 0; $template = $templates->item($i); $i++){
-			$nametpl = $template->getAttribute('name');
-			$matchtpl = $template->getAttribute('match');
-			if(empty($nametpl) && !empty($matchtpl)){
-				$match[$matchtpl] = $template;
-			} else if(!empty($nametpl)){
-				$call[$nametpl] = $template;
-			}
-		}
-
-		for ($i = 0; $import = $imports->item($i); $i++){
-			$stylesheets[] = $import->getAttribute('href');
-		}
-		for ($i = 0; $include = $includes->item($i); $i++){
-			$stylesheets[] = $include->getAttribute('href');
-		}
-
-		while (list(,$val) = each($stylesheets)) {
-			$val = $this->_relativeToPath($path, $val);
-			$xsl = new DOMDocument('1.0', 'UTF-8');
-			$xsl->createElement('stylesheet');
-			$xsl->load($val);
-			$templates = $this->_parseTemplates($xsl, $val, $call, $match);
-			$call = $templates[0];
-			$match = $templates[1];
-		}
-		return array($call, $match);
-	}
-	private function _relativeToPath($path, $relative){
-		if($relative{0} != '/'){
-			$filename = basename($relative);
-			$cwd = getcwd();
-			chdir(dirname($path));
-			chdir(dirname($relative));
-			$relative = getcwd();
-			chdir($cwd);
-			return $relative.'/'.$filename;
-		} else {
-			return $relative;
-		}
-	}
-
-	private function _xslRewriteParseForeachAs($as){
-		if(strstr($as, ',')){
-			list($key, $val) = explode(',', $as);
-			return '$'.trim($key).', $'.trim($val);
-		} else {
-			return ', $'.trim($as);
-		}
-	}
 }
 
 class PageFactoryDOMXSLDOMDocument extends DOMDocument {

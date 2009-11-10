@@ -1,6 +1,6 @@
 <?php
 class WebPage extends ManagerPage {
-	public function __construct(){ }
+	public function __init(){ }
 
 	public function build(){
 
@@ -10,6 +10,12 @@ class WebPage extends ManagerPage {
 		$manager = Manager::getInstance();
 		$resource = $manager->getResource($handler, $resource);
 		$extension = substr($resource, -3);
+
+		header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', filemtime($resource)));
+ 		header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+		header('Cache-Control: public, max-age=86400');
+		header('Pragma:');
+
 		switch ($extension){
 			case 'css':
 				header('Content-Type: text/css');

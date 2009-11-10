@@ -429,7 +429,7 @@ abstract class ManagerPage extends PageBase {
 	protected $xsl = null;
 	protected $post = null;
 
-	public function __construct(){
+	public function __init(){
 		if(!defined('CORELIB_MANAGER_USERNAME')){
 			define('CORELIB_MANAGER_USERNAME', 'admin');
 		}

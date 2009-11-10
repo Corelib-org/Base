@@ -1,17 +1,47 @@
 <?php
 class File {
+	/**
+	 * Absolute filename and path.
+	 *
+	 * @var string filename
+	 */
 	private $filename = null;
+	/**
+	 * File mime-type
+	 *
+	 * @var string mime-type
+	 */
 	private $mime_type = null;
+	/**
+	 * @var resource file-pointer
+	 */
 	private $pointer = null;
-	
+
+	/**
+	 * Create new file instance.
+	 *
+	 * @param string $file filename
+	 * @uses File::$filename
+	 * @return void
+	 */
 	public function __construct($file){
+		assert('is_string($file)');
+
 		if(!is_file($file)){
 			$this->filename = realpath(dirname($file)).'/'.$file;
-		} else {
+		} else if(!is_dir($file)){
 			$this->filename = realpath($file);
+		} else {
+			throw new BaseException();
 		}
 	}
-	
+
+	/**
+	 * Get filename
+	 *
+	 * @uses File::$filename
+	 * @return string filename
+	 */
 	public function getName(){
 		return basename($this->filename);
 	}
@@ -27,12 +57,12 @@ class File {
 	public function getSize(){
 		return filesize($this->getFullName());
 	}
-	
+
 
 	public function fopen($mode = 'r'){
 		$this->pointer = fopen($this->getFullName(), $mode);
 	}
-	
+
 	public function fseek($offset, $whence=SEEK_SET){
 		return fseek($this->pointer, $offset, $whence);
 	}
@@ -59,7 +89,7 @@ class File {
 			return false;
 		}
 	}
-	
+
 	public function cp($target){
 		$target = $this->_resolveTarget($target);
 		try {
@@ -94,11 +124,11 @@ class File {
 			echo $e;
 			return false;
 		}
-	}	
+	}
 	public function rm(){
 		return unlink($this->getFullName());
 	}
-	
+
 	protected function _resolveTarget($target){
 		if(is_dir($target)){
 			$target = realpath($target).'/'.$this->getName();

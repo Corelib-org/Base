@@ -5,7 +5,7 @@
  *
  * <i>No Description</i>
  *
- * This script is part of the corelib project. The corelib project is 
+ * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -40,11 +40,11 @@
 if(!defined('DATABASE_SHOW_QUERY_LOG')){
 	/**
 	 * Enable and disable query log.
-	 * 
-	 * if this is set to false, no logging will be performed, 
-	 * if set to true a query log will apear at the end of 
+	 *
+	 * if this is set to false, no logging will be performed,
+	 * if set to true a query log will apear at the end of
 	 * each page.
-	 * 
+	 *
 	 * Default: false
 	 */
 	define('DATABASE_SHOW_QUERY_LOG', false);
@@ -67,11 +67,11 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
 class Database implements Singleton {
 	/**
 	 * Singleton Object Reference.
-	 * 
+	 *
 	 * @var Database
 	 */
 	private static $instance = null;
-	
+
 	/**
 	 * @var string DAO Object prefix
 	 */
@@ -81,17 +81,17 @@ class Database implements Singleton {
 	 * @var DatabaseEngine slave connection
 	 */
 	private $slave = null;
-	
+
 	/**
 	 * @var DatabaseEngine master connection
 	 */
 	private $master = null;
-	
+
 	/**
 	 * Query log.
-	 * 
+	 *
 	 * Array containing a liste of executed queries
-	 * 
+	 *
 	 * @var array
 	 */
 	private $query_log = array();
@@ -100,13 +100,13 @@ class Database implements Singleton {
 	 * @ignore
 	 */
 	private function __construct(){ }
-	
+
 	/**
 	 * Return instance of Database.
 	 *
 	 * Please refer to the {@link Singleton} interface for complete
 	 * description.
-	 * 
+	 *
 	 * @uses Database
 	 * @return Database
 	 */
@@ -119,7 +119,7 @@ class Database implements Singleton {
 
 	/**
 	 * Get instance of specified DAO object.
-	 * 
+	 *
 	 * @uses Database::$dao_prefix
 	 * @return DatabaseDAO
 	 */
@@ -130,7 +130,7 @@ class Database implements Singleton {
 
 	/**
 	 * Connect to the master database.
-	 * 
+	 *
 	 * @uses Database::$dao_prefix
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::getPrefix()
@@ -147,22 +147,22 @@ class Database implements Singleton {
 
 	/**
 	 * Connect to a slave database.
-	 * 
+	 *
 	 * @uses Database::$slave
 	 * @param DatabaseEngine Database connection i use
-	 */	
+	 */
 	public function slaveConnect(DatabaseEngine $slave){
 		$this->slave = $slave;
 	}
-	
+
 	/**
 	 * Execute a query.
-	 * 
+	 *
 	 * When function is called it will detect if the statemant
 	 * is a selecting or modifying statement and the execute
 	 * the statement using the right connection, the master connection
 	 * for modifications and the slave connection for selection.
-	 * 
+	 *
 	 * @uses Database::masterQuery()
 	 * @uses Database::slaveQuery()
 	 * @uses Database::_error()
@@ -182,7 +182,7 @@ class Database implements Singleton {
 
 	/**
 	 * Execute a query using the master connection.
-	 * 
+	 *
 	 * @uses Database::$query
 	 * @uses Database::_runQuery()
 	 * @param Query $query Query to execute
@@ -195,9 +195,9 @@ class Database implements Singleton {
 
 	/**
 	 * Execute a query using the slave connection.
-	 * 
+	 *
 	 * WARNING: Do not send modifying queries using the connection.
-	 * 
+	 *
 	 * @uses Database::$query
 	 * @uses Database::_runQuery()
 	 * @param Query $query Query to execute
@@ -210,10 +210,10 @@ class Database implements Singleton {
 
 	/**
 	 * Run query on a specific data connection.
-	 * 
-	 * if a error occurs while running the 
+	 *
+	 * if a error occurs while running the
 	 * query {@link Database::_error()} is called
-	 * 
+	 *
 	 * @uses DATABASE_SHOW_QUERY_LOG
 	 * @uses BASE_RUNLEVEL
 	 * @uses BASE_RUNLEVEL_DEVEL
@@ -222,13 +222,13 @@ class Database implements Singleton {
 	 * @uses Database::_error()
 	 * @uses Exception::__toString()
 	 * @uses DatabaseEngine::analyse()
-	 * @uses DatabaseEngine::query() 
+	 * @uses DatabaseEngine::query()
 	 * @param DatabaseEngine $instance
 	 * @param Query $query
 	 * @return true on success, else false
 	 */
 	private function _runQuery(DatabaseEngine $instance, Query $query){
-		if(DATABASE_SHOW_QUERY_LOG && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
 			$start = microtime(true);
 			$instance->query($query);
 			$e = new Exception();
@@ -236,18 +236,18 @@ class Database implements Singleton {
 			                           'error' => array('code' => $query->getErrno(),
 			                                            'message' => $query->getError()),
 			                           'time' => round(microtime(true) - $start, 5),
-			                           'backtrace' => $e->__toString(),
+			                           'backtrace' => $e->getTraceAsString(),
 			                           'analysis' => $instance->analyse($query));
-			
+
 		} else {
 			$instance->query($query);
 		}
 		return $this->_error($query);
 	}
-	
+
 	/**
 	 * Handle database errors.
-	 * 
+	 *
 	 * @uses BaseException
 	 * @uses Query::getError()
 	 * @uses Query::getErrno()
@@ -268,7 +268,7 @@ class Database implements Singleton {
 
 	/**
 	 * Get DAO class prefix.
-	 * 
+	 *
 	 * @uses Database::$dao_prefix
 	 * @return string DAO class prefix
 	 */
@@ -278,7 +278,7 @@ class Database implements Singleton {
 
 	/**
 	 * Start database transaction.
-	 * 
+	 *
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::startTransaction()
 	 */
@@ -288,27 +288,27 @@ class Database implements Singleton {
 
 	/**
 	 * Commit database transaction.
-	 * 
+	 *
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::commit()
 	 */
 	public function commit(){
 		$this->master->commit();
 	}
-	
+
 	/**
 	 * Rollback database transaction.
-	 * 
+	 *
 	 * @uses Database::$master
 	 * @uses DatabaseEngine::rollback()
 	 */
 	public function rollback(){
 		$this->master->rollback();
 	}
-	
+
 	/**
 	 * Get query log.
-	 * 
+	 *
 	 * @uses Database::$query_log
 	 * @return array Content of {@link Database::$query_log}
 	 */
@@ -332,13 +332,13 @@ class Database implements Singleton {
 interface DatabaseEngine {
 	/**
 	 * Execute query.
-	 * 
-	 * @param Query $query 
+	 *
+	 * @param Query $query
 	 */
 	public function query(Query $query);
 	/**
 	 * Get DAO class prefix.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function getPrefix();
@@ -356,10 +356,10 @@ interface DatabaseEngine {
 	public function rollback();
 	/**
 	 * Analyse Query.
-	 * 
+	 *
 	 * Analyses a query and return a array with the results
 	 * The return array is a multi dimensional array
-	 * 
+	 *
 	 * @todo add output array example
 	 * @return array
 	 */
@@ -385,71 +385,71 @@ abstract class Query {
 	protected $query = null;
 	/**
 	 * Create new query object instance.
-	 * 
-	 * @param string $query 
+	 *
+	 * @param string $query
 	 */
 	public function __construct($query) {
 		$this->query = $query;
 	}
 	/**
 	 * Execute query.
-	 * 
+	 *
 	 * @return true on success, else return false
 	 */
 	abstract public function execute();
 	/**
 	 * Get query.
-	 * 
+	 *
 	 * @return string query
 	 */
 	abstract public function getQuery();
 	/**
 	 * Get error description.
-	 * 
+	 *
 	 * @return string error description
 	 */
 	abstract public function getError();
 	/**
 	 * Get error code.
-	 * 
+	 *
 	 * @return integer error code, else return false or 0
 	 */
 	abstract public function getErrno();
 	/**
 	 * Set database instance.
-	 * 
+	 *
 	 * Set database engine by passing the database connection resource
-	 * 
+	 *
 	 * @param mixed $instance
 	 */
 	abstract public function setInstance($instance);
 	/**
 	 * Get number of rows of select query.
-	 * 
+	 *
 	 * @return integer
 	 */
 	abstract public function getNumRows();
 	/**
 	 * Get last insert ID.
-	 * 
+	 *
 	 * @return integer row id, else return false
 	 */
 	abstract public function getInsertID();
 	/**
 	 * Fetch row as array from result.
-	 * 
+	 *
 	 * @return array row
 	 */
 	abstract public function fetchArray();
 	/**
 	 * Fetch fields from result.
-	 * 
+	 *
 	 * @return array fields
 	 */
 	abstract public function fetchFields();
 	/**
 	 * Get affected rows.
-	 * 
+	 *
 	 * return integer affected rows
 	 */
 	abstract public function getAffectedRows();
@@ -480,7 +480,7 @@ abstract class DatabaseDAO {
 
 	/**
 	 * Execute a query.
-	 * 
+	 *
 	 * @see Database::query()
 	 * @uses DatabaseDAO::$database
 	 */
@@ -489,7 +489,7 @@ abstract class DatabaseDAO {
 	}
 	/**
 	 * Execute a query using the master connection.
-	 * 
+	 *
 	 * @see Database::masterQuery()
 	 * @uses DatabaseDAO::$database
 	 */
@@ -498,7 +498,7 @@ abstract class DatabaseDAO {
 	}
 	/**
 	 * Execute a query using the slave connection.
-	 * 
+	 *
 	 * @see Database::slaveQuery();
 	 * @uses DatabaseDAO::$database
 	 */
@@ -507,7 +507,7 @@ abstract class DatabaseDAO {
 	}
 	/**
 	 * Start transaction.
-	 * 
+	 *
 	 * @uses DatabaseDAO::$database
 	 * @see Database::startTransaction()
 	 */
@@ -516,7 +516,7 @@ abstract class DatabaseDAO {
 	}
 	/**
 	 * Commit transaction.
-	 * 
+	 *
 	 * @uses DatabaseDAO::$database
 	 * @see Database::commit()
 	 */
@@ -525,14 +525,14 @@ abstract class DatabaseDAO {
 	}
 	/**
 	 * Rollback transaction.
-	 * 
+	 *
 	 * @uses DatabaseDAO::$database
 	 * @see Database::rollback()
 	 */
 	public function rollback(){
 		return $this->database->rollback();
 	}
-	
+
 	/**
 	 * @ignore
 	 */
@@ -555,7 +555,7 @@ abstract class DatabaseDAO {
  * Database print stats even.
  *
  * Draw query log when request ends
- * 
+ *
  * This {@link EventTypeHandler} is executed when {@link EventRequestEnd}
  * is triggered
  *
@@ -564,15 +564,15 @@ abstract class DatabaseDAO {
  */
 class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 	private $subject = null;
-	
+
 	/**
 	 * @see EventTypeHandler::getEventType();
 	 * @return string 'EventRequestEnd'
 	 */
 	public function getEventType(){
-		return 'EventRequestEnd';	
+		return 'EventRequestEnd';
 	}
-	
+
 	/**
 	 * @see EventTypeHandler::getEventType();
 	 */
@@ -581,15 +581,15 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 	}
 	/**
 	 * Echo query log.
-	 * 
-	 * @see EventTypeHandler::update(); 
+	 *
+	 * @see EventTypeHandler::update();
 	 */
 	public function update($update){
 		$log = Database::getInstance()->getQueryLog();
 		$duplicates = array();
 		$duplicate_count = 0;
 		$time = 0;
-		$result = '';		
+		$result = '';
 		foreach ($log as $key => $line){
 			$result .= '<div>';
 			$time += $line['time'];
@@ -601,15 +601,15 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.$line['time'].'s) <b>WARNING: DUPLICATED QUERY (#'.$duplicates[md5($line['query'])].')</b></u>';
 			}
 			$result .= '<br/><span style="color: #999999; font-size: 10px;">'.substr($line['query'], 0, 200).'</span></h2>';
-			
+
 			if($line['error']['code'] > 0){
 				$result .= '<h3>Error Code: '.$line['error']['code'].'</h3>';
 				$result .= '<p>'.$line['error']['message'].'</p>';
 			}
-			
+
 			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.$line['query'].'</pre><br/>';
-			
-			
+
+
 			if(is_array($line['analysis'])){
 				$result .= '<h3>Analysis</h3><table style="width: 100%; border-spacing: 0px; font-size: 11px;"><thead><tr>';
 				foreach ($line['analysis']['columns'] as $column){
@@ -620,19 +620,20 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 					$result .= '<tr>';
 					print_r($rows);
 					foreach ($rows as $columns){
-						
+
 						$result .= '<td style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$columns.'</td>';
 					}
 					$result .= '</tr>';
 				}
-				
-				
+
+
 				$result .= '</table><br/>';
 			}
 			$result .= '<h3>Backtrace</h3><pre>'.$line['backtrace'].'</pre><br/>';
 			$result .= '<hr/><br/></div></div>';
 		}
-		
+
+
 		echo '<div id="DatabaseQueryLog" style="text-align: left; width: 80%; margin: auto; background-color: #ffffef; padding: 20px;">';
 		echo '<h1>Query Log (Queries: '.sizeof($log).', Duplicates: '.$duplicate_count.', Time: '.$time.'s )</h1>';
 		echo $result;
@@ -640,6 +641,9 @@ class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
 	}
 }
 
+if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+	PageFactoryDeveloperToolbar::getInstance()->addItem(new DatabaseDeveloperToolbarQueryLog());
+}
 if(DATABASE_SHOW_QUERY_LOG && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
 	$eventHandler = EventHandler::getInstance();
 	$eventHandler->registerObserver(new DatabasePrintStatsEvent());

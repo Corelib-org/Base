@@ -5,7 +5,7 @@
  *
  * <i>No Description</i>
  *
- * This script is part of the corelib project. The corelib project is 
+ * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -38,13 +38,13 @@
 
 /**
  * Singleton interface
- * 
+ *
  * Use this interface for defining the base of all Singleton
  * classes, however since PHP does not allow us to to include
  * the specifics of the constructer, you have to remember to
  * set the constructor private to get the desired effect of a
  * singleton class.
- * 
+ *
  * @see http://en.wikipedia.org/wiki/Singleton_pattern
  */
 interface Singleton {
@@ -73,16 +73,17 @@ interface Output {
 	public function getXML(DOMDocument $xml);
 }
 
+
 /**
  * @see http://en.wikipedia.org/wiki/Decorator_pattern
  */
 abstract class Decorator {
 	protected $decorator = null;
-		
+
 	public function getDecorator(){
 		return $this->decorator;
 	}
-	
+
 	protected function buildXML(DOMDocument $xml, DOMElement $DOMNode){
 		if(!is_null($this->decorator)){
 			$DOMElement = $this->decorator->getXML($xml);
@@ -100,49 +101,49 @@ abstract class Decorator {
 abstract class Component {
 	/**
 	 * Child Components
-	 * 
+	 *
 	 * @var Array instantiated components
 	 */
 	protected $components = array();
-	
+
 	/**
 	 * Parent Component
-	 * 
+	 *
 	 * @var Component parent component
 	 */
-	protected $parent = null;	
-		
-	
+	protected $parent = null;
+
+
 	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
 		while(list(,$val) = each($this->components)){
 			$DOMnode->appendChild($val->getXML($xml));
 		}
 		reset($this->components);
 	}
-	
+
 	public function getComponentsArray(array &$array){
 		while(list(,$val) = each($this->components)){
 			$array[] = $val->getArray();
 		}
 		reset($this->components);
 	}
-	
+
 	public function removeComponents(){
 		$this->components = array();
 		return true;
 	}
-	
+
 	public function addComponent(Component $component){
 		$this->components[] = $component;
 		$component->setParentComponent($this);
 		return $component;
 	}
-	
+
 	public function setParentComponent(Component $component){
 		$this->parent = $component;
 		return $component;
 	}
-	
+
 	protected function _commitComponents($recursive=true){
 		if($recursive){
 			foreach ($this->components as $component){
@@ -150,9 +151,9 @@ abstract class Component {
 			}
 		}
 	}
-	
+
 	public function commit($recursive=true){
 		$this->_commitComponents($recursive);
-	}		
+	}
 }
 ?>

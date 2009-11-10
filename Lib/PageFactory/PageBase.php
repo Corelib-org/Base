@@ -21,9 +21,8 @@
  *	@link http://www.bravura.dk/
  *	@version 1.0.0 ($Id$)
  */
-
-define('PAGE_OUTPUT_CACHE_DYNAMIC', 0);
-define('PAGE_OUTPUT_CACHE_EXPIRE', 1);
+define('PAGE_OUTPUT_CACHE_DISABLED', 0);
+define('PAGE_OUTPUT_CACHE_DYNAMIC', 1);
 define('PAGE_OUTPUT_CACHE_STATIC', 2);
 
 abstract class PageBase {
@@ -34,14 +33,37 @@ abstract class PageBase {
 	private $args = array();
 	private $function = 'build';
 
+	/**
+	 * @var CacheManager
+	 */
+	private $cache = null;
+
+	public final function __construct(){
+
+	}
+
+	public function __init(){ }
+
 	abstract public function build();
 
-	public function addContent(Output $content, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
-		$this->content[] = array('content' => $content, 'cache'=>$cache, 'expire'=>$expire);
+	final public function setCacheManager(CacheManager $cache){
+		$this->cache = $cache;
+	}
+
+	public function addContent(Output $content, $cache=PAGE_OUTPUT_CACHE_DISABLED, $ttl=false){
+		if($cache == PAGE_OUTPUT_CACHE_DYNAMIC  && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
+			$this->cache->addDynamicContent($content);
+		} else {
+			$this->content[] = array('object' => $content, 'cache'=>$cache, 'ttl'=>$ttl);
+		}
 		return $content;
 	}
-	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DYNAMIC, $expire=false){
-		$this->settings[] = array('settings' => $settings, 'cache'=>$cache, 'expire'=>$expire);
+	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DISABLED, $ttl=false){
+		if($cache == PAGE_OUTPUT_CACHE_DYNAMIC  && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
+			$this->cache->addDynamicSettings($settings);
+		} else {
+			$this->settings[] = array('object' => $settings, 'cache'=>$cache, 'ttl'=>$ttl);
+		}
 		return $settings;
 	}
 	/**
@@ -75,26 +97,43 @@ abstract class PageBase {
 	 * @return boolean true on success else return false
 	 */
 	final public function draw(PageFactoryTemplateEngine $engine){
+
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
-			$event = EventHandler::getInstance();
-			$event->triggerEvent(new EventApplyDefaultSettings($this));
+			EventHandler::getInstance()->triggerEvent(new EventApplyDefaultSettings($this));
 
 			while(list(,$val) = each($this->content)){
-				$engine->addPageContent($val['content']);
+				if(($val['cache'] == PAGE_OUTPUT_CACHE_STATIC && !$this->cache->isCached()) || !PAGE_FACTORY_CACHE_ENABLE){
+					$this->_registerCacheInformation($val);
+				}
+				$engine->addPageContent($val['object']);
 			}
 			while(list(,$val) = each($this->settings)){
-				$engine->addPageSettings($val['settings']);
+				if(($val['cache'] == PAGE_OUTPUT_CACHE_STATIC && !$this->cache->isCached()) || !PAGE_FACTORY_CACHE_ENABLE){
+					$this->_registerCacheInformation($val);
+				}
+				$engine->addPageSettings($val['object']);
 			}
 			return true;
 		} else {
 			return false;
+		}
+		return true;
+	}
+
+	protected function isCached(){
+		return $this->cache->isCached() && $this->cache->getType() != PAGE_FACTORY_CACHE_STATIC;
+	}
+
+	private function _registerCacheInformation(array $item){
+		if($item['object'] instanceof CacheableOutput){
+			$this->cache->getCacheManagerOutput($item['object'], $item['cache'], $item['ttl']);
 		}
 	}
 
 	private function _getTemplateDefinition(PageFactoryTemplateEngine $engine){
 		try {
 			if(!isset($this->templates[$engine->getSupportedTemplateDefinition()])){
-				throw new BaseException('Unable to find template for given template engine', E_USER_ERROR);
+				throw new BaseException('Unable to find template for given template engine: '.$engine->getSupportedTemplateDefinition(), E_USER_ERROR);
 			} else {
 				return $this->templates[$engine->getSupportedTemplateDefinition()];
 			}

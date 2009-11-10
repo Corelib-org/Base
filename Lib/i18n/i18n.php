@@ -135,7 +135,7 @@ class i18n implements Singleton,Output {
 	}
 
 	public function addLanguageFilePath($filename){
-		// assert('is_string($filename) && is_file($filename)');
+		assert('is_string($filename) && is_file($filename)');
 		$this->language_files[] = $filename;
 	}
 
@@ -156,7 +156,11 @@ class i18n implements Singleton,Output {
 	}
 
 	public function getLanguage(){
-		return $this->current_language;
+		if(!is_null($this->current_language)){
+			return $this->current_language;
+		} else {
+			return $this->getDefaultLanguage();
+		}
 	}
 	public function getTimezone(){
 		return $this->timezone;
@@ -174,10 +178,15 @@ class i18n implements Singleton,Output {
 		return I18N_LANGUAGE_BASE.$this->getLanguage();
 	}
 
+	/**
+	 * @param string $language
+	 * @return boolean true if language excists, else return false
+	 */
 	public function setLanguage($language){
 		if(isset($this->languages[$language])){
 			$this->current_locale = $this->languages[$language];
 			$this->current_language = $language;
+			setlocale(LC_TIME, $this->current_locale);
 			setcookie($this->cookie_name, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 			return true;
 		} else {

@@ -1,25 +1,36 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- *	PageFactory Base Classes
+ *	PageFactory Base Classes.
  *
  *	<i>No Description</i>
  *
- *	LICENSE: This source file is subject to version 1.0 of the
- *	Bravura Distribution license that is available through the
- *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to
- *	license@bravura.dk so we can mail you a copy immediately.
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
  *
- * @author Steffen Sørensen <ss@corelib.org>
- * @copyright Copyright (c) 2006 Back in five minutes
- * @license http://www.bravura.dk/licence/corelib_1_0/
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @author Steffen Soerensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2009 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
  * @package corelib
  * @subpackage Base
  * @link http://www.corelib.org/
- * @version 1.0.0 ($Id$)
+ * @version 5.0.0 ($Id$)
+ * @filesource
  */
 
 if(!defined('PAGE_FACTORY_ENGINE')){
@@ -32,17 +43,50 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 		define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
 	}
 }
-if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
-	define('PAGE_FACTORY_CACHE_ENABLE', false);
-}
 if(!defined('PAGE_FACTORY_CLASS_NAME')){
+	/**
+	 * Define the default page class.
+	 *
+	 * This class is name of the class which {@link PageFactory}
+	 * looks for when loading pages.
+	 *
+	 * @var boolean string class name
+	 */
 	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
 }
+if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
+	/**
+	 * Enable or disable page caching.
+	 *
+	 * Should PageFactory do page caching?
+	 *
+	 * @var boolean true if enable, else false
+	 * @since Version 5.0
+	 */
+	define('PAGE_FACTORY_CACHE_ENABLE', false);
+}
+
 if(!defined('PAGE_FACTORY_CACHE_DEBUG')){
+	/**
+	 * Enable cache debugging
+	 *
+	 * If {@link PAGE_FACTORY_CACHE_ENABLE} is enabled and
+	 * this contant i set to boolean true it will cause PageFactory
+	 * to create a new cache file on each request.
+	 *
+	 * @see PAGE_FACTORY_CACHE_ENABLE
+	 * @var boolean true if enabled else false
+	 */
 	define('PAGE_FACTORY_CACHE_DEBUG', false);
 }
 if(!defined('PAGE_FACTORY_CACHE_DIR')){
-	define('PAGE_FACTORY_CACHE_DIR', 'var/db/cache/');
+	/**
+	 * Cache dir.
+	 *
+	 * @var string directory
+	 * @since Version 5.0
+	 */
+	define('PAGE_FACTORY_CACHE_DIR', 'var/cache/pages/');
 }
 if(!defined('PAGE_FACTORY_GET_FILE')){
 	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
@@ -56,10 +100,6 @@ if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
 if(!defined('PAGE_FACTORY_GET_TOKEN')){
 	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
 }
-if(!defined('PAGE_FACTORY_CACHE_DIR')){
-	define('PAGE_FACTORY_CACHE_DIR', 'var/cache/pages/');
-}
-
 
 define('PAGE_FACTORY_CACHE_STATIC', 1);
 define('PAGE_FACTORY_CACHE_DYNAMIC', 2);
@@ -75,11 +115,41 @@ interface PageFactoryPageResolver {
 }
 
 abstract class PageFactoryTemplate {
+	/**
+	 * Template init method
+	 *
+	 * This method allows for developers to do some initial actions
+	 * as soon as a template has been added to into to the template
+	 * engine, the template engine then return boolean true or false
+	 * based on if the init method returned true.
+	 *
+	 * @todo add some references and add more documentation
+	 * @return boolean true on success, else return false
+	 */
 	public function init(){
 		return true;
 	}
 
+	/**
+	 * Get supported template engine.
+	 *
+	 * Each template can support only one type of template engine,
+	 * this allows a single page to implement different template engines
+	 * for on the fly template interchange ability.
+	 *
+	 * @return string Supported template engine class name
+	 */
 	abstract public function getSupportedTemplateEngineName();
+
+	/**
+	 * Cleanup template before sending output.
+	 *
+	 * Do some last minute stuff before Pagefactory returns or
+	 * writes template engine output. This could be sending HTTP headers
+	 *
+	 * @todo this method should be renamed to something more saying
+	 * @return void
+	 */
 	abstract public function cleanup();
 }
 
@@ -93,8 +163,16 @@ abstract class PageFactoryTemplateEngine {
 	 */
 	protected $template = null;
 
+	/**
+	 * @var CacheManager
+	 */
+	private $cache = null;
+
 	public function build(PageBase $page, $callback=null){
+
 		$this->page = $page;
+		$this->page->setCacheManager($this->cache);
+
 		if(!is_null($callback)){
 			if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL && isset($_GET['CALLBACK'])){
 				echo $callback;
@@ -106,15 +184,27 @@ abstract class PageFactoryTemplateEngine {
 		}
 	}
 
+	protected function _getCacheType(){
+		return $this->cache->getType();
+	}
+	protected function _isCached(){
+		return $this->cache->isCached();
+	}
+
 	public function setTemplate(PageFactoryTemplate $template){
 		$this->template = $template;
 		return $this->template->init();
 	}
+
 	/**
 	 * @return PageFactoryTemplate
 	 */
 	public function getTemplate(){
 		return $this->template;
+	}
+
+	public function setCacheManager(CacheManager $cache){
+		$this->cache = $cache;
 	}
 
 	abstract public function draw();
@@ -146,20 +236,18 @@ class PageFactory implements Singleton {
 	 */
 	private $url = null;
 
-	private $cache = array('type' => PAGE_FACTORY_CACHE_DISABLED);
+	private $cache = null;
 
-	private $cache_file = null;
 
 	private $write_to_cache = false;
 
-	const TTL_FILE_SUFFIX = '.ttl';
 
 	/**
 	 * @return void
 	 */
 	private function __construct(){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemParseTimeCalculator());
+			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemExectutionTimeCalculator());
 		}
 
 		$engine = '$this->engine = new '.PAGE_FACTORY_ENGINE.'();';
@@ -184,13 +272,19 @@ class PageFactory implements Singleton {
 		if($dirname != '/'){
 			$this->url = preg_replace('/^'.str_replace('/', '\/', preg_quote($dirname)).'/', '', $this->url);
 		}
-		$this->cache_file = PAGE_FACTORY_CACHE_DIR.str_replace('/', '_', $_SERVER['REQUEST_URI']);
+		$this->cache = new CacheManager(PAGE_FACTORY_CACHE_DIR.str_replace('/', '_', $_SERVER['REQUEST_URI']));
+		$this->engine->setCacheManager($this->cache);
+
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemCacheStatus($this->cache));
+		}
 	}
 
 	/**
 	 * Get PageFactory instance.
 	 *
-	 *	@return PageFactory
+	 * @uses PageFactory::$instance
+	 * @return PageFactory
 	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
@@ -208,15 +302,31 @@ class PageFactory implements Singleton {
 	 * Please note that if a PHP have occured during the draw process the
 	 * will return false.
 	 *
-	 * @param $return boolean
+	 * In the end it will draw the DeveloperToolbar.
+	 *
+	 * @todo Developer toolbar still neads a lot of work especially when handling different kinds of output.
+	 * @param $return boolean if true return PageFactory output else print echo to browser
+	 * @since Version 5.0
+	 * @uses Eventhandler::triggerEvent()
+	 * @uses EventRequestStart
+	 * @uses EventRequestEnd
+	 * @uses PageFactory::resolvePageObject()
+	 * @uses PageFactory::getCacheType()
+	 * @uses PageFactory::draw()
+	 * @uses PAGE_FACTORY_CACHE_STATIC
+	 * @uses PAGE_FACTORY_CLASS_NAME
+	 * @uses BaseException::getErrorPage()
+	 * @uses BaseException::IsErrorThrown()
 	 * @return mixed string or boolean
 	 */
 	public static function bootstrap($return=false){
+		header('Content-Type: text/html');
+
 		$eventHandler = EventHandler::getInstance();
 		$eventHandler->triggerEvent(new EventRequestStart());
 
 		$page = PageFactory::getInstance();
-		$page->resolvePageObject();
+ 		$page->resolvePageController();
 
 		if($page->getCacheType() != PAGE_FACTORY_CACHE_STATIC){
 			try {
@@ -230,7 +340,6 @@ class PageFactory implements Singleton {
 			}
 		}
 
-		$data = false;
 		if(BaseException::IsErrorThrown()){
 			echo BaseException::getErrorPage();
 			$data = false;
@@ -242,53 +351,63 @@ class PageFactory implements Singleton {
 				$data = true;
 			}
 		}
-
 		$eventHandler->triggerEvent(new EventRequestEnd());
-
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
-			echo PageFactoryDeveloperToolbar::getInstance();
-		}
+		echo PageFactoryDeveloperToolbar::getInstance();
 		return $data;
 	}
 
 	/**
+	 * Add page resolver.
+	 *
 	 * @param string $ident
 	 * @param PageFactoryPageResolver $resolver
 	 * @return PageFactoryPageResolver on success else return boolean false
 	 */
 	public function addResolver($ident, PageFactoryPageResolver $resolver){
-		try {
-			StrictTypes::isString($ident);
-		} catch (BaseException $e){
-			echo $e;
-		}
+		assert('is_string($ident)');
 		$this->resolvers[$ident] = $resolver;
 		return $resolver;
 	}
 
+	/**
+	 * Resolve page object.
+	 *
+	 * Deprecated, use {@link PageFactory::resolvePageController()} instead
+	 *
+	 * @see PageFactory::resolvePageController();
+	 * @deprecated Since version 5.0
+	 * @return true if page object could be found
+	 */
 	public function resolvePageObject(){
+		return $this->resolvePageController();
+	}
+
+	/**
+	 * Resolve page controller.
+	 *
+	 * Use configuration page lookup tables to find the file containing
+	 * the page controller which controls the current url.
+	 * the default files for this is either {@link get.php} for get requests
+	 * and {@link post.php} for post requests.
+	 *
+	 * This function is used by older versions of the corelib Dummy, however
+	 * the corelib Dummy now uses {@link PageFactory::bootstrap()} instead
+	 *
+	 * @throws BaseException if no page object could be found.
+	 * @return true if page controller could be found
+	 * @since Version 5.0
+	 * @see PageFactory::bootstrap()
+	 */
+	public function resolvePageController(){
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once(PAGE_FACTORY_POST_FILE);
 		} else {
-			if(PAGE_FACTORY_CACHE_ENABLE && is_file($this->cache_file)){
-				if(is_file($this->cache_file.self::TTL_FILE_SUFFIX)){
-					$ttl = (int) file_get_contents($this->cache_file.self::TTL_FILE_SUFFIX);
-
-					if(time() > (filemtime($this->cache_file) + $ttl)){
-						unlink($this->cache_file);
-					}
-				}
-
-				if(is_file($this->cache_file)){
-					if(!is_executable($this->cache_file)){
-						$this->cache = array('type' => PAGE_FACTORY_CACHE_STATIC,
-						                     'file' => $this->cache_file);
-					} else {
-						$this->cache = array('type' => PAGE_FACTORY_CACHE_DYNAMIC,
-						                     'file' => $this->cache_file);
-					}
+			if(PAGE_FACTORY_CACHE_ENABLE && $this->cache->isCached() && !PAGE_FACTORY_CACHE_DEBUG){
+				if(!is_executable($this->cache->getFilename())){
+					$this->cache->setType(PAGE_FACTORY_CACHE_STATIC);
 					return true;
 				} else {
+					$this->cache->setType(PAGE_FACTORY_CACHE_DYNAMIC);
 					include_once(PAGE_FACTORY_GET_FILE);
 				}
 			} else {
@@ -301,7 +420,6 @@ class PageFactory implements Singleton {
 			$manager->init();
 			$manager->setupPageRegistry($pages);
 		}
-
 
 		if(!isset($pages[$this->url])){
 			if(isset($pages)){
@@ -329,6 +447,8 @@ class PageFactory implements Singleton {
 					}
 				}
 			}
+
+
 
 			try {
 				if(!isset($pages['/404/'])){
@@ -363,8 +483,23 @@ class PageFactory implements Singleton {
 		return true;
 	}
 
+	/**
+	 * Get current caching type.
+	 *
+	 * @uses PAGE_FACTORY_CACHE_DEBUG
+	 * @uses PAGE_FACTORY_CACHE_ENABLE
+	 * @uses PAGE_FACTORY_CACHE_DYNAMIC
+	 * @uses CacheManager::isCached()
+	 * @uses CacheManager::getType()
+	 * @uses PageFactory::$cache
+	 * @return integer Cache type
+	 */
 	public function getCacheType(){
-		return $this->cache['type'];
+		if(PAGE_FACTORY_CACHE_ENABLE && !PAGE_FACTORY_CACHE_DEBUG && $this->cache->isCached()){
+			return $this->cache->getType();
+		} else {
+			return PAGE_FACTORY_CACHE_DYNAMIC;
+		}
 	}
 
 
@@ -373,14 +508,14 @@ class PageFactory implements Singleton {
 	 * @return void
 	 */
 	private function _setCacheSettings(array $page){
-		if(isset($page['cache']) && $page['cache'] == PAGE_FACTORY_CACHE_STATIC){
-			if(!is_dir(dirname($this->cache_file))){
-				mkdir(dirname($this->cache_file), 0777, true);
+		if(isset($page['cache'])){
+			$this->cache->setType($page['cache']);
+			if(isset($page['ttl'])){
+				$this->cache->setTTL($page['ttl']);
 			}
 			$this->write_to_cache = true;
-			if(isset($page['ttl'])){
-				file_put_contents($this->cache_file.self::TTL_FILE_SUFFIX, $page['ttl']);
-			}
+		} else {
+			$this->cache->setType(PAGE_FACTORY_CACHE_DISABLED);
 		}
 	}
 
@@ -389,6 +524,8 @@ class PageFactory implements Singleton {
 	 * @return void
 	 */
 	public function build(PageBase $page){
+		$page->setCacheManager($this->cache);
+		$page->__init();
 		$this->engine->build($page, $this->callback);
 	}
 
@@ -397,20 +534,28 @@ class PageFactory implements Singleton {
 	 * @return mixed
 	 */
 	public function draw($return=false){
-		if($this->cache['type'] == PAGE_FACTORY_CACHE_STATIC){
+		if($this->getCacheType() == PAGE_FACTORY_CACHE_STATIC && $this->cache->isCached()){
 			if($return){
-				return file_get_contents($this->cache['file']);
+				return $this->cache->read();
 			} else {
-				echo file_get_contents($this->cache['file']);
+				echo $this->cache->read();
 			}
 		} else {
-			$content = $this->engine->draw();
-			if($template = $this->engine->getTemplate()){
-				$template->cleanup();
+			if(!($this->getCacheType() == PAGE_FACTORY_CACHE_DYNAMIC && $this->cache->isCached()) || !PAGE_FACTORY_CACHE_ENABLE){
+				$content = $this->engine->draw();
+				if($template = $this->engine->getTemplate()){
+					$template->cleanup();
+				}
+				if($this->write_to_cache && PAGE_FACTORY_CACHE_ENABLE){
+					$this->cache->setData($content);
+				}
 			}
-			if($this->write_to_cache){
-				file_put_contents($this->cache_file, $content);
+
+			if($this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
+				echo $this->cache->read();
+				return true;
 			}
+
 			if($return){
 				return $content;
 			} else {
@@ -418,6 +563,7 @@ class PageFactory implements Singleton {
 				return true;
 			}
 		}
+
 	}
 }
 
@@ -428,7 +574,7 @@ class PageFactory implements Singleton {
  * @package corelib
  * @subpackage Base
  */
-class PageFactoryDeveloperToolbarItemParseTimeCalculator extends PageFactoryDeveloperToolbarItem {
+class PageFactoryDeveloperToolbarItemExectutionTimeCalculator extends PageFactoryDeveloperToolbarItem {
 	private $start = null;
 
 	public function __construct(){
@@ -436,7 +582,7 @@ class PageFactoryDeveloperToolbarItemParseTimeCalculator extends PageFactoryDeve
 	}
 
 	public function getToolbarItem(){
-		return '<img src="corelib/resource/manager/images/page/icons/toolbar/parsetime.png" alt="parsetime" title="Page parsetime"/> '.round((microtime(true) - $this->start), 4).' s.';
+		return '<img src="corelib/resource/manager/images/page/icons/toolbar/parsetime.png" alt="parsetime" title="Page execution time"/> '.(round((microtime(true) - $this->start) , 4) * 1000).' ms.';
 	}
 
 	public function getContent(){

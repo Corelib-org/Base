@@ -114,8 +114,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 
 		if(is_null($this->location)){
-			header('Content-MD5: '.md5(ob_get_contents()));
-
 			header('Content-Location: '. $this->request_uri);
 
 			$type = $this->content_type;
@@ -147,11 +145,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		return $this->expires = $timestamp;
 	}
 	public function setContentType($content_type){
-		try {
-			StrictTypes::isString($content_type);
-		} catch (BaseException $e){
-			echo $e;
-		}
+		assert('is_string($content_type)');
 		return $this->content_type = $content_type;
 	}
 	public function setContentCharset($charset){

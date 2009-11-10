@@ -87,16 +87,36 @@ class PageFactoryDeveloperToolbar implements Singleton {
 	}
 
 	public function __toString(){
-		$toolbar = '';
-		foreach($this->items as $item){
-			if(!$content = $item->getContent()){
-				$toolbar .= $item->getToolbarItem().' ';
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
+			$headers = headers_list();
+			$show_bar = false;
+			foreach($headers as $header){
+				if(stristr($header, 'Content-Type') && stristr($header, 'text/html')){
+					$show_bar = true;
+					break;
+				}
+			}
+
+			if($show_bar){
+				$data = '';
+				$toolbar = '';
+				foreach($this->items as $item){
+					$id = 'developer-toolbar-'.RFC4122::generate();
+					$tool = $item->getToolbarItem();
+					if($content = $item->getContent()){
+						$toolbar .= '<a onclick="if(document.getElementById(\''.$id.'\').style.display == \'none\'){ document.getElementById(\''.$id.'\').style.display = \'block\' } else { document.getElementById(\''.$id.'\').style.display = \'none\' }">'.$tool.'</a	> &nbsp; ';
+						$data .= '<div id="'.$id.'" style="display: none;">'.$content.'</div>';
+					} else {
+						$toolbar .= $tool.'  &nbsp;  ';
+					}
+				}
+
+				$output  = '<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/toolbar.css" />';
+				$output .= '<div id="developer-toolbar"><div class="toolbar">'.$toolbar.'</div><div class="data">'.$data.'</div></div>';
+				return $output;
 			}
 		}
-
-		$output  = '<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/toolbar.css" />';
-		$output .= '<div id="developer-toolbar"><div class="toolbar">'.$toolbar.'</div></div>';
-		return $output;
+		return '';
 	}
 }
 

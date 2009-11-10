@@ -39,9 +39,9 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	private $custom_cache_string = null;
 
 	private $registered_php_functions = false;
-	
+
 	private $output_converter = null;
-	
+
 	const TEMPLATE_ENGINE = 'PageFactoryDOMXSL';
 
 	const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
@@ -70,7 +70,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	public function setCoreXSLT($xslcore){
 		$this->xsl_core = $xslcore;
 	}
-	
+
 	public function getRegisteredPHPFunctions(){
 		return $this->registered_php_functions;
 	}
@@ -89,6 +89,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 		$this->xsl_templates[] = $template;
 	}
+
 	public function buildCoreTemplate(DOMDocument $xsl){
 		while(list(,$val) = each($this->xsl_templates)){
 			$XSLinclude = $xsl->documentElement->appendChild($xsl->createElementNS(self::XSL_NAMESPACE_URI, 'xsl:include'));
@@ -99,7 +100,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	public function registerPHPFunctions(array $functions){
 		$this->registered_php_functions = $functions;
 	}
-	
+
 	public function setXMLVersion($version){
 		$this->xml_version = $version;
 		try {
@@ -133,7 +134,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	public function getOutputConverter(){
 		return $this->output_converter;
 	}
-	
+
 	public function getPageCacheString(){
 		if(is_null($this->custom_cache_string)){
 			$this->custom_cache_string = sha1($this->getScriptUri().serialize($this->xsl_templates).$this->xsl_core);

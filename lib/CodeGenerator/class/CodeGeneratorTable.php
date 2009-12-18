@@ -67,9 +67,33 @@ class CodeGeneratorTable {
 	 * Columns in table.
 	 *
 	 * @var array columns in table
+	 * @internal
 	 */
 	private $columns = array();
 
+	/**
+	 * indexes in table.
+	 *
+	 * @var array indexes in table
+	 * @internal
+	 */
+	private $indexes = array();
+
+	/**
+	 * Name resolver.
+	 *
+	 * @var CodeGeneretorNameResolver
+	 * @internal
+	 */
+	private $resolver = null;
+
+	/**
+	 * Primary key.
+	 *
+	 * @var CodeGeneratorIndex
+	 * @internal
+	 */
+	private $primary = null;
 
 	//*****************************************************************//
 	//*************** CodeGenrator Table Class Methods ****************//
@@ -78,11 +102,14 @@ class CodeGeneratorTable {
 	 * Create new table instance.
 	 *
 	 * @uses CodeGeneratorTable::$name
+	 * @uses CodeGeneratorTable::$resolver
+	 * @uses CodeGeneretorNameResolver::getInstance()
 	 * @param string $table Table name
 	 * @return void
 	 */
 	public function __construct($name){
 		$this->name = $name;
+		$this->resolver = CodeGeneretorNameResolver::getInstance();
 	}
 
 	/**
@@ -96,6 +123,42 @@ class CodeGeneratorTable {
 	}
 
 	/**
+	 * Get class variable name.
+	 *
+	 * @uses CodeGeneratorTable::$resolver
+	 * @uses CodeGeneretorNameResolver::getClassVariable()
+	 * @return string class variable
+	 */
+	public function getClassVariable(){
+		$variable = $this->getClassName();
+		$variable = preg_replace('/([a-z])([A-Z])/', '\\1_\\2', $variable);
+		$variable = strtolower($variable);
+		return $variable;
+	}
+
+	/**
+	 * Get class name.
+	 *
+	 * @uses CodeGeneratorTable::$resolver
+	 * @uses CodeGeneretorNameResolver::getClassName()
+	 * @return string class name
+	 */
+	public function getClassName(){
+		return $this->resolver->getClassName($this);
+	}
+
+	/**
+	 * Get column count.
+	 *
+	 * Count the number of columns in talbe.
+	 *
+	 * @return integer column count
+	 */
+	public function countColumns(){
+		return count($this->columns);
+	}
+
+	/**
 	 * Iterate over table columns.
 	 *
 	 * Do iteration over table columns and return a object representing
@@ -104,7 +167,7 @@ class CodeGeneratorTable {
 	 * @uses CodeGeneratorTable::$columns
 	 * @return CodeGeneratorColumn table column
 	 */
-	public function each(){
+	public function eachColumn(){
 		if($column = each($this->columns)){
 			return $column;
 		} else {
@@ -122,5 +185,55 @@ class CodeGeneratorTable {
 	 */
 	public function addColumn($column){
 		return $this->columns[$column] = new CodeGeneratorColumn($this, $column);
+	}
+
+	/**
+	 * Add index to index list
+	 *
+	 * @uses CodeGeneratorTable::$indexes
+	 * @param string $indexname index name
+	 * @return CodeGeneratorIndex
+	 */
+	public function addIndex($column){
+		return $this->indexes[$column] = new CodeGeneratorIndex($this, $column);
+	}
+
+	/**
+	 * Set primary key.
+	 *
+	 * @uses CodeGeneratorTable::$primary
+	 * @param CodeGeneratorIndex $index
+	 * @return CodeGeneratorIndex
+	 */
+	public function setPrimaryKey(CodeGeneratorIndex $index){
+		return $this->primary = $index;
+	}
+
+	/**
+	 * Get primary key.
+	 *
+	 * @uses CodeGeneratorTable::$primary
+	 * @return CodeGeneratorIndex
+	 */
+	public function getPrimaryKey(){
+		return $this->primary;
+	}
+
+	/**
+	 * Iterate over table indexes.
+	 *
+	 * Do iteration over table indexes and return a object representing
+	 * each index.
+	 *
+	 * @uses CodeGeneratorTable::$indexes
+	 * @return CodeGeneratorIndex table column
+	 */
+	public function eachIndex(){
+		if($index = each($this->indexes)){
+			return $index;
+		} else {
+			reset($this->indexes);
+			return false;
+		}
 	}
 }

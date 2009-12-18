@@ -40,7 +40,7 @@
 /**
  * CodeGenerator table column.
  *
- * The code generator represents a table  column in a relations database.
+ * The code generator represents a table column in a relations database.
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @package Base
@@ -123,15 +123,24 @@ class CodeGeneratorColumn {
 	 */
 	private $values = false;
 
+	/**
+	 * Name resolver.
+	 *
+	 * @var CodeGeneretorNameResolver
+	 */
+	private $resolver = null;
+
+	/**
+	 * Name reference.
+	 *
+	 * @var string reference column name
+	 */
+	private $reference = null;
+
 
 	//*****************************************************************//
 	//********** CodeGenrator Table Column Class constants ************//
 	//*****************************************************************//
-	/**
-	 * @var integer column type class
-	 */
-	const TYPE_CLASS = 1;
-
 	/**
 	 * @var integer column type string
 	 */
@@ -169,6 +178,14 @@ class CodeGeneratorColumn {
 	 * @var integer column smart type seconds
 	 */
 	const SMARTTYPE_SECONDS = 1004;
+	/**
+	 * @var integer column smart type timestamp set on create
+	 */
+	const SMARTTYPE_TIMESTAMP_SET_ON_CREATE = 1005;
+	/**
+	 * @var integer column smart type sort order
+	 */
+	const SMARTTYPE_SORT_ORDER = 1006;
 
 
 	/**
@@ -204,6 +221,7 @@ class CodeGeneratorColumn {
 		if(assert('is_string($name)')){
 			$this->table = $table;
 			$this->name = $name;
+			$this->resolver = CodeGeneretorNameResolver::getInstance();
 		} else {
 			throw new BaseException('$name is not a string', E_USER_ERROR);
 		}
@@ -337,5 +355,190 @@ class CodeGeneratorColumn {
 	public function setValues(array $values){
 		$this->values = $values;
 		return true;
+	}
+
+	/**
+	 * Set reference.
+	 *
+	 * @param string $reference reference column name
+	 * @uses CodeGeneratorColumn::$reference
+	 * @return boolean true if succesfull, else return false
+	 */
+	public function setReference($reference){
+		$this->reference = $reference;
+		return true;
+	}
+
+	/**
+	 * Get column name.
+	 *
+	 * @uses CodeGeneratorColumn::$name
+	 * @return string column name
+	 */
+	public function getName(){
+		return $this->name;
+	}
+
+	/**
+	 * Get table instance.
+	 *
+	 * @uses CodeGeneratorColumn::$table
+	 * @return CodeGeneratorTable
+	 */
+	public function getTable(){
+		return $this->table;
+	}
+
+	/**
+	 * Get reference column.
+	 *
+	 * @uses CodeGeneratorColumn::$reference
+	 * @return string
+	 */
+	public function getReference(){
+		return $this->reference;
+	}
+
+	/**
+	 * Get index type.
+	 *
+	 * @uses CodeGeneratorColumn::$key
+	 * @return integer
+	 */
+	public function getKey(){
+		return $this->key;
+	}
+
+	/**
+	 * Get reference class.
+	 *
+	 * @uses CodeGeneratorColumn::$resolver
+	 * @uses CodeGeneretorNameResolver::getReferenceClassName()
+	 * @return string class name
+	 */
+	public function getReferenceClassName(){
+		return $this->resolver->getReferenceClassName($this);
+	}
+
+	/**
+	 * Get column default value.
+	 *
+	 * @uses CodeGeneratorColumn::$default
+	 * @return string column default value
+	 */
+	public function getDefault(){
+		return $this->default;
+	}
+
+	/**
+	 * Get column smart type.
+	 *
+	 * @uses CodeGeneratorColumn::$smarttype
+	 * @return integer column smarttype
+	 */
+	public function getSmartType(){
+		return $this->smarttype;
+	}
+
+	/**
+	 * Get column type.
+	 *
+	 * @uses CodeGeneratorColumn::$type
+	 * @return integer column type
+	 */
+	public function getType(){
+		return $this->type;
+	}
+
+	/**
+	 * Get field constant name.
+	 *
+	 * @uses CodeGeneratorColumn::$resolver
+	 * @uses CodeGeneretorNameResolver::getFieldConstantName()
+	 * @return string field constant name
+	 */
+	public function getFieldConstantName(){
+		return $this->resolver->getFieldConstantName($this);
+	}
+
+	/**
+	 * Get field variable name.
+	 *
+	 * @uses CodeGeneratorColumn::$resolver
+	 * @uses CodeGeneretorNameResolver::getFieldVariableName()
+	 * @return string field constant name
+	 */
+	public function getFieldVariableName(){
+		return $this->resolver->getFieldVariableName($this);
+	}
+
+	/**
+	 * Get field readable variable name.
+	 *
+	 * @uses CodeGeneratorColumn::$resolver
+	 * @uses CodeGeneretorNameResolver::getFieldVariableName()
+	 * @return string field constant name
+	 */
+	public function getFieldReadableVariableName(){
+		return str_replace('_', '-', $this->resolver->getFieldVariableName($this));
+	}
+
+	/**
+	 * Get field method name.
+	 *
+	 * @uses CodeGeneratorColumn::$resolver
+	 * @uses CodeGeneretorNameResolver::getFieldMethodName()
+	 * @return string field method name
+	 */
+	public function getFieldMethodName(){
+		return $this->resolver->getFieldMethodName($this);
+	}
+
+
+	/**
+	 * Check and see if column i writable.
+	 *
+	 * @return boolean true if writeable, else return false
+	 */
+	public function isWritable(){
+		return !$this->readonly;
+	}
+
+	/**
+	 * Check if column is a foreign key
+	 *
+	 * @return boolean true if column is a foreign key, else return false
+	 */
+	public function isForeignKey(){
+		return $this->resolver->isColumnForeignKey($this);
+	}
+
+	/**
+	 * count enum values.
+	 *
+	 * @uses CodeGeneratorTable::$values
+	 * @return integer values count
+	 */
+	public function countValues(){
+		return count($this->values);
+	}
+
+	/**
+	 * Iterate over column enum values.
+	 *
+	 * Do iteration over column values and return a array
+	 *
+	 * @uses CodeGeneratorTable::$values
+	 * @return string column enum value
+	 */
+	public function eachValues(){
+		if(is_array($this->values)){
+			if($value = each($this->values)){
+				return $value;
+			} else {
+				reset($this->values);
+				return false;
+			}
+		}
 	}
 }

@@ -37,6 +37,15 @@
 //*****************************************************************//
 //******************* CodeGeneratorModel class ********************//
 //*****************************************************************//
+/**
+ * CodeGenerator model plugin.
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @package Base
+ * @subpackage CodeGenerator
+ * @category corelib
+ * @since Version 5.0
+ */
 class CodeGeneratorModel extends CodeGeneratorPlugin {
 
 

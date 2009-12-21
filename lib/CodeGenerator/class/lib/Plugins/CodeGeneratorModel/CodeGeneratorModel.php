@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Code generator model plugin definition class.
+ * Corelib Code generator gui plugin definition class.
  *
  * <i>No Description</i>
  *
@@ -35,10 +35,10 @@
  */
 
 //*****************************************************************//
-//******************* CodeGeneratorModel class ********************//
+//******************** CodeGeneratorGUI class *********************//
 //*****************************************************************//
 /**
- * CodeGenerator model plugin.
+ * CodeGenerator gui plugin.
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @package Base
@@ -46,7 +46,7 @@
  * @category corelib
  * @since Version 5.0
  */
-class CodeGeneratorModel extends CodeGeneratorPlugin {
+class CodeGeneratorGUI extends CodeGeneratorPlugin {
 
 
 	//*****************************************************************//
@@ -55,11 +55,6 @@ class CodeGeneratorModel extends CodeGeneratorPlugin {
 	/**
 	 * Init plugin.
 	 *
-	 * Initiate plugin and add {@link CodeGeneratorModelFile}
-	 * and {@link CodeGeneratorModelFileDAOMySQLi} to code genrator queue
-	 *
-	 * @uses CodeGeneratorModelFile
-	 * @uses CodeGeneratorModelFileDAOMySQLi
 	 * @return void
 	 */
 	public function init(){

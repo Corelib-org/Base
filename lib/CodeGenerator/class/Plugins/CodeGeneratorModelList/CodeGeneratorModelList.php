@@ -37,7 +37,7 @@
 //*****************************************************************//
 //******************* CodeGeneratorModel class ********************//
 //*****************************************************************//
-class CodeGeneratorModel extends CodeGeneratorPlugin {
+class CodeGeneratorModelList extends CodeGeneratorPlugin {
 
 
 	//*****************************************************************//
@@ -46,16 +46,16 @@ class CodeGeneratorModel extends CodeGeneratorPlugin {
 	/**
 	 * Init plugin.
 	 *
-	 * Initiate plugin and add {@link CodeGeneratorModelFile}
-	 * and {@link CodeGeneratorModelFileDAOMySQLi} to code genrator queue
+	 * Initiate plugin and add {@link CodeGeneratorModelListFile} and
+	 * {@link CodeGeneratorModelListFileDAOMySQLi} to code genrator queue
 	 *
-	 * @uses CodeGeneratorModelFile
-	 * @uses CodeGeneratorModelFileDAOMySQLi
+	 * @uses CodeGeneratorModelListFile
+	 * @uses CodeGeneratorModelListFileDAOMySQLi
 	 * @return void
 	 */
 	public function init(){
-		$file = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFile', $this->settings));
-		$dao = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFileDAOMySQLi', $this->settings));
+		$this->_addFile($this->_createFileInstance('CodeGeneratorModelListFile', $this->settings));
+		$this->_addFile($this->_createFileInstance('CodeGeneratorModelListFileDAOMySQLi', $this->settings));
 	}
 }
 ?>

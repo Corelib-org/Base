@@ -121,7 +121,7 @@ class CodeGeneratorColumn {
 	/**
 	 * @var array enum values
 	 */
-	private $values = false;
+	private $values = array();
 
 	/**
 	 * Name resolver.
@@ -502,6 +502,15 @@ class CodeGeneratorColumn {
 	 */
 	public function isWritable(){
 		return !$this->readonly;
+	}
+
+	/**
+	 * Check and see if column is sortable.
+	 *
+	 * @return boolean true if sotable, else return false
+	 */
+	public function isSortable(){
+		return $this->sortable;
 	}
 
 	/**

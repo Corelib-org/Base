@@ -220,6 +220,19 @@ class CodeGeneratorTable {
 	}
 
 	/**
+	 * Get table readable variable name.
+	 *
+	 * @uses CodeGeneratorColumn::$resolver
+	 * @uses CodeGeneretorNameResolver::getFieldVariableName()
+	 * @return string field constant name
+	 */
+	public function getTableReadableVariableName(){
+		return str_replace('_', '-', $this->getClassVariable());
+	}
+
+
+
+	/**
 	 * Iterate over table indexes.
 	 *
 	 * Do iteration over table indexes and return a object representing

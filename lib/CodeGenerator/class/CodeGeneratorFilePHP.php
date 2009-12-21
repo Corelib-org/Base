@@ -66,7 +66,7 @@ abstract class CodeGeneratorFilePHP extends CodeGeneratorFile {
 	 * @return CodeGeneratorCodeBlockPHP if block exist, else return false
 	 */
 	protected function _getCodeBlock(&$source, $block, $prefix='/*', $suffix='*/'){
-		$block = new CodeGeneratorCodeBlockPHP($source, $block, $prefix='/*', $suffix='*/' );
+		$block = new CodeGeneratorCodeBlockPHP($source, $block, $prefix, $suffix);
 		if($block->exist()){
 			return $block;
 		} else {

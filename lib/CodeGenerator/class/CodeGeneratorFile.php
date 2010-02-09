@@ -91,6 +91,11 @@ abstract class CodeGeneratorFile implements Output {
 	private $filename = null;
 
 	/**
+	 * @var DOMElement settings
+	 */
+	protected $settings = null;
+
+	/**
 	 * @var string write results
 	 */
 	private $write_result = null;
@@ -193,11 +198,21 @@ abstract class CodeGeneratorFile implements Output {
 	/**
 	 * Get genertor settings.
 	 *
-	 * @uses CodeGeneratorFile::$settings
-	 * @return DOMElement
+	 * @uses CodeGeneratorFile::$group
+	 * @return string group name
 	 */
 	public function getSettings(){
 		return $this->settings;
+	}
+
+	/**
+	 * Get genertor group.
+	 *
+	 * @uses CodeGeneratorFile::$settings
+	 * @return DOMElement
+	 */
+	public function getGroup(){
+		return $this->group;
 	}
 
 
@@ -409,6 +424,10 @@ abstract class CodeGeneratorFile implements Output {
 		$diff = trim(`$diff`);
 		unlink($tempfile);
 		return $diff;
+	}
+
+	protected function _getReadableGroup($group){
+		return strtolower(preg_replace('/([a-z])([A-Z])/', '\\1-\\2', $group));
 	}
 }
 ?>

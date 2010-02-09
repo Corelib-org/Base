@@ -107,26 +107,6 @@ class CodeGeneratorCodeBlockPHP extends CodeGeneratorCodeBlock {
 		return preg_match('/(private|protected|public)\s*function\s*'.preg_quote($method, '/').'\s*\(.*?\)\s*\{/ms', $this->getSource());
 	}
 
-	/**
-	 * Has statement regex
-	 *
-	 * @param string $regex
-	 * @return boolean true if statement exists, else return false
-	 */
-	public function hasStatementRegex($regex){
-		return preg_match($regex, $this->getSource());
-	}
-
-	/**
-	 * Has statement
-	 *
-	 * @param string $statement
-	 * @return boolean true if statement exists, else return false
-	 */
-	public function hasStatement($statement){
-		return $this->hasStatementRegex('/'.preg_replace('/\s/', '\s*', preg_quote($statement, '/')).'/ms');
-	}
-
 }
 
 

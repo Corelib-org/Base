@@ -91,6 +91,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		$this->_writeColumnConstants($this->content);
 		$this->_writeProperties($this->content);
 		$this->_writeEnumConstants($this->content);
+		$this->_writeElement($this->content);
 		$this->_writeGetters($this->content);
 		$this->_writeSetters($this->content);
 		$this->_writeConverters($this->content);
@@ -228,7 +229,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 					                    CodeGeneratorColumn::SMARTTYPE_TIMESTAMP_SET_ON_CREATE);
 
 					if($converters > 0 || in_array($column->getSmartType(), $smarttypes)){
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$column->getFieldVariableName().')'));
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$this->_makeConverterVariableName($column).')'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$this->_makeConverterVariableName($column).'->convert($this->'.$column->getFieldVariableName().');'));
 
 						$g = $if->addAlternate();
@@ -311,7 +312,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 							$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$key->getFieldVariableName()));
 							if($class = $this->_getReferenceClass($key)){
 								$param->setType($class);
-								$parameters[] = '$'.$key->getFieldVariableName().'->getID()';
+								$parameters[] = '$'.$key->getFieldVariableName(); // ->getID() removed for compatability with isavailable methods
 								$sethandler[] = new CodeGeneratorCodeBlockPHPStatement('$this->datahandler->set(self::'.$key->getFieldConstantName().', $'.$key->getFieldVariableName().'->getID());');
 								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' $'.$key->getFieldVariableName()));
 							} else {
@@ -458,6 +459,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		if($block = $this->_getCodeBlock($content, 'Get XML method')){
 			$xpath = new DOMXPath($this->getSettings()->ownerDocument);
 			while(list(,$column) = $this->getTable()->eachColumn()){
+
 				$property = $column->getFieldVariableName();
 				if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property.'\s*\).*?\{/')){
 					$reference_class = $xpath->query('field[@name = "'.$column->getName().'" and @reference-class=true()]', $this->getSettings());
@@ -566,6 +568,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
 						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
 					}
+					$methodname = 'is'.$index->getIndexMethodName().'Available';
 					if(!$block->hasMethod($methodname)){
 						$parameters = array();
 						$methodname = 'is'.$index->getIndexMethodName().'Available';
@@ -625,7 +628,8 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 	 */
 	private function _writeRelationChanges(&$content){
 		$primary = $this->getTable()->getPrimaryKey();
-		if($primary->countColumns() > 1){
+
+		if($primary && $primary->countColumns() > 1){
 			$xpath = new DOMXPath($this->getSettings()->ownerDocument);
 			while(list(,$column) = $primary->eachColumn()){
 				$reference_class = $xpath->query('field[@name = "'.$column->getName().'" and @reference-class=true()]', $this->getSettings());
@@ -682,6 +686,17 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Write element name.
+	 *
+	 * @param string $content
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
+	private function _writeElement(&$content){
+		$content = str_replace('${element}', $this->getTable()->getTableReadableVariableName(), $content);
 	}
 }
 ?>

@@ -77,7 +77,7 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 			$prefix .= $group.'/';
 		}
 
-		$this->_setFilename($prefix.'Lib/DAO'.$this->getTable()->getClassName().'List.php');
+		$this->_setFilename($prefix.'Lib/DAO/MySQLi.'.$this->getTable()->getClassName().'List.php');
 		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelListDAOMySQLi.php');
 	}
 
@@ -117,7 +117,11 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 					}
 				}
 			}
-			$statement = $order = 'MySQLiTools::prepareOrderStatement($order, '.implode(', ', $columns).');';
+			if(count($columns) > 0){
+				$statement = 'MySQLiTools::prepareOrderStatement($order, '.implode(', ', $columns).');';
+			} else {
+				$statement = 'MySQLiTools::prepareOrderStatement($order);';
+			}
 
 			if(!$block->hasStatement('MySQLiTools::prepareOrderStatement ( $order')){
 				$block->addComponent(new CodeGeneratorCodeBlockPHPStatement($statement));
@@ -149,19 +153,19 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 					if(in_array($column->getSmartType(), $smarttypes)){
 						if(!$block->hasStatement('if ( $'.$column->getFieldVariableName().'_from')){
 							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_from = $this->filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_from\')'));
-							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' <= FROM_UNIXTIME(\\\'\'.$this->escapeString($'.$column->getFieldVariableName().'_from).\'\\\'\');'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' <= FROM_UNIXTIME(\\\'\'.$this->escapeString($'.$column->getFieldVariableName().'_from).\'\\\'\';'));
 						}
 						if(!$block->hasStatement('if ( $'.$column->getFieldVariableName().'_to')){
 							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_to = $this->filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_to\')'));
-							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' >= FROM_UNIXTIME(\\\'\'.$this->escapeString($'.$column->getFieldVariableName().'_to).\'\\\'\');'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' >= FROM_UNIXTIME(\\\'\'.$this->escapeString($'.$column->getFieldVariableName().'_to).\'\\\'\';'));
 						}
 					}
 					if(!$block->hasStatement('if ( $'.$column->getFieldVariableName())){
 						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().' = $this->filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().')'));
 						if($column->countValues() > 0 || $column->getType() == CodeGeneratorColumn::TYPE_INTEGER || $column->getType() == CodeGeneratorColumn::TYPE_FLOAT){
-							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'\');'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'\';'));
 						} else {
-							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' LIKE \\\'\'.$this->escapeString(MySQLiTools::parseWildcards($'.$column->getFieldVariableName().')).\'\\\'\');'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' LIKE \\\'\'.$this->escapeString(MySQLiTools::parseWildcards($'.$column->getFieldVariableName().')).\'\\\'\';'));
 						}
 					}
 				}
@@ -180,7 +184,8 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 	 * @return boolean true on success, else return false
 	 */
 	private function _writeRelationChanges(&$content){
-		if($this->getTable()->getPrimaryKey()->countColumns() > 1){
+		$primary = $this->getTable()->getPrimaryKey();
+		if($primary && $primary->countColumns() > 1){
 			if(preg_match('/function getListCount(.*?)AS `count`/s', $content, $match)){
 				$result = preg_replace('/(SELECT COUNT\()(.*?)(\) AS `count`)/s', '\\1*\\3', $match[0]);
 				$content = str_replace($match[0], $result, $content);

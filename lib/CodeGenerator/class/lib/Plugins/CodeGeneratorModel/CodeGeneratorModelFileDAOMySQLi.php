@@ -153,7 +153,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 	private function _writeNMRelationChanges(&$content){
 		$joins = array();
 		$primary = $this->getTable()->getPrimaryKey();
-		if($primary->countColumns() > 1){
+		if($primary && $primary->countColumns() > 1){
 			while(list(,$column) = $primary->eachColumn()){
 				$dao[] = '$'.$column->getFieldVariableName();
 				$where[] = '`\'.'.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'` = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
@@ -226,7 +226,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 				}
 			}
 			$primary = $this->getTable()->getPrimaryKey();
-			if($primary->countColumns() > 1){
+			if($primary && $primary->countColumns() > 1){
 				while(list(,$column) = $primary->eachColumn()){
 					if(!$block->hasStatement('$data->removeExcludeField ( '.$primary->getTable()->getClassName().'::'.$column->getFieldConstantName())){
 						$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$data->removeExcludeField('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().');'));
@@ -280,7 +280,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 				}
 			}
 			$primary = $this->getTable()->getPrimaryKey();
-			if($primary->countColumns() > 1){
+			if($primary && $primary->countColumns() > 1){
 				while(list(,$column) = $primary->eachColumn()){
 					if(!$block->hasStatement('$data->addExcludeField ( '.$primary->getTable()->getClassName().'::'.$column->getFieldConstantName())){
 						$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$data->addExcludeField('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().');'));

@@ -196,10 +196,10 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 						if($class = $this->_getReferenceClass($column)){
 							$param->setType($class);
 							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' '.'$'.$column->getFieldVariableName()));
-							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->filter->set('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().'->getID()'));
+							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->filter->set('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().'->getID());'));
 						} else {
 							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, true).' '.'$'.$column->getFieldVariableName()));
-							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->filter->set('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName()));
+							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->filter->set('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().');'));
 						}
 					}
 					$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success else return false'));
@@ -233,7 +233,7 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 	 */
 	private function _writeRelationChanges(&$content){
 		$primary = $this->getTable()->getPrimaryKey();
-		if($primary->countColumns() > 1){
+		if($primary && $primary->countColumns() > 1){
 			while(list(,$column) = $primary->eachColumn()){
 				$keys[] = '$out['.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().']';
  			}

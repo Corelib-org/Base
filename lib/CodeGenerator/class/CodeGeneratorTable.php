@@ -69,7 +69,7 @@ class CodeGeneratorTable {
 	 * @var array columns in table
 	 * @internal
 	 */
-	private $columns = array();
+	protected $columns = array();
 
 	/**
 	 * indexes in table.
@@ -93,7 +93,7 @@ class CodeGeneratorTable {
 	 * @var CodeGeneratorIndex
 	 * @internal
 	 */
-	private $primary = null;
+	private $primary = false;
 
 	//*****************************************************************//
 	//*************** CodeGenrator Table Class Methods ****************//

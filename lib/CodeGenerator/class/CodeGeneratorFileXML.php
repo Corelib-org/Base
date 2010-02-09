@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Code generator model plugin definition class.
+ * Corelib Code generator xml file object
  *
  * <i>No Description</i>
  *
@@ -34,11 +34,14 @@
  * @since Version 5.0
  */
 
+
 //*****************************************************************//
-//******************** CodeGeneratorModel class *********************//
+//***************** CodeGenrator XML File class *******************//
 //*****************************************************************//
 /**
- * CodeGenerator gui plugin.
+ * CodeGenerator xml file.
+ *
+ * The code generator represents a xml file.
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @package Base
@@ -46,20 +49,29 @@
  * @category corelib
  * @since Version 5.0
  */
-class CodeGeneratorModel extends CodeGeneratorPlugin {
+abstract class CodeGeneratorFileXML extends CodeGeneratorFile {
 
 
 	//*****************************************************************//
-	//***************** CodeGeneratorModel methods ********************//
+	//************ CodeGenrator XML File class methods ****************//
 	//*****************************************************************//
 	/**
-	 * Init plugin.
+	 * Get codeblock from source.
 	 *
-	 * @return void
+	 * @uses CodeGeneratorCodeBlock::exist()
+	 * @param string $source Source code string
+	 * @param string $block Block name
+	 * @param string $prefix Block prefix
+	 * @param string $suffix Block suffix
+	 * @return CodeGeneratorCodeBlockPHP if block exist, else return false
 	 */
-	public function init(){
-		$file = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFile', $this->settings));
-		$dao = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFileDAOMySQLi', $this->settings));
+	protected function _getCodeBlock(&$source, $block, $prefix='<!--', $suffix='-->'){
+		$block = new CodeGeneratorCodeBlockXML($source, $block, $prefix, $suffix);
+		if($block->exist()){
+			return $block;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

@@ -75,7 +75,7 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 		if(isset($create['Table'])){
 			$create = $create['Create Table'];
 		} else {
-			$create = $create['Create View'];
+			trigger_error('This is not a table, use view instead.');
 		}
 
 
@@ -229,6 +229,41 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 		return $cls_table;
 	}
 
+
+	public function analyseView($view){
+		$dbtables = $this->masterQuery(new MySQLiQuery('SHOW TABLES'));
+
+
+		$create = $this->masterQuery(new MySQLiQuery('SHOW CREATE VIEW `'.$view.'`'));
+		$create = $create->fetchArray();
+		list(,$create['Create View']) = explode('AS', $create['Create View'], 2);
+		preg_match_all('/`(.*?)`/i', $create['Create View'], $matches);
+		$entities = array_unique($matches[1]);
+
+		$viewcolumns = $this->masterQuery(new MySQLiQuery('DESC `'.$view.'`'));
+		while($out = $viewcolumns->fetchArray()){
+			$columns[] = $out['Field'];
+		}
+
+		while($out = $dbtables->fetchArray()){
+			if(in_array($out[0], $entities)){
+				$tables[] = $this->analyseTable($out[0]);
+			}
+		}
+		$view = new CodeGeneratorView($view);
+
+		foreach($tables as $table){
+			while(list(,$column) = $table->eachColumn()){
+				if(in_array($column->getName(), $columns)){
+					$view->addViewColumn($column);
+
+				}
+			}
+
+		}
+		return $view;
+	}
+
 	/**
 	 * Lookup class name from mysql reference.
 	 *
@@ -245,14 +280,15 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 		} else {
 			$create = $create['Create View'];
 		}
-
 		if(preg_match('/CONSTRAINT.*?FOREIGN\s+KEY\s*\(`'.preg_quote($field->getName(), '/').'`\).*?REFERENCES.*?`(.*?)`.*?\(`(.*?)`\)/', $create, $match)){
-			$table = new CodeGeneratorTable($match[1]);
-			$column = $table->addColumn($match[2]);
+			$reference_table = new CodeGeneratorTable($match[1]);
+			$column = $reference_table->addColumn($match[2]);
 			if(CodeGeneretorNameResolver::getInstance()->isColumnPrimaryKey($column)){
 				return $column->getName();
+			} else if($table->getName() == $reference_table->getName()){
+				return $table->getPrimaryKey()->getName();
 			} else {
-				return $this->_lookupReference($table, $column);
+				return $this->_lookupReference($reference_table, $column);
 			}
 		}
 		return false;

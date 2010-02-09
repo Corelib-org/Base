@@ -62,6 +62,14 @@ interface DAO_CodeGenerator {
 	 * @return CodeGeneratorTable
 	 */
 	public function analyseTable($table);
+
+	/**
+	 * Analyse table.
+	 *
+	 * @param string $view view name
+	 * @return CodeGeneratorView
+	 */
+	public function analyseView($view);
 }
 
 
@@ -241,8 +249,21 @@ class CodeGenerator implements Output {
 	 * @return return boolean true on success, else return false
 	 * @internal
 	 */
-	private function _loadView(DOMElement $view, $group=null){
-		var_Dump('view');
+	private function _loadView(DOMElement $view, $prefix=null, $group=null){
+		$this->classes[$view->getAttribute('name')]['table'] = $this->dao->analyseView($view->getAttribute('name'));
+
+		$xpath = new DOMXPath($view->ownerDocument);
+		$generators = $xpath->query('generator', $view);
+		$this->classes[$view->getAttribute('name')]['generators'] = array();
+
+		for ($i = 0; $i < $generators->length; $i++){
+			$class = $generators->item($i)->getAttribute('name');
+			$class = new $class($this->classes[$view->getAttribute('name')]['table'], $generators->item($i), $prefix, $group);
+			$class->init();
+  			$this->classes[$view->getAttribute('name')]['generators'][] = $class;
+		}
+//		var_Dump($this->classes[$view->getAttribute('name')]['table']);
+//		exit;
 	}
 
 	/**

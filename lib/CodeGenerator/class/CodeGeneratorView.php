@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Code generator model plugin definition class.
+ * Corelib Code generator view object.
  *
  * <i>No Description</i>
  *
@@ -35,10 +35,13 @@
  */
 
 //*****************************************************************//
-//******************** CodeGeneratorModel class *********************//
+//*********************** CodeGenrator View ***********************//
 //*****************************************************************//
 /**
- * CodeGenerator gui plugin.
+ * CodeGenerator view.
+ *
+ * The code generator represents a view in a relations database. a instance
+ * of this object is returned when the code generator is done analyzing a view.
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @package Base
@@ -46,20 +49,28 @@
  * @category corelib
  * @since Version 5.0
  */
-class CodeGeneratorModel extends CodeGeneratorPlugin {
+class CodeGeneratorView extends CodeGeneratorTable {
 
 
 	//*****************************************************************//
-	//***************** CodeGeneratorModel methods ********************//
+	//************** CodeGenrator View Class Properties ***************//
 	//*****************************************************************//
-	/**
-	 * Init plugin.
-	 *
-	 * @return void
-	 */
-	public function init(){
-		$file = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFile', $this->settings));
-		$dao = $this->_addFile($this->_createFileInstance('CodeGeneratorModelFileDAOMySQLi', $this->settings));
+
+
+	//*****************************************************************//
+	//*************** CodeGenrator View Class Methods *****************//
+	//*****************************************************************//
+	public function addViewColumn(CodeGeneratorColumn $column){
+		$column->setReadOnly(true);
+//		if($column->getKey() == CodeGeneratorColumn::KEY_PRIMARY){
+//			$this->setPrimaryKey($column);
+//		}
+		return $this->columns[$column->getName()] = $column;
 	}
+
+	public function addColumn(){
+		throw new BaseException('Not allowed here, use addViewColumn() instead.');
+	}
+
 }
 ?>

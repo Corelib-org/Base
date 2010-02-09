@@ -85,6 +85,30 @@ abstract class CodeGeneratorCodeBlockComposite extends Composite {
 
 
 	//*****************************************************************//
+	//******** CodeGenrator Code block composite class methods ********//
+	//*****************************************************************//
+	/**
+	 * Has statement
+	 *
+	 * @param string $statement
+	 * @return boolean true if statement exists, else return false
+	 */
+	public function hasStatement($statement){
+		return $this->hasStatementRegex('/'.preg_replace('/\s/', '\s*', preg_quote($statement, '/')).'/ms');
+	}
+
+	/**
+	 * Has statement regex
+	 *
+	 * @param string $regex
+	 * @return boolean true if statement exists, else return false
+	 */
+	public function hasStatementRegex($regex){
+		return preg_match($regex, $this->getSource());
+	}
+
+
+	//*****************************************************************//
 	//****** CodeGenrator Code block composite class constants ********//
 	//*****************************************************************//
 	/**
@@ -326,6 +350,8 @@ class CodeGeneratorCodeBlock extends CodeGeneratorCodeBlockComposite {
 	public function getLineCount(){
 		return count($this->block);
 	}
+
+
 
 }
 

@@ -178,6 +178,16 @@ abstract class CodeGeneratorPlugin implements Output {
 	}
 
 	/**
+	 * Get table instance.
+	 *
+	 * @uses CodeGeneratorFile::$table
+	 * @return CodeGeneratorTable
+	 */
+	public function getTable(){
+		return $this->table;
+	}
+
+	/**
 	 * Get XML.
 	 *
 	 * @uses CodeGeneratorPlugin::$files

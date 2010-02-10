@@ -31,7 +31,7 @@
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
- * @version 1.0.1 ($Id: RFC4122.php 4526 2008-06-04 10:54:33Z wayland $)
+ * @version 1.0.1 ($Id$)
  */
 
 //*****************************************************************//

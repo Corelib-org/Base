@@ -23,25 +23,44 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Soerensen <ss@corelib.org>
+ * @category corelib
+ * @package Base
+ * @subpackage Database
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2009 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Database
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
- * @filesource
- * @todo finish documentation
  */
 
-
+//*****************************************************************//
+//************** MySQLi Database Engine constants *****************//
+//*****************************************************************//
+/**
+ * MySQLi Descending sort order key.
+ *
+ * @var string
+ */
 define('DATABASE_ORDER_DESC', 'DESC');
-define('DATABASE_ORDER_ASC', 'ASC');
-define('DATABASE_GT', '>');
-define('DATABASE_LT', '<');
-define('DATABASE_EQUAL', '=');
-define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
 
+/**
+ * MySQLi Ascending sort order key.
+ *
+ * @var string
+ */
+define('DATABASE_ORDER_ASC', 'ASC');
+
+// DEPRECATED???
+// define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
+// define('DATABASE_GT', '>');
+// define('DATABASE_LT', '<');
+// define('DATABASE_EQUAL', '=');
+
+
+//*****************************************************************//
+//***************** MySQLi Database Engine class ******************//
+//*****************************************************************//
 /**
  * MySQLi Database engine.
  *
@@ -49,44 +68,67 @@ define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
  * for communicating with a mysql database using PHP's
  * mysqli extension.
  *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 class MySQLiEngine implements DatabaseEngine {
+
+
+	//*****************************************************************//
+	//************ MySQLi Database Engine class properties ************//
+	//*****************************************************************//
 	/**
 	 * @var mysqli database connection
+	 * @internal
 	 */
 	private $connection = null;
 	/**
 	 * @var string hostname
+	 * @internal
 	 */
 	private $hostname = null;
 	/**
 	 * @var string username
+	 * @internal
 	 */
 	private $username = null;
 	/**
 	 * @var string password
+	 * @internal
 	 */
 	private $password = null;
 	/**
 	 * @var string database
+	 * @internal
 	 */
 	private $database = null;
 	/**
 	 * @var string connection encoding
+	 * @internal
 	 */
 	private $charset = 'utf8';
 	/**
 	 * @var boolean reconnect if connection is lost
+	 * @internal
 	 */
 	private $reconnect = false;
 
+
+	//*****************************************************************//
+	//************ MySQLi Database Engine class constants *************//
+	//*****************************************************************//
 	/**
 	 * MySQLi engine DAO class prefix.
+	 *
+	 * @var string prefix
 	 */
 	const PREFIX = 'MySQLi';
 
+
+	//*****************************************************************//
+	//************* MySQLi Database Engine class methods **************//
+	//*****************************************************************//
 	/**
 	 * Create new connection.
 	 *
@@ -163,7 +205,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Start transaction.
 	 *
 	 * @uses MySQLiQuery
 	 * @uses MySQLiEngine::query()
@@ -173,7 +215,7 @@ class MySQLiEngine implements DatabaseEngine {
 		$this->query(new MySQLiQuery('START TRANSACTION'));
 	}
 	/**
-	 * {@inheritdoc}
+	 * Commit transaction.
 	 *
 	 * @uses MySQLiQuery
 	 * @uses MySQLiEngine::query()
@@ -184,7 +226,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Rollback transaction.
 	 *
 	 * @uses MySQLiQuery
 	 * @uses MySQLiEngine::query()
@@ -195,7 +237,7 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Analyse query.
 	 *
 	 * @see DatabaseEngine::analyse()
 	 * @uses MySQLiQuery
@@ -228,6 +270,19 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 
 	/**
+	 * Escaping string.
+	 *
+	 * @param string $string
+	 * @return string.
+	 */
+	public function escapeString($string){
+		if(is_null($this->connection)){
+			$this->_connect();
+		}
+		return $this->connection->real_escape_string($string);
+	}
+
+	/**
 	 * Connect to database.
 	 *
 	 * @uses MySQLiEngine::$hostname
@@ -237,6 +292,7 @@ class MySQLiEngine implements DatabaseEngine {
 	 * @uses MySQLiEngine::$connection
 	 * @uses MySQLiEngine::$charset
 	 * @return true on success, else return false
+	 * @internal
 	 */
 	private function _connect(){
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
@@ -250,43 +306,50 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 }
 
+
+//*****************************************************************//
+//********************** MySQLiQuery class ************************//
+//*****************************************************************//
 /**
- * mysqli query.
+ * MySQLi Query.
  *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 class MySQLiQuery extends Query {
+
+	//*****************************************************************//
+	//**************** MySQLiQuery class properties *******************//
+	//*****************************************************************//
 	/**
 	 * @var mysqli
+	 * @internal
 	 */
 	protected $instance = null;
 	/**
 	 * @var mysqli_result
+	 * @internal
 	 */
 	protected $result = null;
 	/**
 	 * @var string query error
+	 * @internal
 	 */
 	protected $error = null;
 	/**
 	 * @var integer query error number
+	 * @internal
 	 */
 	protected $errno = null;
 	/**
 	 * @var integer last insert id
+	 * @internal
 	 */
 	protected $insertid = null;
 
 	/**
-	 * {@inheritdoc}
-	 */
-	public function __construct($query){
-		parent::__construct($query);
-	}
-
-	/**
-	 * {@inheritdoc}
+	 * Run query and populate object.
 	 *
 	 * @uses MySQLiQuery::$instance
 	 * @uses MySQLiQuery::$result
@@ -294,6 +357,7 @@ class MySQLiQuery extends Query {
 	 * @uses MySQLiQuery::$errno
 	 * @uses MySQLiQuery::$insertid
 	 * @uses MySQLiQuery::getQuery()
+	 * @internal
 	 */
 	public function execute(){
 		$this->result = $this->instance->query($this->getQuery());
@@ -301,34 +365,39 @@ class MySQLiQuery extends Query {
 		$this->errno = $this->instance->errno;
 		$this->insertid = $this->instance->insert_id;
 	}
+
 	/**
-	 * {@inheritdoc}
+	 * Set connection instance.
 	 *
 	 * @uses MySQLiQuery::$instance
+	 * @internal
 	 */
 	public function setInstance($instance){
 		$this->instance = $instance;
 	}
+
 	/**
-	 * {@inheritdoc}
+	 * Get Query string.
 	 *
 	 * @uses MySQLiQuery::$query
+	 * @return string query
 	 */
 	public function getQuery(){
 		return $this->query;
 	}
+
 	/**
-	 * {@inheritdoc}
+	 * Get error description.
 	 *
 	 * @uses MySQLiQuery::$error
 	 * @uses MySQLiQuery::$query
-	 * @return string error
+	 * @return string error description
 	 */
 	public function getError(){
 		return $this->error."\n<br/><br/>".$this->query;
 	}
 	/**
-	 * {@inheritdoc}
+	 * Get error code.
 	 *
 	 * @uses MySQLiQuery::$errno
 	 * @return integer mysql error code
@@ -337,15 +406,16 @@ class MySQLiQuery extends Query {
 		return $this->errno;
 	}
 	/**
-	 * {@inheritdoc}
+	 * Get get row count in query.
 	 *
 	 * @uses MySQLiQuery::$result
 	 */
 	public function getNumRows(){
 		return $this->result->num_rows;
 	}
+
 	/**
-	 * {@inheritdoc}
+	 * Get insert ID.
 	 *
 	 * @uses MySQLiQuery::$insertid
 	 * @return integer last insert id
@@ -354,7 +424,7 @@ class MySQLiQuery extends Query {
 		return $this->insertid;
 	}
 	/**
-	 * {@inheritdoc}
+	 * Fetch row as array
 	 *
 	 * @uses MySQLiQuery::$result
 	 * @return array
@@ -362,8 +432,9 @@ class MySQLiQuery extends Query {
 	public function fetchArray(){
 		return $this->result->fetch_array();
 	}
+
 	/**
-	 * {@inheritdoc}
+	 * Fetch fields as array.
 	 *
 	 * @uses MySQLiQuery::$result
 	 * @return array|boolean if succesfull return array else return false
@@ -376,7 +447,7 @@ class MySQLiQuery extends Query {
 		}
 	}
 	/**
-	 * {@inheritdoc}
+	 * Get affected rows.
 	 *
 	 * @uses MySQLiQuery::$instance
 	 * @return integer
@@ -386,7 +457,7 @@ class MySQLiQuery extends Query {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Adjusts the result pointer to an arbitary row in the result.
 	 *
 	 * @uses MySQLiQuery::$result
 	 * @return array
@@ -398,34 +469,50 @@ class MySQLiQuery extends Query {
 	/**
 	 * @see MySQLiQuery::getQuery()
 	 * @return string query
+	 * @internal
 	 */
 	public function __toString(){
 		return $this->getQuery();
 	}
 }
 
+
+//*****************************************************************//
+//***************** MySQLiQueryStatement class ********************//
+//*****************************************************************//
 /**
- * mysqli query statement.
+ * MySQLi Query Statement.
  *
- * mysqli query object used for prepared statements
- *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 class MySQLiQueryStatement extends MySQLiQuery {
+
+
+	//*****************************************************************//
+	//************ MySQLiQueryStatement class properties **************//
+	//*****************************************************************//
 	/**
-	 * @var mysqli_stmt
+	 * @var mysqli_stmt Mysqli stmt instance
+	 * @internal
 	 */
 	private $statement = null;
+
 	/**
 	 * @var array query values
 	 */
 	private $bind = array();
+
 	/**
 	 * @var array query values larger than 256 bytes
 	 */
 	private $blob = array();
 
+
+	//*****************************************************************//
+	//************** MySQLiQueryStatement class methods ***************//
+	//*****************************************************************//
 	/**
 	 * Construct object and optionally pass data.
 	 *
@@ -474,6 +561,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 * @uses MySQLiQueryStatement::$blob
 	 * @uses MySQLiTools::parseBooleanValue()
 	 * @param mixed $val Value to bind
+	 * @internal
 	 */
 	private function _bindValue($val){
 		if(isset($this->bind['param'])){
@@ -501,7 +589,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Execute query.
 	 *
 	 * @uses MySQLiQuery::$instance
 	 * @uses MySQLiQueryStatement::$statement
@@ -512,6 +600,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 * @uses MySQLiQueryStatement::$blob
 	 * @uses MySQLiQuery::getQuery()
 	 * @return true on success, else return false
+	 * @internal
 	 */
 	public function execute(){
 		if(is_null($this->statement)){
@@ -524,6 +613,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 
 		$bind = $this->bind['param'];
 		array_unshift($bind, implode('', $this->bind['types']));
+
 		call_user_func_array(array($this->statement, 'bind_param'), $bind);
 
 		foreach ($this->blob as $key => $val){
@@ -538,7 +628,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Get number of rows in query.
 	 *
 	 * @uses MySQLiQueryStatement::$statement
 	 */
@@ -546,7 +636,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		return $this->statement->num_rows;
 	}
 	/**
-	 * {@inheritdoc}
+	 * Get affected rows.
 	 *
 	 * @uses MySQLiQueryStatement::$statement
 	 * @return integer
@@ -556,7 +646,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	}
 
 	/**
-	 * {@inheritdoc}
+	 * Fetch row as array from result.
 	 *
 	 * This method have not been implemented yet
 	 *
@@ -571,13 +661,41 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 * Destroy object.
 	 *
 	 * @uses MySQLiQueryStatement::$statement
+	 * @internal
 	 */
 	public function __destruct(){
 		@$this->statement->close();
 	}
 }
 
+
+//*****************************************************************//
+//********************** MySQLiTools class ************************//
+//*****************************************************************//
+/**
+ * MySQLi Tools.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Database
+ */
 class MySQLiTools {
+
+
+	//*****************************************************************//
+	//******************* MySQLiTools class methods *******************//
+	//*****************************************************************//
+	/**
+	 * Splice any number of fields together.
+	 *
+	 * Combine each paramater into one array of all fields.
+	 * Any number of parameters can be supplied to this method.
+	 * either a string with a field name or a array with multiple
+	 * field names.
+	 *
+	 * @param mixed $field string or array with field names.
+	 * @return array
+	 */
 	static public function spliceFields($field=null /*, [$field..] */){
 		$fields = func_get_args();
 		foreach ($fields as $val) {
@@ -592,48 +710,96 @@ class MySQLiTools {
 		return $freturn;
 	}
 
-	static public function parseNullValue($val){
-		if(is_null($val)){
-			$val = 'NULL';
+	/**
+	 * Parse NULL value.
+	 *
+	 * Parse php datatype "null" into a valid mysql statement.
+	 * if value is not null the correct format will also be returned.
+	 *
+	 * @param mixed $value data
+	 * @return string
+	 */
+	static public function parseNullValue($value){
+		if(is_null($value)){
+			$value = 'NULL';
 		} else {
-			$val = '\''.$val.'\'';
+			$value = '\''.$value.'\'';
 		}
-		return $val;
+		return $value;
 	}
-	static public function parseBooleanValue($val, $escape=true){
+
+	/**
+	 * Parse bolean value
+	 *
+	 * Parse PHP datatype "boolean" into valid mysql statement, and
+	 * return a string to be used with the enum boolean principle used
+	 * by the {@link CodeGenerator}.
+	 *
+	 * @param string $value
+	 * @param boolean $escape if true escape string, else do nothing.
+	 * @return string
+	 */
+	static public function parseBooleanValue($value, $escape=true){
 		if($escape){
-			if($val === true){
-				$val = '\'TRUE\'';
+			if($value === true){
+				$value = '\'TRUE\'';
 			} else {
-				$val = '\'FALSE\'';
+				$value = '\'FALSE\'';
 			}
 		} else {
-			if($val === true){
-				$val = 'TRUE';
+			if($value === true){
+				$value = 'TRUE';
 			} else {
-				$val = 'FALSE';
+				$value = 'FALSE';
 			}
 		}
-		return $val;
+		return $value;
 	}
-	static public function parseWildcards($val){
-		return str_replace('*', '%', $val);
+
+	/**
+	 * Replace * wildcards with mysql % wildcard.
+	 *
+	 * @param string $value
+	 * @return string
+	 */
+	static public function parseWildcards($value){
+		return str_replace('*', '%', $value);
 	}
-	static public function parseUnixtimestamp($val,$statement=false){
+
+	/**
+	 * Parse unix timestamp into mysql "unix timestamp"
+	 *
+	 * Convert timestamp to a valid mysql unix timestamp statement
+	 * using mysql's {@link FROM_UNIXTIME http://dev.mysql.com/doc/refman/5.1/en/date-and-time-functions.html#function_from-unixtime} function
+	 *
+	 * @param integer $value unix timestamps
+	 * @param boolean $statement if true prepare timestamp for a mysql statement.
+	 * @return string
+	 */
+	static public function parseUnixtimestamp($value,$statement=false){
 		if($statement) {
-			if(!is_null($val)) {
+			if(!is_null($value)) {
 				return 'FROM_UNIXTIME(?)';
 			} else {
 				return null;
 			}
 		} else {
-			if(!is_null($val)) {
+			if(!is_null($value)) {
 				return 'FROM_UNIXTIME(\''.$val.'\')';
 			} else {
 				return 'NULL';
 			}
 		}
 	}
+
+	/**
+	 * Prepare order statement
+	 *
+	 * Convert {@link DatabaseListHelperOrder} into a valid mysql order statement.
+	 *
+	 * @param DatabaseListHelperOrder $order
+	 * @return mixed false if no ordering should be done, else return string with order statement.
+	 */
 	static public function prepareOrderStatement(DatabaseListHelperOrder $order){
 		$args = func_get_args();
 		$fields = array();
@@ -649,6 +815,16 @@ class MySQLiTools {
 			return false;
 		}
 	}
+
+	/**
+	 * Prepare limit statement.
+	 *
+	 * Convert limit and offset into a valid mysql statement
+	 *
+	 * @param integer $offset
+	 * @param integer $limit
+	 * @return string
+	 */
 	static public function prepareLimitStatement($offset=null, $limit=null){
 		if(!is_null($offset) && !is_null(!$limit)){
 			return 'LIMIT '.$offset.', '.$limit;
@@ -661,14 +837,49 @@ class MySQLiTools {
 		}
 	}
 
-	static public function makeInsertStatement($table, array $fields){
-		return 'INSERT INTO `'.$table.'` '.self::_makeInsertReplaceValues($fields);
+	/**
+	 * Create prepared statement compatible insert statement.
+	 *
+	 * @param string $table
+	 * @param array $fields
+	 * @param string $param extra parameters
+	 * @return string
+	 */
+	static public function makeInsertStatement($table, array $fields, $param=''){
+		return 'INSERT INTO `'.$table.'` '.self::_makeInsertReplaceValues($fields).' '.$param;
 	}
+
+	/**
+	 * Create prepared statement compatible replace statement.
+	 *
+	 * @param string $table
+	 * @param array $fields
+	 * @return string
+	 */
 	static public function makeReplaceStatement($table, array $fields){
 		return 'REPLACE INTO `'.$table.'` '.self::_makeInsertReplaceValues($fields);
 	}
+
+	/**
+	 * Create prepared statement compatible update statement.
+	 *
+	 * @param string $table
+	 * @param array $fields
+	 * @param string $where where statement
+	 * @return string
+	 */
 	static public function makeUpdateStatement($table, array $fields, $where=''){
 		$query = 'UPDATE `'.$table.'`'."\n".' SET';
+		return $query.' '.self::makeUpdateColumns($fields).' '.$where;
+	}
+
+	/**
+	 * Convert array to valid mysql update column list.
+	 *
+	 * @param array $fields
+	 * @return string
+	 */
+	static public function makeUpdateColumns(array $fields){
 		$qfields = array();
 		foreach ($fields as $field => $value){
 			if(is_integer($field)){
@@ -677,8 +888,15 @@ class MySQLiTools {
 				$qfields[] = ' `'.$field.'`='.$value.'';
 			}
 		}
-		return $query.' '.implode(', ', $qfields).' '.$where;
+		return implode(', ', $qfields);
 	}
+
+	/**
+	 * Convert several values into a mysql IN statement.
+	 *
+	 * @param array $values
+	 * @return string
+	 */
 	static public function makeInStatement(array $values){
 		foreach ($values as $key => $val){
 			if(!is_numeric($val)){
@@ -689,6 +907,12 @@ class MySQLiTools {
 		return 'IN('.implode(', ', $values).')';
 	}
 
+	/**
+	 * Create insert/replace values.
+	 *
+	 * @param array $fields
+	 * @return string
+	 */
 	static protected function _makeInsertReplaceValues(array $fields){
 		$qfields = array();
 		$qvalues = array();

@@ -5,7 +5,7 @@
  *
  * <i>No Description</i>
  *
- * This script is part of the corelib project. The corelib project is 
+ * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,49 +23,58 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
+ * @category corelib
+ * @package Base
+ * @subpackage Database
+ *
  * @author Steffen Soerensen <ss@corelib.org>
  * @copyright Copyright (c) 2009 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Database
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
- * @filesource
  */
 
 
-
 //*****************************************************************//
-//**************** DatabaseHelper abstract classes ****************//
+//*********************** DatabaseHelper class ********************//
 //*****************************************************************//
 /**
  * DatabaseHelper class.
  *
  * The DatabaseHelper class is the fundament of
  * various DatabaseHelpers
- * 
- * @package corelib
+ *
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 abstract class DatabaseHelper {
+
+	//*****************************************************************//
+	//***************** DatabaseHelper class properties ***************//
+	//*****************************************************************//
 	/**
 	 * @var array list of settings
 	 */
 	protected $settings = array();
-	
+
+
+	//*****************************************************************//
+	//****************** DatabaseHelper class methods **************//
+	//*****************************************************************//
 	/**
 	 * Set value of a column.
-	 * 
+	 *
 	 * @uses DatabaseHelper::$settings
 	 * @param string $column database (table) column
 	 * @param mixed $setting
-	 * @return boolean true 
+	 * @return boolean true
 	 */
 	public function set($column, $setting){
 		$this->settings[$column] = $setting;
 		return true;
 	}
-	
+
 	/**
 	 * Get value of a column.
 	 *
@@ -80,22 +89,30 @@ abstract class DatabaseHelper {
 			return null;
 		}
 	}
-	
 }
 
+
+//*****************************************************************//
+//******************* DatabaseListHelper class ********************//
+//*****************************************************************//
 /**
  * DatabaseListHelper class.
  *
  * The DatabaseListHelper class is the fundament of
  * various DatabaseListHelpers
- * 
+ *
  * @package corelib
  * @subpackage Database
  */
 abstract class DatabaseListHelper extends DatabaseHelper {
+
+
+	//*****************************************************************//
+	//************** DatabaseListHelper class methods *****************//
+	//*****************************************************************//
 	/**
 	 * Count number settings.
-	 * 
+	 *
 	 * @return integer number of settings
 	 */
 	public function count(){
@@ -103,23 +120,28 @@ abstract class DatabaseListHelper extends DatabaseHelper {
 	}
 }
 
-//*****************************************************************//
-//********************* DatabaseHelper classes ********************//
-//*****************************************************************//
 
+//*****************************************************************//
+//***************** DatabaseListHelperOrder class *****************//
+//*****************************************************************//
 /**
  * DatabaseListHelperOrder class.
  *
  * The DatabaseListHelperOrder class manages the
  * sorting should be applied on select queries
- * 
+ *
  * @package corelib
  * @subpackage Database
  */
 class DatabaseListHelperOrder extends DatabaseListHelper {
+
+
+	//*****************************************************************//
+	//************ DatabaseListHelperOrder class methods **************//
+	//*****************************************************************//
 	/**
 	 * Set sort order for column.
-	 * 
+	 *
 	 * @see DatabaseHelper::set()
 	 */
 	public function set($column, $setting=DATABASE_ORDER_DESC){
@@ -128,7 +150,7 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 
 	/**
 	 * Get sort order for column.
-	 * 
+	 *
 	 * @return string column with sort order, if no sort isset return false
 	 */
 	public function get($column){
@@ -140,67 +162,97 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 	}
 }
 
+
+//*****************************************************************//
+//*************** DatabaseListHelperFilter class ******************//
+//*****************************************************************//
 /**
  * DatabaseListHelperFilter class.
  *
  * The DatabaseListHelperFilter class manages the
  * filters that should be applied on select queries
- * 
+ *
  * @package corelib
  * @subpackage Database
  */
 class DatabaseListHelperFilter extends DatabaseListHelper {
-	
+
 }
 
+
+//*****************************************************************//
+//******************* DatabaseDataHandler class *******************//
+//*****************************************************************//
 /**
  * DatabaseDataHandler class.
  *
  * The DatabaseDataHandler class manages the changes
  * made when modififying data
- * 
+ *
  * @package corelib
  * @subpackage Database
  */
 class DatabaseDataHandler extends DatabaseHelper {
+
+
+	//*****************************************************************//
+	//************* DatabaseDataHandler class constants ***************//
+	//*****************************************************************//
 	/**
 	 * Set no history break charecter.
-	 * 
+	 *
 	 * Since null is used for representing null
 	 * in the database another character should
 	 * be used to ignore changes if no history values
-	 * apper. For this ASCII C0 Cancel is used
+	 * appear. For this ASCII C0 Cancel is used
+	 *
+	 * @internal
 	 */
 	const NO_HISTORY = "\024";
-	
+
+
+	//*****************************************************************//
+	//************ DatabaseDataHandler class properties ***************//
+	//*****************************************************************//
 	/**
 	 * @see DatabaseDataHandler::setSpecialValue()
 	 * @var array list of special columns
+	 * @internal
 	 */
 	private $special_values = array();
+
 	/**
 	 * @see DatabaseDataHandler::getUpdatedColumns()
 	 * @see DatabaseDataHandler::getUpdatedColumnValues()
 	 * @var array list of updated columns
+	 * @internal
 	 */
 	private $updated_columns = array();
+
 	/**
 	 * @see DatabaseDataHandler::getUpdatedColumns()
 	 * @see DatabaseDataHandler::getUpdatedColumnValues()
 	 * @see DatabaseDataHandler::addExcludeField()
 	 * @var array list of columns which should be excluded
+	 * @internal
 	 */
 	private $special_exclude = array();
+
 	/**
 	 * @see DatabaseDataHandler::set()
 	 * @see DatabaseDataHandler::getHistoryValue()
 	 * @var array of history of updated values
-	 */	
+	 * @internal
+	 */
 	private $history_values = array();
-	
+
+
+	//*****************************************************************//
+	//*************** DatabaseDataHandler class methods ***************//
+	//*****************************************************************//
 	/**
 	 * Set column value.
-	 * 
+	 *
 	 * @uses DatabaseDataHandler::$updated_columns
 	 * @uses DatabaseDataHandler::$history_values
 	 * @param string $column column
@@ -215,10 +267,10 @@ class DatabaseDataHandler extends DatabaseHelper {
 		}
 		return parent::set($column, $setting);
 	}
-	
+
 	/**
 	 * Get historic value of column.
-	 * 
+	 *
 	 * @uses DatabaseDataHandler::$history_values
 	 * @param string column
 	 * @return mixed historic value of column, if none available then return false;
@@ -230,10 +282,10 @@ class DatabaseDataHandler extends DatabaseHelper {
 			return self::NO_HISTORY;
 		}
 	}
-	
+
 	/**
 	 * Get updated columns.
-	 * 
+	 *
 	 * @uses DatabaseHelper::$settings
 	 * @uses DatabaseDataHandler::$special_values
 	 * @uses DatabaseDataHandler::$special_exclude
@@ -243,7 +295,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 	public function getUpdatedColumns($column=null /*[,$column..]*/){
 		$columns = array();
 		$special_values = array();
-		
+
 		$arg = func_get_args();
 		if(count($arg) == 0){
 			$arg = false;
@@ -252,13 +304,13 @@ class DatabaseDataHandler extends DatabaseHelper {
 			if(isset($this->special_values[$key]) && (!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg)))){
 				$special_values[$key] = $val;
 				unset($this->settings[$key]);
-			} else if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){ 
+			} else if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){
 				if(!$arg || in_array($key, $arg)){
 					$columns[] = $key;
 				}
 			}
 		}
-		
+
 		$special_keys = $this->special_values;
 		foreach ($special_values as $key => $val){
 			$this->settings[$key] = $val;
@@ -267,7 +319,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 			}
 			unset($special_keys[$key]);
 		}
-		
+
 		foreach ($special_keys as $key => $val){
 			if(!$arg || in_array($key, $arg)){
 				$columns[$key] = $val;
@@ -275,18 +327,18 @@ class DatabaseDataHandler extends DatabaseHelper {
 		}
 		return $columns;
 	}
-	
+
 	/**
 	 * Get updated values.
-	 * 
+	 *
 	 * @uses DatabaseHelper::$settings
 	 * @uses DatabaseDataHandler::$special_exclude
 	 * @param string $column,...
 	 * @return array list of updated columns
-	 */	
+	 */
 	public function getUpdatedColumnValues($column=null /*[,$column..]*/){
 		$values = array();
-		
+
 		if(!is_array($column)){
 			$arg = func_get_args();
 			if(count($arg) == 0){
@@ -298,7 +350,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 
 		foreach ($this->settings as $key => $val){
 			if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){
-				
+
 				if(!$arg || in_array($key, $arg) || isset($arg[$key])){
 					$values[$key] = $val;
 				}
@@ -306,11 +358,11 @@ class DatabaseDataHandler extends DatabaseHelper {
 		}
 		return $values;
 	}
-	
+
 	/**
 	 * check to se if there have been any changes made.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param string $column if column is specified the check is only made on that column
 	 * @return boolean true if changed else return false
 	 */
@@ -325,10 +377,10 @@ class DatabaseDataHandler extends DatabaseHelper {
 			return isset($this->settings[$column]);
 		}
 	}
-	
+
 	/**
 	 * Set special column value.
-	 * 
+	 *
 	 * @uses DatabaseDataHandler::$special_values
 	 * @param string $column
 	 * @param mixed $value
@@ -337,21 +389,38 @@ class DatabaseDataHandler extends DatabaseHelper {
 		$this->special_values[$column] = $value;
 		return true;
 	}
-	
+
 	/**
 	 * Add a exclude filter.
-	 * 
+	 *
 	 * Prevent a column from being retrieved when using
 	 * {@link DatabaseDataHandler::getUpdatedColumnValues()} and
 	 * {@link DatabaseDataHandler::getUpdatedColumns()}.
-	 * 
+	 *
 	 * @uses DatabaseDataHandler::$special_exclude
 	 * @param string $column
 	 * @return boolean true
 	 */
 	public function addExcludeField($column){
-		$this->special_exclude[] = $column;
+		$this->special_exclude[$column] = $column;
 		return true;
+	}
+
+	/**
+	 * Remove a exclude filter.
+	 *
+	 * @uses DatabaseDataHandler::$special_exclude
+	 * @see DatabaseDataHandler::addExcludeField
+	 * @param string $column
+	 * @return boolean true
+	 */
+	public function removeExcludeField($column){
+		if(isset($this->special_exclude[$column])){
+			unset($this->special_exclude[$column]);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
 ?>

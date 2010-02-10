@@ -23,14 +23,15 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Soerensen <ss@corelib.org>
+ * @category corelib
+ * @package Base
+ * @subpackage Database
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2009 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Database
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
- * @filesource
  */
 
 
@@ -52,7 +53,7 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
 
 
 //*****************************************************************//
-//*********************** Database Classes ************************//
+//************************ Database Class *************************//
 //*****************************************************************//
 /**
  * Database class.
@@ -61,10 +62,16 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
  * for communicating with varios databases, as well as
  * looking up the proper DAO class
  *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 class Database implements Singleton {
+
+
+	//*****************************************************************//
+	//******************* Database Class properties *******************//
+	//*****************************************************************//
 	/**
 	 * Singleton Object Reference.
 	 *
@@ -96,6 +103,10 @@ class Database implements Singleton {
 	 */
 	private $query_log = array();
 
+
+	//*****************************************************************//
+	//********************* Database Class methods ********************//
+	//*****************************************************************//
 	/**
 	 * @ignore
 	 */
@@ -209,6 +220,16 @@ class Database implements Singleton {
 	}
 
 	/**
+	 * Escaping string.
+	 *
+	 * @param string $string
+	 * @return string.
+	 */
+	public function escapeString($string){
+		return $this->master->escapeString($string);
+	}
+
+	/**
 	 * Run query on a specific data connection.
 	 *
 	 * if a error occurs while running the
@@ -226,6 +247,7 @@ class Database implements Singleton {
 	 * @param DatabaseEngine $instance
 	 * @param Query $query
 	 * @return true on success, else false
+	 * @internal
 	 */
 	private function _runQuery(DatabaseEngine $instance, Query $query){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
@@ -252,7 +274,9 @@ class Database implements Singleton {
 	 * @uses Query::getError()
 	 * @uses Query::getErrno()
 	 * @param Query $query
+	 * @throws BaseException
 	 * @return boolean true if no error have occured else return false and throw a exception
+	 * @internal
 	 */
 	private function _error(Query $query){
 		try {
@@ -326,10 +350,16 @@ class Database implements Singleton {
  *
  * This defines how a DatabaseEngine is implemented
  *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 interface DatabaseEngine {
+
+
+	//*****************************************************************//
+	//****************** Database interface methods *******************//
+	//*****************************************************************//
 	/**
 	 * Execute query.
 	 *
@@ -355,6 +385,13 @@ interface DatabaseEngine {
 	 */
 	public function rollback();
 	/**
+	 * Escaping string.
+	 *
+	 * @param string $string
+	 * @return string.
+	 */
+	public function escapeString($string);
+	/**
 	 * Analyse Query.
 	 *
 	 * Analyses a query and return a array with the results
@@ -368,21 +405,32 @@ interface DatabaseEngine {
 
 
 //*****************************************************************//
-//******************* Database abstract classes *******************//
+//********************* Database Query class **********************//
 //*****************************************************************//
 /**
  * Database Query abstract class.
  *
  * This defines how a Query is implemented
  *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 abstract class Query {
+
+
+	//*****************************************************************//
+	//*************** Database Query class properties *****************//
+	//*****************************************************************//
 	/**
 	 * @var Query
 	 */
 	protected $query = null;
+
+
+	//*****************************************************************//
+	//***************** Database Query class methods ******************//
+	//*****************************************************************//
 	/**
 	 * Create new query object instance.
 	 *
@@ -463,21 +511,33 @@ abstract class Query {
 }
 
 
-
+//*****************************************************************//
+//************************ DatabaseDAO class **********************//
+//*****************************************************************//
 /**
  * Database DAO abstract class.
  *
  * This defines how a DAO class is implemented
  *
- * @package corelib
+ * @category corelib
+ * @package Base
  * @subpackage Database
  */
 abstract class DatabaseDAO {
+
+
+	//*****************************************************************//
+	//**************** DatabaseDAO class properties *******************//
+	//*****************************************************************//
 	/**
 	 * @var DatabaseEngine
 	 */
 	private $database;
 
+
+	//*****************************************************************//
+	//****************** DatabaseDAO class methods ********************//
+	//*****************************************************************//
 	/**
 	 * @ignore
 	 */
@@ -494,6 +554,7 @@ abstract class DatabaseDAO {
 	final protected function query(Query $query){
 		return $this->database->query($query);
 	}
+
 	/**
 	 * Execute a query using the master connection.
 	 *
@@ -503,6 +564,7 @@ abstract class DatabaseDAO {
 	final protected function masterQuery(Query $query){
 		return $this->database->masterQuery($query);
 	}
+
 	/**
 	 * Execute a query using the slave connection.
 	 *
@@ -512,6 +574,19 @@ abstract class DatabaseDAO {
 	final protected function slaveQuery(Query $query){
 		return $this->database->slaveQuery($query);
 	}
+
+	/**
+	 * Escaping string.
+	 *
+	 * Escape string before using it in a query.
+	 *
+	 * @param string $string
+	 * @return string.
+	 */
+	final protected function escapeString($string){
+		return $this->database->escapeString($string);
+	}
+
 	/**
 	 * Start transaction.
 	 *
@@ -521,6 +596,7 @@ abstract class DatabaseDAO {
 	public function startTransaction(){
 		return $this->database->startTransaction();
 	}
+
 	/**
 	 * Commit transaction.
 	 *
@@ -530,6 +606,7 @@ abstract class DatabaseDAO {
 	public function commit(){
 		return $this->database->commit();
 	}
+
 	/**
 	 * Rollback transaction.
 	 *
@@ -541,12 +618,24 @@ abstract class DatabaseDAO {
 	}
 
 	/**
-	 * @ignore
+	 * Put object to sleep.
+	 *
+	 * If object is put to sleep this method returns a empty array
+	 * and by that resetting any information about old database connection
+	 * instances.
+	 *
+	 * @return array
+	 * @internal
 	 */
 	public function __sleep(){
 		return array();
 	}
 	/**
+	 * Wake up object.
+	 *
+	 * When the object wake up the constructor should be run again
+	 * in order to determine the new database connection instance.
+	 *
 	 * @ignore
 	 */
 	public function __wakeup(){
@@ -554,105 +643,7 @@ abstract class DatabaseDAO {
 	}
 }
 
-
-//*****************************************************************//
-//************************ Database events ************************//
-//*****************************************************************//
-/**
- * Database print stats even.
- *
- * Draw query log when request ends
- *
- * This {@link EventTypeHandler} is executed when {@link EventRequestEnd}
- * is triggered
- *
- * @package corelib
- * @subpackage Database
- */
-class DatabasePrintStatsEvent implements EventTypeHandler,Observer  {
-	private $subject = null;
-
-	/**
-	 * @see EventTypeHandler::getEventType();
-	 * @return string 'EventRequestEnd'
-	 */
-	public function getEventType(){
-		return 'EventRequestEnd';
-	}
-
-	/**
-	 * @see EventTypeHandler::getEventType();
-	 */
-	public function register(ObserverSubject $subject){
-		$this->subject = $subject;
-	}
-	/**
-	 * Echo query log.
-	 *
-	 * @see EventTypeHandler::update();
-	 */
-	public function update($update){
-		$log = Database::getInstance()->getQueryLog();
-		$duplicates = array();
-		$duplicate_count = 0;
-		$time = 0;
-		$result = '';
-		foreach ($log as $key => $line){
-			$result .= '<div>';
-			$time += $line['time'];
-			if(!isset($duplicates[md5($line['query'])])){
-				$duplicates[md5($line['query'])] = ($key + 1);
-				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }">#'.($key + 1).' Query ('.$line['time'].'s)';
-			} else {
-				$duplicate_count++;
-				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.$line['time'].'s) <b>WARNING: DUPLICATED QUERY (#'.$duplicates[md5($line['query'])].')</b></u>';
-			}
-			$result .= '<br/><span style="color: #999999; font-size: 10px;">'.substr($line['query'], 0, 200).'</span></h2>';
-
-			if($line['error']['code'] > 0){
-				$result .= '<h3>Error Code: '.$line['error']['code'].'</h3>';
-				$result .= '<p>'.$line['error']['message'].'</p>';
-			}
-
-			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.$line['query'].'</pre><br/>';
-
-
-			if(is_array($line['analysis'])){
-				$result .= '<h3>Analysis</h3><table style="width: 100%; border-spacing: 0px; font-size: 11px;"><thead><tr>';
-				foreach ($line['analysis']['columns'] as $column){
-					$result .= '<th style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$column.'</th>';
-				}
-				$result .= '<tr></thead>';
-				foreach ($line['analysis']['rows'] as $rows){
-					$result .= '<tr>';
-					print_r($rows);
-					foreach ($rows as $columns){
-
-						$result .= '<td style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$columns.'</td>';
-					}
-					$result .= '</tr>';
-				}
-
-
-				$result .= '</table><br/>';
-			}
-			$result .= '<h3>Backtrace</h3><pre>'.$line['backtrace'].'</pre><br/>';
-			$result .= '<hr/><br/></div></div>';
-		}
-
-
-		echo '<div id="DatabaseQueryLog" style="text-align: left; width: 80%; margin: auto; background-color: #ffffef; padding: 20px;">';
-		echo '<h1>Query Log (Queries: '.sizeof($log).', Duplicates: '.$duplicate_count.', Time: '.$time.'s )</h1>';
-		echo $result;
-		echo '</div">';
-	}
-}
-
 if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
 	PageFactoryDeveloperToolbar::getInstance()->addItem(new DatabaseDeveloperToolbarQueryLog());
-}
-if(DATABASE_SHOW_QUERY_LOG && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-	$eventHandler = EventHandler::getInstance();
-	$eventHandler->registerObserver(new DatabasePrintStatsEvent());
 }
 ?>

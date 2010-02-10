@@ -80,6 +80,12 @@ class CodeGeneratorGUIGetRegistry extends CodeGeneratorGUIFilePHP {
 		$this->_loadContent('etc/get.php');
 	}
 
+	/**
+	 * Set GUI Get file.
+	 *
+	 * @param CodeGeneratorGUIGet $get
+	 * @return unknown_type
+	 */
 	public function setGetFile(CodeGeneratorGUIGet $get){
 		$this->get = $get;
 	}

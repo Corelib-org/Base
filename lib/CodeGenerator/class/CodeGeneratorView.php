@@ -32,6 +32,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
  * @since Version 5.0
+ * @internal
  */
 
 //*****************************************************************//
@@ -48,6 +49,7 @@
  * @subpackage CodeGenerator
  * @category corelib
  * @since Version 5.0
+ * @internal
  */
 class CodeGeneratorView extends CodeGeneratorTable {
 
@@ -60,6 +62,12 @@ class CodeGeneratorView extends CodeGeneratorTable {
 	//*****************************************************************//
 	//*************** CodeGenrator View Class Methods *****************//
 	//*****************************************************************//
+	/**
+	 * Add column to view.
+	 *
+	 * @param CodeGeneratorColumn $column
+	 * @return CodeGeneratorColumn
+	 */
 	public function addViewColumn(CodeGeneratorColumn $column){
 		$column->setReadOnly(true);
 //		if($column->getKey() == CodeGeneratorColumn::KEY_PRIMARY){
@@ -68,9 +76,15 @@ class CodeGeneratorView extends CodeGeneratorTable {
 		return $this->columns[$column->getName()] = $column;
 	}
 
+	/**
+	 * Overwrite base method.
+	 *
+	 * This method disables the original addColumn method
+	 *
+	 * @throws BaseException
+	 */
 	public function addColumn(){
 		throw new BaseException('Not allowed here, use addViewColumn() instead.');
 	}
-
 }
 ?>

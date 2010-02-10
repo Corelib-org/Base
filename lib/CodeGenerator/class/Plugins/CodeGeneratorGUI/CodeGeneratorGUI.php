@@ -323,6 +323,12 @@ abstract class CodeGeneratorGUIFilePHP extends CodeGeneratorFilePHP {
 	//*****************************************************************//
 	//************** CodeGeneratorGUIFilePHP methods ******************//
 	//*****************************************************************//
+	/**
+	 * Get list url.
+	 *
+	 * @param DOMElement $element
+	 * @return unknown_type
+	 */
 	public function getListURL(DOMElement $element){
 		$xpath = new DOMXPath($this->settings->ownerDocument);
 		$lists = $xpath->query('list', $element->parentNode);

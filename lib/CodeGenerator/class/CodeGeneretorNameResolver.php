@@ -284,7 +284,7 @@ class CodeGeneretorNameResolver implements CodeGeneretorNameResolverEngine,Singl
 	}
 
 	/**
-	 * DDetect whether column is a foreign key.
+	 * Detect whether column is a foreign key.
 	 *
 	 * Detect if column is a foreign key from  CodeGeneratorNameResolverEngine.
 	 *

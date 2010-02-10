@@ -230,6 +230,14 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 	}
 
 
+	/**
+	 * Analyse view.
+	 *
+	 * @todo complete integration
+	 * @see DAO_CodeGenerator::analyseView()
+	 * @return CodeGeneratorView
+	 * @internal
+	 */
 	public function analyseView($view){
 		$dbtables = $this->masterQuery(new MySQLiQuery('SHOW TABLES'));
 

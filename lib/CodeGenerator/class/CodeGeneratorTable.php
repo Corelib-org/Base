@@ -230,8 +230,6 @@ class CodeGeneratorTable {
 		return str_replace('_', '-', $this->getClassVariable());
 	}
 
-
-
 	/**
 	 * Iterate over table indexes.
 	 *

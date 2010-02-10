@@ -202,6 +202,5 @@ abstract class CodeGeneratorPlugin implements Output {
 		}
 		return $files;
 	}
-
 }
 ?>

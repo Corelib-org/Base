@@ -194,7 +194,6 @@ abstract class CodeGeneratorFile implements Output {
 		return $this->table;
 	}
 
-
 	/**
 	 * Get genertor settings.
 	 *
@@ -214,7 +213,6 @@ abstract class CodeGeneratorFile implements Output {
 	public function getGroup(){
 		return $this->group;
 	}
-
 
 	/**
 	 * Write class name to file/template.

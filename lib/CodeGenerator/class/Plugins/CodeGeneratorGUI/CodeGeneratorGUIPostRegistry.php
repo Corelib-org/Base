@@ -80,6 +80,12 @@ class CodeGeneratorGUIPostRegistry extends CodeGeneratorGUIFilePHP {
 		$this->_loadContent('etc/post.php');
 	}
 
+	/**
+	 * Set GUI Post file instance.
+	 *
+	 * @param CodeGeneratorGUIPost $post
+	 * @return void
+	 */
 	public function setPostFile(CodeGeneratorGUIPost $post){
 		$this->post = $post;
 	}

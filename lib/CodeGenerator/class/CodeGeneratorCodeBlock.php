@@ -350,9 +350,6 @@ class CodeGeneratorCodeBlock extends CodeGeneratorCodeBlockComposite {
 	public function getLineCount(){
 		return count($this->block);
 	}
-
-
-
 }
 
 

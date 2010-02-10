@@ -5,7 +5,7 @@
  *
  * <i>No Description</i>
  *
- * This script is part of the corelib project. The corelib project is 
+ * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,49 +23,48 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Soerensen <ss@corelib.org>
+ * @category corelib
+ * @package Base
+ * @subpackage Algorithms
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Base
  * @link http://www.corelib.org/
- * @version 4.0.0 ($Id$)
  * @filesource
+ * @version 1.0.0 ($Id$)
  */
-
-//*****************************************************************//
-//************************ Table Of Content ***********************//
-//*****************************************************************//
-//**                                                        Line **//
-//**    1. HEXHide Class ...................................     **//
-//**        1. HEXHide Class Methods .......................     **//
-//**            1. hide() ..................................     **//
-//**            2. find() ..................................     **//
-//**            3. _getHiddenOffset() ......................     **//
-//**                                                             **//
-//*****************************************************************//
 
 //*****************************************************************//
 //**'********************** HEXHide Class *************************//
 //*****************************************************************//
 /**
- * HEXHide implements a simple algorithm for hiding a number within a hex string
- * 
+ * HEXHide class.
+ *
+ * HEXHide implements a simple algorithm for hiding a number within
+ * a base16 string.
+ *
  * @todo Describe how the HEXHide encoding process works
- * @package corelib 
+ * @package corelib
  */
 class HEXHide {
+
+
 	//*****************************************************************//
 	//********************* HEXHide Class Methods *********************//
-	//*****************************************************************//		
+	//*****************************************************************//
 	/**
-	 * Hide integer in HEX String
-	 * 
+	 * Hide integer in HEX String.
+	 *
+	 * @see HEXHide::hide()
+	 * @uses HEXHide::_getHiddenOffset()
 	 * @param $number integer Interger to hide within a hex string
 	 * @param $seed string setting a custom seed instead of letting HEXHide generate one
 	 * @return string Hash with hidden number
 	 */
 	public static function hide($number, $seed=null){
+		asset('is_integer($number)');
+		asset('is_null($seed) || is_string($seed)');
 		if(is_null($seed)){
 			$seed = sha1(microtime()).md5(strrev(microtime()));
 		}
@@ -75,25 +74,29 @@ class HEXHide {
 		$end = substr($seed, strlen($prefix) + strlen($number)+strlen($length));
 		return $prefix.$length.$number.$end;
 	}
-	
+
 	/**
-	 * Find integer in HEX String
-	 * 
+	 * Find integer in HEX String.
+	 *
 	 * @param $hex string HEX String containing the hidden number
+	 * @uses HEXHide::_getHiddenOffset()
+	 * @see HEXHide::hide()
 	 * @return integer Hidden integer
 	 */
 	public static function find($hex){
+		asset('is_string($hex)');
 		$offset = self::_getHiddenOffset($hex);
 		$offset = substr($hex, $offset, strlen($hex));
 		$endbytes = hexdec($offset{0});
 		return (integer) substr($offset, 1, $endbytes);
 	}
-	
+
 	/**
-	 * Find HEX string offset
-	 * 
-	 * @todo Optimize HEXHide::_getHiddenOffset(), how the offset is calculated  
+	 * Find HEX string offset.
+	 *
+	 * @todo Optimize HEXHide::_getHiddenOffset(), how the offset is calculated
 	 * @return integer offset
+	 * @internal
 	 */
 	private static function _getHiddenOffset($hex){
 		$offset = hexdec($hex{0});

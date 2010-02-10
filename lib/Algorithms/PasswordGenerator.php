@@ -1,13 +1,76 @@
 <?php
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * Password generation Class
+ *
+ * <i>No Description</i>
+ *
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Algorithms
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
+ * @link http://www.corelib.org/
+ * @version 1.0.1 ($Id: RFC4122.php 4526 2008-06-04 10:54:33Z wayland $)
+ */
+
+//*****************************************************************//
+//******************* PasswordGenerator class *********************//
+//*****************************************************************//
+/**
+ * PasswordGenerator class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Algorithms
+ * @author Steffen Sørensen <ss@corelib.org>
+ */
 class PasswordGenerator {
-	private static $characters = 'ABCDEFGHKMNPRSTXYZabcdefghjkmnpqrtxyz2346789';
-	
-	static public function random($len){
+
+
+	//*****************************************************************//
+	//************** PasswordGenerator class properties ***************//
+	//*****************************************************************//
+	/**
+	 * Character list.
+	 *
+	 * This list seed characters into the password generator.
+	 *
+	 * @var string
+	 * @internal
+	 */
+	private static $characters = 'ABCDEFGHKMNPRSTXYZabcdefghjkmnpqrtxyz2346789_-!#%&?+*,.';
+
+
+	//*****************************************************************//
+	//**************** PasswordGenerator class methods ****************//
+	//*****************************************************************//
+	static public function create($len){
 		$code = '';
-		for ($i = 1; $i <= $len; $i++){	
+		for ($i = 1; $i <= $len; $i++){
 			$code .= self::$characters{mt_rand(0, (strlen(self::$characters) -1 ))};
 		}
 		return $code;
-	}	
+	}
 }
 ?>

@@ -23,64 +23,16 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Soerensen <ss@corelib.org>
+ * @category corelib
+ * @package Base
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Base
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
  * @filesource
  */
-
-//*****************************************************************//
-//************************ Table Of Content ***********************//
-//*****************************************************************//
-//**                                                             **//
-//**    1. Define Contants .................................     **//
-//**        1. BASE_RUNLEVEL_TERM_DEBUG ....................     **//
-//**        2. BASE_RUNLEVEL_TERM_NOTICE ...................     **//
-//**        3. BASE_RUNLEVEL_TERM_WARN .....................     **//
-//**        4. BASE_RUNLEVEL_DEVEL .........................     **//
-//**        5. BASE_RUNLEVEL_PROD ..........................     **//
-//**        6. CORELIB_BASE_VERSION ........................     **//
-//**       10. CORELIB_COPYRIGHT ...........................     **//
-//**       11. CORELIB_COPYRIGHT_YEAR ......................     **//
-//**    2. Basic Configuration Checks ......................     **//
-//**        1. CORELIB .....................................     **//
-//**        2. CURRENT_WORKING_DIR .........................     **//
-//**        3. BASE_RUNLEVEL ...............................     **//
-//**        4. BASE_CLASS_CACHE_FILE .......................     **//
-//**        5. BASE_DEFAULT_TIMEZONE .......................     **//
-//**        6. BASE_ADMIN_EMAIL ............................     **//
-//**        7. TEMPORARY_DIR ...............................     **//
-//**    3. Load Base Support Files .........................     **//
-//**        1. Base/Lib/Interfaces.php .....................     **//
-//**        2. Base/Lib/ErrorHandler.php ...................     **//
-//**    4. Base Classes ....................................     **//
-//**        1. Base Class ..................................     **//
-//**            1. Base Class Properties ...................     **//
-//**                1. $instance ...........................     **//
-//**                2. $class_cache ........................     **//
-//**                3. $class_cache_updated ................     **//
-//**                4. $class_paths ........................     **//
-//**            2. Base Class Methods ......................     **//
-//**                1. __construct() .......................     **//
-//**                2. getInstance() .......................     **//
-//**                3. addClassPath() ......................     **//
-//**                3. loadClass() .........................     **//
-//**                4. findClass() .........................     **//
-//**                5. getClassPaths() .....................     **//
-//**                6. _classSearch() ......................     **//
-//**                7. _searchDir() ........................     **//
-//**                8. __clone() ...........................     **//
-//**                9. __destruct() ........................     **//
-//**    5. Base Functions ..................................     **//
-//**        1. __autoload() ................................     **//
-//**    6. Instanciate Base ................................     **//
-//**                                                             **//
-//*****************************************************************//
-
 
 //*****************************************************************//
 //*********************** Define Contants *************************//
@@ -131,13 +83,7 @@ if(!defined('CORELIB')){
 	 */
 	define('CORELIB', '/path/to/corelib/');
 }
-/*
-if(!defined('ENABLE_XDEBUG') && ENABLE_XDEBUG){
-	if(is_callable('xdebug_start_code_coverage')){
-		// xdebug_start_code_coverage();
-	}
-}
-*/
+
 if(!defined('CURRENT_WORKING_DIR')){
 	/**
 	 *	Current Working Dir Constant.
@@ -207,52 +153,62 @@ require_once(CORELIB.'/Base/Lib/Interfaces.php');
 //************************* Base Classes **************************//
 //*****************************************************************//
 /**
- *	Base Class.
+ * Base Class.
  *
- *	The base class provides all basic functionality, it is also
- *	responsible for controlling some basic PHP features, but the main
- * 	purpose of this file is to control autoloading of class as the are used.
+ * The base class provides all basic functionality, it is also
+ * responsible for controlling some basic PHP features, but the main
+ * purpose of this file is to control autoloading of class as the are used.
  *
- *	@package corelib
- *	@subpackage Base
+ * @category corelib
+ * @package Base
+ * @author Steffen Sørensen <ss@corelib.org>
  */
 class Base implements Singleton {
+
+
 	//*****************************************************************//
 	//********************* Base Class Properties *********************//
 	//*****************************************************************//
 	/**
-	 *	Singleton Object Reference.
+	 * Singleton Object Reference.
 	 *
-	 *	@var Base
+	 * @var Base
+	 * @internal
 	 */
 	private static $instance = null;
+
 	/**
-	 *	Class Cache.
+	 * Class Cache.
 	 *
-	 *	Array containing references about in which files
-	 * 	the different classes are located.
+	 * Array containing references about in which files
+	 * the different classes are located.
 	 *
 	 * @var array
+	 * @internal
 	 */
 	private $class_cache = array();
+
 	/**
-	 *	Class Cache Change Status.
+	 * Class Cache Change Status.
 	 *
-	 *	Holds informations wether the class cache have been update
-	 *	true if the class cache file should be rewritten, false if no
-	 *	changes have been made.
+	 * Holds informations wether the class cache have been update
+	 * true if the class cache file should be rewritten, false if no
+	 * changes have been made.
 	 *
-	 *	@var boolean
-	 * 	@see Base::__destruct()
+	 * @var boolean
+	 * @see Base::__destruct()
+	 * @internal
 	 */
 	private $class_cache_updated = false;
+
 	/**
-	 *	Class Paths.
+	 * Class Paths.
 	 *
-	 * 	Holds informations about where classes are stored.
+	 * Holds informations about where classes are stored.
 	 *
-	 *	@var array
-	 * 	@see Base::setClassPaths()
+	 * @var array
+	 * @see Base::setClassPaths()
+	 * @internal
 	 */
 	private $class_paths = array(CORELIB);
 
@@ -263,17 +219,18 @@ class Base implements Singleton {
 	/**
 	 *	Base Constructor.
 	 *
-	 * 	@uses BASE_CLASS_CACHE_FILE
-	 * 	@uses CORELIB_COPYRIGHT_YEAR
-	 * 	@uses CORELIB_COPYRIGHT
-	 * 	@uses CORELIB_BASE_VERSION
-	 * 	@uses BASE_DEFAULT_TIMEZONE
-	 * 	@uses BASE_CLASS_CACHE_FILE
-	 * 	@uses BASE_CLASS_CACHE_FILE
-	 * 	@uses BASE_UMASK
-	 * 	@uses CORELIB
-	 * 	@uses Base::$class_cache
-	 * 	@uses Base::$class_cache_updated
+	 * @uses BASE_CLASS_CACHE_FILE
+	 * @uses CORELIB_COPYRIGHT_YEAR
+	 * @uses CORELIB_COPYRIGHT
+	 * @uses CORELIB_BASE_VERSION
+	 * @uses BASE_DEFAULT_TIMEZONE
+	 * @uses BASE_CLASS_CACHE_FILE
+	 * @uses BASE_CLASS_CACHE_FILE
+	 * @uses BASE_UMASK
+	 * @uses CORELIB
+	 * @uses Base::$class_cache
+	 * @uses Base::$class_cache_updated
+	 * @internal
 	 */
 	private function __construct(){
 		mb_internal_encoding('UTF-8');
@@ -286,6 +243,7 @@ class Base implements Singleton {
 		if(is_callable('date_default_timezone_set')){
 			date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
 		}
+
 		if(!defined('BASE_ADMIN_EMAIL')){
 			/**
 			 * Define Admin Email.
@@ -302,16 +260,33 @@ class Base implements Singleton {
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 		}
-		/**
-		 *	Load Error Handler.
-		 *
-		 *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
-		 * 	and set it to true
-		 *
-		 * @see BASE_DISABLE_ERROR_HANDLER
-		 */
-		require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
+		if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
+			if(!defined('BASE_DISABLE_ERROR_HANDLER')){
+				/**
+				 * Disable error handler.
+				 *
+				 * @var boolean true for disabled, false to enable
+				 */
+				define('BASE_DISABLE_ERROR_HANDLER', false);
+			}
 
+			/**
+			 *	Load Error Handler.
+			 *
+			 *	To disable the error handler define the constant BASE_DISABLE_ERROR_HANDLER
+			 * 	and set it to true
+			 *
+			 * @see BASE_DISABLE_ERROR_HANDLER
+			 * @internal
+			 */
+			require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
+		}
+
+		/**
+		 * Load loopback streams
+		 *
+		 * @internal
+		 */
 		require_once(CORELIB.'/Base/Lib/LoopbackStream.php');
 
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
@@ -428,6 +403,7 @@ class Base implements Singleton {
 	 * @return string File containing the class, else return false
 	 * @uses Base::_searchDir()
 	 * @uses Base::$class_paths
+	 * @internal
 	 */
 	private function _classSearch($class){
 		$file = false;
@@ -447,6 +423,7 @@ class Base implements Singleton {
 	 * @param string $class Name of the class to find
 	 * @uses Base::_searchDir()
 	 * @return string filename containing the class, else return false
+	 * @internal
 	 */
 	private function _searchDir($dir, $class){
 		$fp = dir($dir);
@@ -471,6 +448,7 @@ class Base implements Singleton {
 	 * Declared private to prevent cloning
 	 *
 	 * @return false
+	 * @internal
 	 */
 	private function __clone(){
 		return false;
@@ -481,10 +459,11 @@ class Base implements Singleton {
 	 *
 	 * The base destructor saves the current class cache, if changed
 	 *
-	 *	@uses CURRENT_WORKING_DIR
-	 * 	@uses BASE_CLASS_CACHE_FILE
-	 * 	@uses Base::$class_cache
-	 * 	@uses Base::$class_cache_updated
+	 * @uses CURRENT_WORKING_DIR
+	 * @uses BASE_CLASS_CACHE_FILE
+	 * @uses Base::$class_cache
+	 * @uses Base::$class_cache_updated
+	 * @internal
 	 */
 	public function __destruct(){
 		if($this->class_cache_updated){
@@ -524,6 +503,7 @@ class Base implements Singleton {
  *
  * @param string $class Missing class name
  * @uses Base::findClass()
+ * @internal
  */
 function __autoload($class){
 	if($filename = Base::getInstance()->findClass($class)){

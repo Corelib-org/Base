@@ -31,7 +31,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
- * @filesource
  */
 
 //*****************************************************************//
@@ -159,7 +158,6 @@ require_once(CORELIB.'/Base/Lib/Interfaces.php');
  * responsible for controlling some basic PHP features, but the main
  * purpose of this file is to control autoloading of class as the are used.
  *
- * @category corelib
  * @package Base
  * @author Steffen Sørensen <ss@corelib.org>
  */

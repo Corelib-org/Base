@@ -23,258 +23,245 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
+ * @category corelib
+ * @package Base
+ * @subpackage ErrorHandler
+ *
  * @author Steffen Sørensen <ss@corelib.org>
- * @copyright Copyright (c) 2009
+ * @copyright Copyright (c) 2010
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Base
  * @link http://www.corelib.org/
- * @version 1.0.0 ($Id$)
+ * @version 2.0.0 ($Id$)
  */
+
+//*****************************************************************//
+//****************** Basic Configuration Check ********************//
+//*****************************************************************//
+// Set error reporting level
 error_reporting(E_ALL | E_STRICT);
 
-if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
-	if(!defined('BASE_DISABLE_ERROR_HANDLER')){
-		define('BASE_DISABLE_ERROR_HANDLER', false);
-	}
-
-	if(BASE_RUNLEVEL > BASE_RUNLEVEL_PROD){
-		assert_options(ASSERT_ACTIVE, true);
-		assert_options(ASSERT_BAIL, true);
-		assert_options(ASSERT_WARNING, true);
-	} else {
-		assert_options(ASSERT_ACTIVE, false);
-	}
-
-	ini_set('html_errors',true);
-	set_error_handler('BaseError');
-	ob_start('BaseFatalError');
-}
-
 if(!defined('BASE_ERROR_LOGFILE')){
+	/**
+	 * Define error log file.
+	 *
+	 * @var string filename
+	 */
 	define('BASE_ERROR_LOGFILE','var/log/error.log');
 }
-/*
-if(!defined('BASE_ERROR_FATAL_REDIRECT') && isset($_SERVER['SERVER_NAME'])){
+
+if(false){ // For documentational purpose only
+	/**
+	 * Set fatal error redirect target.
+	 *
+	 * If this constant is defined the error handler will
+	 * automatically redirect users to page that can show
+	 * a error has occured.
+	 *
+	 * @var string url to error handling page.
+	 */
 	define('BASE_ERROR_FATAL_REDIRECT','http://'.$_SERVER['SERVER_NAME'].'/corelib/report/');
 }
-*/
 
+
+//*****************************************************************//
+//*********************** ErrorHandler class **********************//
+//*****************************************************************//
 /**
- * 	PHP error handler
+ * Error Handler class.
  *
- * 	This function is used for capturing PHP errors.
- * 	The function captures PHP errors triggered either
- * 	by programming errors, or errors triggered by the
- * 	PHP trigger_error() function.
- *
- *	@param integer $errno
- *	@param string $errstr
- *	@param string $errfile
- *	@param integer $errline
- *	@param string $errorcontext
- *	@uses BaseException
+ * @category corelib
+ * @package Base
+ * @subpackage ErrorHandler
  */
-function BaseError($errno, $errstr, $errfile, $errline, $errorcontext){
-	try {
+class ErrorHandler implements Singleton {
+
+
+	//*****************************************************************//
+	//*************** ErrorHandler class properties *******************//
+	//*****************************************************************//
+	/**
+	 * Singleton Object Reference.
+	 *
+	 * @var ErrorHandler
+	 * @internal
+	 */
+	private static $instance = null;
+
+	/**
+	 * Error list.
+	 *
+	 * @var array
+	 * @internal
+	 */
+	private $errors = array();
+
+
+	//*****************************************************************//
+	//**************** ErrorHandler class constants *******************//
+	//*****************************************************************//
+	/**
+	 * Number of lines to display around the error.
+	 *
+	 * @var integer
+	 * @internal
+	 */
+	const SOURCE_LINES = 12;
+
+
+	//*****************************************************************//
+	//**************** ErrorHandler class methods *******************//
+	//*****************************************************************//
+	/**
+	 * Error handler constructor.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	private function __construct(){ }
+
+	/**
+	 * 	Return instance of ErrorHandler.
+	 *
+	 * 	Please refer to the {@link Singleton} interface for complete
+	 * 	description.
+	 *
+	 * 	@see Singleton
+	 *  @uses ErrorHandler::$instance
+	 *	@return ErrorHandler
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new ErrorHandler();
+		}
+		return self::$instance;
+	}
+
+	/**
+	 * Have any errors been cought.
+	 *
+	 * @return boolean true of errors have been cought else return false
+	 */
+	public function hasErrors(){
+		if(count($this->errors) > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Trigger error.
+	 *
+	 * This method is used by php's internal errorhandler.
+	 *
+	 * @param integer $code error code.
+	 * @param string $description error description
+	 * @param string $file filename
+	 * @param integer $line line number
+	 * @param object $symbol object reference
+	 * @return void
+	 * @internal
+	 */
+	public function trigger($code, $description, $file=null, $line=null, $symbol=null){
 		if(error_reporting() != 0){
 			/**
 			 * XXX This if loop is a hot fix for disabling E_STRICT errors for all php 5.2.x version.
 			 * XXX This works as a workaround for php bug #49177, see: http://bugs.php.net/bug.php?id=49177 for more information
 			 */
-			if($errno != E_STRICT || !(version_compare(PHP_VERSION, '5.2') == 1 && version_compare(PHP_VERSION, '5.3') == -1)){
-				throw new BaseException(htmlentities($errstr).' <br/><i> '.$errfile.' at line '.$errline.'</i>', $errno, $errstr, $errfile, $errline, $errorcontext);
+			if($code != E_STRICT || !(version_compare(PHP_VERSION, '5.2') == 1 && version_compare(PHP_VERSION, '5.3') == -1)){
+				$this->errors[] = array('code' => $code,
+				                        'description' => $description,
+				                        'file' => $file,
+				                        'line' => $line,
+				                        'symbol' => $symbol,
+				                        'backtrace' => debug_backtrace());
 			}
 		}
-	} catch (BaseException $e){
-		echo $e;
-		return $e;
 	}
-	return true;
-}
 
-function BaseFatalError($buffer){
-	if(!strstr($buffer, '<b>Fatal error</b>:')){
-		return false;
-	} else {
-		preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin\s.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
-		while(list($key, $val) = each($result[0])){
-			$buffer = str_replace($result[0][$key], '', $buffer);
-			$e = BaseError(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
-			$buffer .= $e->__toString();
+	/**
+	 * Fatal error handler
+	 *
+	 * If the error handler detects a fatal error
+	 * which normally would'nt be cought this method
+	 * will scan the content of the output buffer instead.
+	 *
+	 * @param string output buffer
+	 * @return string new output buffer
+	 * @internal
+	 */
+	public function fatal($buffer){
+		if(!strstr($buffer, '<b>Fatal error</b>:')){
+			return false;
+		} else {
+			preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin\s.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
+			while(list($key, $val) = each($result[0])){
+				$this->trigger(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
+				$buffer = $this->__toString();
 
-			$checksum = $e->getChecksum();
-			if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
-				if(BASE_ADMIN_EMAIL !== false){
-					mail(BASE_ADMIN_EMAIL, '[Corelib Error Handler] '.$result[2][$key], $e->writeToLog(true));
-				}
-				if(defined('BASE_ERROR_FATAL_REDIRECT')){
-					$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
-				} else {
-					$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib</a></i></body></html>';
+				if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
+					if(BASE_ADMIN_EMAIL !== false){
+						mail(BASE_ADMIN_EMAIL, '['.$_SERVER['SERVER_NAME'].' - Corelib error handler] '.$result[2][$key], $buffer, 'Content-Type: text/html');
+					}
+					if(defined('BASE_ERROR_FATAL_REDIRECT')){
+						$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
+					} else {
+						$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib</a></i></body></html>';
+					}
 				}
 			}
+			return $buffer;
+		}
+	}
+
+	/**
+	 * Convert error handler to string.
+	 *
+	 * @return string error handler content.
+	 */
+	public function __toString(){
+		$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
+		$content = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', $template);
+		foreach ($this->errors as $error){
+			$buffer .= preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$this->_getError($error, $content).' \\3', $template);
 		}
 		return $buffer;
 	}
-}
 
-class BaseException extends Exception {
-	private static $buffer = false;
-	private static $template = null;
-	private static $template_desc = null;
-
-	private $errstr = null;
-	private $errfile = null;
-	private $errline = null;
-	private $errorcontext = null;
-	private $checksum = null;
-
-	const SOURCE_LINES = 12;
-
-	function __construct($msg, $code=0, $errstr=null, $errfile=null, $errline=null, $errorcontext=null) {
-		parent::__construct($msg, $code);
-		$this->errstr = $errstr;
-		$this->errfile = $errfile;
-		$this->errline = $errline;
-		$this->errorcontext = $errorcontext;
-		$this->checksum = md5($this->getFile().$this->getLine());
-		if(!self::$buffer){
-			self::$buffer = true;
-			self::$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
-			self::$template_desc = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', self::$template);
-		}
-	}
-
-	function __toString(){
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-			if(php_sapi_name() == 'cli'){
-				return $this->WriteToLog(true);
-			} else {
-				return $this->htmlError();
-			}
-		} else {
-			return $this->WriteToLog();
-		}
-	}
-
-	public function myGetFile(){
-		if(!is_null($this->errfile)){
-			return $this->errfile;
-		} else {
-			return $this->getFile();
-		}
-	}
-	public function myGetLine(){
-		if(!is_null($this->errline)){
-			return $this->errline;
-		} else {
-			return $this->getLine();
-		}
-	}
-	public function myGetMessage(){
-		if(!is_null($this->errstr)){
-			return $this->errstr;
-		} else {
-			return $this->getMessage();
-		}
-	}
-	public function getChecksum(){
-		return $this->checksum;
-	}
-
-
-	function htmlError(){
-		$return = str_replace('!ERROR_NAME!', ($this->getCode().': '.$this->myGetCode()), self::$template_desc);
-		$return = str_replace('!ERROR_DESC!', $this->myGetMessage(), $return);
-		$return = str_replace('!ERROR_FILE!', $this->myGetFile(), $return);
-		$return = str_replace('!ERROR_LINE!', $this->myGetLine(), $return);
-		$return = str_replace('!ERROR_FILE_CONTENT!', $this->getSource(), $return);
+	/**
+	 * Merge error template with error content.
+	 *
+	 * @param array $error error information
+	 * @param string $content template
+	 * @return string
+	 * @internal
+	 */
+	private function _getError(array &$error, $content){
+		$return = str_replace('!ERROR_NAME!', $error['code'].': '.$this->_getErrorCodeDescription($error['code']), $content);
+		$return = str_replace('!ERROR_DESC!', $error['description'], $return);
+		$return = str_replace('!ERROR_FILE!', $error['file'], $return);
+		$return = str_replace('!ERROR_LINE!', $error['line'], $return);
+		$return = str_replace('!ERROR_FILE_CONTENT!', $this->_getSource($error), $return);
+		$return = str_replace('!ERROR_FILE_CONTENT_ID!', RFC4122::generate(), $return);
 		$return = str_replace('!CORELIB_VERSION!', CORELIB_BASE_VERSION, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT!', CORELIB_COPYRIGHT, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT_YEAR!', CORELIB_COPYRIGHT_YEAR, $return);
-		$return = str_replace('!STACK_TRACE!', nl2br(htmlentities($this->getTraceAsString())), $return);
-		$this->getSource();
+		$return = str_replace('!STACK_TRACE!', $this->_getTraceAsHTML($error['backtrace']), $return);
+		$return = str_replace('!STACK_TRACE_ID!', RFC4122::generate(), $return);
+		$return = str_replace('!REQUEST_CONTENT!', $this->_getRequestContentAsHTML(), $return);
+		$return = str_replace('!REQUEST_CONTENT_ID!', RFC4122::generate(), $return);
 		return $return;
 	}
 
-	function getSource(){
-		$source = file_get_contents($this->myGetFile());
-		$source = explode('<br />', $source);
-		$source = file($this->myGetFile());
-		if($this->myGetLine() < self::SOURCE_LINES){
-			$offset = 1;
-		} else {
-			$offset = $this->myGetLine() - self::SOURCE_LINES;
-		}
-		if(($offset + (self::SOURCE_LINES * 2)) > sizeof($source)){
-			$offset = sizeof($source) - (self::SOURCE_LINES * 2);
-		}
-		$offset--;
-		$content = '';
-		$instring = false;
-		for ($i = $offset; $i <= $offset + (self::SOURCE_LINES * 2); $i++){
-			if(isset($source[$i])){
-				$source[$i] = htmlspecialchars($source[$i]);
-				if($this->mygetLine() == ($i + 1)){
-					$style="background-color: #FFCCCC;";
-				} else {
-					$style="";
-				}
-
-				if(!$instring){
-					if(preg_match('/[\'"].*?\n/s', $source[$i]) && !preg_match('/[\'"].*?[\'"\n]/s', $source[$i])){
-						$instring = true;
-					}
-					$source[$i] = preg_replace('/[\'"].*?[\'"\n]/s', '<span style="color: #008200">\\0</span>', $source[$i]);
-					$source[$i] = preg_replace('/\$[[:alpha:]_]+/', '<span style="color: #ad2e00">\\0</span>', $source[$i]);
-					$source[$i] = preg_replace('/\b(abstract|public|private|implements|const|class|extends|protected|static|function|require_once|require|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
-				} else {
-					if(preg_match('/.*?[\'"]/', $source[$i])){
-						$instring = false;
-					}
-					$source[$i] = preg_replace('/.*?[\'"\n]/', '<span style="color: #008200">\\0</span>', $source[$i]);
-				}
-
-
-				$source[$i] = str_replace("\t", '&#160;&#160;&#160;&#160;', $source[$i]);
-
-				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
-			}
-		}
-		return $content;
-	}
-
-	function WriteToLog($return = false){
-		$content = '--====MD5 '.$this->checksum.' Time: '.date('r')."\n";
-		$content .= 'Error Code: '.$this->myGetCode()."\n";
-		$content .= 'Error File: '.$this->getFile()."\n";
-		$content .= 'Error Line: '.$this->getLine()."\n";
-		if(isset($_SERVER['REQUEST_URI'])){
-			$content .= 'Request URI: '.$_SERVER['REQUEST_URI']."\n";
-		}
-		if(isset($_SERVER['HTTP_REFERER'])){
-			$content .= 'HTTP Referer: '.$_SERVER['HTTP_REFERER']."\n";
-		}
-		if(isset($_SERVER['REMOTE_ADDR'])){
-			$content .= 'Remote Address: '.$_SERVER['REMOTE_ADDR']."\n";
-		}
-		$content .= "\n";
-		$content .= strip_tags(preg_replace('/\<br\/\\>\s*/', "\n", $this->getMessage()))."\n\n";
-		$content .= $this->getTraceAsString()."\n";
-		$content .= 'EOF====--'."\n\n";
-		if(!$return){
-			$fp = fopen(BASE_ERROR_LOGFILE, 'a+');
-			fwrite($fp, $content, strlen($content));
-			fclose($fp);
-			return '';
-		} else {
-			return $content;
-		}
-	}
-
-	function myGetCode(){
-		switch ($this->getCode()) {
+	/**
+	 * Translate error code to string.
+	 *
+	 * @param integer $code
+	 * @return string error description
+	 * @internal
+	 */
+	private function _getErrorCodeDescription($code){
+		switch ($code) {
 			case E_USER_ERROR:
 				return 'Error';
 				break;
@@ -295,27 +282,152 @@ class BaseException extends Exception {
 		}
 	}
 
-	static function IsErrorThrown(){
-		$base = Base::getInstance();
-		if(self::$buffer !== false){
-			header('HTTP/1.1 503 Internal Server Error');
-			header('Status: 503');
+	/**
+	 * Get trace as HTML.
+	 *
+	 * @param array $trace
+	 * @return string
+	 * @internal
+	 */
+	private function _getTraceAsHTML(array &$trace){
+		$return = '';
+		foreach ($trace as $key => $level){
+			if(isset($level['class']) && !empty($level['class'])){
+				$function = $level['class'].'->'.$level['function'];
+			} else {
+				$function = $level['function'];
+			}
+			$args = array();
+			foreach ($level['args'] as $arg){
+				if(is_array($arg)){
+					$args[] = 'array('.sizeof($arg).')';
+				} else if(is_object($arg)){
+					$args[] = get_class($arg);
+				} else if(is_string($arg)) {
+					if(strlen($arg) > 30){
+						$args[] = '\'<span title="'.htmlspecialchars($arg).'">'.htmlspecialchars(substr($arg, 0, 30)).'...</span>\'';
+					} else {
+						$args[] = '\''.htmlspecialchars($arg).'\'';
+					}
+				} else {
+					$args[] = $arg;
+				}
+			}
+			$return .= '#'.($key + 1).' '.$level['file'].'('.$level['line'].')'.' '.htmlspecialchars($function).'('.implode(', ', $args).')'."<br/>";
 		}
-		if(BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
-			return self::$buffer;
-		} else {
-			return false;
-		}
+		return $return;
 	}
 
-	static function getErrorPage(){
-		$content = ob_get_contents();
-		ob_end_clean();
-		if(php_sapi_name() != 'cli'){
-			return preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$content.' \\3', self::$template);
+	/**
+	 * Get highlighted source cut.
+	 *
+	 * @param array $error
+	 * @return string
+	 * @internal
+	 */
+	private function _getSource(array &$error){
+		$source = file_get_contents($error['file']);
+		$source = explode('<br />', $source);
+		$source = file($error['file']);
+		if($error['line'] < self::SOURCE_LINES){
+			$offset = 1;
 		} else {
-			return  $content;
+			$offset = $error['line'] - self::SOURCE_LINES;
 		}
+		if(($offset + (self::SOURCE_LINES * 2)) > sizeof($source)){
+			$offset = sizeof($source) - (self::SOURCE_LINES * 2);
+		}
+		$offset--;
+		$content = '';
+		$instring = false;
+		for ($i = $offset; $i <= $offset + (self::SOURCE_LINES * 2); $i++){
+			if(isset($source[$i])){
+				$source[$i] = htmlspecialchars($source[$i]);
+				if($error['line'] == ($i + 1)){
+					$style="background-color: #FFCCCC;";
+				} else {
+					$style="";
+				}
+
+				if(!$instring){
+					if(preg_match('/[\'"].*?\n/s', $source[$i]) && !preg_match('/[\'"].*?[\'"\n]/s', $source[$i])){
+						$instring = true;
+					}
+					$source[$i] = preg_replace('/[\'"].*?[\'"\n]/s', '<span style="color: #008200">\\0</span>', $source[$i]);
+					$source[$i] = preg_replace('/\$[[:alpha:]_]+/', '<span style="color: #ad2e00">\\0</span>', $source[$i]);
+					$source[$i] = preg_replace('/\b(public|private|implements|const|^\s*(abstract)?\s*class|extends|protected|static|function|require_once|require|include_once|include|if|else|while|new|null|true|false|isset|return|self|echo|exit|try|throw|catch)\b/', '<span style="color: #0000ff">\\0</span>', $source[$i]);
+				} else {
+					if(preg_match('/.*?[\'"]/', $source[$i])){
+						$instring = false;
+					}
+					$source[$i] = preg_replace('/.*?[\'"\n]/', '<span style="color: #008200">\\0</span>', $source[$i]);
+				}
+
+
+				$source[$i] = str_replace("\t", '&#160;&#160;&#160;&#160;', $source[$i]);
+
+				$content .= '<div style="line-height: 16px; font-family: monospace; '.$style.'">'.($i + 1).': '.($source[$i]).'</div>';
+			}
+		}
+		return $content;
 	}
+
+	/**
+	 * Get request content as HTML
+	 *
+	 * @return string
+	 * @internal
+	 */
+	private function _getRequestContentAsHTML(){
+		$return = '<b>$_SERVER</b><table>';
+		foreach($_SERVER as $key => $data){
+			$return .= '<tr><td style="font-size: 10px;">'.$key.'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.$data.'</td></tr>';
+		}
+		$return .= '</table>';
+		if(sizeof($_GET) > 0){
+		$return .= '<br/><b>$_GET</b><table>';
+			foreach($_GET as $key => $data){
+				$return .= '<tr><td style="font-size: 10px;">'.$key.'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.$data.'</td></tr>';
+			}
+			$return .= '</table>';
+		}
+		if(sizeof($_POST) > 0){
+			$return .= '<br/><b>$_POST</b><table>';
+			foreach($_POST as $key => $data){
+				$return .= '<tr><td style="font-size: 10px;">'.$key.'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.$data.'</td></tr>';
+			}
+			$return .= '</table>';
+		}
+		return $return;
+	}
+}
+
+//*****************************************************************//
+//********************** BaseException class **********************//
+//*****************************************************************//
+/**
+ * Base exception class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage ErrorHandler
+ */
+class BaseException extends Exception { }
+
+
+//*****************************************************************//
+//****************** Last minute configuration ********************//
+//*****************************************************************//
+if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
+	if(BASE_RUNLEVEL > BASE_RUNLEVEL_PROD){
+		assert_options(ASSERT_ACTIVE, true);
+		assert_options(ASSERT_BAIL, true);
+		assert_options(ASSERT_WARNING, true);
+	} else {
+		assert_options(ASSERT_ACTIVE, false);
+	}
+	ini_set('html_errors',true);
+	set_error_handler(array(ErrorHandler::getInstance(), 'trigger'));
+	ob_start(array(ErrorHandler::getInstance(), 'fatal'));
 }
 ?>

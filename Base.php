@@ -365,16 +365,11 @@ class Base implements Singleton {
 		assert('is_string($class)');
 
 		if(!isset($this->class_cache[$class])){
-			try {
-				if($file = $this->_classSearch($class)){
-					$this->class_cache[$class] = $file;
-					$this->class_cache_updated = true;
-				} else {
-					throw new BaseException('File containing class '.$class.' could not be found');
-				}
-			} catch (BaseException $e){
-				echo $e->htmlError();
-				exit;
+			if($file = $this->_classSearch($class)){
+				$this->class_cache[$class] = $file;
+				$this->class_cache_updated = true;
+			} else {
+				trigger_error('File containing class '.$class.' could not be found', E_USER_WARNING);
 			}
 		}
 		if(isset($this->class_cache[$class])){

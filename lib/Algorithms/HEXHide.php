@@ -31,7 +31,6 @@
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
- * @filesource
  * @version 1.0.0 ($Id$)
  */
 

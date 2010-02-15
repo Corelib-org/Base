@@ -744,58 +744,17 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
  * @package Base
  * @subpackage SessionHandler
  */
-class SessionHandlerInitEvent implements EventTypeHandler,Observer  {
-
-
-	//*****************************************************************//
-	//*********** SessionHandlerInitEvent class properties ************//
-	//*****************************************************************//
-	/**
-	 * Eventhandler subject
-	 *
-	 * @var ObserverSubject
-	 */
-	private $subject = null;
+class SessionHandlerInitEvent extends EventAction  {
 
 
 	//*****************************************************************//
 	//************ SessionHandlerInitEvent class methods **************//
-	//*****************************************************************//
-	/**
-	 * SessionHandlerInitEvent constructor.
-	 *
-	 * @return void
-	 * @internal
-	 */
-	public function __construct(){
-
-	}
-
-	/**
-	 * Get event type.
-	 *
-	 * @see EventTypeHandler::getEventType()
-	 * @return string {@link EventSessionConfigured}
-	 */
-	public function getEventType(){
-		return 'EventSessionConfigured';
-	}
-
-	/**
-	 * Register observerSubject.
-	 *
-	 * @see Observer::register()
-	 */
-	public function register(ObserverSubject $subject){
-		$this->subject = $subject;
-	}
-
 	/**
 	 * Update with event.
 	 *
 	 * @see Observer::update()
 	 */
-	public function update($update){
+	public function update(Event $event){
 		$session = SessionHandler::getInstance();
 		if(SESSION_INIT_METHOD == SESSION_INIT_BY_EVENT){
 			$session->init();
@@ -820,5 +779,5 @@ class EventSessionConfigured implements Event {
 }
 
 $event = EventHandler::getInstance();
-$event->registerObserver(new SessionHandlerInitEvent());
+$event->register(new SessionHandlerInitEvent(), 'EventSessionConfigured');
 ?>

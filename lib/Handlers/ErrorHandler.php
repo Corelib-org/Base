@@ -72,6 +72,7 @@ if(false){ // For documentational purpose only
  * @category corelib
  * @package Base
  * @subpackage ErrorHandler
+ * @since 5.0
  */
 class ErrorHandler implements Singleton {
 
@@ -246,7 +247,7 @@ class ErrorHandler implements Singleton {
 		$return = str_replace('!CORELIB_VERSION!', CORELIB_BASE_VERSION, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT!', CORELIB_COPYRIGHT, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT_YEAR!', CORELIB_COPYRIGHT_YEAR, $return);
-		$return = str_replace('!STACK_TRACE!', $this->_getTraceAsHTML($error['backtrace']), $return);
+		$return = str_replace('!STACK_TRACE!', $this->getTraceAsHTML($error['backtrace']), $return);
 		$return = str_replace('!STACK_TRACE_ID!', RFC4122::generate(), $return);
 		$return = str_replace('!REQUEST_CONTENT!', $this->_getRequestContentAsHTML(), $return);
 		$return = str_replace('!REQUEST_CONTENT_ID!', RFC4122::generate(), $return);
@@ -287,9 +288,8 @@ class ErrorHandler implements Singleton {
 	 *
 	 * @param array $trace
 	 * @return string
-	 * @internal
 	 */
-	private function _getTraceAsHTML(array &$trace){
+	public function getTraceAsHTML(array &$trace){
 		$return = '';
 		foreach ($trace as $key => $level){
 			if(isset($level['class']) && !empty($level['class'])){

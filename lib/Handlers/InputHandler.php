@@ -1235,7 +1235,7 @@ class InputValidatorArray implements InputValidator {
  * @package Base
  * @subpackage InputHandler
  */
-class InputValidatorIsSet implements InputValidator {
+class InputValidatorIsSet extends InputValidatorRegex {
 
 
 	//*****************************************************************//

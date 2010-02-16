@@ -412,7 +412,32 @@ class ErrorHandler implements Singleton {
  * @package Base
  * @subpackage ErrorHandler
  */
-class BaseException extends Exception { }
+class BaseException extends Exception {
+
+
+	//*****************************************************************//
+	//***************** BaseException class methods *******************//
+	//*****************************************************************//
+	/**
+	 * Overwrite parent constructor.
+	 *
+	 * override original constructor in order to add support for
+	 * both PHP < 5.3 where exception linking where unsupported and
+	 * >= PHP 5.3 where exception linking is supported
+	 *
+	 * @param string $message
+	 * @param integer $code
+	 * @param Exception $previous
+	 * @return void
+	 */
+	public function __construct($message = null, $code = 0, Exception $previous = null){
+		if(version_compare(PHP_VERSION, '5.3') == -1){
+			parent::__construct($message, $code);
+		} else {
+			parent::__construct($message, $code, $previous);
+		}
+	}
+}
 
 
 //*****************************************************************//

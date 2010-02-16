@@ -1,84 +1,278 @@
 <?php
-/*	@version 1.0 Beta ($Id$) */
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * Input handler Classes
+ *
+ * <i>No Description</i>
+ *
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2010
+ * @license http://www.gnu.org/copyleft/gpl.html
+ * @link http://www.corelib.org/
+ * @version 1.1.0 ($Id$)
+ */
 
-interface InputValidator {
-	public function validate($content);
+//*****************************************************************//
+//****************** Basic Configuration Check ********************//
+//*****************************************************************//
+/**
+ * Input handler invalid variable error code.
+ *
+ * @var integer
+ */
+define('INPUT_HANDLER_INVALID_VARIABLE', 1);
+
+
+//*****************************************************************//
+//********************** BaseException class **********************//
+//*****************************************************************//
+/**
+ * Inputhandler exception class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class BaseInputHandlerException extends BaseException { }
+
+
+//*****************************************************************//
+//********** BaseInputHandlerInvalidGetException class ************//
+//*****************************************************************//
+/**
+ * Inputhandler invalid get variable exception class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class BaseInputHandlerInvalidGetException extends BaseInputHandlerException {
+
+
+	//*****************************************************************//
+	//****** BaseInputHandlerInvalidGetException class methods ********//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $message
+	 * @param integer $code
+	 * @param Exception $previous
+	 * @return void
+	 */
+	public function __construct($message = null, $code = INPUT_HANDLER_INVALID_VARIABLE, Exception $previous = null){
+		parent::__construct('Ivalid get variable: '.$message, $code, $previous);
+	}
 }
 
+
+//*****************************************************************//
+//********* BaseInputHandlerInvalidPostException class ************//
+//*****************************************************************//
+/**
+ * Inputhandler invalid post variable exception class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class BaseInputHandlerInvalidPostException extends BaseInputHandlerException {
+
+
+	//*****************************************************************//
+	//****** BaseInputHandlerInvalidPostException class methods *******//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $message
+	 * @param integer $code
+	 * @param Exception $previous
+	 * @return void
+	 */
+	public function __construct($message = null, $code = INPUT_HANDLER_INVALID_VARIABLE, Exception $previous = null){
+		parent::__construct('Ivalid post variable: '.$message, $code, $previous);
+	}
+}
+
+
+//*****************************************************************//
+//********************** InputHandler class ***********************//
+//*****************************************************************//
+/**
+ * Session handler.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
 class InputHandler implements Singleton,Output {
+
+
+	//*****************************************************************//
+	//**************** InputHandler class properties ******************//
+	//*****************************************************************//
+	/**
+	 * Singleton Object Reference.
+	 *
+	 * @var InputHandler
+	 * @internal
+	 */
 	private static $instance = null;
 
+	/**
+	 * @var array valid post variables
+	 * @internal
+	 */
 	private $post_valid = array();
+
+	/**
+	 * @var array post variables
+	 * @internal
+	 */
 	private $post = array();
+
+	/**
+	 * @var array valid get variables
+	 * @internal
+	 */
 	private $get_valid = array();
+
+	/**
+	 * @var array get variables
+	 * @internal
+	 */
 	private $get = array();
-	private $addslashes = true;
+
+	/**
+	 * @var boolean true if a error occured, else false
+	 * @internal
+	 */
 	private $input_error = false;
+
+	/**
+	 * @var array get variable error descriptions or codes
+	 * @internal
+	 */
 	private $error_overwrite_get = array();
+
+	/**
+	 * @var array post variable error descriptions or codes
+	 * @internal
+	 */
 	private $error_overwrite_post = array();
+
+	/**
+	 * @var array get variables which should be stripped
+	 * @internal
+	 */
 	private $serialize_strip_get = array();
+
+	/**
+	 * @var array post variables which should be stripped
+	 * @internal
+	 */
 	private $serialize_strip_post = array();
 
-	/**
-	 * @var array
-	 */
-	private $cp1252_bad_charecters = array("\xE2\x80\xA6",        // ellipsis
-	                                       "\xE2\x80\x93",        // long dash
-	                                       "\xE2\x80\x94",        // long dash
-	                                       "\xE2\x80\x98",        // single quote opening
-	                                       "\xE2\x80\x99",        // single quote closing
-	                                       "\xE2\x80\x9c",        // double quote opening
-	                                       "\xE2\x80\x9d",        // double quote closing
-	                                       "\xE2\x80\xa2");       // dot used for bullet points)
-	/**
-	 * @var array
-	 */
-	private $cp1252_new_charecters = array('...',
-	                                       '-',
-	                                       '-',
-	                                       '\'',
-	                                       '\'',
-	                                       '"',
-	                                       '"',
-	                                       '*');
 
+	//*****************************************************************//
+	//****************** InputHandler class methods *******************//
+	//*****************************************************************//
+	/**
+	 * Input handler constructor.
+	 *
+	 * @return void
+	 * @internal
+	 */
 	private function __construct(){
 		if(!defined('INPUT_HANDLER_RESET_GET_POST')){
+			/**
+			 * Reset get and post variables
+			 *
+			 * If this constant is set to true the input handler
+			 * will automatically remove the content of $_GET and $_POST.
+			 * This is done by default, and to disable this behavior set this
+			 * contant to false in your config or abstracts file.
+			 *
+			 * @var boolean
+			 */
 			define('INPUT_HANDLER_RESET_GET_POST', true);
 		}
 		set_magic_quotes_runtime(false);
 
 		if(isset($_POST)){
-			$this->post = $_POST;
+			$this->post = &$_POST;
 		}
 		if(isset($_GET)){
-			$this->get = $_GET;
+			$this->get = &$_GET;
 		}
 		if(INPUT_HANDLER_RESET_GET_POST){
 			unset($_POST, $_GET);
 		}
 		if(get_magic_quotes_gpc()){
-			$this->get = $this->_stripslashes($this->get);			
-			$this->post = $this->_stripslashes($this->post);			
+			$this->get = $this->_stripslashes($this->get);
+			$this->post = $this->_stripslashes($this->post);
 		}
-		$this->addslashes = false;
 	}
 
-	public function addslashes($boolean=null){
-		if(!is_null($boolean)){
-			$this->addslashes = $boolean;
+	/**
+	 * 	Return instance of InputHandler.
+	 *
+	 * 	Please refer to the {@link Singleton} interface for complete
+	 * 	description.
+	 *
+	 * 	@see Singleton
+	 *  @uses InputHandler::$instance
+	 *	@return InputHandler
+	 */
+	public static function getInstance(){
+		if(is_null(self::$instance)){
+			self::$instance = new InputHandler();
 		}
-		return $this->addslashes;
+		return self::$instance;
 	}
 
+	/**
+	 * Validate post variable.
+	 *
+	 * Apply {@link InputValidator} object to post variable.
+	 *
+	 * @param string $item post variable name
+	 * @param InputValidator $mode
+	 * @return boolean true if valid, else return false
+	 * @see InputHandler::unValidatePost()
+	 * @see InputHandler::isValidPost()
+	 * @see InputHandler::isSetPost()
+	 * @see InputHandler::setPost()
+	 * @see InputHandler::unsetPost()
+	 * @see InputHandler::validateGet()
+	 */
 	public function validatePost($item, InputValidator $mode){
 		if(isset($this->post[$item])){
 			if($valid = $this->_validate($this->post[$item], $mode)){
-				$this->post[$item] = $this->_cp1252Safe($this->post[$item]);
 				$this->post_valid[$item] = &$this->post[$item];
-				if($this->addslashes){
-					$this->post_valid[$item] = $this->_addslashes($this->post_valid[$item]);
-				}
 				return $valid;
 			} else {
 				if(isset($this->post_valid[$item])){
@@ -94,14 +288,24 @@ class InputHandler implements Singleton,Output {
 		}
 	}
 
+	/**
+	 * Validate get variable.
+	 *
+	 * Apply {@link InputValidator} object to get variable.
+	 *
+	 * @param string $item get variable name
+	 * @param InputValidator $mode
+	 * @return boolean true if valid, else return false
+	 * @see InputHandler::unValidateGet()
+	 * @see InputHandler::isValidGet()
+	 * @see InputHandler::isSetGet()
+	 * @see InputHandler::setGet()
+	 * @see InputHandler::unsetGet()
+	 * @see InputHandler::validatePost()
+	 */
 	public function validateGet($item, InputValidator $mode){
 		if(isset($this->get[$item]) && $valid = $this->_validate($this->get[$item], $mode)){
-			$this->get[$item] = $this->_cp1252Safe($this->get[$item]);
 			$this->get_valid[$item] = &$this->get[$item];
-			if($this->addslashes){
-				$this->get_valid[$item] = $this->_addslashes($this->get_valid[$item]);
-			}
-
 			return $valid;
 		} else {
 			if(isset($this->get_valid[$item])){
@@ -112,6 +316,15 @@ class InputHandler implements Singleton,Output {
 		}
 	}
 
+	/**
+	 * Force invalid get variable.
+	 *
+	 * force a valid get variable into being a invalid get variable.
+	 *
+	 * @param string $item get variable name
+	 * @return boolean true if variable is valid and action was successfull, else return false
+	 * @see InputHandler::validateGet()
+	 */
 	public function unValidateGet($item){
 		if(isset($this->get_valid[$item])){
 			unset($this->get_valid[$item]);
@@ -120,6 +333,15 @@ class InputHandler implements Singleton,Output {
 		return false;
 	}
 
+	/**
+	 * Force invalid get variable.
+	 *
+	 * force a valid get variable into being a invalid get variable.
+	 *
+	 * @param string $item get variable name
+	 * @return boolean true if variable is valid and action was successfull, else return false
+	 * @see InputHandler::validatePost()
+	 */
 	public function unValidatePost($item){
 		if(isset($this->post_valid[$item])){
 			unset($this->post_valid[$item]);
@@ -128,111 +350,136 @@ class InputHandler implements Singleton,Output {
 		return false;
 	}
 
-	private function _validate($content, InputValidator $mode){
-		return $mode->validate($content);
-	}
-
+	/**
+	 * Check to see if a get variable is set.
+	 *
+	 * @param string $item get variable name
+	 * @return boolean true if set else return false
+	 */
 	public function isSetGet($item){
 		return isset($this->get[$item]);
 	}
 
+	/**
+	 * Check to see if a post variable is set.
+	 *
+	 * @param string $item post variable name
+	 * @return boolean true if set else return false
+	 */
 	public function isSetPost($item){
 		return isset($this->post[$item]);
 	}
 
+	/**
+	 * Check to see if a get variable is valid.
+	 *
+	 * @param string $item get variable name
+	 * @return boolean true if set else return false
+	 */
 	public function isValidGet($item){
 		return isset($this->get_valid[$item]);
 	}
 
+	/**
+	 * Check to see if a post variable is valid.
+	 *
+	 * @param string $item get variable name
+	 * @return boolean true if set else return false
+	 */
 	public function isValidPost($item){
 		return isset($this->post_valid[$item]);
 	}
 
-	public function getGet($item, $specialchars=false){
-		try {
-			if(!isset($this->get_valid[$item])){
-				throw new BaseException('Variable Not valid');
-			} else {
-				if($specialchars){
-					return $this->_htmlspecialchars($this->get_valid[$item], ENT_COMPAT, 'UTF-8');
-				} else {
-					return $this->get_valid[$item];
-				}
-			}
-		} catch (Exception $e){
-			echo 'An unvalidated GET variable was requested: '.$item, $e;
-			echo "\n\n";
+	/**
+	 * Get a valid get variable.
+	 *
+	 * @param string $item get variable name
+	 * @return mixed variable value if variable is valid else return false
+	 * @throws BaseInputHandlerInvalidGetException
+	 */
+	public function getGet($item){
+		if(!isset($this->get_valid[$item])){
+			throw new BaseInputHandlerInvalidGetException($item);
+			return false;
+		} else {
+			return $this->get_valid[$item];
+		}
+	}
+
+	/**
+	 * Get a valid post variable.
+	 *
+	 * @param string $item post variable name
+	 * @return mixed variable value if variable is valid else return false
+	 * @throws BaseInputHandlerInvalidPostException
+	 */
+	public function getPost($item){
+		if(!isset($this->post_valid[$item])){
+			throw new BaseInputHandlerInvalidPostException($item);
+		} else {
+			return $this->post_valid[$item];
 		}
 		return false;
 	}
 
-	public function getPost($item, $specialchars=false){
-		try {
-			if(!isset($this->post_valid[$item])){
-				throw new BaseException('Variable Not valid');
-			} else {
-				if($specialchars){
-					return $this->_htmlspecialchars($this->post_valid[$item], ENT_COMPAT, 'UTF-8');
-				} else {
-					return $this->post_valid[$item];
-				}
-			}
-		} catch (Exception $e){
-			echo 'An unvalidated POST variable was requested: '.$item, $e;
-			echo "\n\n";
-		}
-		return false;
-	}
-	public function setGet($item,$value){
+	/**
+	 * Set get variable value.
+	 *
+	 * Set a get variable value and mark it as valid.
+	 *
+	 * @param string $item get variable name
+	 * @param mixed $value get value
+	 * @return boolean true on success, else return false
+	 */
+	public function setGet($item, $value){
 		$this->get_valid[$item] = $value;
 		$this->get[$item] = $value;
+		return true;
 	}
-	public function setPost($item,$value){
+
+	/**
+	 * Set post variable value.
+	 *
+	 * Set a post variable value and mark it as valid.
+	 *
+	 * @param string $item post variable name
+	 * @param mixed $value post value
+	 * @return boolean true on success, else return false
+	 */
+	public function setPost($item, $value){
 		$this->post_valid[$item] = $value;
 		$this->post[$item] = $value;
 	}
 
+	/**
+	 * Unset post variable.
+	 *
+	 * @param string $item post variable name
+	 * @return boolean true on success, else return false
+	 */
 	public function unsetPost($item){
 		$item = func_get_args();
 		while (list(,$val) = each($item)){
 			unset($this->post_valid[$val], $this->post[$val]);
 		}
 	}
+
+	/**
+	 * Unset get variable.
+	 *
+	 * @param string $item get variable name
+	 * @return boolean true on success, else return false
+	 */
 	public function unsetGet($item){
 		$item = func_get_args();
 		while (list(,$val) = each($item)){
 			unset($this->get_valid[$val], $this->get[$val]);
 		}
 	}
-	
-	/**
-	 *	@return InputHandler
-	 */
-	public static function getInstance(){
-		if(is_null(self::$instance)){
-			self::$instance = new InputHandler();
-		}
-		return self::$instance;
-	}
 
-	public function dumpPost(){
-		return serialize($this->post_valid);
-	}
-	public function dumpGet(){
-		return serialize($this->get_valid);
-	}
-
-	public function importPostDump($dump){
-		$this->post_valid = array_merge($this->post_valid, unserialize($dump));
-		$this->post = array_merge($this->post, unserialize($dump));
-	}
-	public function importGetDump($dump){
-		$this->get_valid = array_merge($this->get_valid, unserialize($dump));
-		$this->get = array_merge($this->get, unserialize($dump));
-	}
 
 	/**
-	 * 	Serialize get array
+	 * 	Serialize get array.
 	 *
 	 * 	Serialize get Array, and return seriliazed string, with embedded error
 	 * 	codes.
@@ -249,9 +496,6 @@ class InputHandler implements Singleton,Output {
 		while(list($key, $val) = each($array)){
 			if(!isset($strip_variables[$key])){
 				if($urlencode){
-					if($this->addslashes){
-						$val = $this->_stripslashes($val);
-					}
 					$val = $this->_urlencode($val);
 					$encoded .= $this->_urlencodeArray($val, $key).'&';
 				} else {
@@ -262,13 +506,13 @@ class InputHandler implements Singleton,Output {
 				if(isset($error_codes[$key])){
 					if($urlencode){
 						$error = $error_codes[$key];
-						$encoded .= $key.'_error='.urlencode($error).'&';
+						$encoded .= $key.'-error='.urlencode($error).'&';
 					} else {
 						$encoded[$key.'_error'] = $error;
 					}
 				} else {
 					if($urlencode){
-						$encoded .= $key.'_error&';
+						$encoded .= $key.'-error&';
 					} else {
 						$encoded[$key.'_error'] = true;
 					}
@@ -285,7 +529,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 * 	Serialize Post Variables
+	 * 	Serialize Post Variables.
 	 *
 	 *	if $urlencode is set true a url encoded string is returned
 	 * 	otherwise a serialized array is returned
@@ -299,7 +543,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 * 	Serialize Get Variables
+	 * 	Serialize Get Variables.
 	 *
 	 *	if $urlencode is set true a url encoded string is returned
 	 * 	otherwise a serialized array is returned
@@ -313,7 +557,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 * 	Set Post Error Code
+	 * 	Set Post Error Code.
 	 *
 	 *	This is used together with {@link InputHandler::serializePost()},
 	 *  embedding error codes within the serialised string.
@@ -328,7 +572,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 * 	Set Get Error Code
+	 * 	Set Get Error Code.
 	 *
 	 *	This is used together with {@link InputHandler::serializeGet()},
 	 *  embedding error codes within the serialised string.
@@ -343,7 +587,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 * 	Strip variable from get array when serializing
+	 * 	Strip variable from get array when serializing.
 	 *
 	 * 	@param string $item get variable name
 	 * 	@return boolean true
@@ -352,8 +596,9 @@ class InputHandler implements Singleton,Output {
 		$this->serialize_strip_get[$item] = true;
 		return true;
 	}
+
 	/**
-	 * 	Strip variable from post array when serializing
+	 * 	Strip variable from post array when serializing.
 	 *
 	 * 	@param string $item post variable name
 	 * 	@return boolean true
@@ -364,7 +609,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 *	Check multiple get variables for validity
+	 *	Check multiple get variables for validity.
 	 *
 	 * 	If no variable names is added, all variables will be checked,
 	 * 	this function can take any number of get variables as arguments
@@ -377,7 +622,7 @@ class InputHandler implements Singleton,Output {
 		} else {
 			$array = $item;
 		}
-		
+
 		if(sizeof($array) > 0){
 			while(list(,$val) = each($array)){
 				if(!$this->isValidGet($val)){
@@ -397,7 +642,7 @@ class InputHandler implements Singleton,Output {
 	}
 
 	/**
-	 *	Check multiple post variables for validity
+	 *	Check multiple post variables for validity.
 	 *
 	 * 	If no variable names is added, all variables will be checked,
 	 * 	this function can take any number of post variables as arguments
@@ -429,6 +674,11 @@ class InputHandler implements Singleton,Output {
 	}
 
 
+	/**
+	 * Get XML content.
+	 *
+	 * @see Output::getXML()
+	 */
 	public function getXML(DOMDocument $xml){
 		$XMLget = $xml->createElement('get');
 		while(list($key, $val) = each($this->get)){
@@ -446,23 +696,16 @@ class InputHandler implements Singleton,Output {
 		return $XMLget;
 	}
 
-	public function &getArray(){
-		$array = array();
-		while(list($key, $val) = each($this->get)){
-			if(preg_match('/^[a-zA-Z0-9_]*$/', $key)){
-				if(is_array($val)) {
-					$array[$key] = $val;
-				} else {
-					$array[$key] = $val;
-				}
-			}
-		}
-		$array = array('get'=>$array);
-		return $array;
-	}
-
-
-	private function _xmlArray(DOMDocument $xml, DOMElement $parentNode, $array){
+	/**
+	 * Translate array into XML tree.
+	 *
+	 * @param DOMDocument $xml
+	 * @param DOMElement $parentNode
+	 * @param array $array
+	 * @return void
+	 * @internal
+	 */
+	private function _xmlArray(DOMDocument $xml, DOMElement $parentNode, array $array){
 		while(list($key, $val) = each($array)){
 			if(is_array($val)){
 				$XMLItem = $xml->createElement('item');
@@ -473,19 +716,15 @@ class InputHandler implements Singleton,Output {
 			$XMLItem->setAttribute('id',$key);
 			$parentNode->appendChild($XMLItem);
 		}
+	}
 
-	}
-	private function _addslashes($subject){
-		if(is_array($subject)){
-			while(list($key,$val) = each($subject)){
-				$subject[$key] = $this->_addslashes($val);
-			}
-			reset($subject);
-		} else {
-			$subject = addslashes($subject);
-		}
-		return $subject;
-	}
+	/**
+	 * Stripslashes from value.
+	 *
+	 * @param mixed $subject
+	 * @return mixed stripslashed value
+	 * @internal
+	 */
 	private function _stripslashes($subject){
 		if(is_array($subject)){
 			while(list($key,$val) = each($subject)){
@@ -497,6 +736,14 @@ class InputHandler implements Singleton,Output {
 		}
 		return $subject;
 	}
+
+	/**
+	 * URL encode value.
+	 *
+	 * @param string $subject
+	 * @return string urlencoded value
+	 * @internal
+	 */
 	private function _urlencode($subject){
 		if(is_array($subject)){
 			while(list($key,$val) = each($subject)){
@@ -508,7 +755,16 @@ class InputHandler implements Singleton,Output {
 		}
 		return $subject;
 	}
-	private function _urlencodeArray($array, $parent=null){
+
+	/**
+	 * URL encode array recursive.
+	 *
+	 * @param array $array
+	 * @param array $parent parent value.
+	 * @return string url encoded array
+	 * @internal
+	 */
+	private function _urlencodeArray(array $array, array $parent=null){
 		$return = '';
 		if(is_array($array)){
 			while(list($key,$val) = each($array)){
@@ -521,138 +777,437 @@ class InputHandler implements Singleton,Output {
 		} else {
 			return $parent.'='.$array;
 		}
-
 	}
 
-	private function _cp1252Safe($string){
-		return str_replace($this->cp1252_bad_charecters, $this->cp1252_new_charecters, $string);
-	}
-
-	private function _htmlspecialchars($subject, $quote_style=ENT_COMPAT, $charset='UTF-8'){
-		if(is_array($subject)){
-			while(list($key,$val) = each($subject)){
-				$subject[$key] = $this->_htmlspecialchars($val, $quote_style, $charset);
-			}
-			reset($subject);
-		} else {
-			$subject = htmlspecialchars($subject, $quote_style, $charset);
-		}
-		return $subject;
+	/**
+	 * Generic value validation
+	 *
+	 * Match value against {@link InputValidator}
+	 *
+	 * @param mixed $content value
+	 * @param InputValidator $mode
+	 * @return boolean true if valid, else return false
+	 * @internal
+	 */
+	private function _validate($content, InputValidator $mode){
+		return $mode->validate($content);
 	}
 }
 
+
+//*****************************************************************//
+//****************** InputValidator interface *********************//
+//*****************************************************************//
+/**
+ * InputValidator interface.
+ *
+ * Impliment this interface in order to create a new input validator
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+interface InputValidator {
+	/**
+	 * Validate content.
+	 *
+	 * @param mixed $content
+	 * @return boolean true i content is valid, else return false
+	 */
+	public function validate($content);
+}
+
+
+//*****************************************************************//
+//***************** InputValidatorRegex class *********************//
+//*****************************************************************//
+/**
+ * InputValidatorRegex validator class.
+ *
+ * Use this class to validate content based on a perl compatible regular expression.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
 class InputValidatorRegex implements InputValidator {
+
+
+	//*****************************************************************//
+	//************ InputValidatorRegex class properties ***************//
+	//*****************************************************************//
+	/**
+	 * @var string perl compatibel regular expression
+	 * @internal
+	 */
 	private $expr;
 
+
+	//*****************************************************************//
+	//************** InputValidatorRegex class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $expr perl compatibel regular expression
+	 * @return void
+	 */
 	public function __construct($expr){
 		$this->expr = $expr;
 	}
 
+	/**
+	 * Validate content against regular expression.
+	 *
+	 * @see InputValidator::validate()
+	 * @return boolean true i content is valid, else return false
+	 */
 	public function validate($content){
 		return preg_match($this->expr, $content);
 	}
 }
 
+
+//*****************************************************************//
+//***************** InputValidatorEmail class *********************//
+//*****************************************************************//
 /**
- * @deprecated use InputValidatorRegex istead
+ * InputValidatorEmail validator class.
+ *
+ * Use this class to validate content against email validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
  */
-class RegexInputValidator extends InputValidatorRegex { }
+class InputValidatorEmail extends InputValidatorRegex {
 
-class InputValidatorEmail implements InputValidator {
-	public function validate($content){
-       	return(preg_match('/^[-_.[:alnum:]]+@((([[:alnum:]]|[[:alnum:]][[:alnum:]-]*[[:alnum:]])\.)+(ad|ae|aero|af|ag|ai|al|am|an|ao|aq|ar|arpa|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|biz|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|com|coop|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|edu|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gh|gi|gl|gm|gn|gov|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|in|info|int|io|iq|ir|is|it|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|mg|mh|mil|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|museum|mv|mw|mx|my|mz|na|name|nc|ne|net|nf|ng|ni|nl|no|np|nr|nt|nu|nz|om|org|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|pro|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)|(([0-9][0-9]?|[0-1][0-9][0-9]|[2][0-4][0-9]|[2][5][0-5])\.){3}([0-9][0-9]?|[0-1][0-9][0-9]|[2][0-4][0-9]|[2][5][0-5]))$/i', $content));
+
+	//*****************************************************************//
+	//************* InputValidatorEmail class methods *****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function __construct(){
+       	parent::__construct('/^[-_.[:alnum:]]+@((([[:alnum:]]|[[:alnum:]][[:alnum:]-]*[[:alnum:]])\.)+(ad|ae|aero|af|ag|ai|al|am|an|ao|aq|ar|arpa|as|at|au|aw|az|ba|bb|bd|be|bf|bg|bh|bi|biz|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|com|coop|cr|cs|cu|cv|cx|cy|cz|de|dj|dk|dm|do|dz|ec|edu|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gh|gi|gl|gm|gn|gov|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|in|info|int|io|iq|ir|is|it|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|mg|mh|mil|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|museum|mv|mw|mx|my|mz|na|name|nc|ne|net|nf|ng|ni|nl|no|np|nr|nt|nu|nz|om|org|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|pro|ps|pt|pw|py|qa|re|ro|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|sk|sl|sm|sn|so|sr|st|su|sv|sy|sz|tc|td|tf|tg|th|tj|tk|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|um|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)|(([0-9][0-9]?|[0-1][0-9][0-9]|[2][0-4][0-9]|[2][5][0-5])\.){3}([0-9][0-9]?|[0-1][0-9][0-9]|[2][0-4][0-9]|[2][5][0-5]))$/i');
 	}
 }
+
+
+//*****************************************************************//
+//****************** InputValidatorURL class **********************//
+//*****************************************************************//
 /**
- * @deprecated use InputValidatorEmail istead
+ * InputValidatorURL validator class.
+ *
+ * Use this class to validate content against url validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
  */
-class EmailInputValidator extends InputValidatorEmail {
-	
-}
+class InputValidatorURL extends InputValidatorRegex {
 
-class InputValidatorUrl implements InputValidator {
-	public function validate($content){
-		return preg_match('/^(http|https|ftp):\/\/[a-z0-9\/:_\-_\.\?\$,~=#&%\+]+$/i',$content);
+
+	//*****************************************************************//
+	//************** InputValidatorURL class methods ******************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function __construct(){
+		parent::__construct('/^(http|https|ftp):\/\/[a-z0-9\/:_\-_\.\?\$,~=#&%\+]+$/i');
 	}
 }
+
+
+//*****************************************************************//
+//***************** InputValidatorInteger class *******************//
+//*****************************************************************//
 /**
- * @deprecated use InputValidatorUrl istead
+ * InputValidatorInteger validator class.
+ *
+ * Use this class to validate content against integer validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
  */
-class UrlInputValidator extends InputValidatorUrl {
-	
-}
+class InputValidatorInteger extends InputValidatorRegex {
 
-class InputValidatorInteger implements InputValidator {
-	public function validate($content){
-		return(preg_match('/^[0-9]+$/',$content));
+
+	//*****************************************************************//
+	//************ InputValidatorInteger class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function __construct(){
+		parent::__construct('/^[0-9]+$/');
 	}
 }
-class InputValidatorIsFloat implements InputValidator {
-	public function validate($content){
-		return(preg_match('/^[0-9]+(\.[0-9]+)?$/',$content));
+
+
+//*****************************************************************//
+//***************** InputValidatorIsFloat class *******************//
+//*****************************************************************//
+/**
+ * InputValidatorIsFloat validator class.
+ *
+ * Use this class to validate content against float validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class InputValidatorIsFloat extends InputValidatorRegex {
+
+
+	//*****************************************************************//
+	//************ InputValidatorIsFloat class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function __construct(){
+		parent::__construct('/^[0-9]+(\.[0-9]+)?$/');
 	}
 }
 
-class InputValidatorEnum implements InputValidator {
-	private $values = array();
-	
+
+//*****************************************************************//
+//******************* InputValidatorEnum class ********************//
+//*****************************************************************//
+/**
+ * InputValidatorEnum validator class.
+ *
+ * Use this class to validate content against enum validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class InputValidatorEnum extends InputValidatorRegex {
+
+
+	//*****************************************************************//
+	//************** InputValidatorEnum class methods *****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * The constructor takes one or more parameters as valid enum values.
+	 *
+	 * @param string $item
+	 * @return void
+	 */
 	public function __construct($item=null /*, [$items...] */){
-		$this->values = func_get_args();
-	}
-	
-	public function validate($content){
-		return(preg_match('/^('.implode('|', $this->values).')$/',$content));
+		parent::__construct('/^('.implode('|', func_get_args()).')$/');
 	}
 }
 
+
+//*****************************************************************//
+//**************** InputValidatorNotEmpty class *******************//
+//*****************************************************************//
+/**
+ * InputValidatorNotEmpty validator class.
+ *
+ * Use this class to validate content against not empty validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
 class InputValidatorNotEmpty implements InputValidator {
+
+
+	//*****************************************************************//
+	//************ InputValidatorNotEmpty class methods ***************//
+	//*****************************************************************//
+	/**
+	 * Validate content against not empty validation rules.
+	 *
+	 * @see InputValidator::validate()
+	 * @return boolean true i content is valid, else return false
+	 */
 	public function validate($content){
 		return !empty($content);
 	}
 }
 
+
+//*****************************************************************//
+//******************* InputValidatorEmpty class *******************//
+//*****************************************************************//
+/**
+ * InputValidatorEmpty validator class.
+ *
+ * Use this class to validate content against empty validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
 class InputValidatorEmpty implements InputValidator {
+
+
+	//*****************************************************************//
+	//************** InputValidatorEmpty class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Validate content against empty validation rules.
+	 *
+	 * @see InputValidator::validate()
+	 * @return boolean true i content is valid, else return false
+	 */
 	public function validate($content){
 		return empty($content);
 	}
 }
 
-class InputValidatorPhone implements InputValidator {
-	public function validate($content){
-		return(preg_match('/^\+?[\-\s0-9]{8,}$/',$content));
+
+//*****************************************************************//
+//******************* InputValidatorPhone class *******************//
+//*****************************************************************//
+/**
+ * InputValidatorPhone validator class.
+ *
+ * Use this class to validate content against phone validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class InputValidatorPhone extends InputValidatorRegex {
+
+
+	//*****************************************************************//
+	//************** InputValidatorPhone class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $item
+	 * @return void
+	 * @internal
+	 */
+	public function __construct($content){
+		parent::__construct('/^\+?[\-\s0-9]{8,}$/');
 	}
 }
-/**
- * @deprecated use InputValidatorPhone istead
- */
-class PhoneInputValidator extends InputValidatorPhone {
-	
-}
 
+
+//*****************************************************************//
+//****************** InputValidatorEquals class *******************//
+//*****************************************************************//
+/**
+ * InputValidatorEquals validator class.
+ *
+ * Use this class to validate content against equals validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
 class InputValidatorEquals implements InputValidator {
+
+
+	//*****************************************************************//
+	//************ InputValidatorEquals class properties **************//
+	//*****************************************************************//
+	/**
+	 * @var string
+	 * @internal
+	 */
 	private $expr;
 
+
+	//*****************************************************************//
+	//************* InputValidatorEquals class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $expr string to match against.
+	 * @return void
+	 */
 	public function __construct($expr){
 		$this->expr = $expr;
 	}
 
+	/**
+	 * Validate content against equals validation rules.
+	 *
+	 * @see InputValidator::validate()
+	 * @return boolean true i content is valid, else return false
+	 */
 	public function validate($content){
 		return ($this->expr == $content);
 	}
 }
-/**
- * @deprecated use InputValidatorEquals istead
- */
-class EqualsInputValidator extends InputValidatorEquals {
-	
-}
 
+
+//*****************************************************************//
+//******************* InputValidatorArray class *******************//
+//*****************************************************************//
+/**
+ * InputValidatorArray validator class.
+ *
+ * Use this class to validate content against array validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
 class InputValidatorArray implements InputValidator {
+
+
+	//*****************************************************************//
+	//************* InputValidatorArray class properties **************//
+	//*****************************************************************//
+	/**
+	 * @var InputValidator
+	 * @internal
+	 */
 	private $validator;
 
-	public function __construct($validator=null){
+
+	//*****************************************************************//
+	//************** InputValidatorArray class methods ****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance
+	 *
+	 * The optional parameter $validator can be specified in order to
+	 * check all array values against the same validator.
+	 *
+	 * @param InputValidator $validator optional validator
+	 * @return void
+	 */
+	public function __construct(InputValidator $validator=null){
 		$this->validator = $validator;
 	}
+
+	/**
+	 * Validate content against array validation rules.
+	 *
+	 * @see InputValidator::validate()
+	 * @return boolean true i content is valid, else return false
+	 */
 	public function validate($content){
 		if(!$this->validator instanceof InputValidator && is_array($content)){
 			return true;
@@ -667,24 +1222,105 @@ class InputValidatorArray implements InputValidator {
 	}
 }
 
+
+//*****************************************************************//
+//******************* InputValidatorIsSet class *******************//
+//*****************************************************************//
 /**
- * @deprecated use ArrayInputValidator instead
+ * InputValidatorIsSet validator class.
+ *
+ * Use this class to validate content against isset validation rules.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
  */
-class ArrayInputValidator extends InputValidatorArray { }
-class IsArrayInputValidator extends ArrayInputValidator { }
-
-
 class InputValidatorIsSet implements InputValidator {
-	public function validate($content){
-		$regex = new RegexInputValidator('/^.*$/s');
-		return $regex->validate($content);
+
+
+	//*****************************************************************//
+	//************* InputValidatorIsSet class methods *****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $item
+	 * @return void
+	 * @internal
+	 */
+	public function __construct(){
+		parent::__construct('/^.*$/s');
 	}
 }
-/**
- * @deprecated use InputValidatorIsSet instead
- */
-class IsSetInputValidator extends InputValidatorIsSet {
-	
-}
 
+
+//*****************************************************************//
+//*************** InputValidatorModelExists class *****************//
+//*****************************************************************//
+/**
+ * InputValidatorModelExists validator class.
+ *
+ * Use this class to validate content against a class and a read() method.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage InputHandler
+ */
+class InputValidatorModelExists implements InputValidator {
+
+
+	//*****************************************************************//
+	//********** InputValidatorModelExists class properties ***********//
+	//*****************************************************************//
+	/**
+	 * @var string class name to match with
+	 * @internal
+	 */
+	private $class = null;
+
+	/**
+	 * @var object instance of {@link InputValidatorModelExists::$class} class name.
+	 * @internal
+	 */
+	private $instance = false;
+
+
+	//*****************************************************************//
+	//********** InputValidatorModelExists class methods **************//
+	//*****************************************************************//
+	/**
+	 * Create new instance
+	 *
+	 * @param string $class class name
+	 * @return void
+	 */
+	public function __construct($class){
+		$this->class = $class;
+	}
+
+	/**
+	 * Validate content against class read validation rules.
+	 *
+	 * @see InputValidator::validate()
+	 * @return boolean true i content is valid, else return false
+	 */
+	public function validate($content){
+		$this->instance = new $this->class($content);
+		if(is_callable(array($this->instance, 'read'))){
+			return $this->instance->read();
+		} else {
+			$this->instance = false;
+			return false;
+		}
+	}
+
+	/**
+	 * Get instance of object used to check against.
+	 *
+	 * @return mixed instance of object if {@link InputValidatorModelExists::validate()} returned true, else return false
+	 */
+	public function getInstance(){
+		return $this->instance;
+	}
+}
 ?>

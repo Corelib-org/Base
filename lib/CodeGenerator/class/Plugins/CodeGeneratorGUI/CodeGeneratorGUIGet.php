@@ -72,11 +72,8 @@ class CodeGeneratorGUIGet extends CodeGeneratorGUIFilePHP {
 	public function __construct(CodeGeneratorTable $table, DOMElement $settings=null, $prefix=null, $group=null){
 		parent::__construct($table, $settings, $prefix, $group);
 
-		if(!is_null($prefix)){
-			$prefix .= '/';
-		} else {
-			$prefix .= 'lib/http/get/';
-		}
+		$prefix .= 'lib/http/get/';
+
 		if(!is_null($group)){
 			$prefix .= $this->_getReadableGroup($group).'/';
 		}

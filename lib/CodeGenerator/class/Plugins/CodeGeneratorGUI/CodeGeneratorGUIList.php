@@ -72,11 +72,8 @@ class CodeGeneratorGUIList extends CodeGeneratorGUIFileXSL {
 	public function __construct(CodeGeneratorTable $table, DOMElement $settings=null, $prefix=null, $group=null){
 		parent::__construct($table, $settings, $prefix, $group);
 
-		if(!is_null($prefix)){
-			$prefix .= '/';
-		} else {
-			$prefix .= 'share/xsl/pages/';
-		}
+		$prefix .= 'share/xsl/pages/';
+
 		if(!is_null($group)){
 			$prefix .= $this->_getReadableGroup($group).'/';
 		}

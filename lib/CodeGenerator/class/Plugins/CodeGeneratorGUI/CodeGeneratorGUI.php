@@ -199,9 +199,7 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 			if(strlen(trim($list->item(0)->getAttribute('method'))) <= 0){
 				$list->item(0)->setAttribute('method', 'delete');
 			}
-
 			$list->item(0)->setAttribute('gui-url', $this->createURL($file, '/${id}/delete/'));
-
 		}
 
 		$get = $this->_addFile($this->_createFileInstance('CodeGeneratorGUIGet', $this->settings));

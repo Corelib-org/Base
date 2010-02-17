@@ -68,11 +68,8 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 	public function __construct(CodeGeneratorTable $table, DOMElement $settings=null, $prefix=null, $group=null){
 		parent::__construct($table, $settings, $prefix, $group);
 
-		if(!is_null($prefix)){
-			$prefix .= '/';
-		} else {
-			$prefix .= 'lib/class/';
-		}
+		$prefix .= 'lib/class/';
+
 		if(!is_null($group)){
 			$prefix .= $group.'/';
 		}

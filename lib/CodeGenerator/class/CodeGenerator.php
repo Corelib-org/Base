@@ -197,15 +197,22 @@ class CodeGenerator implements Output {
 		}
 
 		for ($i = 0; $i < $objects->length; $i++){
+
+			if($objects->item($i)->getAttribute('prefix')){
+				$prefix = $objects->item($i)->getAttribute('prefix');
+			} else {
+				$prefix = null;
+			}
+
 			switch ($objects->item($i)->nodeName){
 				case 'table':
-					$this->_loadTable($objects->item($i));
+					$this->_loadTable($objects->item($i), $prefix);
 					break;
 				case 'view':
-					$this->_loadView($objects->item($i));
+					$this->_loadView($objects->item($i), $prefix);
 					break;
 				case 'group':
-					$this->_loadGroup($objects->item($i));
+					$this->_loadGroup($objects->item($i), $prefix);
 					break;
 			}
 		}

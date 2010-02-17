@@ -84,7 +84,7 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 	public function getToolbarItem(){
 		$this->log = Database::getInstance()->getQueryLog();
 		$this->_prepareContent();
-		return '<img src="corelib/resource/manager/images/page/icons/toolbar/database.png" alt="database" title="Database stats"/> '.(round($this->time, 4) * 1000).' ms.';
+		return '<img src="corelib/resource/manager/images/icons/toolbar/database.png" alt="database" title="Database stats"/> '.(round($this->time, 4) * 1000).' ms.';
 	}
 
 	/**

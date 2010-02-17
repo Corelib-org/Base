@@ -353,7 +353,7 @@ class EventHandlerLogToolbar extends PageFactoryDeveloperToolbarItem {
 	 * @see PageFactoryDeveloperToolbarItem::getToolbarItem()
 	 */
 	public function getToolbarItem(){
-		return '<img src="corelib/resource/manager/images/page/icons/toolbar/events.png" alt="events" title="Events"/> '.(count($this->log));
+		return '<img src="corelib/resource/manager/images/icons/toolbar/events.png" alt="events" title="Events"/> '.(count($this->log));
 	}
 
 	/**

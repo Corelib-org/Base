@@ -289,7 +289,7 @@ abstract class CodeGeneratorFile implements Output {
 	 * @return return boolean true on success, else return false
 	 */
 	protected function _setFilename($filename){
-		 $this->filename = $filename;
+		 $this->filename = str_replace('//', '/', $filename);
 		 return true;
 	}
 

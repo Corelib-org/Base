@@ -117,7 +117,7 @@ abstract class CodeGeneratorPlugin implements Output {
 	 */
 	public function __construct(CodeGeneratorTable $table, DOMElement $settings=null, $prefix=null, $group=null){
 		if(!is_null($prefix)){
-			$this->prefix = $prefix.'/';
+			$this->prefix = Manager::parseConstantTags($prefix).'/';
 		}
 		$this->group = $group;
 		$this->table = $table;

@@ -394,13 +394,17 @@ class InputHandler implements Singleton,Output {
 	 * Get a valid get variable.
 	 *
 	 * @param string $item get variable name
+	 * @param Converter $converter set value converter
 	 * @return mixed variable value if variable is valid else return false
 	 * @throws BaseInputHandlerInvalidGetException
+	 * @since Version 5.0 the $converter parameter became available
 	 */
-	public function getGet($item){
+	public function getGet($item, Converter $converter=null){
 		if(!isset($this->get_valid[$item])){
 			throw new BaseInputHandlerInvalidGetException($item);
 			return false;
+		} else if(!is_null($converter)){
+			return $converter->convert($this->get_valid[$item]);
 		} else {
 			return $this->get_valid[$item];
 		}
@@ -410,12 +414,16 @@ class InputHandler implements Singleton,Output {
 	 * Get a valid post variable.
 	 *
 	 * @param string $item post variable name
+	 * @param Converter $converter set value converter
 	 * @return mixed variable value if variable is valid else return false
 	 * @throws BaseInputHandlerInvalidPostException
+	 * @since Version 5.0 the $converter parameter became available
 	 */
-	public function getPost($item){
+	public function getPost($item, Converter $converter=null){
 		if(!isset($this->post_valid[$item])){
 			throw new BaseInputHandlerInvalidPostException($item);
+		} else if(!is_null($converter)){
+			return $converter->convert($this->post_valid[$item]);
 		} else {
 			return $this->post_valid[$item];
 		}

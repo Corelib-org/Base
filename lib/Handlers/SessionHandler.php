@@ -749,6 +749,7 @@ class SessionHandlerInitEvent extends EventAction  {
 
 	//*****************************************************************//
 	//************ SessionHandlerInitEvent class methods **************//
+	//*****************************************************************//
 	/**
 	 * Update with event.
 	 *

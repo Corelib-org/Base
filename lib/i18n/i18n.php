@@ -23,59 +23,249 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Soerensen <ss@corelib.org>
- * @copyright Copyright (c) 2009 Steffen Soerensen
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2010
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Base
  * @link http://www.corelib.org/
- * @version 1.0.0 ($Id: Base.php 5066 2009-09-24 09:32:09Z wayland $)
- * @filesource
+ * @version 2.0.0 ($Id: Base.php 5066 2009-09-24 09:32:09Z wayland $)
  */
 
-
+//*****************************************************************//
+//****************** Basic Configuration Check ********************//
+//*****************************************************************//
 if(!defined('I18N_COOKIE_NAME')){
+	/**
+	 * i18n Cookie name.
+	 *
+	 * @var string
+	 */
 	define('I18N_COOKIE_NAME', 'i18n');
 }
 if(!defined('I18N_COOKIE_TIMEOUT')){
+	/**
+	 * i18n cookie lifetime.
+	 *
+	 * @var integer seconds
+	 */
 	define('I18N_COOKIE_TIMEOUT', 31536000);
 }
 if(!defined('I18N_COOKIE_PATH')){
-	define('I18N_COOKIE_PATH', '/');
-}
-if(!defined('I18N_COOKIE_PATH')){
+	/**
+	 * i18n Cookie path.
+	 *
+	 * @var string
+	 */
 	define('I18N_COOKIE_PATH', '/');
 }
 if(!defined('I18N_LANGUAGE_BASE')){
+	/**
+	 * i18n language file base.
+	 *
+	 * Directory where the language files are located.
+	 *
+	 * @var string
+	 */
 	define('I18N_LANGUAGE_BASE', 'share/lang/');
 }
 if(!defined('I18N_DEFAULT_TIMEZONE')){
+	/**
+	 * i18n Default timezone.
+	 *
+	 * @var string
+	 */
 	define('I18N_DEFAULT_TIMEZONE', date('e'));
 }
 
-class i18n implements Singleton,Output {
+
+//*****************************************************************//
+//************************ i18nLocale class ***********************//
+//*****************************************************************//
+/**
+ * i18nLocale class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ * @since 5.0
+ */
+class i18nLocale {
+
+
+	//*****************************************************************//
+	//***************** i18nLocale class properties *******************//
+	//*****************************************************************//
 	/**
-	 * @var i18n
+	 * @var string ISO-639 language abbreviation and any two-letter initial subtag defined by ISO-3166
+	 * @internal
+	 */
+	private $language = null;
+
+	/**
+	 * @var string RFC 1766 valid locale string
+	 * @internal
+	 */
+	private $locale = null;
+
+	/**
+	 * @var array date formats
+	 * @internal
+	 */
+	private $date_formats = array();
+
+	/**
+	 * @var array date input formats
+	 * @internal
+	 */
+	private $date_input_formats = array();
+
+
+	//*****************************************************************//
+	//******************* i18nLocale class methods ********************//
+	//*****************************************************************//
+	/**
+	 * Create new locale instance.
+	 *
+	 * @param $language string ISO-639 language abbreviation and any two-letter initial subtag defined by ISO-3166
+	 * @param $locale string RFC 1766 valid locale string
+	 * @return void
+	 */
+	public function __construct($language, $locale){
+		assert('is_string($language)');
+		assert('is_string($locale)');
+
+		$this->language = $language;
+		$this->locale = $locale;
+	}
+
+	/**
+	 * Add new date format.
+	 *
+	 * @param string $ident identifying name
+	 * @param string $format date format
+	 * @return boolean true on succes, else return false
+	 */
+	public function addDateFormat($ident, $format){
+		assert('is_string($ident)');
+		assert('is_string($format)');
+
+		$this->date_formats[$ident] = $format;
+		return true;
+	}
+
+	/**
+	 * Add new date input format.
+	 *
+	 * @param string $ident identifying name
+	 * @param string $format date format
+	 * @param string $hint date format hint
+	 * @return boolean true on succes, else return false
+	 */
+	public function addDateFormatInputFormat($ident, $format, $hint=null){
+		assert('is_string($ident)');
+		assert('is_string($format)');
+		assert('(is_null($hint) || is_string($hint))');
+
+		$this->date_input_formats[$ident] = array('format' => $format, 'hint' => $hint);
+		return true;
+	}
+
+	/**
+	 * Get language.
+	 *
+	 * @return string ISO-639 language abbreviation and any two-letter initial subtag defined by ISO-3166
+	 */
+	public function getLanguage(){
+		return $this->language;
+	}
+
+	/**
+	 * Get Locale.
+	 *
+	 * @return string RFC 1766 valid locale string
+	 */
+	public function getLocale(){
+		return $this->locale;
+	}
+}
+
+
+//*****************************************************************//
+//*************************** i18n class **************************//
+//*****************************************************************//
+/**
+ * i18n class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ * @since 5.0
+ */
+class i18n implements Singleton,Output {
+
+
+	//*****************************************************************//
+	//********************* i18n class properties *********************//
+	//*****************************************************************//
+	/**
+	 * Singleton Object Reference.
+	 *
+	 * @var InputHandler
+	 * @internal
 	 */
 	private static $instance = null;
 
-	private $languages = array();
-	private $date_formats = array();
-	private $date_default_format = '%D %T';
-
-	private $timezone = null;
-	private $timezone_offset = 0;
-
-	private $current_locale = null;
-	private $current_language = null;
-
-	private $default_language = null;
-
-	private $language_files = array();
-
-	protected $cookie_name = null;
+	/**
+	 * @var array list of known locales.
+	 * @internal
+	 */
+	private $locales = array();
 
 	/**
+	 * @var i18nLocale
+	 * @internal
+	 */
+	private $locale = null;
+
+	/**
+	 * @var i18nLocale
+	 * @internal
+	 */
+	private $fallback = null;
+
+	/**
+	 * @var string
+	 * @internal
+	 */
+	private $timezone = null;
+
+
+	//*****************************************************************//
+	//*********************** i18n class methods **********************//
+	//*****************************************************************//
+	/**
+	 * i18n constructor.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	protected function __construct(){
+		EventHandler::getInstance()->register(new i18nDetectLanguageEventActions(), 'EventRequestStart');
+		EventHandler::getInstance()->register(new i18nApplyDefaultSettingsEventActions(), 'EventApplyDefaultSettings');
+		$this->getTimezone();
+	}
+
+	/**
+	 * 	Return instance of i18n.
+	 *
+	 * 	Please refer to the {@link Singleton} interface for complete
+	 * 	description.
+	 *
+	 * 	@see Singleton
+	 *  @uses i18n::$instance
 	 *	@return i18n
 	 */
 	public static function getInstance(){
@@ -85,134 +275,109 @@ class i18n implements Singleton,Output {
 		return self::$instance;
 	}
 
-	protected function __construct(){
-		if(is_null($this->cookie_name)){
-			$this->cookie_name = I18N_COOKIE_NAME;
+	/**
+	 * Add locale.
+	 *
+	 * @param i18nLocale $locale
+	 * @return boolean true on success, else return false
+	 */
+	public function addLocale(i18nLocale $locale){
+		if(sizeof($this->locales) > 0){
+			$this->fallback = $locale;
 		}
-		ini_set('date.timezone', I18N_DEFAULT_TIMEZONE);
-		date_default_timezone_set(I18N_DEFAULT_TIMEZONE);
-		if(!isset($_COOKIE[$this->cookie_name.'_timezone'])){
-			$this->setTimezone(I18N_DEFAULT_TIMEZONE);
-		} else {
-			$this->setTimezone($_COOKIE[$this->cookie_name.'_timezone']);
-		}
+		$this->locales[$locale->getLanguage()] = $locale;
 	}
 
 	/**
-	 * Add new locale
+	 * Add language file.
 	 *
-	 * @param $language string ISO-639 language abbreviation and any two-letter initial subtag defined by ISO-3166
-	 * @param $locale string RFC 1766 valid locale string
+	 * @uses i18n::addLanguageFilePath()
+	 * @param string $filename
 	 * @return boolean true on success, else return false
 	 */
-	public function addLanguage($language, $locale){
-		if(sizeof($this->languages) > 0){
-			$this->current_language = $language;
-			$this->current_locale = $locale;
-			$this->default_language = $language;
-		}
-		$this->languages[$language] = $locale;
-	}
-
-	public function addDateFormat($language, $id, $format='%D %T'){
-		$this->date_formats[$language][$id] = $format;
-	}
-
-	public function getDateFormat($id){
-	//	echo '<pre style="text-align: left">';
-	//	print_r($this);
-	//	echo I18N_DEFAULT_TIMEZONE;
-		if(isset($this->date_formats[$this->getLanguage()][$id])){
-			return new i18nDateConverter($this->date_formats[$this->getLanguage()][$id], $this->getTimezoneOffset());
-		} else {
-			return new i18nDateConverter($this->date_default_format, $this->getTimezoneOffset());
-		}
-	}
-
 	public function addLanguageFile($filename){
 		assert('is_string($filename)');
-		$this->addLanguageFilePath(I18N_LANGUAGE_BASE.$this->getLanguage().'/'.$filename);
-	}
-
-	public function addLanguageFilePath($filename){
-		assert('is_string($filename) && is_file($filename)');
-		$this->language_files[] = $filename;
+		return $this->addLanguageFilePath(I18N_LANGUAGE_BASE.$this->locale->getLanguage().'/'.$filename);
 	}
 
 	/**
 	 * Add a language file based on the full file path.
 	 *
-	 * This function is an alias of {@link i18n::addLanguageFilePath()}
-	 *
-	 * @see i18n::addLanguageFilePath()
-	 * @deprecated use i18n::addLanguageFilePath() instead
-	 * @uses i18n::addLanguageFilePath()
 	 * @param string $filename language file full filename and path
-	 * @return mixed same as {@link i18n::addLanguageFilePath()}
+	 * @return boolean true on success, else return false
 	 */
-	public function addLangaugeFilePath($filename){
-
-		return $this->addLanguageFilePath($filename);
-	}
-
-	public function getLanguage(){
-		if(!is_null($this->current_language)){
-			return $this->current_language;
+	public function addLanguageFilePath($filename){
+		assert('is_string($filename)');
+		if(is_file($filename)){
+			$this->language_files[] = $filename;
+			return true;
 		} else {
-			return $this->getDefaultLanguage();
+			trigger_error('Unable to add language file, no such file or directory: '.$filename, E_USER_WARNING);
+			return false;
 		}
-	}
-	public function getTimezone(){
-		return $this->timezone;
-	}
-	public function getTimezoneOffset(){
-		return $this->timezone_offset;
-	}
-	public function getLocale(){
-		return $this->current_locale;
-	}
-	public function getDefaultLanguage(){
-		return $this->default_language;
-	}
-	public function getFileBase(){
-		return I18N_LANGUAGE_BASE.$this->getLanguage();
 	}
 
 	/**
-	 * @param string $language
-	 * @return boolean true if language excists, else return false
+	 * Set current locale.
+	 *
+	 * @param $language string ISO-639 language abbreviation and any two-letter initial subtag defined by ISO-3166
+	 * @return boolean true if locale exists, else return false
 	 */
-	public function setLanguage($language){
-		if(isset($this->languages[$language])){
-			$this->current_locale = $this->languages[$language];
-			$this->current_language = $language;
-			setlocale(LC_TIME, $this->current_locale);
-			setcookie($this->cookie_name, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+	public function setLocale($language){
+		if(isset($this->locales[$language])){
+			$this->locale = $this->locales[$language];
+			setlocale(LC_TIME, $this->locale->getLocale());
+			setlocale(LC_COLLATE, $this->locale->getLocale());
+			setlocale(LC_CTYPE, $this->locale->getLocale());
+			setlocale(LC_MONETARY, $this->locale->getLocale());
+			setcookie(I18N_COOKIE_NAME, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
+	/**
+	 * Set current timezone.
+	 *
+	 * @param string $timezone Valid timezone identifier
+	 * @return boolean true on success, else return false.
+	 */
 	public function setTimezone($timezone){
 		$this->timezone = $timezone;
-		setcookie($this->cookie_name.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
-
-		// Calculate time offset in seconds
-		//echo I18N_DEFAULT_TIMEZONE;
-		$default_timezone = timezone_open(I18N_DEFAULT_TIMEZONE);
-		// echo $timezone;
-		if(!$timezone = @timezone_open($timezone)){
-			$timezone = $default_timezone;
-		}
-		$date = date_create(null, $default_timezone);
-		//echo date('r', $default_timezone->getOffset($date))."\n";
-		//echo date('r', $timezone->getOffset($date)),"\n";
-		$this->timezone_offset = $default_timezone->getOffset($date) - $timezone->getOffset($date);
+		ini_set('date.timezone', $this->timezone);
+		date_default_timezone_set($this->timezone);
+		setcookie(I18N_COOKIE_NAME.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+		EventHandler::getInstance()->trigger(new i18nEventTimezoneChange($this->timezone));
+		return true;
 	}
 
+	/**
+	 * Get current timezone.
+	 *
+	 * @return string current timezone
+	 */
+	public function getTimezone(){
+		if(is_null($this->timezone)){
+			if(!isset($_COOKIE[I18N_COOKIE_NAME.'_timezone'])){
+				$this->setTimezone(I18N_DEFAULT_TIMEZONE);
+			} else {
+				$this->setTimezone($_COOKIE[I18N_COOKIE_NAME.'_timezone']);
+			}
+		}
+		return $this->timezone;
+	}
+
+	/**
+	 * Detect client language.
+	 *
+	 * Detect the client language and fallback to default
+	 * language if unable to detect language.
+	 *
+	 * @return string
+	 */
 	public function detectLanguage(){
-		if(!isset($_COOKIE[$this->cookie_name]) || !isset($this->languages[$_COOKIE[$this->cookie_name]])){
+		if(!isset($_COOKIE[I18N_COOKIE_NAME]) || !isset($this->locales[$_COOKIE[I18N_COOKIE_NAME]])){
 			if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
 				$locales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 				while (list(,$val) = each($locales)){
@@ -228,57 +393,242 @@ class i18n implements Singleton,Output {
 				$languages = array_keys($languages);
 				while(sizeof($languages) > 0){
 					$language = array_pop($languages);
-					if(isset($this->languages[$language])){
-						$this->setLanguage($language);
+					echo $language.' ';
+					if(isset($this->locales[$language])){
+						$this->setLocale($language);
 						break;
 					} else if(strstr($language, '-')){
 						list($suffix,) = explode('-', $language);
 						if(isset($this->languages[$suffix])){
-							$this->setLanguage($suffix);
+							$this->setLocale($suffix);
 							break;
 						}
 					}
 				}
 			} else {
-				$this->setLanguage($this->getDefaultLanguage());
+				$this->setLocale($this->fallback->getLanguage());
 			}
 		} else {
-			$this->setLanguage($_COOKIE[$this->cookie_name]);
+			$this->setLocale($_COOKIE[I18N_COOKIE_NAME]);
 		}
 		return true;
 	}
 
+	/**
+	 * Get XML Output.
+	 *
+	 * @see Output::getXML()
+	 * @return DOMElement
+	 */
 	public function getXML(DOMDocument $xml){
-		$language = $xml->createElement('language');
-		$language->setAttribute('language', $this->getLanguage());
-		$language->setAttribute('locale', $this->getLocale());
-		$language->setAttribute('timezone', $this->getTimezone());
+		$i18n = $xml->createElement('i18n');
+		$i18n->setAttribute('language', $this->locale->getLanguage());
+		$i18n->setAttribute('locale', $this->locale->getLocale());
+		$i18n->setAttribute('timezone', $this->getTimezone());
 
 		while (list(,$val) = each($this->language_files)){
-			try {
-				if(!is_file($val)){
-					$lfile = str_replace('/'.$this->current_language.'/', '/'.$this->default_language.'/', $val);
+			if(!is_file($val)){
+				$lfile = str_replace('/'.$this->locale->getLanguage().'/', '/'.$this->fallback->getLanguage().'/', $val);
+			}
+			if(isset($lfile) && !is_file($lfile)){
+				trigger_errorn('Unable to load fallback language file '.$lfile.'. File does not excist', E_USER_WARNING);
+			} else if(!isset($lfile)){
+				$lfile = $val;
+			}
+			$languagefile = new DOMDocument('1.0', 'UTF-8');
+			$languagefile->load($lfile);
+			for ($i = 0; $item = $languagefile->documentElement->childNodes->item($i); $i++){
+				if($item->nodeName == 'item'){
+					$i18n->appendChild($xml->importNode($item, true));
 				}
-				if(isset($lfile) && !is_file($lfile)){
-					throw new BaseException('Unable to load fallback language file '.$lfile.'. File does not excist', E_USER_ERROR);
-				} else if(!isset($lfile)){
-					$lfile = $val;
-				}
-				$languagefile = new DOMDocument('1.0', 'UTF-8');
-				$languagefile->load($lfile);
-				for ($i = 0; $item = $languagefile->documentElement->childNodes->item($i); $i++){
-					if($item->nodeName == 'item'){
-						$language->appendChild($xml->importNode($item, true));
-					}
-				}
-			} catch (BaseException $e){
-				echo $e;
-				exit;
 			}
 			unset($lfile);
 		}
 		reset($this->language_files);
-		return $language;
+		return $i18n;
+	}
+
+}
+
+
+//*****************************************************************//
+//********************** i18nTimezones class **********************//
+//*****************************************************************//
+/**
+ * i18nTimezones class.
+ *
+ * This class can be used to retrieve all available timezones
+ * on the current system.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ * @since 5.0
+ */
+class i18nTimezones implements Output {
+
+
+	//*****************************************************************//
+	//******************* i18nTimezones propeties *********************//
+	//*****************************************************************//
+	/**
+	 * List of system timezones.
+	 *
+	 * @var array timezones
+	 * @internal
+	 */
+	private $timezones = null;
+
+
+	//*****************************************************************//
+	//******************** i18nTimezones methods **********************//
+	//*****************************************************************//
+	/**
+	 * i18nTimezones constructor.
+	 *
+	 * @param array $timezones custom list of timeszones
+	 * @return void
+	 */
+	public function __construct($timezones=null){
+		 $this->timezones = $timezones;
+	}
+
+	/**
+	 * Get XML Output.
+	 *
+	 * @see Output::getXML()
+	 * @return DOMElement
+	 */
+	public function getXML(DOMDocument $xml){
+		if(is_null($this->timezones)){
+			$this->timezones = timezone_identifiers_list();
+		}
+		$timezones = $xml->createElement('i18n-timezones');
+		foreach($this->timezones as $key => $val) {
+			if(is_array($val)){
+				$key = $val[0];
+				$val = $val[1];
+			}
+			$timezone = $timezones->appendChild($xml->createElement('timezone', $val));
+			if(!is_numeric($key)){
+				$timezone->setAttribute('name', $key);
+			} else {
+				$timezone->setAttribute('name', $val);
+			}
+		}
+		reset($this->timezones);
+		return $timezones;
+	}
+}
+
+
+//*****************************************************************//
+//**************** i18nEventTimezoneChange class ******************//
+//*****************************************************************//
+/**
+ * i18nEventTimezoneChange class.
+ *
+ * This class can be used to retrieve all available timezones
+ * on the current system.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ * @since 5.0
+ */
+class i18nEventTimezoneChange implements Event {
+
+
+	//*****************************************************************//
+	//********* i18nEventTimezoneChange class properties **************//
+	//*****************************************************************//
+	/**
+	 * Current timezone.
+	 *
+	 * @var string
+	 * @internal
+	 */
+	private $timezone = null;
+
+	//*****************************************************************//
+	//*********** i18nEventTimezoneChange class methods ***************//
+	//*****************************************************************//
+	/**
+	 * i18nEventTimezoneChange constructor.
+	 *
+	 * @param array $timezone
+	 * @return void
+	 */
+	public function __construct($timezone){
+		$this->timezone = $timezone;
+	}
+
+	/**
+	 * Get current timezone.
+	 *
+	 * @return string
+	 */
+	public function getTimezone(){
+		return $this->timezone;
+	}
+}
+
+
+//*****************************************************************//
+//************ i18nDetectLanguageEventActions class ***************//
+//*****************************************************************//
+/**
+ * i18nDetectLanguageEventActions class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ * @since 5.0
+ */
+class i18nDetectLanguageEventActions extends EventAction {
+
+
+	//*****************************************************************//
+	//******** i18nDetectLanguageEventActions class methods ***********//
+	//*****************************************************************//
+	/**
+	 * Update method.
+	 *
+	 * @see EventAction::update()
+	 */
+	public function update(Event $event){
+		i18n::getInstance()->detectLanguage();
+	}
+}
+
+
+//*****************************************************************//
+//**************** i18nEventTimezoneChange class ******************//
+//*****************************************************************//
+/**
+ * i18nEventTimezoneChange class.
+ *
+ * This class can be used to retrieve all available timezones
+ * on the current system.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage i18n
+ * @since 5.0
+ */
+class i18nApplyDefaultSettingsEventActions extends EventAction {
+
+
+	//*****************************************************************//
+	//***** i18nApplyDefaultSettingsEventActions class methods ********//
+	//*****************************************************************//
+	/**
+	 * Update method.
+	 *
+	 * @see EventAction::update()
+	 */
+	public function update(Event $event){
+		$event->getPage()->addSettings(i18n::getInstance());
 	}
 }
 ?>

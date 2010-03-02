@@ -1,71 +1,138 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- *	PageFactoryDeveloperToolbar
+ * Page Factory Developer toolbar.
  *
- *	<i>No Description</i>
+ * <i>No Description</i>
  *
- *	LICENSE: This source file is subject to version 1.0 of the
- *	Bravura Distribution license that is available through the
- *	world-wide-web at the following URI: http://www.bravura.dk/licence/corelib_1_0/.
- *	If you did not receive a copy of the Bravura License and are
- *	unable to obtain it through the web, please send a note to
- *	license@bravura.dk so we can mail you a copy immediately.
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
  *
- * @author Steffen Soerensen <ss@corelib.org>
- * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage PageFactory
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2010 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Base
  * @link http://www.corelib.org/
- * @version 1.0.0 ($Id: PageFactory.php 5058 2009-09-21 08:11:24Z wayland $)
+ * @version 1.0.0 ($Id$)
+ * @since Version 5.0
+ *
+ * @todo Write implementation example for {@link PageFactoryDeveloperToolbarItem}
  */
 
 
+//*****************************************************************//
+//************ PageFactoryDeveloperToolbarItem Class **************//
+//*****************************************************************//
 /**
- * @author Steffen Sørensen <ss@corelib.org>
+ * Page Factory Developer toolbar item.
+ *
+ * This abstract class should be extended in order to
+ * create a new toolbar item.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage PageFactory
  */
 abstract class PageFactoryDeveloperToolbarItem {
-	public function getToolbarItem(){
 
-	}
 
+	//*****************************************************************//
+	//***** PageFactoryDeveloperToolbarItem Class abstract methods ****//
+	//*****************************************************************//
+	/**
+	 * Get toolbar item html code.
+	 *
+	 * This method should return the html code to represent
+	 * what ever should be displayed in the toolbar. eg. a
+	 * image or a count of something. Clicking this item will
+	 * display whatever {@link PageFactoryDeveloperToolbarItem::getContent()}
+	 * returns.
+	 *
+	 * @return string html
+	 */
+	abstract public function getToolbarItem();
+
+
+	//*****************************************************************//
+	//********** PageFactoryDeveloperToolbarItem Class methods ********//
+	//*****************************************************************//
+	/**
+	 * Get item content.
+	 *
+	 * Return html content for whatever should be displayed when
+	 * the toolbar item is clicked.
+	 *
+	 * @see PageFactoryDeveloperToolbarItem::getToolbarItem()
+	 * @return mixed boolean false if no content, else return string
+	 */
 	public function getContent(){
 		return false;
 	}
 }
 
 
+//*****************************************************************//
+//*************** PageFactoryDeveloperToolbar Class ***************//
+//*****************************************************************//
 /**
- * @author Steffen Sørensen <ss@corelib.org>
- * @package corelib
- * @subpackage Base
+ * Page Factory Developer toolbar.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage PageFactory
  */
-class PageFactoryDeveloperToolbar implements Singleton {
+final class PageFactoryDeveloperToolbar implements Singleton {
+
+
+	//*****************************************************************//
+	//********* PageFactoryDeveloperToolbar Class properties **********//
+	//*****************************************************************//
 	/**
-	 *	@var PageFactoryDeveloperToolbar
+	 * Singleton Object Reference.
+	 *
+	 * @var PageFactoryDeveloperToolbar
+	 * @internal
 	 */
 	private static $instance = null;
 
 	/**
+	 * Toolbar items.
+	 *
 	 * @var array toolbar items
 	 */
 	private $items = array();
 
-
 	/**
-	 * @return void
+	 * @ignore
 	 */
-	private function __construct(){
-
-	}
-
-
+	private function __construct(){ }
 
 	/**
-	 * Get PageFactoryDeveloperToolbar instance.
+	 * 	Return instance of PageFactoryDeveloperToolbar.
 	 *
+	 * 	Please refer to the {@link Singleton} interface for complete
+	 * 	description.
+	 *
+	 * 	@see Singleton
+	 *  @uses PageFactoryDeveloperToolbar::$instance
 	 *	@return PageFactoryDeveloperToolbar
 	 */
 	public static function getInstance(){
@@ -74,6 +141,7 @@ class PageFactoryDeveloperToolbar implements Singleton {
 		}
 		return self::$instance;
 	}
+
 
 	/**
 	 * Add toolbar item to toolbar.
@@ -86,6 +154,14 @@ class PageFactoryDeveloperToolbar implements Singleton {
 		return $item;
 	}
 
+	/**
+	 * Create toolbar.
+	 *
+	 * Generate toolbar when object is echoed.
+	 *
+	 * @return string toolbar.
+	 * @internal
+	 */
 	public function __toString(){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
 			$headers = headers_list();
@@ -119,7 +195,4 @@ class PageFactoryDeveloperToolbar implements Singleton {
 		return '';
 	}
 }
-
-
-
 ?>

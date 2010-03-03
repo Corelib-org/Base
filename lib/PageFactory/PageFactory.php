@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- *	PageFactory Base Classes.
+ * PageFactory Base Classes.
  *
  * <i>No Description</i>
  *
@@ -32,7 +32,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
- * @since Version 5.0
  */
 
 //*****************************************************************//

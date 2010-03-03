@@ -647,19 +647,19 @@ class PageFactory implements Singleton {
 			}
 		}
 
+		$data = $page->draw().PageFactoryDeveloperToolbar::getInstance();
+
+		$eventHandler->trigger(new EventRequestEnd());
+
 		if(Errorhandler::getInstance()->hasErrors()){
 			echo Errorhandler::getInstance();
 			$data = false;
 		} else {
-			if($return){
-				$data = $page->draw($return);
-			} else {
-				$page->draw($return);
+			if(!$return){
+				echo $data;
 				$data = true;
 			}
 		}
-		$eventHandler->trigger(new EventRequestEnd());
-		echo PageFactoryDeveloperToolbar::getInstance();
 		return $data;
 	}
 
@@ -902,17 +902,12 @@ class PageFactory implements Singleton {
 	 * and reading it from the cache if page allready is
 	 * cached.
 	 *
-	 * @param boolean $return
-	 * @return mixed
+	 * @return string
 	 * @internal
 	 */
-	public function draw($return=false){
+	public function draw(){
 		if($this->getCacheType() == PAGE_FACTORY_CACHE_STATIC && $this->cache->isCached()){
-			if($return){
-				return $this->cache->read();
-			} else {
-				echo $this->cache->read();
-			}
+			return $this->cache->read();
 		} else {
 			if(!($this->getCacheType() == PAGE_FACTORY_CACHE_DYNAMIC && $this->cache->isCached()) || !PAGE_FACTORY_CACHE_ENABLE){
 				$content = $this->engine->draw();
@@ -929,12 +924,7 @@ class PageFactory implements Singleton {
 				return true;
 			}
 
-			if($return){
-				return $content;
-			} else {
-				echo $content;
-				return true;
-			}
+			return $content;
 		}
 
 	}

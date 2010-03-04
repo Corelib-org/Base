@@ -262,7 +262,8 @@ abstract class PageFactoryTemplate {
 	 * This method allows for developers to do some initial actions
 	 * as soon as a template has been added to into to the template
 	 * engine, the template engine then return boolean true or false
-	 * based on if the init method returned true.
+	 * based on if the init method returned true. if the init method
+	 * returns false, no output will be send.
 	 *
 	 * @todo add some references and add more documentation
 	 * @return boolean true on success, else return false

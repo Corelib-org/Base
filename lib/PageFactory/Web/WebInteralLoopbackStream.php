@@ -32,6 +32,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
  * @version 1.0.0 ($Id: XMLOutput.php 5170 2010-03-03 13:07:25Z wayland $)
+ * @since Version 5.0
  */
 
 //*****************************************************************//
@@ -50,6 +51,7 @@
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @see LoopbackStream
+ * @since Version 5.0
  */
 class WebInteralLoopbackStream extends LoopbackStream {
 

@@ -5,8 +5,8 @@
 	<xsl:template match="/">
 		<html>
 			<head>
-				<base href="{/page/settings/redirect_url}"/>
-				<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+				<base href="{/page/settings/redirect-url}"/>
+				<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
 				<meta http-equiv="Content-language" content="en"/>
 				<meta http-equiv="Content-Script-Type" content="text/javascript"/>
 				<script language="JavaScript" type="text/javascript" src="corelib/resource/manager/javascript/prototype.js" />
@@ -16,7 +16,7 @@
 				</xsl:for-each>
 				<script type="text/javascript">
 					<xsl:comment>
-						var redirect_url = '<xsl:value-of select="/page/settings/redirect_url"/>';
+						var redirect_url = '<xsl:value-of select="/page/settings/redirect-url"/>';
 					//</xsl:comment>
 				</script>
 				<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/basic.css" />
@@ -25,7 +25,9 @@
 				</xsl:for-each>
 			</head>
 			<body>
-				<xsl:apply-templates select="page/content"/>	
+				<div id="page-container">
+					<xsl:apply-templates select="page/content" mode="xhtml-layout"/>
+				</div>	
 			</body>
 		</html>
 	</xsl:template>

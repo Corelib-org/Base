@@ -59,15 +59,15 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base.
  */
-define('CORELIB_BASE_VERSION', '4.6.0');
+define('CORELIB_BASE_VERSION', '5.0.0');
 /**
  * Define CoreLib Copyright owner
  */
-define('CORELIB_COPYRIGHT', 'Steffen Soerensen - http://www.corelib.org/');
+define('CORELIB_COPYRIGHT', 'Steffen Sørensen - http://www.corelib.org/');
 /**
  * Define CoreLib Copyright year
  */
-define('CORELIB_COPYRIGHT_YEAR', '2009');
+define('CORELIB_COPYRIGHT_YEAR', '2010');
 
 
 //*****************************************************************//
@@ -357,7 +357,6 @@ class Base implements Singleton {
 	 * @param string $class Name of the class
 	 * @return string File containing the class, else return false
 	 * @uses Base::_classSearch()
-	 * @uses BaseException
 	 * @uses Base::$class_cache
 	 * @uses Base::$class_cache_updated
 	 */

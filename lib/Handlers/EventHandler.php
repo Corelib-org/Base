@@ -369,9 +369,9 @@ class EventHandlerLogToolbar extends PageFactoryDeveloperToolbarItem {
 				$return .= '<h1>'.get_class($log['event']).'</h1>';
 				$actions = array();
 				foreach($log['actions'] as $action){
-					$actions[] = '<h3>'.get_class($action).'</h3>';
+					$actions[] = '<b>'.get_class($action).'</b>';
 				}
-				$return .= implode(' ,', $actions);
+				$return .= implode(', ', $actions);
 				$return .= '<div>'.ErrorHandler::getInstance()->getTraceAsHTML($log['backtrace']).'</div><br/>';
 			}
 			return $return;

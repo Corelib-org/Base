@@ -10,12 +10,12 @@ class ManagerConfig extends CorelibManagerExtension {
 		}
 		return self::$instance;
 	}
-	
+
 	public function __construct(){
 		$event = EventHandler::getInstance();
-		$event->registerObserver(new ManagerConfigAddSettings($this));
+		$event->register(new ManagerConfigAddSettings($this), 'EventApplyDefaultSettings');
 	}
-	
+
 	public function getResourceDir($handle){
 		if($resources = $this->getPropertyXML('resources')){
 			$xpath = new DOMXPath($resources->ownerDocument);
@@ -29,7 +29,7 @@ class ManagerConfig extends CorelibManagerExtension {
 			return false;
 		}
 	}
-	
+
 	public function getSystemCheckResults(){
 		if($checks = $this->getPropertyXML('systemchecks')){
 			$i = 0;
@@ -47,7 +47,7 @@ class ManagerConfig extends CorelibManagerExtension {
 											$is_dir = 'true';
 										} else {
 											$is_dir = 'false';
-										}														
+										}
 										$result->appendChild($checks->ownerDocument->createElement('dir', $is_dir));
 										if($object->getAttribute('readable') == 'true'){
 											if(is_readable($folder)){
@@ -63,7 +63,7 @@ class ManagerConfig extends CorelibManagerExtension {
 											} else {
 												$writable = 'false';
 											}
-											
+
 											$result->appendChild($checks->ownerDocument->createElement('writable', $writable));
 										}
 										break;
@@ -74,15 +74,15 @@ class ManagerConfig extends CorelibManagerExtension {
 											$is_file = 'true';
 										} else {
 											$is_file = 'false';
-										}											
-									
+										}
+
 										$result->appendChild($checks->ownerDocument->createElement('file', $is_file));
 										if($object->getAttribute('readable') == 'true'){
 											if(is_readable($file)){
 												$readable = 'true';
 											} else {
 												$readable = 'false';
-											}											
+											}
 											$result->appendChild($checks->ownerDocument->createElement('readable', $readable));
 										}
 										if($object->getAttribute('writable') == 'true'){
@@ -90,7 +90,7 @@ class ManagerConfig extends CorelibManagerExtension {
 												$writable = 'true';
 											} else {
 												$writable = 'false';
-											}											
+											}
 											$result->appendChild($checks->ownerDocument->createElement('writable', $writable));
 										}
 										break;
@@ -114,51 +114,44 @@ class ManagerDashboard implements Output {
 	 * @var PageFactoryDOMXSLTemplate
 	 */
 	private $template = null;
-	
+
 	public function __construct(PageFactoryDOMXSLTemplate $template){
 		$this->config = ManagerConfig::getInstance();
-		$this->template = $template; 
+		$this->template = $template;
 	}
-	
+
 	public function getXML(DOMDocument $xml){
 		$widgets = $xml->createElement('dashboard');
-		
+
 		$dashboard = $this->config->getPropertyXML('dashboard');
 		for ($i = 0; $item = $dashboard->childNodes->item($i); $i++){
 			if($item->nodeName == 'widget'){
 				eval('$widget = new '.$item->getAttribute('handler').'();');
 				$widget->setTemplate($this->template);
-				$widget->setSettings($item); 
+				$widget->setSettings($item);
 				$widgets->appendChild($widget->getXML($xml));
 			}
 		}
 		return $widgets;
 	}
-	
+
 	public function &getArray(){
-		
+
 	}
 }
 
-class ManagerConfigAddSettings implements EventTypeHandler,Observer  {
-	private $subject = null;
+class ManagerConfigAddSettings extends EventAction {
 	/**
 	 * @var ManagerConfig
 	 */
 	private $config = null;
-	
+
 	public function __construct(ManagerConfig $config){
 		$this->config = $config;
 	}
-	
-	public function getEventType(){
-		return 'EventApplyDefaultSettings';	
-	}	
-	public function register(ObserverSubject $subject){
-		$this->subject = $subject;
-	}
-	public function update($update){
-		$update->getPage()->addSettings($this->config->getPropertyOutput('menu'));
+
+	public function update(Event $event){
+		$event->getPage()->addSettings($this->config->getPropertyOutput('menu'));
 	}
 }
 ?>

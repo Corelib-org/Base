@@ -19,19 +19,19 @@ class DatabaseDAOView extends DatabaseDAO {
 	 * @var DatabaseViewHelper
 	 */
 	private $view = null;
-	
+
 	public function getListHelper(){
 		try {
 			if(is_null($this->view)){
 				throw new BaseException('DatabaseViewHelper not set.', E_USER_ERROR);
 			} else {
-				return $this->view; 
+				return $this->view;
 			}
 		} catch (Exception $e){
 			echo $e;
 		}
 	}
-	
+
 	protected function _setListHelper(DatabaseViewHelper $view){
 		$this->view = $view;
 		return true;
@@ -47,7 +47,7 @@ abstract class View implements Output {
 	protected $xml = null;
 
 	protected $dao = null;
-	
+
 	const FIELD_XML = 'xml';
 
 	abstract public function commit();
@@ -56,42 +56,42 @@ abstract class View implements Output {
 	 */
 	abstract protected function _generate(DOMDocument $xml);
 	abstract protected function _getDAO($read=true);
-	
+
 	public function generate(){
 		$this->_getDAO(false);
 		if(is_null($this->xml)){
-			$this->xml = $this->_prepareDOMDocument();			
+			$this->xml = $this->_prepareDOMDocument();
 		}
 		$this->xml->appendChild($this->_generate($this->xml));
 		$this->commit();
 	}
-	
+
 	public function getXML(DOMDocument $xml){
 		if(is_null($this->xml) && !$this->read()){
 			$this->generate();
 		}
 		return $xml->importNode($this->xml->documentElement, true);
 	}
-		
-	public function &getArray(){ 
 
-	}	
-	
+	public function &getArray(){
+
+	}
+
 	protected function _getXML(){
 		return $this->xml->saveXML();
 	}
-	
+
 	protected function _loadXML($xml){
 		$this->xml = $this->_prepareDOMDocument();
-		$this->xml->loadXML($xml);;		
+		$this->xml->loadXML($xml);;
 	}
-	
+
 	protected function _setFromArray($array){
 		if(!is_null($array[self::FIELD_XML])){
 			$this->_loadXML($array[self::FIELD_XML]);
 		}
 	}
-	
+
 	private function _prepareDOMDocument(){
 		return new PageFactoryDOMXSLDOMDocument('1.0', 'UTF-8');
 	}

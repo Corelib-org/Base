@@ -6,19 +6,23 @@ class StringConverterNl2br implements Converter {
 }
 
 class StringConverterAddCSlashes implements Converter {
-	
+
 	private $charlist = null;
-	
+
 	public function __construct($charlist='\''){
 		$this->charlist = $charlist;
 	}
-	
+
 	public function convert($data) {
 		return addcslashes($data, $this->charlist);
 	}
 }
 
-
+/**
+ * @todo Class should be deleted!!!!!!
+ * @author wayland
+ *
+ */
 class StringConverterHTMLEntities implements Converter {
 	/**
 	 * @param Converter $converter If converter is set, this will be applies after
@@ -28,7 +32,7 @@ class StringConverterHTMLEntities implements Converter {
 		$this->charset = $charset;
 		$this->quotestyle = $qoutestyle;
 	}
-	
+
 	public function convert($data) {
 		$data = htmlentities($data,$this->quotestyle,$this->charset);
 
@@ -42,7 +46,7 @@ class StringConverterSubstring implements Converter {
 	private $cutsymbol = '...';
 	private $smart = false;
 	private $wordsafe = false;
-	
+
 
 	public function __construct($length, $smart=false, $wordsafe=true, $cutsymbol='...'){
 		$this->length = $length;
@@ -50,7 +54,7 @@ class StringConverterSubstring implements Converter {
 		$this->smart = $smart;
 		$this->wordsafe = $wordsafe;
 	}
-	
+
 	public function convert($data){
 		if(strlen($data) > $this->length){
 			if($this->smart){
@@ -62,23 +66,23 @@ class StringConverterSubstring implements Converter {
 			return $data;
 		}
 	}
-	
+
 	public function _smartSubstring($data){
 		$cut = strlen($data) - $this->length;
-		$cut_left = floor($cut / 2); 
-		$cut_right = ceil($cut / 2); 
+		$cut_left = floor($cut / 2);
+		$cut_right = ceil($cut / 2);
 		$split = floor(strlen($data) / 2);
-		
+
 		$left = substr($data, 0, $split);
 		$left = substr($left, 0, strlen($left) - $cut_left);
-		
+
 		$right = substr($data, $split);
 		$right = substr($right, $cut_right);
 
 		return $left.$this->cutsymbol.$right;
-	}	
-	
-	
+	}
+
+
 	private function _substr($string, $length){
 		if($this->wordsafe){
 			while($string{$length} != ' '){
@@ -89,6 +93,6 @@ class StringConverterSubstring implements Converter {
 			}
 		}
 		return substr($string, 0, $length);
-	}	
+	}
 }
 ?>

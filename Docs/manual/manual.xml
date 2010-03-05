@@ -248,7 +248,7 @@ define('CORELIB_MANAGER_USERNAME', 'admin'); ]]>
 		<xi:include href="codegenerator/creating-modules.xml"/>
 		<xi:include href="codegenerator/module-file.xml"/>
 		<xi:include href="howto/setting-up-a-corelib-site.xml"/>
-		<section>
+		<chapter>
 			<title>Registering pages</title>
 			<section>
 				<title>Simple page looukup</title>
@@ -329,7 +329,7 @@ $pages[] = array('type'=>'PageFactoryMetaPageResolver',
 			<section>
 				<title>Custom lookup engines</title>
 			</section>
-		</section>
+		</chapter>
 		<section>
 			<title>Using the SOAP services and XSLT</title>
 		</section>
@@ -338,9 +338,60 @@ $pages[] = array('type'=>'PageFactoryMetaPageResolver',
 	<reference>
 		<title>FAQ</title>
 	</reference>	
-	<reference>
+	
+	
+	
+	<part>
 		<title>Function reference</title>
-	</reference>	
+		
+		<chapter>
+			<title>Corelib-Base</title>
+			<chapter>
+				<title>File system</title>
+				<refentry>
+					<refmeta>
+						<refentrytitle>FileSystemTemplateEngine</refentrytitle>
+						<manvolnum>3S</manvolnum>
+					</refmeta>	
+					<refnamediv>
+						<refname>FileSystemTemplateEngine</refname>
+						<refpurpose>Filesystem dummy template engine.</refpurpose>
+					</refnamediv>
+					<refsection>
+						<title>Introduction</title>
+						<para>A dummy template engine which does not implment any output, it simply serves as a loader before writing the actual file output to the client.</para>
+					</refsection>					
+					<refsynopsisdiv>
+						<classsynopsis class="class" language="php">
+							<ooclass>
+								<classname>FileSystemTemplateEngine</classname>
+							</ooclass>
+							<ooclass>
+								<classname>PageFactoryTemplateEngine</classname>
+							</ooclass>
+							<methodsynopsis>
+								<modifier>public</modifier>
+								<void/>	
+								<methodname>draw</methodname>
+							</methodsynopsis>
+							<methodsynopsis>
+								<modifier>public</modifier>
+								<type>Output</type>
+								<methodname>addPageSettings</methodname>
+								<methodparam>
+									<type>Output</type>
+									<parameter>$content</parameter>
+								</methodparam>						
+							</methodsynopsis>
+						</classsynopsis>
+					</refsynopsisdiv>
+				</refentry>
+			</chapter>
+		</chapter>
+		
+	</part>
+	
+		
 	<glossary>
 		<glossentry xml:id="php">
 			<glossterm>PHP: Hypertext Preprocessor</glossterm>

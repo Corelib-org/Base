@@ -35,7 +35,7 @@
  */
 
 //*****************************************************************//
-//**'********************** HEXHide Class *************************//
+//************************* HEXHide Class *************************//
 //*****************************************************************//
 /**
  * HEXHide class.
@@ -44,7 +44,9 @@
  * a base16 string.
  *
  * @todo Describe how the HEXHide encoding process works
- * @package corelib
+ * @category corelib
+ * @package Base
+ * @subpackage Algorithms
  */
 class HEXHide {
 

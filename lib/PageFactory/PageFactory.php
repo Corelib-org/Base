@@ -207,12 +207,14 @@ interface PageFactoryPageResolver {
 	 * When {@link PageFactory} tries to lookup a page the first
 	 * thing it will do is to ask the resolver to parse the the
 	 * expression ($expr) and execution statement ($exec) for later use.
+	 * The url is also passed along for optimal extendability.
 	 *
 	 * @param string $expr expression read from page lookup table
 	 * @param string $exec execution statement read from page lookup table
+	 * @param string $url request url
 	 * @return boolean true on success, else return false
 	 */
-	public function resolve($expr, $exec);
+	public function resolve($expr, $exec, $url);
 
 	/**
 	 * Get expression.
@@ -754,18 +756,13 @@ class PageFactory implements Singleton {
 				foreach($pages as $val){
 					if(is_array($val)){
 						if(isset($val['type']) && $val['type'] != 'regex' ){
-							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec']);
+							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec'], $this->url);
 							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
 							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 						}
 						if( isset($val['expr']) && preg_match($val['expr'], $this->url) ){
-							try {
-								if(!is_file($val['page'])){
-									throw new BaseException('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
-								}
-							} catch (BaseException $e){
-								echo $e;
-								exit;
+							if(!is_file($val['page'])){
+								trigger_error('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
 							}
 
 							if(!isset($val['engine'])){
@@ -784,13 +781,8 @@ class PageFactory implements Singleton {
 				}
 			}
 
-			try {
-				if(!isset($pages['/404/'])){
-					throw new BaseException('404 Error unspecified!', E_USER_ERROR);;
-				}
-			} catch (BaseException $e){
-				echo $e;
-				exit;
+			if(!isset($pages['/404/'])){
+				trigger_error('404 Error unspecified!', E_USER_ERROR);;
 			}
 			$this->url = '/404/';
 		}

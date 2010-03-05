@@ -38,7 +38,6 @@ class LoopbackStream {
 		}
 	}
 
-
 	public function stream_stat(){
 		return fstat($this->socket);
 	}
@@ -58,19 +57,15 @@ class LoopbackStream {
 	public function stream_close(){
 		fclose($this->socket);
 	}
+
 	/*
-
-
     public function stream_lock($operation);
-
-    public function stream_read($count);
     public function stream_seek($offset , $whence = SEEK_SET);
     public function stream_set_option($option , $arg1 , $arg2);
-    public function stream_stat();
     public function stream_tell();
     public function stream_write($data);
     public function url_stat($path , $flags);
-*/
+	*/
 
 
 	private function _parsePath($path){

@@ -94,27 +94,17 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				return $this->xml->saveXML();
 			} else {
 
-//				if(!PAGE_FACTORY_CACHE_ENABLE || !is_file($this->template_cache_file)){
-					$tranformToXML = false;
-					if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
-						$tranformToXML = true;
-					}
-					$doc = $proc->transformToDoc($this->xml);
-					if($this->_getCacheType() == PAGE_FACTORY_CACHE_DYNAMIC){
-						$page = $this->_transformCachedPage($doc, $tranformToXML);
-					} else {
-						$page = $this->_transformPage($doc, $tranformToXML);
-					}
-					/*
-					if(!PAGE_FACTORY_CACHE_DEBUG){
-						file_put_contents($this->template_cache_file, $page);
-					} */
-	/*			} else {
-					$page = file_get_contents($this->template_cache_file);
+				$tranformToXML = false;
+				if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
+					$tranformToXML = true;
 				}
-				if(PAGE_FACTORY_CACHE_ENABLE){
-					return PageFactoryDOMXSLCapsule::parseCacheData($page, $this->settings_array, $this->content_array);
-				} */
+				$doc = $proc->transformToDoc($this->xml);
+				if($this->_getCacheType() == PAGE_FACTORY_CACHE_DYNAMIC){
+					$page = $this->_transformCachedPage($doc, $tranformToXML);
+				} else {
+					$page = $this->_transformPage($doc, $tranformToXML);
+				}
+
 
 				$converter = $this->template->getOutputConverter();
 				if(!is_null($converter)){
@@ -128,14 +118,11 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 	public function addPageContent(Output $content){
 		$this->content->appendChild($content->getXML($this->xml));
+		return true;
 	}
 
 	public function addPageSettings(Output $settings){
 		$this->settings->appendChild($settings->getXML($this->xml));
-	}
-
-	public function getSupportedTemplateDefinition(){
-		return __CLASS__;
 	}
 
 	public function setTemplate(PageFactoryTemplate $template){
@@ -145,16 +132,16 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		} else { */
 			$this->_prepareXML();
 
-			$this->settings->appendChild($this->xml->createElement('script_uri', $this->template->getScriptUri()));
-			$this->settings->appendChild($this->xml->createElement('script_url', $this->template->getScriptUrl()));
-			$this->settings->appendChild($this->xml->createElement('request_url', str_replace('&', '&amp;', $this->template->getRequestUri())));
-			$this->settings->appendChild($this->xml->createElement('http_referer', str_replace('&', '&amp;', $this->template->getHTTPReferer())));
+			$this->settings->appendChild($this->xml->createElement('script-uri', $this->template->getScriptUri()));
+			$this->settings->appendChild($this->xml->createElement('script-url', $this->template->getScriptUrl()));
+			$this->settings->appendChild($this->xml->createElement('request-url', str_replace('&', '&amp;', $this->template->getRequestUri())));
+			$this->settings->appendChild($this->xml->createElement('http-referer', str_replace('&', '&amp;', $this->template->getHTTPReferer())));
 
-			$this->settings->appendChild($this->xml->createElement('server_name', $this->template->getServerName()));
-			$this->settings->appendChild($this->xml->createElement('user_agent', $this->template->getUserAgent()));
-			$this->settings->appendChild($this->xml->createElement('remote_address', $this->template->getRemoteAddress()));
-			$this->settings->appendChild($this->xml->createElement('redirect_url', $this->template->getHTTPRedirectBase()));
-			$this->settings->appendChild($this->xml->createElement('base_url', $this->template->getHTTPRedirectBase()));
+			$this->settings->appendChild($this->xml->createElement('server-name', $this->template->getServerName()));
+			$this->settings->appendChild($this->xml->createElement('user-agent', $this->template->getUserAgent()));
+			$this->settings->appendChild($this->xml->createElement('remote-address', $this->template->getRemoteAddress()));
+			$this->settings->appendChild($this->xml->createElement('redirect-url', $this->template->getHTTPRedirectBase()));
+			$this->settings->appendChild($this->xml->createElement('base-url', $this->template->getHTTPRedirectBase()));
 
 			$stylesheets = $this->template->getStyleSheets();
 			while(list(,$val) = each($stylesheets)){
@@ -235,7 +222,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	}
 
 	protected function _prepareXML(){
-		$this->xml = new PageFactoryDOMXSLDOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
+		$this->xml = new PageFactoryDOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$this->xml->preserveWhiteSpace = false;
 
 		$this->xsl = new DOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
@@ -247,15 +234,5 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		return true;
 	}
 
-}
-
-class PageFactoryDOMXSLDOMDocument extends DOMDocument {
-	public function createElement($name, $value=null){
-		if(!is_null($value)){
-			return parent::createElement($name, XMLTools::escapeXMLCharacters($value));
-		} else {
-			return parent::createElement($name);
-		}
-	}
 }
 ?>

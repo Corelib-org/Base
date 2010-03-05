@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+<!DOCTYPE part PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<part xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>Function reference</title>
+	
+	<chapter>
+		<title>Corelib-Base</title>
+		
+		
+		<section>
+			<title>File system</title>
+			<para>
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec adipiscing egestas vehicula. Donec eget fermentum eros. In vestibulum lorem sem, sit amet consequat lacus. Sed rhoncus lobortis nisl ut varius. Proin commodo nulla eget metus viverra ullamcorper. Pellentesque tincidunt purus eu diam suscipit blandit. Curabitur euismod ultrices lorem eget luctus. Donec mauris quam, vulputate vitae dignissim vitae, porttitor in nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras id tellus ullamcorper diam ultricies feugiat. Sed imperdiet, turpis ac adipiscing ullamcorper, libero arcu placerat nisi, quis aliquet lacus ligula sit amet enim. Phasellus id purus non justo ullamcorper pretium ut in lacus. Nulla ut lorem non eros euismod venenatis. Ut molestie, lorem vel volutpat consectetur, risus nisl commodo nibh, in egestas ipsum quam blandit lorem. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sed enim erat. Curabitur lobortis ligula non sem faucibus vitae luctus quam mattis. In ac libero dui. Cras id libero felis, ut laoreet nibh. 
+			</para>
+			
+			<refentry>
+				<refmeta>
+					<refentrytitle>FileSystemTemplateEngine</refentrytitle>
+					<manvolnum>3S</manvolnum>
+				</refmeta>	
+				<refnamediv>
+					<refname>FileSystemTemplateEngine</refname>
+					<refpurpose>Filesystem dummy template engine.</refpurpose>
+				</refnamediv>
+				<refsection>
+					<title>Description</title>
+					<para>A dummy template engine which does not implment any output, it simply serves as a loader before writing the actual file output to the client.</para>
+				</refsection>					
+				<refsynopsisdiv>
+					<classsynopsis class="class" language="php">
+						<ooclass>
+							<classname>FileSystemTemplateEngine</classname>
+						</ooclass>
+						<ooclass>
+							<classname>PageFactoryTemplateEngine</classname>
+						</ooclass>
+						<methodsynopsis>
+							<modifier>public</modifier>
+							<void/>	
+							<methodname>draw</methodname>
+						</methodsynopsis>
+						<methodsynopsis>
+							<modifier>public</modifier>
+							<type>Output</type>
+							<methodname>addPageSettings</methodname>
+							<methodparam>
+								<type>Output</type>
+								<parameter>$content</parameter>
+							</methodparam>						
+						</methodsynopsis>
+					</classsynopsis>
+				</refsynopsisdiv>
+			</refentry>
+		</section>
+	</chapter>
+</part>

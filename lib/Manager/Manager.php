@@ -116,7 +116,8 @@ class Manager implements Singleton {
 
 	protected $extension_dirs = array(CORELIB,
 	                                  'var/',
-	                                  'lib/');
+	                                  'lib/',
+	                                  'share/');
 	/**
 	 * @var DOMDocument
 	 */
@@ -212,25 +213,21 @@ class Manager implements Singleton {
 	}
 
 	public function getResource($handle, $resource){
-		try {
-			StrictTypes::isString($handle);
-			StrictTypes::isString($resource);
-			$config = ManagerConfig::getInstance();
-			if(!$dir = $config->getResourceDir($handle)){
-				return false;
-			} else if(!is_dir($dir)){
-				throw new BaseException('No Such file or directory: '.$dir);
-			}
-			$filename = $dir.'/'.$resource;
-			$filename = str_replace('../', '/', $filename);
-			while(strstr($filename, '//')){
-				$filename = str_replace('//', '/', $filename);
-			}
-			if(!is_file($filename)){
-				return false;
-			}
-		} catch (BaseException $e){
-			echo $e;
+		assert('is_string($handle)');
+		assert('is_string($resource)');
+		$config = ManagerConfig::getInstance();
+		if(!$dir = $config->getResourceDir($handle)){
+			return false;
+		} else if(!is_dir($dir)){
+			throw new BaseException('No Such file or directory: '.$dir);
+		}
+		$filename = $dir.'/'.$resource;
+		$filename = str_replace('../', '/', $filename);
+		while(strstr($filename, '//')){
+			$filename = str_replace('//', '/', $filename);
+		}
+		if(!is_file($filename)){
+			return false;
 		}
 		return $filename;
 	}
@@ -270,7 +267,7 @@ class Manager implements Singleton {
 								break;
 							default:
 								if($prop->nodeType != XML_TEXT_NODE){
-									$event->triggerEvent(new ManagerUnknownSetupProperty($handler, $prop));
+									$event->trigger(new ManagerUnknownSetupProperty($handler, $prop));
 								}
 								break;
 						}
@@ -278,11 +275,10 @@ class Manager implements Singleton {
 				} else {
 					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
 						if($prop->nodeType != XML_TEXT_NODE){
-							$event->triggerEvent(new ManagerUnknownSetupProperty(UnknownCorelibManagerExtension::getInstance(), $prop));
+							$event->trigger(new ManagerUnknownSetupProperty(UnknownCorelibManagerExtension::getInstance(), $prop));
 						}
 					}
 					$handler = null;
-//					throw new BaseException('Invalid corelib extension '.$item->getAttribute('id').', no handler defined!', E_USER_ERROR);
 				}
 
 				$this->extensions_data[] = array('handler' => $handler, 'node'=>$item);
@@ -339,8 +335,7 @@ class Manager implements Singleton {
 			} else if(is_dir($dir.'/'.$entry) && $entry != '.' && $entry != '..'){
 				$this->_searchDir($dir.'/'.$entry);
 			} else if($entry != '.' && $entry != '..'){
-				$event = EventHandler::getInstance();
-				$event->triggerEvent(new ManagerFileSearch($dir.'/'.$entry));
+				EventHandler::getInstance()->trigger(new ManagerFileSearch($dir.'/'.$entry));
 			}
 		}
 	}
@@ -373,12 +368,7 @@ class ManagerFileSearch implements Event {
 	private $filename;
 
 	public function __construct($filename){
-		try {
-			StrictTypes::isString($filename);
-		} catch (BaseException $e){
-			echo $e;
-			return false;
-		}
+		assert('is_string($filename)');
 		$this->filename = $filename;
 	}
 
@@ -450,12 +440,27 @@ abstract class ManagerPage extends PageBase {
 		}
 
 		define('DOMXSL_TEMPLATE_XSL_PATH', CORELIB);
-		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/Resources/XSLT/core.xsl');
+		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/xsl/base/core.xsl');
 		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
 
 		$this->post = new PageFactoryPostTemplate();
 		$this->addTemplateDefinition($this->post);
+	}
+
+	/**
+	 * Get current page from url.
+	 *
+	 * @param string $inputvar http get variable name
+	 * @return integer page
+	 */
+	public function getPagingPage($inputvar = 'p'){
+		$input = InputHandler::getInstance();
+		if($input->validateGet('p',new InputValidatorRegex('/^[0-9]+$/'))) {
+			return (int) $input->getGet('p');
+		} else {
+			return 1;
+		}
 	}
 
 	protected function _selectMenuItem($tab, $item){

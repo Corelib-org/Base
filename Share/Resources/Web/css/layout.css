@@ -43,26 +43,15 @@ tbody tr:hover {
 table.noborders td {
 	border-width: 0px;
 }
-/************************** Topbar *************************/
-#topbar {
-	background-image: url('../images/header/background.gif');
-	height: 90px;
-	text-align: center;
-}
-#topbar > div {
-	background-image: url('../images/header/background.gif');
-	text-align: left;
-	width: 995px;
-	margin: auto;
-}
 
 
 /************************** Content *************************/
-.shadow, #container, #menu, #menu > ul > ul  {
+.shadow, #page-content-container, #menu, #menu > ul > ul  {
 	background-image: url('../images/shadow.png');
 	background-repeat: repeat-x;
 	min-height: 9px;
 }
+
 .left {
 	float: left;
 }
@@ -124,15 +113,13 @@ table.noborders td {
 	width: 200px;
 	padding: 2px;
 }
-#container {
-	text-align: left;
+
+#page-content-container > div {
+	margin-left: 20px;
+	margin-right: 20px;
 }
-#container > div {
-	width: 995px;
-	margin: auto;
-	margin-top: 0px;
-	padding-top: 0px;
-}
+
+
 #menu {
 	width: 180px;
 	border: 1px solid #ececec;

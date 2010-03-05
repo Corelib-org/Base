@@ -242,6 +242,12 @@ class i18n implements Singleton,Output {
 	 */
 	private $timezone = null;
 
+	/**
+	 * @var array language files
+	 * @internal
+	 */
+	private $language_files = array();
+
 
 	//*****************************************************************//
 	//*********************** i18n class methods **********************//

@@ -31,11 +31,13 @@
  * @link http://www.corelib.org/
  * @version 1.1.0 ($Id$)
  * @filesource
- * @todo Observer pattern is only used with Eventhandler, maybe it should be merged
  * @todo Output interface is used by PageFactory and shouldbe moved there
  * @todo Decorator and Component pattern is outdated and should be removed or rewritten
  */
 
+//*****************************************************************//
+//********************** Singleton interface **********************//
+//*****************************************************************//
 /**
  * Singleton interface
  *
@@ -53,21 +55,23 @@ interface Singleton {
 	 */
 	public static function getInstance();
 }
+
 /**
- * @see http://en.wikipedia.org/wiki/Observer_pattern
+ * @see http://en.wikipedia.org/wiki/Composite_pattern
  */
-interface ObserverSubject {
-	public function registerObserver(Observer $observer);
-	public function removeObserver(Observer $observer);
-	public function notifyObservers();
+abstract class Composite {
+	/**
+	 * @return Composite
+	 */
+	public function getComposite(){
+		return false;
+	}
+
+	public function addComponent(Composite $component){
+		throw new Exception('Not allowed here');
+	}
 }
-/**
- * @see http://en.wikipedia.org/wiki/Observer_pattern
- */
-interface Observer {
-	public function register(ObserverSubject $subject);
-	public function update($update);
-}
+
 
 interface Output {
 	public function getXML(DOMDocument $xml);
@@ -92,68 +96,6 @@ abstract class Decorator {
 		} else {
 			return $DOMNode;
 		}
-	}
-}
-
-/**
- * @see http://en.wikipedia.org/wiki/Composite_pattern
- */
-abstract class Component {
-	/**
-	 * Child Components
-	 *
-	 * @var Array instantiated components
-	 */
-	protected $components = array();
-
-	/**
-	 * Parent Component
-	 *
-	 * @var Component parent component
-	 */
-	protected $parent = null;
-
-
-	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
-		while(list(,$val) = each($this->components)){
-			$DOMnode->appendChild($val->getXML($xml));
-		}
-		reset($this->components);
-	}
-
-	public function getComponentsArray(array &$array){
-		while(list(,$val) = each($this->components)){
-			$array[] = $val->getArray();
-		}
-		reset($this->components);
-	}
-
-	public function removeComponents(){
-		$this->components = array();
-		return true;
-	}
-
-	public function addComponent(Component $component){
-		$this->components[] = $component;
-		$component->setParentComponent($this);
-		return $component;
-	}
-
-	public function setParentComponent(Component $component){
-		$this->parent = $component;
-		return $component;
-	}
-
-	protected function _commitComponents($recursive=true){
-		if($recursive){
-			foreach ($this->components as $component){
-				$component->commit();
-			}
-		}
-	}
-
-	public function commit($recursive=true){
-		$this->_commitComponents($recursive);
 	}
 }
 ?>

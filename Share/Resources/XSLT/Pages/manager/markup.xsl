@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
 	<xsl:output method="xml" indent="yes" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
-	
-	<xsl:template match="content">
-		<xsl:call-template name="manager">
-			<xsl:with-param name="content">
+	<xsl:include href="../../../../xsl/base/layouts/default.xsl"/>
 
-				<xsl:call-template name="h1">
+	<xsl:template match="content" mode="xhtml-content">
+	
+	
+						<xsl:call-template name="h1">
 					<xsl:with-param name="headline">XHTML Markup</xsl:with-param>
 					<xsl:with-param name="nav">
 					<label for="view">Change view</label>
@@ -23,7 +23,6 @@
 				 <p>
 					Ut nunc justo, rutrum eu, posuere quis, dapibus id, tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla facilisi. Cras feugiat nulla commodo leo. Morbi posuere, purus in nonummy condimentum, massa ipsum rhoncus erat, id fringilla libero purus eget pede. Vivamus quis magna. Etiam congue, purus quis ultricies placerat, nisi ligula dapibus mi, sit amet pretium sem ante tempus quam. Praesent sit amet nisi. Donec sit amet mi. Mauris cursus massa et risus. Aliquam suscipit ipsum ac leo. Curabitur ligula ipsum, pretium eget, tristique in, condimentum at, dolor. Curabitur sit amet elit eget quam congue sagittis. Maecenas auctor magna eu libero. Sed eget sem. Vivamus erat dui, placerat nec, sollicitudin sed, mattis eu, sem. Donec nec mauris sit amet dui ornare faucibus.
 				</p>
-				
 				<xsl:call-template name="h1">
 					<xsl:with-param name="headline">Select blog</xsl:with-param>
 					<xsl:with-param name="backtitle">Step 1</xsl:with-param>
@@ -106,10 +105,6 @@
 								</tbody>
 							</table>
 
-
-
-			</xsl:with-param>
-		</xsl:call-template>
 	</xsl:template>
 
 </xsl:stylesheet>

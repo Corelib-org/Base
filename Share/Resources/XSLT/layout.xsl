@@ -28,7 +28,7 @@
 								<xsl:if test="count(item) > 0">
 									<ul>
 										<xsl:for-each select="item">
-											<li><xsl:value-of select="."/></li>
+											<li><a href="{@url}"><xsl:value-of select="."/></a></li>
 										</xsl:for-each>
 									</ul>
 								</xsl:if>

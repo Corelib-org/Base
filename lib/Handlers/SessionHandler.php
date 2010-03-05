@@ -324,6 +324,15 @@ class SessionHandler implements Singleton,Output {
 	}
 
 	/**
+	 * Regenerate session ID.
+	 *
+	 * @return boolean true on success, else return false.
+	 */
+	public function regenerateID(){
+		return $this->engine->regenerateID();
+	}
+
+	/**
 	 * Set output converter for session variable.
 	 *
 	 * @param string $name
@@ -446,6 +455,13 @@ interface SessionHandlerEngine {
 	 * @return string
 	 */
 	public function getID();
+
+	/**
+	 * Regenerate session ID.
+	 *
+	 * @return string
+	 */
+	public function regenerateID();
 
 	/**
 	 * Initiate session.
@@ -681,6 +697,16 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	public function getID(){
 		return session_id();
 	}
+
+	/**
+	 * Regenerate session ID.
+	 *
+	 * @return string
+	 */
+	public function regenerateID(){
+		session_regenerate_id();
+	}
+
 
 	/**
 	 * Set session cookie parameters.

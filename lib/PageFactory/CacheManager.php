@@ -155,7 +155,7 @@ class CacheManagerUpdate extends EventInstanceAction {
 	 * @see EventAction::update($event)
 	 */
 	public function update(Event $event){
-		$this->cache->update($update->getModel());
+		$this->cache->update($event->getModel());
 	}
 }
 

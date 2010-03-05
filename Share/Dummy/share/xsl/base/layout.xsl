@@ -1,38 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
-	<xsl:output method="xml" indent="yes" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>			
-	<xsl:template name="page">
-		<xsl:param name="content"/>
-		
-		<div id="header">
-		
-		</div>
-		
-		<div id="container">
-			<xsl:call-template name="status_box"/>
-			<xsl:copy-of select="$content"/>				
-		</div>
-		
-		<div id="footer">
+	<xsl:output method="xml" indent="yes"/>			
 
-		</div>	
+	<!-- 
+	/** 
+	 * Page header 
+	 * 
+	 * @param content optional page header content
+	 */
+	-->
+	<xsl:template name="page-header">
+		<div id="page-header">
+			<br/>
+			<h1>Corelib dummy site</h1>
+			<xsl:call-template name="page-navigation"/>
+		</div>
 	</xsl:template>
-
 	
-	<xsl:template name="statusbox">
-		<xsl:if test="/page/settings/message = true()">
-				<div id="message_{/page/settings/message/@type}">
-					<h2><xsl:value-of select="/page/settings/message/headline" /></h2>
-					<xsl:if test="/page/settings/message/item">
-						<span>
-							<xsl:value-of select="." />
-						</span>
-					</xsl:if>			
-				</div>		
-		</xsl:if>
+	<!-- 
+	/** 
+	 * Page navigation 
+	 */ 
+	-->
+	<xsl:template name="page-navigation">
+		<div id="page-navigation">
+			Navigation
+		</div>
 	</xsl:template>
-		
-	<xsl:template name="nav">
+	
+	<!-- 
+	/** 
+	 * Page content container 
+	 * 
+	 * @param content content of page-contant-container
+	 */
+	 -->
+	<xsl:template name="page-content-container">
+		<xsl:param name="content"/>
+		<div id="page-content-container">
+			<xsl:copy-of select="$content"/>
+		</div>
 	</xsl:template>
+	
+	<!-- 
+	/** 
+	 * Page footer 
+	 */
+	 -->
+	<xsl:template name="page-footer">
+		<div id="page-footer">
+			Corelib.org
+		</div>
+	</xsl:template>	
 	
 </xsl:stylesheet>

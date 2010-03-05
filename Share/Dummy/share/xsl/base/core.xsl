@@ -5,29 +5,32 @@
 	<xsl:template match="/">
 		<html>
 			<head>
+				<base href="{/page/settings/redirect-url}"/>
 				<meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
 				<meta http-equiv="Content-language" content="en"/>
 				<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+				
 				<xsl:for-each select="/page/settings/javascript">
 					<script language="JavaScript" type="text/javascript" src="{.}" />
 				</xsl:for-each>
 				<script type="text/javascript">
 					<xsl:comment>
-						var redirect_url = '<xsl:value-of select="/page/settings/redirect_url"/>';
+						var redirect_url = '<xsl:value-of select="/page/settings/base-url"/>';
 					//</xsl:comment>
 				</script>
-				<link rel="shortcut icon" href="{/page/settings/static_url}images/favicon.ico" />
-				<link rel="stylesheet" type="text/css" href="/share/web/stylesheet/style.css" />
+				
+				<link rel="shortcut icon" href="share/web/images/favicon.ico" />
+				<link rel="stylesheet" type="text/css" href="share/web/style/basic.css" />
 				<xsl:for-each select="/page/settings/stylesheet">
 					<link rel="stylesheet" type="text/css" href="{.}" />
 				</xsl:for-each>
-				<xsl:for-each select="/page/settings/rss">
-					<link rel="alternate" type="application/rss+xml" title="{.}" href="{/page/settings/get/page}rss/"/>
-				</xsl:for-each>
+				
 			</head>
 			<body>
-				<xsl:apply-templates select="page/content"/>	
+				<div id="page-container">
+					<xsl:apply-templates select="page/content" mode="xhtml-layout"/>
+				</div>
 			</body>
 		</html>
 	</xsl:template>
-</xsl:stylesheet>
+</xsl:stylesheet>	

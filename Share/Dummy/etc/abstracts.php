@@ -110,8 +110,24 @@ abstract class DummyPageGet extends DummyPage {
 	 * @uses DummyPageGet::$xsl
 	 * @return void
 	 */
-	function __construct() {
+	function __init() {
 		$this->xsl = new PageFactoryDOMXSLTemplate();
+		$this->addTemplateDefinition($this->xsl);
+	}
+
+	/**
+	 * Get current page from url.
+	 *
+	 * @param string $inputvar http get variable name
+	 * @return integer page
+	 */
+	public function getPagingPage($inputvar = 'p'){
+		$input = InputHandler::getInstance();
+		if($input->validateGet('p',new InputValidatorRegex('/^[0-9]+$/'))) {
+			return (int) $input->getGet('p');
+		} else {
+			return 1;
+		}
 	}
 }
 
@@ -141,8 +157,9 @@ abstract class DummyPagePost extends DummyPage {
 	 * @uses DummyPagePost::$post
 	 * @return void
 	 */
-	function __construct() {
+	function __init() {
 		$this->post = new PageFactoryPostTemplate();
+		$this->addTemplateDefinition($this->post);
 	}
 }
 ?>

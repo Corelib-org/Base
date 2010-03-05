@@ -258,7 +258,7 @@ class SessionHandler implements Singleton,Output {
 	 */
 	public function remove($name){
 		assert('is_string($name)');
-		while($this->is_locked($name)){
+		while($this->isLocked($name)){
 			usleep(1);
 		}
 		$this->lock($name);

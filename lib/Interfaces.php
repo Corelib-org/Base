@@ -98,4 +98,66 @@ abstract class Decorator {
 		}
 	}
 }
+
+/**
+ * @see http://en.wikipedia.org/wiki/Composite_pattern
+ */
+abstract class Component {
+	/**
+	 * Child Components
+	 * 
+	 * @var Array instantiated components
+	 */
+	protected $components = array();
+	
+	/**
+	 * Parent Component
+	 * 
+	 * @var Component parent component
+	 */
+	protected $parent = null;	
+		
+	
+	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
+		while(list(,$val) = each($this->components)){
+			$DOMnode->appendChild($val->getXML($xml));
+		}
+		reset($this->components);
+	}
+	
+	public function getComponentsArray(array &$array){
+		while(list(,$val) = each($this->components)){
+			$array[] = $val->getArray();
+		}
+		reset($this->components);
+	}
+	
+	public function removeComponents(){
+		$this->components = array();
+		return true;
+	}
+	
+	public function addComponent(Component $component){
+		$this->components[] = $component;
+		$component->setParentComponent($this);
+		return $component;
+	}
+	
+	public function setParentComponent(Component $component){
+		$this->parent = $component;
+		return $component;
+	}
+	
+	protected function _commitComponents($recursive=true){
+		if($recursive){
+			foreach ($this->components as $component){
+				$component->commit();
+			}
+		}
+	}
+	
+	public function commit($recursive=true){
+		$this->_commitComponents($recursive);
+	}		
+}
 ?>

@@ -168,7 +168,7 @@ class EventHandler implements Singleton {
 				if($event instanceof $instance){
 					foreach ($actions as $action){
 						$log[] = $action;
-						$handler->update($event);
+						$action->update($event);
 					}
 				}
 			}

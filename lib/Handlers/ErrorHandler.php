@@ -298,22 +298,24 @@ class ErrorHandler implements Singleton {
 				$function = $level['function'];
 			}
 			$args = array();
-			foreach ($level['args'] as $arg){
-				if(is_array($arg)){
-					$args[] = 'array('.sizeof($arg).')';
-				} else if(is_object($arg)){
-					$args[] = get_class($arg);
-				} else if(is_string($arg)) {
-					if(strlen($arg) > 30){
-						$args[] = '\'<span title="'.htmlspecialchars($arg).'">'.htmlspecialchars(substr($arg, 0, 30)).'...</span>\'';
+			if(isset($level['args'])){
+				foreach ($level['args'] as $arg){
+					if(is_array($arg)){
+						$args[] = 'array('.sizeof($arg).')';
+					} else if(is_object($arg)){
+						$args[] = get_class($arg);
+					} else if(is_string($arg)) {
+						if(strlen($arg) > 30){
+							$args[] = '\'<span title="'.htmlspecialchars($arg).'">'.htmlspecialchars(substr($arg, 0, 30)).'...</span>\'';
+						} else {
+							$args[] = '\''.htmlspecialchars($arg).'\'';
+						}
 					} else {
-						$args[] = '\''.htmlspecialchars($arg).'\'';
+						$args[] = $arg;
 					}
-				} else {
-					$args[] = $arg;
 				}
+				$return .= '#'.($key + 1).' '.$level['file'].'('.$level['line'].')'.' '.htmlspecialchars($function).'('.implode(', ', $args).')'."<br/>";
 			}
-			$return .= '#'.($key + 1).' '.$level['file'].'('.$level['line'].')'.' '.htmlspecialchars($function).'('.implode(', ', $args).')'."<br/>";
 		}
 		return $return;
 	}

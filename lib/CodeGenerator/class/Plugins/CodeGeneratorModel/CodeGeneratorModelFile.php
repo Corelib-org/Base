@@ -193,7 +193,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			$xpath = new DOMXPath($this->getSettings()->ownerDocument);
 			while(list(,$column) = $this->getTable()->eachColumn()){
 				$method = 'get'.$column->getFieldMethodName();
-				if(!$block->hasMethod($method)){
+
+				$readable = $xpath->query('field[@name = "'.$column->getName().'" and @readable="false"]', $this->getSettings())->length;
+				if(!$block->hasMethod($method) && $readable == 0){
 					$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
 
 					switch ($column->getType()){
@@ -266,10 +268,13 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 	private function _writeSetters(&$content){
 		if($block = $this->_getCodeBlock($content, 'Set methods')){
 			$xpath = new DOMXPath($this->getSettings()->ownerDocument);
+
 			while(list(,$column) = $this->getTable()->eachColumn()){
 
+				$writable = $xpath->query('field[@name = "'.$column->getName().'" and @writable="false"]', $this->getSettings())->length;
+
 				$method = 'set'.$column->getFieldMethodName();
-				if((!$block->hasMethod($method)) && $column->isWritable() && $column->getKey() != CodeGeneratorColumn::KEY_UNIQUE){
+				if((!$block->hasMethod($method)) && $column->isWritable() && $column->getKey() != CodeGeneratorColumn::KEY_UNIQUE && $writable == 0){
 					$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
 
 					$reference_class = $xpath->query('field[@name = "'.$column->getName().'" and @reference-class=true()]', $this->getSettings());
@@ -306,6 +311,10 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 						$docblock = new CodeGeneratorCodeBlockPHPDoc('Set '.$index->getName());
 						$parameters = array();
 						while(list(,$key) = $index->eachColumn()){
+							$sethandler = array();
+							$parameters = array();
+							$sets = array();
+
 							$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$key->getFieldVariableName()));
 							if($class = $this->_getReferenceClass($key)){
 								$param->setType($class);
@@ -457,8 +466,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			$xpath = new DOMXPath($this->getSettings()->ownerDocument);
 			while(list(,$column) = $this->getTable()->eachColumn()){
 
+				$readable = $xpath->query('field[@name = "'.$column->getName().'" and @readable="false"]', $this->getSettings())->length;
 				$property = $column->getFieldVariableName();
-				if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property.'\s*\).*?\{/')){
+				if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property.'\s*\).*?\{/') && $readable == 0){
 					$reference_class = $xpath->query('field[@name = "'.$column->getName().'" and @reference-class=true()]', $this->getSettings());
 					if($reference_class->length > 0){
 						$class = $reference_class->item(0)->getAttribute('reference-class');
@@ -571,6 +581,10 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 						$methodname = 'is'.$index->getIndexMethodName().'Available';
 						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $methodname));
 						$docblock = new CodeGeneratorCodeBlockPHPDoc('Is '.$index->getName().' combination available');
+
+						while(list(,$column) = $this->getTable()->getPrimaryKey()->eachColumn()){
+							$parameters[] = '$this->'.$column->getFieldVariableName();
+						}
 						while(list(,$key) = $index->eachColumn()){
 
 							$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$key->getFieldVariableName()));

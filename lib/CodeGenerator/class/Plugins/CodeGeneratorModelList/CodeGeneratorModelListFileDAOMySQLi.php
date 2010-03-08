@@ -149,16 +149,16 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 				if($column->isSortable()){
 					if(in_array($column->getSmartType(), $smarttypes)){
 						if(!$block->hasStatement('if ( $'.$column->getFieldVariableName().'_from')){
-							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_from = $this->filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_from\')'));
+							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_from = $filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_from\')'));
 							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' <= FROM_UNIXTIME(\\\'\'.$this->escapeString($'.$column->getFieldVariableName().'_from).\'\\\'\';'));
 						}
 						if(!$block->hasStatement('if ( $'.$column->getFieldVariableName().'_to')){
-							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_to = $this->filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_to\')'));
+							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_to = $filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_to\')'));
 							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' >= FROM_UNIXTIME(\\\'\'.$this->escapeString($'.$column->getFieldVariableName().'_to).\'\\\'\';'));
 						}
 					}
 					if(!$block->hasStatement('if ( $'.$column->getFieldVariableName())){
-						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().' = $this->filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().')'));
+						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().' = $filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().')'));
 						if($column->countValues() > 0 || $column->getType() == CodeGeneratorColumn::TYPE_INTEGER || $column->getType() == CodeGeneratorColumn::TYPE_FLOAT){
 							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$filters[\'where\'] .= \'AND '.$this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'\';'));
 						} else {

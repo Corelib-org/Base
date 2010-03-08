@@ -86,11 +86,11 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 	 */
 	public function generate(){
 		$this->_writeSelectColumns($this->content);
-		$this->_writeNMRelationChanges($this->content);
 		$this->_writeSpecialCreateFields($this->content);
 		$this->_writeSpecialUpdateFields($this->content);
 		$this->_writeDeleteActions($this->content);
 		$this->_writeUtilityMethods($this->content);
+		$this->_writeNMRelationChanges($this->content);
 	}
 
 	/**
@@ -217,7 +217,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 							$changes[] = '$data->isChanged('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().')';
 							$available[] = '$data->get('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().')';
 						}
-						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('!$this->is'.$index->getIndexMethodName().'Available('.implode(', ', $available).')'));
+						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('!$this->is'.$index->getIndexMethodName().'Available('.str_repeat('null, ', $this->getTable()->getPrimaryKey()->countColumns()).implode(', ', $available).')'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
 					}
 				}
@@ -271,7 +271,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 							$changes[] = '$data->isChanged('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().')';
 							$available[] = '$data->get('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().')';
 						}
-						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('('.implode(' || ', $changes).') && !$this->is'.$index->getIndexMethodName().'Available('.implode(', ', $available).')'));
+						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('('.implode(' || ', $changes).') && !$this->is'.$index->getIndexMethodName().'Available($id, '.implode(', ', $available).')'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
 					}
 				}
@@ -482,6 +482,31 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 					$changes = array();
 					$available = array();
 
+					$method = 'getBy'.$index->getIndexMethodName();
+					if(!$block->hasMethod($method)){
+						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
+						$docblock = $method->setDocBlock(new CodeGeneratorCodeBlockPHPDoc('Get row by '.$index->getName()));
+
+						$where = array();
+						while(list(,$column) = $index->eachColumn()){
+							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, false).' $'.$column->getFieldVariableName()));
+							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+							$where[] = $this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
+						}
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'mixed array similar of read method, else return false'));
+
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = \'SELECT \'.$this->getSelectColumns().\''));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM `'.$this->getTable()->getName().'`'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          WHERE '.implode(' AND ', $where).'\';'));
+
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->slaveQuery(new MySQLiQuery($query));'));
+
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$query->getNumRows() > 0'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $query->fetchArray();'));
+						$else = $if->addAlternate();
+						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
+					}
+
 					$method = 'is'.$index->getIndexMethodName().'Available';
 					if(!$block->hasMethod($method)){
 						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
@@ -491,13 +516,19 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						$select = array();
 						$parameters = array();
 
+						while(list(,$column) = $this->getTable()->getPrimaryKey()->eachColumn()){
+							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, false).' $'.$column->getFieldVariableName()));
+							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+							$parameters[] = '`'.$column->getName().'` != \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
+						}
+
 						while(list(,$column) = $index->eachColumn()){
 							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, true).' $'.$column->getFieldVariableName()));
-							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName(), 'null'));
+							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
 							$select[] = $this->_createFieldName($column);
 							$where[] = $this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
 							$nwhere[] = $this->_createFieldName($column).' != \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
-							$parameters[] = '!is_null($'.$column->getFieldVariableName().')';
+
 						}
 						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
 
@@ -505,8 +536,8 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM `'.$this->getTable()->getName().'`'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          WHERE '.implode(' AND ', $where).'\';'));
 
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf(implode(' && ', $parameters)));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query .= \' AND '.implode(' AND ', $nwhere).'\';'));
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($id)'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query .= \' AND '.implode(' AND ', $parameters).'\';'));
 
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->slaveQuery(new MySQLiQuery($query));'));
 
@@ -514,7 +545,6 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
 						$else = $if->addAlternate();
 						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
-
 					}
 				}
 			}

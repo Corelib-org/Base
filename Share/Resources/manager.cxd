@@ -194,7 +194,7 @@
 			<group name="test">
 				<table name="tbl_test">
 					<generator name="CodeGeneratorModel">
-						<field name="name" converter="true"/>
+						<field name="name" converter="true" writable="true" readable="true"/>
 					</generator>
 					<generator name="CodeGeneratorModelList"/>
 					<generator name="CodeGeneratorGUI">

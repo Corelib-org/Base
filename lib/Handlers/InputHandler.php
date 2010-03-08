@@ -1023,7 +1023,8 @@ class InputValidatorEnum extends InputValidatorRegex {
 	 * @return void
 	 */
 	public function __construct($item=null /*, [$items...] */){
-		parent::__construct('/^('.implode('|', func_get_args()).')$/');
+		$args = func_get_args();
+		parent::__construct('/^('.implode('|', $args).')$/');
 	}
 }
 

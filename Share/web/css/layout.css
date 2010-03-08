@@ -132,3 +132,17 @@ tbody tr:hover {
 table.noborders td {
 	border-width: 0px;
 }
+
+table.list .actions {
+	text-align: right;
+}
+
+
+table.list tfoot td.pager {
+	background-color: #f9f9f9;
+	text-align: left;
+}
+table.list tfoot td.count {
+	background-color: #f9f9f9;
+	text-align: right;
+}

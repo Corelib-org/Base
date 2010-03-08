@@ -704,7 +704,7 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	 * @return string
 	 */
 	public function regenerateID(){
-		session_regenerate_id();
+		return session_regenerate_id(true);
 	}
 
 

@@ -439,6 +439,11 @@ class BaseException extends Exception {
 			parent::__construct($message, $code, $previous);
 		}
 	}
+
+	public function __toString(){
+		trigger_error('Uncought exception: '.get_class($this).' - '.$this->getMessage(), E_USER_ERROR);
+		return parent::__toString();
+	}
 }
 
 

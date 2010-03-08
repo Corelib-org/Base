@@ -760,7 +760,7 @@ class PageFactory implements Singleton {
 							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
 							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
 						}
-						if( isset($val['expr']) && preg_match($val['expr'], $this->url) ){
+						if( isset($val['expr']) && $val['expr'] !== false && preg_match($val['expr'], $this->url) ){
 							if(!is_file($val['page'])){
 								trigger_error('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
 							}

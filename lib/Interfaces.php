@@ -43,9 +43,9 @@
  *
  * Use this interface for defining the base of all Singleton
  * classes, however since PHP does not allow us to to include
- * the specifics of the constructer, you have to remember to
- * set the constructor private to get the desired effect of a
- * singleton class.
+ * the specifics of the constructer and __close, you have to
+ * remember to set the constructor and __close private to get
+ * the desired effect of a singleton class.
  *
  * @see http://en.wikipedia.org/wiki/Singleton_pattern
  */
@@ -56,10 +56,16 @@ interface Singleton {
 	public static function getInstance();
 }
 
+
 /**
  * @see http://en.wikipedia.org/wiki/Composite_pattern
  */
 abstract class Composite {
+
+	private $parent = false;
+
+	protected $components = array();
+
 	/**
 	 * @return Composite
 	 */
@@ -67,10 +73,69 @@ abstract class Composite {
 		return false;
 	}
 
+	private function _setParent(Composite $parent){
+		$this->parent = $parent;
+	}
+
 	public function addComponent(Composite $component){
-		throw new Exception('Not allowed here');
+		if($composite = $this->getComposite()){
+			$uuid = RFC4122::generate();
+			$component->_setParent($composite);
+			$this->components[$uuid] = $component;
+			return $uuid;
+		} else {
+			throw new Exception('Not allowed here');
+		}
+	}
+
+	public function removeComponent($uuid){
+		if($composite = $this->getComposite()){
+			if(isset($this->components[$uuid])){
+				unset($this->components[$uuid]);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			throw new Exception('Not allowed here');
+		}
+	}
+
+	public function getComponent($uuid){
+		if($composite = $this->getComposite()){
+			if(isset($this->components[$uuid])){
+				return $this->components[$uuid];
+			} else {
+				return false;
+			}
+		} else {
+			throw new Exception('Not allowed here');
+		}
+	}
+
+	public function getParent(){
+		return $this->parent;
 	}
 }
+
+
+abstract class CompositeOutput extends Composite implements Output {
+	public function getComponentsXML(array $components, DOMElement $DOMnode){
+		foreach($components as $component){
+			$DOMnode->appendChild($component->getXML($DOMnode->ownerDocument));
+		}
+		reset($this->components);
+	}
+
+	public function addComponent(CompositeOutput $component){
+		parent::addComponent($component);
+	}
+
+}
+
+
+
+
 
 
 interface Output {
@@ -105,49 +170,49 @@ abstract class Decorator {
 abstract class Component {
 	/**
 	 * Child Components
-	 * 
+	 *
 	 * @var Array instantiated components
 	 */
 	protected $components = array();
-	
+
 	/**
 	 * Parent Component
-	 * 
+	 *
 	 * @var Component parent component
 	 */
-	protected $parent = null;	
-		
-	
+	protected $parent = null;
+
+
 	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
 		while(list(,$val) = each($this->components)){
 			$DOMnode->appendChild($val->getXML($xml));
 		}
 		reset($this->components);
 	}
-	
+
 	public function getComponentsArray(array &$array){
 		while(list(,$val) = each($this->components)){
 			$array[] = $val->getArray();
 		}
 		reset($this->components);
 	}
-	
+
 	public function removeComponents(){
 		$this->components = array();
 		return true;
 	}
-	
+
 	public function addComponent(Component $component){
 		$this->components[] = $component;
 		$component->setParentComponent($this);
 		return $component;
 	}
-	
+
 	public function setParentComponent(Component $component){
 		$this->parent = $component;
 		return $component;
 	}
-	
+
 	protected function _commitComponents($recursive=true){
 		if($recursive){
 			foreach ($this->components as $component){
@@ -155,9 +220,9 @@ abstract class Component {
 			}
 		}
 	}
-	
+
 	public function commit($recursive=true){
 		$this->_commitComponents($recursive);
-	}		
+	}
 }
 ?>

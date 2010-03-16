@@ -43,6 +43,7 @@
  * @category corelib
  * @package Base
  * @subpackage Manager
+ * @see DAO_DatabaseTool
  */
 class MySQLi_DatabaseTool extends DatabaseDAO implements Singleton,DAO_DatabaseTool {
 

@@ -43,7 +43,7 @@ if(!defined('CACHE_MANAGER_REFERENCE_FILE')){
 	 *
 	 * @var string filename
 	 */
-	define('CACHE_MANAGER_REFERENCE_FILE', 'var/cache/cachemanager.xml');
+	define('CACHE_MANAGER_REFERENCE_FILE', BASE_CACHE_DIRECTORY.'cachemanager.xml');
 }
 if(!defined('CACHE_MANAGER_DEFAULT_TTL')){
 	/**

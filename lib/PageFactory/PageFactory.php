@@ -129,7 +129,7 @@ if(!defined('PAGE_FACTORY_CACHE_DIR')){
 	 * @var string directory
 	 * @since Version 5.0
 	 */
-	define('PAGE_FACTORY_CACHE_DIR', 'var/cache/pages/');
+	define('PAGE_FACTORY_CACHE_DIR', BASE_CACHE_DIRECTORY.'pages/');
 }
 if(!defined('PAGE_FACTORY_GET_FILE')){
 	/**

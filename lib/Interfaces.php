@@ -26,8 +26,10 @@
  * @author Steffen Soerensen <ss@corelib.org>
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
- * @package corelib
- * @subpackage Base
+ *
+ * @category corelib
+ * @package Base
+ *
  * @link http://www.corelib.org/
  * @version 1.2.0 ($Id$)
  * @filesource
@@ -48,8 +50,8 @@
  * the desired effect of a singleton class.
  *
  * @see http://en.wikipedia.org/wiki/Singleton_pattern
- * @package corelib
- * @subpackage Base
+ * @category corelib
+ * @package Base
  */
 interface Singleton {
 
@@ -72,8 +74,8 @@ interface Singleton {
  *
  * This is the blue print for output classes.
  *
- * @package corelib
- * @subpackage Base
+ * @category corelib
+ * @package Base
  */
 interface Output {
 
@@ -98,8 +100,8 @@ interface Output {
  * Composite abstract class.
  *
  * @see http://en.wikipedia.org/wiki/Composite_pattern
- * @package corelib
- * @subpackage Base
+ * @category corelib
+ * @package Base
  * @since Version 5.0
  */
 abstract class Composite {
@@ -240,8 +242,8 @@ abstract class Composite {
  * Composite output abstract class.
  *
  * @see Composite
- * @package corelib
- * @subpackage Base
+ * @category corelib
+ * @package Base
  * @since Version 5.0
  */
 abstract class CompositeOutput extends Composite implements Output {

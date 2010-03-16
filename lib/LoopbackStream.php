@@ -25,7 +25,6 @@
  *
  * @category corelib
  * @package Base
- * @subpackage Converters
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2010

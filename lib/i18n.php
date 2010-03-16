@@ -399,7 +399,6 @@ class i18n implements Singleton,Output {
 				$languages = array_keys($languages);
 				while(sizeof($languages) > 0){
 					$language = array_pop($languages);
-					echo $language.' ';
 					if(isset($this->locales[$language])){
 						$this->setLocale($language);
 						break;

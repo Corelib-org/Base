@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Internationalization Functions and Classes.
+ * Corelib default converters.
  *
  * <i>No Description</i>
  *
@@ -31,7 +31,7 @@
  * @copyright Copyright (c) 2010
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
- * @version 2.0.0 ($Id: Base.php 5066 2009-09-24 09:32:09Z wayland $)
+ * @version 1.0.0 ($Id: Base.php 5066 2009-09-24 09:32:09Z wayland $)
  */
 
 

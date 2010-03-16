@@ -29,7 +29,7 @@
  * @package corelib
  * @subpackage Base
  * @link http://www.corelib.org/
- * @version 1.1.0 ($Id$)
+ * @version 1.2.0 ($Id$)
  * @filesource
  * @todo Output interface is used by PageFactory and shouldbe moved there
  * @todo Decorator and Component pattern is outdated and should be removed or rewritten
@@ -43,13 +43,20 @@
  *
  * Use this interface for defining the base of all Singleton
  * classes, however since PHP does not allow us to to include
- * the specifics of the constructer and __close, you have to
- * remember to set the constructor and __close private to get
+ * the specifics of the constructer and __clone, you have to
+ * remember to set the constructor and __clone private to get
  * the desired effect of a singleton class.
  *
  * @see http://en.wikipedia.org/wiki/Singleton_pattern
+ * @package corelib
+ * @subpackage Base
  */
 interface Singleton {
+
+
+	//*****************************************************************//
+	//***************** Singleton interface methods *******************//
+	//*****************************************************************//
 	/**
 	 * @return Object Unique version of the object instance
 	 */
@@ -57,172 +64,214 @@ interface Singleton {
 }
 
 
+//*****************************************************************//
+//************************ Output interface ***********************//
+//*****************************************************************//
 /**
+ * Output interface
+ *
+ * This is the blue print for output classes.
+ *
+ * @package corelib
+ * @subpackage Base
+ */
+interface Output {
+
+
+	//*****************************************************************//
+	//******************* Output interface methods ********************//
+	//*****************************************************************//
+	/**
+	 * Get output XML.
+	 *
+	 * @param DOMDocument $xml
+	 * @return DOMElement
+	 */
+	public function getXML(DOMDocument $xml);
+}
+
+
+//*****************************************************************//
+//************************ Composite class ************************//
+//*****************************************************************//
+/**
+ * Composite abstract class.
+ *
  * @see http://en.wikipedia.org/wiki/Composite_pattern
+ * @package corelib
+ * @subpackage Base
+ * @since Version 5.0
  */
 abstract class Composite {
 
+
+	//*****************************************************************//
+	//***************** Composite class properties ********************//
+	//*****************************************************************//
+	/**
+	 * Parent component.
+	 *
+	 * @var Composte
+	 * @internal
+	 */
 	private $parent = false;
 
+	/**
+	 * @var array list of Components
+	 * @internal
+	 */
 	protected $components = array();
 
+
+	//*****************************************************************//
+	//******************* Composite class methods *********************//
+	//*****************************************************************//
 	/**
+	 * Get composite.
+	 *
+	 * Check to see if component is a composite and allows add Component.
+	 * if it is a composite return instance of the object it self, else
+	 * return false. this feature is best discribed in the book "Design patterns"
+	 * from Addison and Wesley.
+	 *
 	 * @return Composite
 	 */
 	public function getComposite(){
 		return false;
 	}
 
+	/**
+	 * Set parent composite.
+	 *
+	 * @param Composite $parent
+	 * @return void
+	 * @internal
+	 */
 	private function _setParent(Composite $parent){
 		$this->parent = $parent;
 	}
 
-	public function addComponent(Composite $component){
+	/**
+	 * Add component.
+	 *
+	 * Add a component to composite. if {@link Composite::getComposite()}
+	 * returns true the component is added else a exception is thrown.
+	 *
+	 * @param Composite $component
+	 * @param string $reference
+	 * @return string reference id, if $reference is null a uuid is returned
+	 * @throws BaseException
+	 */
+	public function addComponent(Composite $component, $reference=null){
 		if($composite = $this->getComposite()){
-			$uuid = RFC4122::generate();
+			if(is_null($reference)){
+				$reference = RFC4122::generate();
+			}
 			$component->_setParent($composite);
-			$this->components[$uuid] = $component;
-			return $uuid;
+			$this->components[$reference] = $component;
+			return $reference;
 		} else {
-			throw new Exception('Not allowed here');
+			throw new BaseException('Not allowed here');
+			return false;
 		}
 	}
 
-	public function removeComponent($uuid){
+	/**
+	 * Remove component.
+	 *
+	 * Remove a component from composite. if {@link Composite::getComposite()}
+	 * returns true the component is removed else a exception is thrown.
+	 *
+	 * @param string $reference retrieved from {@link Composite::addComponent()}
+	 * @return boolean true on success, else return false
+	 * @throws BaseException
+	 */
+	public function removeComponent($reference){
 		if($composite = $this->getComposite()){
-			if(isset($this->components[$uuid])){
-				unset($this->components[$uuid]);
+			if(isset($this->components[$reference])){
+				unset($this->components[$reference]);
 				return true;
 			} else {
 				return false;
 			}
 		} else {
-			throw new Exception('Not allowed here');
+			throw new BaseException('Not allowed here');
+			return false;
 		}
 	}
 
-	public function getComponent($uuid){
+	/**
+	 * Get component.
+	 *
+	 * Get a component from composite. if {@link Composite::getComposite()}
+	 * returns true the component is returned else a exception is thrown.
+	 *
+	 * @param string $reference retrieved from {@link Composite::addComponent()}
+	 * @return Composite on success, else return boolean false
+	 * @throws BaseException
+	 */
+	public function getComponent($reference){
 		if($composite = $this->getComposite()){
-			if(isset($this->components[$uuid])){
-				return $this->components[$uuid];
+			if(isset($this->components[$reference])){
+				return $this->components[$reference];
 			} else {
 				return false;
 			}
 		} else {
-			throw new Exception('Not allowed here');
+			throw new BaseException('Not allowed here');
+			return false;
 		}
 	}
 
+	/**
+	 * Get parent composite.
+	 *
+	 * @return Composite on success, else return false.
+	 */
 	public function getParent(){
 		return $this->parent;
 	}
 }
 
-
+//*****************************************************************//
+//************************ Composite class ************************//
+//*****************************************************************//
+/**
+ * Composite output abstract class.
+ *
+ * @see Composite
+ * @package corelib
+ * @subpackage Base
+ * @since Version 5.0
+ */
 abstract class CompositeOutput extends Composite implements Output {
-	public function getComponentsXML(array $components, DOMElement $DOMnode){
+
+	/**
+	 * Add XML from components as child nodes.
+	 *
+	 * @param DOMElement $DOMnode
+	 * @param array $components
+	 * @return boolean true on success, else return false
+	 */
+	public function getComponentsXML(DOMElement $DOMnode, array $components=null){
+		if(is_null($components)){
+			$components = $this->components;
+		}
 		foreach($components as $component){
 			$DOMnode->appendChild($component->getXML($DOMnode->ownerDocument));
 		}
 		reset($this->components);
-	}
-
-	public function addComponent(CompositeOutput $component){
-		parent::addComponent($component);
-	}
-
-}
-
-
-
-
-
-
-interface Output {
-	public function getXML(DOMDocument $xml);
-}
-
-
-/**
- * @see http://en.wikipedia.org/wiki/Decorator_pattern
- */
-abstract class Decorator {
-	protected $decorator = null;
-
-	public function getDecorator(){
-		return $this->decorator;
-	}
-
-	protected function buildXML(DOMDocument $xml, DOMElement $DOMNode){
-		if(!is_null($this->decorator)){
-			$DOMElement = $this->decorator->getXML($xml);
-			$DOMElement->appendChild($DOMNode);
-			return $DOMElement;
-		} else {
-			return $DOMNode;
-		}
-	}
-}
-
-/**
- * @see http://en.wikipedia.org/wiki/Composite_pattern
- */
-abstract class Component {
-	/**
-	 * Child Components
-	 *
-	 * @var Array instantiated components
-	 */
-	protected $components = array();
-
-	/**
-	 * Parent Component
-	 *
-	 * @var Component parent component
-	 */
-	protected $parent = null;
-
-
-	public function getComponentsXML(DOMDocument $xml, DOMElement $DOMnode){
-		while(list(,$val) = each($this->components)){
-			$DOMnode->appendChild($val->getXML($xml));
-		}
-		reset($this->components);
-	}
-
-	public function getComponentsArray(array &$array){
-		while(list(,$val) = each($this->components)){
-			$array[] = $val->getArray();
-		}
-		reset($this->components);
-	}
-
-	public function removeComponents(){
-		$this->components = array();
 		return true;
 	}
 
-	public function addComponent(Component $component){
-		$this->components[] = $component;
-		$component->setParentComponent($this);
-		return $component;
+	/**
+	 * Add component.
+	 *
+	 * @see Composite::addComponent()
+	 */
+	public function addComponent(CompositeOutput $component){
+		return parent::addComponent($component);
 	}
 
-	public function setParentComponent(Component $component){
-		$this->parent = $component;
-		return $component;
-	}
-
-	protected function _commitComponents($recursive=true){
-		if($recursive){
-			foreach ($this->components as $component){
-				$component->commit();
-			}
-		}
-	}
-
-	public function commit($recursive=true){
-		$this->_commitComponents($recursive);
-	}
 }
 ?>

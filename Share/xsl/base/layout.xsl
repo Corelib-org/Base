@@ -175,7 +175,30 @@
 			</div>
 		</xsl:if>
 	</xsl:template>	
-	
+
+
+	<xsl:template name="h1">
+		<xsl:param name="headline"/>
+		<xsl:param name="backtitle"/>
+		<xsl:param name="nav"/>
+		
+		<span class="backtitle">
+			<xsl:choose>
+				<xsl:when test="$backtitle = true()">
+					<xsl:value-of select="$backtitle"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$headline"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</span>
+		<xsl:if test="$nav">
+			<span class="viewnavigator">
+				<xsl:copy-of select="$nav"/>
+			</span>
+		</xsl:if>
+		<h1><xsl:value-of select="$headline"/></h1>
+	</xsl:template>	
 	
 	<!-- 
 	/** 

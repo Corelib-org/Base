@@ -9,28 +9,28 @@
 		<get>
 			<page>
 				<url>/corelib/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/Manager.php</file>
 				<exec>redirect</exec>
 			</page>
 			<page>
 				<url>/corelib/about/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/Manager.php</file>
 				<exec>about</exec>
 			</page>
 			<page>
 				<url>/corelib/about/markup/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Manager.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/Manager.php</file>
 				<exec>markup</exec>
 			</page>
 			<page>
 				<url>/corelib/system/database/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/System.php</file>
 				<exec>database</exec>
 			</page>
 			<page type="regex">
 				<expr>/^\/corelib\/resource\/(.*?)\/(.*?)\/$/</expr>
 				<exec>getResource('\1', '\2')</exec>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/Resources.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/Resources.php</file>
 			</page>
 			<page>
 				<url>/corelib/generator/</url>
@@ -39,19 +39,19 @@
 			</page>
 			<page>
 				<url>/corelib/system/cache/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/System.php</file>
 				<exec>cache</exec>
 			</page>
 			<page>
 				<url>/corelib/system/cache/clear/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Get/System.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/get/System.php</file>
 				<exec>cacheClear</exec>
 			</page>
 		</get>
 		<post>
 			<page>
 				<url>/corelib/system/database/</url>
-				<file>{CORELIB}/Base/Lib/Manager/Pages/Post/System.php</file>
+				<file>{CORELIB}/Base/Lib/Manager/http/post/system.php</file>
 				<exec>database</exec>
 			</page>			
 		</post>

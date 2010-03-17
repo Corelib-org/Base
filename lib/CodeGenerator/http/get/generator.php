@@ -56,7 +56,7 @@ class WebPage extends ManagerPage {
 	public function build(){
 		$input = InputHandler::getInstance();
 
-		$this->xsl->addTemplate('Base/Share/Resources/XSLT/Pages/generator.xsl');
+		$this->xsl->addTemplate('Base/Share/xsl/pages/generator.xsl');
 		$this->addContent(ManagerConfig::getInstance()->getPropertyOutput('code-generator'));
 
 

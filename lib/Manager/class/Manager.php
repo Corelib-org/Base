@@ -938,7 +938,6 @@ abstract class ManagerPage extends PageBase {
 
 		define('DOMXSL_TEMPLATE_XSL_PATH', CORELIB);
 		$this->xsl = new PageFactoryDOMXSLTemplate('Base/Share/xsl/base/core.xsl');
-		$this->xsl->addTemplate('Base/Share/Resources/XSLT/layout.xsl');
 		$this->addTemplateDefinition($this->xsl);
 
 		$this->post = new PageFactoryPostTemplate();

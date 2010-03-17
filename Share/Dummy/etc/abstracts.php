@@ -41,7 +41,7 @@
 // Check to see if ABSTRACTS_ENABLE_AUTHORIZATION is set true
 // If set to true the UserAuthorization classes is automatically loaded
 if(defined('ABSTRACTS_ENABLE_AUTHORIZATION') && ABSTRACTS_ENABLE_AUTHORIZATION){
-	$base->loadClass('UsersAuthorization');
+	$base->loadClass('UserAuthorization');
 } else if(!defined('ABSTRACTS_ENABLE_AUTHORIZATION')){
 	/**
 	 * Enable autoloading of UserAuthorization features.

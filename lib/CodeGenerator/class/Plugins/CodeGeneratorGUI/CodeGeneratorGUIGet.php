@@ -79,7 +79,7 @@ class CodeGeneratorGUIGet extends CodeGeneratorGUIFilePHP {
 		}
 
 		$this->_setFilename($prefix.$this->getTable()->getTableReadableVariableName().'.php');
-		$this->_loadContent(CORELIB.'/Base/Share/Generator/Get.php');
+		$this->_loadContent(CORELIB.'/Base/Share/Generator/Get.php.generator');
 	}
 
 	/**

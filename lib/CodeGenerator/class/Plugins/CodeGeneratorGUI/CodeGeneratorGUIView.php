@@ -85,7 +85,7 @@ class CodeGeneratorGUIView extends CodeGeneratorGUIFileXSL {
 		}
 
 		$this->_setFilename($prefix.$this->getTable()->getTableReadableVariableName().'/'.$filename.'.xsl');
-		$this->_loadContent(CORELIB.'/Base/Share/Generator/View.xsl');
+		$this->_loadContent(CORELIB.'/Base/Share/Generator/View.xsl.generator');
 	}
 
 	/**

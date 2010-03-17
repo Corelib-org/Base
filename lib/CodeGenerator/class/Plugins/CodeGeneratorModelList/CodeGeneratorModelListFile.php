@@ -75,7 +75,7 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 		}
 
 		$this->_setFilename($prefix.'Lib/'.$this->getTable()->getClassName().'List.php');
-		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelList.php');
+		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelList.php.generator');
 	}
 
 	/**

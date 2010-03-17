@@ -318,6 +318,11 @@ class EventRequestEnd implements Event { }
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @since Version 5.0
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage EventHandler
+ *
  * @internal
  */
 class EventHandlerLogToolbar extends PageFactoryDeveloperToolbarItem {

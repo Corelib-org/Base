@@ -1,79 +1,155 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * PageFactory DOMXSL Template Engine
+ * Page factory DOMXSL Template engine.
  *
  * <i>No Description</i>
  *
- * LICENSE: This source file is subject to version 1.0 of the
- * Bravura Distribution license that is available through the
- * world-wide-web at the following URI: http://www.bravura.dk/$/corelib_1_0/.
- * If you did not receive a copy of the Bravura License and are
- * unable to obtain it through the web, please send a note to
- * license@bravura.dk so we can mail you a copy immediately.
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
  *
- * @author Steffen Sørensen <steffen@bravura.dk>
- * @copyright Copyright (c) 2006 Bravura ApS
- * @license http://www.bravura.dk/licence/corelib_1_0/
- * @package corelib
- * @subpackage Base
- * @link http://www.bravura.dk/
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage PageFactory
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2010 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
+ * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
- * @filesource
  */
+
+//*****************************************************************//
+//****************** Basic Configuration Check ********************//
+//*****************************************************************//
 if(!defined('PAGE_FACTORY_DOMXSL_CACHE_XMLNS')){
+	/**
+	 * Cache xml namespace.
+	 *
+	 * @var string url
+	 */
 	define('PAGE_FACTORY_DOMXSL_CACHE_XMLNS', 'http://www.corelib.org/xmlns/cache');
 }
+
 if(!defined('PAGE_FACTORY_DOMXSL_XSL_XMLNS')){
+	/**
+	 * XSL xml Namespace.
+	 *
+	 * @var string url
+	 */
 	define('PAGE_FACTORY_DOMXSL_XSL_XMLNS', 'http://www.w3.org/1999/XSL/Transform');
 }
+
 if(!defined('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT')){
+	/**
+	 * Format xml output.
+	 *
+	 * @var boolean true to format, else false for no formatting
+	 */
 	define('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT', true);
 }
 
-class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
-	const CACHE_PAGE_XSL = 'Base/Share/Cache.xsl';
 
+//*****************************************************************//
+//******************* PageFactoryDOMXSL class *********************//
+//*****************************************************************//
+/**
+ * Page Factory DOMXSL template engine.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage PageFactory
+ */
+class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
+
+
+	//*****************************************************************//
+	//************** PageFactoryDOMXSL class properties ***************//
+	//*****************************************************************//
 	/**
-	 *	@var DOMDocument
+	 * @var DOMDocument xml document
+	 * @internal
 	 */
 	protected $xml = null;
+
 	/**
-	 *	@var DOMDocument
+	 * @var DOMDocument XSL document
+	 * @internal
 	 */
 	protected $xsl = null;
+
 	/**
-	 * @var DOMElement
+	 * @var DOMElement content element.
+	 * @internal
 	 */
 	private $content = null;
+
 	/**
-	 * @var Array
+	 * @var Array content objects
+	 * @internal
 	 */
 	private $content_array = array();
+
 	/**
-	 * @var DOMElement
+	 * @var DOMElement settings element
+	 * @internal
 	 */
 	private $settings = null;
+
 	/**
-	 * @var Array
+	 * @var array content objects
+	 * @internal
 	 */
 	private $settings_array = array();
+
 	/**
 	 * @var PageFactoryDOMXSLTemplate
+	 * @internal
 	 */
 	protected $template = null;
 
 	/**
-	 * @var string
+	 * @var string template cache file
+	 * @internal
 	 */
 	private $template_cache_file = false;
 
-	/**
-	 * @var Array
-	 */
-	private $parse_tokens = array();
 
+	//*****************************************************************//
+	//******************* PageFactoryDOMXSL class *********************//
+	//*****************************************************************//
+	/**
+	 * Cache template.
+	 *
+	 * @var string xsl file
+	 * @internal
+	 */
+	const CACHE_PAGE_XSL = 'Base/Share/Cache.xsl';
+
+
+	//*****************************************************************//
+	//******************* PageFactoryDOMXSL class *********************//
+	//*****************************************************************//
+	/**
+	 * Draw page content.
+	 *
+	 * @see PageFactoryTemplateEngine::draw()
+	 */
 	public function draw(){
 		if($this->page->draw($this)){
 			$this->xsl->load($this->template->getCoreXSLT());
@@ -116,55 +192,70 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		}
 	}
 
+	/**
+	 * Add page content to page.
+	 *
+	 * @see PageFactoryTemplateEngine::addPageContent()
+	 */
 	public function addPageContent(Output $content){
 		$this->content->appendChild($content->getXML($this->xml));
 		return true;
 	}
 
+	/**
+	 * Add page settings to page.
+	 *
+	 * @see PageFactoryTemplateEngine::addPageSettings()
+	 */
 	public function addPageSettings(Output $settings){
 		$this->settings->appendChild($settings->getXML($this->xml));
 	}
 
-	public function setTemplate(PageFactoryTemplate $template){
+	/**
+	 * Set current active template.
+	 *
+	 * @see PageFactoryTemplateEngine::setTemplate()
+	 */
+	public function setTemplate(PageFactoryDOMXSLTemplate $template){
 		$return = parent::setTemplate($template);
-/*		if(PAGE_FACTORY_CACHE_ENABLE && is_file(PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString())){
-			$this->template_cache_file = PAGE_FACTORY_CACHE_DIR.'/'.$template->getPageCacheString();
-		} else { */
-			$this->_prepareXML();
+		$this->_prepareXML();
 
-			$this->settings->appendChild($this->xml->createElement('script-uri', $this->template->getScriptUri()));
-			$this->settings->appendChild($this->xml->createElement('script-url', $this->template->getScriptUrl()));
-			$this->settings->appendChild($this->xml->createElement('request-url', str_replace('&', '&amp;', $this->template->getRequestUri())));
-			$this->settings->appendChild($this->xml->createElement('http-referer', str_replace('&', '&amp;', $this->template->getHTTPReferer())));
+		$this->settings->appendChild($this->xml->createElement('script-uri', $this->template->getScriptUri()));
+		$this->settings->appendChild($this->xml->createElement('script-url', $this->template->getScriptUrl()));
+		$this->settings->appendChild($this->xml->createElement('request-url', str_replace('&', '&amp;', $this->template->getRequestUri())));
+		$this->settings->appendChild($this->xml->createElement('http-referer', str_replace('&', '&amp;', $this->template->getHTTPReferer())));
 
-			$this->settings->appendChild($this->xml->createElement('server-name', $this->template->getServerName()));
-			$this->settings->appendChild($this->xml->createElement('user-agent', $this->template->getUserAgent()));
-			$this->settings->appendChild($this->xml->createElement('remote-address', $this->template->getRemoteAddress()));
-			$this->settings->appendChild($this->xml->createElement('redirect-url', $this->template->getHTTPRedirectBase()));
-			$this->settings->appendChild($this->xml->createElement('base-url', $this->template->getHTTPRedirectBase()));
+		$this->settings->appendChild($this->xml->createElement('server-name', $this->template->getServerName()));
+		$this->settings->appendChild($this->xml->createElement('user-agent', $this->template->getUserAgent()));
+		$this->settings->appendChild($this->xml->createElement('remote-address', $this->template->getRemoteAddress()));
+		$this->settings->appendChild($this->xml->createElement('redirect-url', $this->template->getHTTPRedirectBase()));
+		$this->settings->appendChild($this->xml->createElement('base-url', $this->template->getHTTPRedirectBase()));
 
-			$stylesheets = $this->template->getStyleSheets();
-			while(list(,$val) = each($stylesheets)){
-				$this->settings->appendChild($this->xml->createElement('stylesheet', $val));
-			}
-			$javascripts = $this->template->getJavaScripts();
-			while(list(,$val) = each($javascripts)){
-				$this->settings->appendChild($this->xml->createElement('javascript', $val));
-			}
+		$stylesheets = $this->template->getStyleSheets();
+		while(list(,$val) = each($stylesheets)){
+			$this->settings->appendChild($this->xml->createElement('stylesheet', $val));
+		}
+		$javascripts = $this->template->getJavaScripts();
+		while(list(,$val) = each($javascripts)){
+			$this->settings->appendChild($this->xml->createElement('javascript', $val));
+		}
 
-			$input = InputHandler::getInstance();
-			$this->addPageSettings($input);
-			// $this->settings->appendChild($input->getXML($this->xml));
-			if($message = $this->template->getStatusMessage()){
-				$this->settings->appendChild($this->xml->importNode($message, true));
-			}
-		// }
+		$input = InputHandler::getInstance();
+		$this->addPageSettings($input);
+		if($message = $this->template->getStatusMessage()){
+			$this->settings->appendChild($this->xml->importNode($message, true));
+		}
 		return $return;
 	}
 
-	public function addParseToken(PageFactoryDOMXSLParseToken $token){
-		$this->parse_tokens[] = $token;
-	}
+	/**
+	 * Transform content XML.
+	 *
+	 * @param DOMDocument $dom
+	 * @param boolean $tranformToXML true for xml compatible output, else false
+	 * @return string content
+	 * @internal
+	 */
 	private function _transformPage(DOMDocument $dom, $tranformToXML=true){
 		$dom->formatOutput = PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT;
 		if($tranformToXML){
@@ -174,6 +265,14 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		}
 	}
 
+	/**
+	 * Transform page to cachable page.
+	 *
+	 * @param DOMDocument $dom
+	 * @param boolean $tranformToXML true for xml compatible output, else false
+	 * @return string cached page.
+	 * @internal
+	 */
 	private function _transformCachedPage(DOMDocument $dom, $tranformToXML=true){
 		$xsl = new DOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$xsl->preserveWhiteSpace = false;
@@ -190,6 +289,13 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 	}
 
+	/**
+	 * Rewrite compatible content path.
+	 *
+	 * @param string $path
+	 * @return string php eval string
+	 * @internal
+	 */
 	public static function _rewriteCPath($path){
 		if(is_array($path)){
 			$path = $path[0];
@@ -221,6 +327,12 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		return $return;
 	}
 
+	/**
+	 * Prepare output XML Document.
+	 *
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	protected function _prepareXML(){
 		$this->xml = new PageFactoryDOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$this->xml->preserveWhiteSpace = false;
@@ -233,6 +345,5 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		$this->content = $page->appendChild($this->xml->createElement('content'));
 		return true;
 	}
-
 }
 ?>

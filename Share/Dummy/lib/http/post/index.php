@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Base manager system tools post controller.
+ * Default index post controller file.
  *
  * <i>No Description</i>
  *
@@ -23,38 +23,33 @@
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  *
- * @author Steffen Soerensen <ss@corelib.org>
- * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @package Dummy
+ * @subpackage Website
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @copyright Copyright (c) 2009 Steffen Sørensen
  * @license http://www.gnu.org/copyleft/gpl.html
- *
- * @category corelib
- * @package Base
- * @subpackage Manager
- *
  * @link http://www.corelib.org/
- * @version 1.0.0 ($Id: Interfaces.php 5218 2010-03-16 13:07:41Z wayland $)
  * @internal
  */
 
 /**
- * @category corelib
- * @package Base
- * @subpackage Manager
+ * Default post controller
  *
+ * @package Dummy
+ * @subpackage Website
  * @ignore
  */
-class WebPage extends ManagerPage {
+class WebPage extends DummyPagePost {
 
-	public function database(){
-		$input = InputHandler::getInstance();
-		$input->validatePost('exclude', new InputValidatorArray(new InputValidatorNotEmpty()));
-
-		$db = new DatabaseTool();
-		if($input->isValidPost('exclude')){
-			call_user_func_array(array($db, 'setExcludes'), array_keys($input->getPost('exclude')));
-		}
-		$db->update();
-		$this->post->setLocation('corelib/system/database/');
+	/**
+	 * Build index page.
+	 *
+	 * @return void
+	 */
+	public function build(){
+		$this->xsl->addTemplate('pages/index.xsl');
+		$this->addTemplateDefinition($this->xsl);
 	}
 }
 ?>

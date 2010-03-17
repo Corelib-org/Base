@@ -75,7 +75,7 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 		}
 
 		$this->_setFilename($prefix.'Lib/DAO/MySQLi.'.$this->getTable()->getClassName().'List.php');
-		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelListDAOMySQLi.php');
+		$this->_loadContent(CORELIB.'/Base/Share/Generator/ModelListDAOMySQLi.php.generator');
 	}
 
 	/**

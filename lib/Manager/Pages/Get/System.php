@@ -37,6 +37,10 @@
  */
 
 /**
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
  * @ignore
  */
 class WebPage extends ManagerPage {

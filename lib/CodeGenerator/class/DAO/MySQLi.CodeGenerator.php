@@ -32,12 +32,22 @@
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
  * @since Version 5.0
+ * @internal
  */
 
 
 //*****************************************************************//
 //*************** MySQLi_CodeGenerator DAO class ******************//
 //*****************************************************************//
+/**
+ * MySQLi DAO Class for the CodeGenerator.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage CodeGenerator
+ *
+ * @internal
+ */
 class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGenerator {
 	/**
 	 * DAO Class instance.

@@ -38,9 +38,12 @@
 //****************** Basic Configuration Check ********************//
 //*****************************************************************//
 if(!defined('SESSION_ENGINE')){
-	/*
-	*	Setup Session Handler Engine (developer only)
-	*/
+	/**
+	 * Setup Session Handler Engine (developer only).
+	 *
+	 * @var string session handler engine class name.
+	 * @internal
+	 */
 	define('SESSION_ENGINE', 'PHPSessionHandler');
 }
 

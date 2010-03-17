@@ -524,7 +524,6 @@ class CacheManager {
 	 * Set cached data.
 	 *
 	 * @param string $data
-	 * @return unknown_type
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */

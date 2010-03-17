@@ -82,3 +82,21 @@ tfoot td {
 small {
 	font-size: 10px;
 }
+
+img {
+	border: 0px;
+}
+
+a:link, a:visited, a:active {
+	color: #777777;
+	text-decoration: underline;	
+}
+
+label a img {
+	vertical-align: text-top;	
+}
+
+a:hover {
+	color: #222222;
+	text-decoration: underline;
+}

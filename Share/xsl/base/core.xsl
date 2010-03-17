@@ -9,6 +9,7 @@
 				<meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
 				<meta http-equiv="Content-language" content="en"/>
 				<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+				<script language="JavaScript" type="text/javascript" src="corelib/resource/manager/javascript/Base.js" />
 				<script language="JavaScript" type="text/javascript" src="corelib/resource/manager/javascript/Toolbox.js" />
 				<script language="JavaScript" type="text/javascript" src="corelib/resource/manager/javascript/prototype.js" />
 				

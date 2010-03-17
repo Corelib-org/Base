@@ -1,43 +1,196 @@
 <?php
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * Corelib Base manager.
+ *
+ * <i>No Description</i>
+ *
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @author Steffen Soerensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
+ * @link http://www.corelib.org/
+ * @version 1.0.0 ($Id: Interfaces.php 5218 2010-03-16 13:07:41Z wayland $)
+ * @internal
+ */
+
+
+//*****************************************************************//
+//****************** Basic Configuration Check ********************//
+//*****************************************************************//
 if(!defined('MANAGER_DATADIR')){
-	define('MANAGER_DATADIR', 'var/cache/manager/');
+	/**
+	 * Manager datadir.
+	 *
+	 * Directory for where the manager should store
+	 * it's runtime files.
+	 *
+	 * @var string directory
+	 */
+	define('MANAGER_DATADIR', BASE_CACHE_DIRECTORY.'manager/');
 }
+
 if(!defined('MANAGER_DEVELOPER_MODE')){
+	/**
+	 * Enable or disable manager developer mode.
+	 *
+	 * Enabling developer mode will cause the manager
+	 * not to cache .cxd files and heavily decrease performance
+	 * how ever when writing .cxd files this feature can come in
+	 * handy.
+	 *
+	 * @var boolean true if enabled, else false
+	 */
 	define('MANAGER_DEVELOPER_MODE', false);
 }
 
+//*****************************************************************//
+//**************** CorelibManagerExtension class ******************//
+//*****************************************************************//
+/**
+ * Corelib manager extension base class.
+ *
+ * In order to implement a new config handler for a extension.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ */
 abstract class CorelibManagerExtension implements Singleton {
-	private $name = '';
-	private $description = '';
-	private $properties = array();
+
+
+	//*****************************************************************//
+	//*********** CorelibManagerExtension class properties ************//
+	//*****************************************************************//
 	/**
-	 * @var DOMXPath
+	 * @var string extension name
+	 * @internal
+	 */
+	private $name = '';
+
+	/**
+	 * @var string extension description
+	 * @internal
+	 */
+	private $description = '';
+
+	/**
+	 * @var array list of properties
+	 * @internal
+	 */
+	private $properties = array();
+
+	/**
+	 * @var DOMXPath object instance
 	 */
 	protected $xpath = null;
 
+
+	//*****************************************************************//
+	//************ CorelibManagerExtension class methods **************//
+	//*****************************************************************//
+	/**
+	 * Set extension name.
+	 *
+	 * @param string $name extension name
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	final public function setName($name){
 		$this->name = $name;
 		return true;
 	}
+
+	/**
+	 * Set extension description.
+	 *
+	 * @param string $description
+	 * @return boolean true  on success, else return false
+	 * @internal
+	 */
 	final public function setDescription($description){
 		$this->description = $description;
 		return true;
 	}
+
+	/**
+	 * Get extension name.
+	 *
+	 * @return string extension name
+	 */
 	final public function getName(){
 		return $this->name;
 	}
+
+	/**
+	 * Get extension description.
+	 *
+	 * @return string extension description
+	 */
 	final public function getDescription(){
 		return $this->description;
 	}
 
+	/**
+	 * Extension loaded.
+	 *
+	 * This method es executed when a extension is being loaded.
+	 * overwrite it to implement you own action when your extension
+	 * is beying loaded. a extension is loaded every time the manager
+	 * is invoked. if you want to execute a action when the extension
+	 * is installed take a look at {@link CorelibManagerExtension::install()}
+	 *
+	 * @return void
+	 * @see CorelibManagerExtension::install()
+	 */
 	public function loaded(){
 
 	}
 
+	/**
+	 * Extension install.
+	 *
+	 * This method es executed when a extension is being installed.
+	 * overwrite it to implement you own action when your extension
+	 * is beying installed.
+	 *
+	 * @return void
+	 * @see CorelibManagerExtension::loaded()
+	 */
 	public function install(){
 
 	}
 
+	/**
+	 * Get property XML.
+	 *
+	 * Get DOMelement for property.
+	 *
+	 * @param string $property property name
+	 * @return DOMElement if property exists, else return false
+	 */
 	public function getPropertyXML($property){
 		if(isset($this->properties[$property])){
 			return $this->properties[$property];
@@ -46,6 +199,14 @@ abstract class CorelibManagerExtension implements Singleton {
 		}
 	}
 
+	/**
+	 * Get property output.
+	 *
+	 * Get {@link Output} for property name
+	 *
+	 * @param string $property property name
+	 * @return XMLOutput
+	 */
 	public function getPropertyOutput($property){
 		$output = new XMLOutput();
 		if($xml = $this->getPropertyXML($property)){
@@ -56,9 +217,31 @@ abstract class CorelibManagerExtension implements Singleton {
 		}
 	}
 
+	/**
+	 * Add base property.
+	 *
+	 * add a base property from the extensions own
+	 * property list.
+	 *
+	 * @param DOMElement $property
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	public function addBaseProperty(DOMElement $property){
 		$this->properties[$property->nodeName] = $property;
+		return true;
 	}
+
+	/**
+	 * Add property from extendprop.
+	 *
+	 * Add and merge a property from another extension,
+	 * which has a extendprops element for the extension.
+	 *
+	 * @param DOMElement $property
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	public function addProperty(DOMElement $property){
 		if(is_null($this->xpath)){
 			$this->xpath = new DOMXPath($property->ownerDocument);
@@ -66,7 +249,20 @@ abstract class CorelibManagerExtension implements Singleton {
 		if(isset($this->properties[$property->nodeName]) && $this->properties[$property->nodeName]->getAttribute('locked') != 'true'){
 			$this->_mergeNodes($this->properties[$property->nodeName], $property);
 		}
+		return true;
 	}
+
+	/**
+	 * Merge to DOMElements together
+	 *
+	 * merge the attributes and elements together using the
+	 * target as master.
+	 *
+	 * @param DOMElement $DOMTarget merge elements into target
+	 * @param DOMElement $DOMSource get elements from source
+	 * @return true on success, else return false
+	 * @internal
+	 */
 	protected function _mergeNodes(DOMElement $DOMTarget, DOMElement $DOMSource){
 		$this->_mergeAttributes($DOMTarget, $DOMSource);
 		for ($i = 0; $item = $DOMSource->childNodes->item($i); $i++){
@@ -84,6 +280,14 @@ abstract class CorelibManagerExtension implements Singleton {
 		return true;
 	}
 
+	/**
+	 * Merge element attributes.
+	 *
+	 * @param DOMElement $DOMTarget merge elements into target
+	 * @param DOMElement $DOMSource get elements from source
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	private function _mergeAttributes(DOMElement $DOMTarget, DOMElement $DOMSource){
 		for ($ia = 0; $attribute = $DOMSource->attributes->item($ia); $ia++){
 			if(!$DOMTarget->getAttribute($attribute->nodeName) || $DOMSource->getAttribute('controller') == 'true'){
@@ -93,11 +297,45 @@ abstract class CorelibManagerExtension implements Singleton {
 	}
 }
 
+
+//*****************************************************************//
+//************ UnknownCorelibManagerExtension class ***************//
+//*****************************************************************//
+/**
+ * Corelib manager unknown extension class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
+ * @internal
+ */
 class UnknownCorelibManagerExtension extends CorelibManagerExtension {
+
+
+	//*****************************************************************//
+	//******* UnknownCorelibManagerExtension class properties *********//
+	//*****************************************************************//
+	/**
+	 * Singleton Object Reference.
+	 *
+	 * @var UnknownCorelibManagerExtension
+	 * @internal
+	 */
 	private static $instance = null;
 
 
+	//*****************************************************************//
+	//********* UnknownCorelibManagerExtension class methods **********//
+	//*****************************************************************//
 	/**
+	 * 	Return instance of UnknownCorelibManagerExtension.
+	 *
+	 * 	Please refer to the {@link Singleton} interface for complete
+	 * 	description.
+	 *
+	 * 	@see Singleton
+	 *  @uses UnknownCorelibManagerExtension::$instance
 	 *	@return UnknownCorelibManagerExtension
 	 */
 	public static function getInstance(){
@@ -109,48 +347,106 @@ class UnknownCorelibManagerExtension extends CorelibManagerExtension {
 }
 
 
+//*****************************************************************//
+//************************* Manager class *************************//
+//*****************************************************************//
+/**
+ * Corelib manager class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
+ * @internal
+ */
 class Manager implements Singleton {
+
+
+	//*****************************************************************//
+	//******************* Manager class properties ********************//
+	//*****************************************************************//
+	/**
+	 * Singleton Object Reference.
+	 *
+	 * @var UnknownCorelibManagerExtension
+	 * @internal
+	 */
 	private static $instance = null;
 
-	const EXTENSIONS_FILE = 'extensions.xml';
-
+	/**
+	 * @var array list of directorys to search
+	 * @internal
+	 */
 	protected $extension_dirs = array(CORELIB,
 	                                  'var/',
 	                                  'lib/',
 	                                  'share/');
 	/**
-	 * @var DOMDocument
+	 * @var DOMDocument extensions.xml DOMDocument
+	 * @internal
 	 */
 	private $extensions = null;
 
+	/**
+	 * @var string manager datadir
+	 * @internal
+	 */
 	private $datadir = MANAGER_DATADIR;
+
+	/**
+	 * @var string extension file.
+	 * @internal
+	 */
 	private $extension_file = '';
 
 	/**
-	 * @var array
+	 * @var array extension data
+	 * @internal
 	 */
 	private $extensions_data = array();
 
+
+	//*****************************************************************//
+	//******************** Manager class constants ********************//
+	//*****************************************************************//
+	/**
+	 * @var string extension filename
+	 * @internal
+	 */
+	const EXTENSIONS_FILE = 'extensions.xml';
+
+
+	//*****************************************************************//
+	//********************* Manager class methods *********************//
+	//*****************************************************************//
+	/**
+	 * Create new instance of Manager.
+	 *
+	 * @param string $datadir
+	 * @return void
+	 * @internal
+	 */
 	protected function __construct($datadir=null){
 		if(!is_null($datadir)){
 			$this->datadir = $datadir;
 		}
-
 		if(!is_dir($this->datadir)){
 			mkdir($this->datadir, 0777, true);
 			@chmod($this->datadir, 0777);
 		}
-		try {
-			if(!is_writeable($this->datadir)){
-				throw new BaseException($this->datadir.' is read-only');
-			}
-		} catch (BaseException $e){
-			echo $e;
-			exit;
+		if(!is_writeable($this->datadir)){
+			trigger_error($this->datadir.' is read-only', E_USER_ERROR);
 		}
 	}
 
 	/**
+	 * 	Return instance of Manager.
+	 *
+	 * 	Please refer to the {@link Singleton} interface for complete
+	 * 	description.
+	 *
+	 * 	@see Singleton
+	 *  @uses Manager::$instance
 	 *	@return Manager
 	 */
 	public static function getInstance(){
@@ -160,6 +456,12 @@ class Manager implements Singleton {
 		return self::$instance;
 	}
 
+	/**
+	 * Initiate manager.
+	 *
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	public function init(){
 		$this->extension_file = $this->datadir.self::EXTENSIONS_FILE;
 		if(!is_file($this->extension_file) || MANAGER_DEVELOPER_MODE){
@@ -167,12 +469,30 @@ class Manager implements Singleton {
 		} else {
 			$this->_reloadManagerExtensionsData();
 		}
+		return true;
 	}
 
+	/**
+	 * Add extension dir.
+	 *
+	 * Add a new directory where the {@link Manager} should
+	 * search for extensions.
+	 *
+	 * @param string $dir
+	 * @return boolean true on success, else return false
+	 */
 	public function addExtensionDir($dir){
 		$this->extension_dirs[] = $dir;
+		return true;
 	}
 
+	/**
+	 * Setup page registry.
+	 *
+	 * @param array $pages page registry
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	public function setupPageRegistry(&$pages){
 		$xpath = new DOMXPath($this->extensions);
 		$pagelist = $xpath->query('//extensions/extension/pages/'.strtolower($_SERVER['REQUEST_METHOD']).'/child::*');
@@ -212,6 +532,14 @@ class Manager implements Singleton {
 		return true;
 	}
 
+	/**
+	 * Get resource filename.
+	 *
+	 * @param string $handle handle name
+	 * @param string $resource filename
+	 * @return string if file exists, else return false
+	 * @internal
+	 */
 	public function getResource($handle, $resource){
 		assert('is_string($handle)');
 		assert('is_string($resource)');
@@ -232,20 +560,47 @@ class Manager implements Singleton {
 		return $filename;
 	}
 
+	/**
+	 * Get datadir.
+	 *
+	 * @return string data directory
+	 * @internal
+	 */
 	public function getDatadir(){
 		return $this->datadir;
 	}
 
+	/**
+	 * Get extensions DOMDocument.
+	 *
+	 * @return DOMDocument
+	 * @internal
+	 */
 	public function getExtensionsXML(){
 		return $this->extensions->documentElement;
 	}
 
+	/**
+	 * Parse constant tags.
+	 *
+	 * Replace constant tags {CONSTANT} with the actual
+	 * constant value.
+	 *
+	 * @param string $string source
+	 * @return string parsed string
+	 */
 	static public function parseConstantTags($string){
 		eval('$string = \''.preg_replace('/\{([A-Za-z_-]+)\}/', '\'.\\1.\'', addcslashes($string, '\'')).'\';');
 		return $string;
 	}
 
-
+	/**
+	 * Reload manager extension data.
+	 *
+	 * @param boolean $install treat reload as a new install
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
 	private function _reloadManagerExtensionsData($install = false){
 		$this->_loadExtensionsXML();
 		$event = EventHandler::getInstance();
@@ -304,8 +659,15 @@ class Manager implements Singleton {
 				}
 			}
 		}
+		return true;
 	}
 
+	/**
+	 * Reload manager extensions.
+	 *
+	 * @return void
+	 * @internal
+	 */
 	protected function _reloadManagerExtensions(){
 		$this->extensions = new DOMDocument('1.0', 'UTF-8');
 		$this->extensions->appendChild($this->extensions->createElement('extensions'));
@@ -321,12 +683,26 @@ class Manager implements Singleton {
 
 		$this->_reloadManagerExtensionsData(true);
 	}
+
+	/**
+	 * Load extension.xml file.
+	 *
+	 * @return void
+	 */
 	private function _loadExtensionsXML(){
 		if(!$this->extensions instanceof DOMDocument){
 			$this->extensions = new DOMDocument('1.0', 'UTF-8');
 			$this->extensions->load($this->extension_file);
 		}
 	}
+
+	/**
+	 * Search directory for .cxd files.
+	 *
+	 * @param string $dir directory
+	 * @return void
+	 * @internal
+	 */
 	protected function _searchDir($dir){
 		$d = dir($dir);
 		while (false !== ($entry = $d->read())) {
@@ -339,6 +715,14 @@ class Manager implements Singleton {
 			}
 		}
 	}
+
+	/**
+	 * Load extension file.
+	 *
+	 * @param string $file
+	 * @return DOMElement
+	 * @internal
+	 */
 	protected function _loadExtension($file){
 		$extension = array();
 
@@ -359,51 +743,133 @@ class Manager implements Singleton {
 		return $dom;
 	}
 
-	private function __clone(){
-
-	}
+	/**
+	 * @ignore
+	 */
+	private function __clone(){	}
 }
 
+
+//*****************************************************************//
+//******************* ManagerFileSearch class *********************//
+//*****************************************************************//
+/**
+ * Corelib manager file search event.
+ *
+ * This event is triggered each time the {@link Manager::_searchDir()}
+ * finds a file that is does not recognise.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ */
 class ManagerFileSearch implements Event {
+
+
+	//*****************************************************************//
+	//************** ManagerFileSearch class properties ***************//
+	//*****************************************************************//
+	/**
+	 * @var string found file
+	 * @internal
+	 */
 	private $filename;
 
+
+	//*****************************************************************//
+	//*************** ManagerFileSearch class methods *****************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $filename
+	 * @return void
+	 * @internal
+	 */
 	public function __construct($filename){
 		assert('is_string($filename)');
 		$this->filename = $filename;
 	}
 
+	/**
+	 * Get found filename.
+	 *
+	 * @return string filename
+	 */
 	public function getFilename(){
 		return $this->filename;
 	}
 }
 
+
+//*****************************************************************//
+//************* ManagerUnknownSetupProperty class *****************//
+//*****************************************************************//
+/**
+ * Corelib manager unknown setup node.
+ *
+ * This event is triggered each time a unknown node name
+ * inside the .cxd file's setup element.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ */
 class ManagerUnknownSetupProperty implements Event {
+
+
+	//*****************************************************************//
+	//********* ManagerUnknownSetupProperty class properties **********//
+	//*****************************************************************//
 	/**
-	 * @var DOMNode
+	 * @var DOMNode unknown node
+	 * @internal
 	 */
 	private $property;
+
 	/**
 	 * @var CorelibManagerExtension
+	 * @internal
 	 */
 	private $handler;
 
+
+	//*****************************************************************//
+	//********** ManagerUnknownSetupProperty class methods ************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param CorelibManagerExtension $handler
+	 * @param DOMNode $property
+	 * @return void
+	 * @internal
+	 */
 	public function __construct(CorelibManagerExtension $handler, DOMNode $property){
 		$this->property = $property;
 		$this->handler = $handler;
 	}
+
 	/**
-	 * @return DOMNode
+	 * Get unknown DOMElement.
+	 *
+	 * @return DOMElement
 	 */
 	public function getProperty(){
 		return $this->property;
 	}
+
 	/**
+	 * Get extension handler.
+	 *
 	 * @return CorelibManagerExtension
 	 */
 	public function getHandler(){
 		return $this->handler;
 	}
 	/**
+	 * Get unknown property name.
+	 *
 	 * @return string
 	 */
 	public function getPropertyName(){
@@ -412,19 +878,50 @@ class ManagerUnknownSetupProperty implements Event {
 }
 
 
+//*****************************************************************//
+//************* ManagerUnknownSetupProperty class *****************//
+//*****************************************************************//
+/**
+ * Corelib manager page.
+ *
+ * Extension HTTP controllers should implement this
+ * Page class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ */
 abstract class ManagerPage extends PageBase {
+
+
+	//*****************************************************************//
+	//********* ManagerUnknownSetupProperty class properties **********//
+	//*****************************************************************//
 	/**
+	 * DOMXSL template.
+	 *
 	 * @var PageFactoryDOMXSLTemplate
 	 */
 	protected $xsl = null;
+
+	/**
+	 * Post template.
+	 *
+	 * @var PageFactoryPostTemplate
+	 */
 	protected $post = null;
 
+	/**
+	 * Init page.
+	 *
+	 * @see PageBase::__init()
+	 */
 	public function __init(){
 		if(!defined('CORELIB_MANAGER_USERNAME')){
 			define('CORELIB_MANAGER_USERNAME', 'admin');
 		}
 		if(!defined('CORELIB_MANAGER_PASSWORD')){
-			define('CORELIB_MANAGER_PASSWORD', sha1(rand(100000, 900000)));
+			define('CORELIB_MANAGER_PASSWORD', sha1(RFC4122::generate()));
 			$password_error = true;
 		}
 
@@ -456,20 +953,11 @@ abstract class ManagerPage extends PageBase {
 	 */
 	public function getPagingPage($inputvar = 'p'){
 		$input = InputHandler::getInstance();
-		if($input->validateGet('p',new InputValidatorRegex('/^[0-9]+$/'))) {
-			return (int) $input->getGet('p');
+		if($input->validateGet($inputvar,new InputValidatorRegex('/^[0-9]+$/'))) {
+			return (int) $input->getGet($inputvar);
 		} else {
 			return 1;
 		}
 	}
-
-	protected function _selectMenuItem($tab, $item){
-/*		$xml = new DOMDocument('1.0', 'UTF-8');
-		$select = $xml->createElement('menuselect');
-		$select->setAttribnute
-		return true; */
-	}
 }
-
-
 ?>

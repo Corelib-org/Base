@@ -137,6 +137,12 @@ table.list .actions {
 	text-align: right;
 }
 
+table.list .actions img, table.list .symbols img {
+	border: 0px;
+	vertical-align: text-bottom;
+	opacity: .7;
+}
+
 
 table.list tfoot td.pager {
 	background-color: #f9f9f9;

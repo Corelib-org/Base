@@ -101,6 +101,20 @@ if(!defined('BASE_RUNLEVEL') && false == true){ // this part is for documentatio
 	define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 }
 
+if(!defined('BASE_CACHE_DIRECTORY')){
+	/**
+	 * Define cache directory.
+	 *
+	 * This constants holds the path, on where to store the cached files
+	 * this directory must be writable by the user running
+	 * the script, and it can be overwritten any time before include
+	 * Base.php .
+	 *
+	 * @see Base.php
+	 */
+	define('BASE_CACHE_DIRECTORY', 'var/cache/');
+}
+
 if(!defined('BASE_CLASS_CACHE_FILE')){
 	/**
 	 * Define class cache file.
@@ -112,7 +126,7 @@ if(!defined('BASE_CLASS_CACHE_FILE')){
 	 *
 	 * @see Base.php
 	 */
-	define('BASE_CLASS_CACHE_FILE', 'var/cache/class.db');
+	define('BASE_CLASS_CACHE_FILE', BASE_CACHE_DIRECTORY.'class.db');
 }
 
 if(!defined('BASE_UMASK')){

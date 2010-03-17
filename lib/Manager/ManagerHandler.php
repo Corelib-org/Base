@@ -1,8 +1,93 @@
 <?php
+/* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * Corelib Base manager cache status output class.
+ *
+ * <i>No Description</i>
+ *
+ * This script is part of the corelib project. The corelib project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ * A copy is found in the textfile GPL.txt and important notices to the license
+ * from the author is found in LICENSE.txt distributed with these scripts.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ *
+ * @author Steffen Soerensen <ss@corelib.org>
+ * @copyright Copyright (c) 2005-2008 Steffen Soerensen
+ * @license http://www.gnu.org/copyleft/gpl.html
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
+ * @link http://www.corelib.org/
+ * @version 1.0.0 ($Id: Interfaces.php 5218 2010-03-16 13:07:41Z wayland $)
+ * @internal
+ */
+
+//*****************************************************************//
+//********************** ManagerConfig class **********************//
+//*****************************************************************//
+/**
+ * Manager extension config class.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
+ * @internal
+ */
 class ManagerConfig extends CorelibManagerExtension {
-	private static $instance = null;
+
+
+	//*****************************************************************//
+	//**************** ManagerConfig class properties *****************//
+	//*****************************************************************//
 	/**
-	 *	@return ManagerConfig
+	 * Singleton Object Reference.
+	 *
+	 * @var ManagerConfig
+	 * @internal
+	 */
+	private static $instance = null;
+
+
+	//*****************************************************************//
+	//****************** ManagerConfig class methods ******************//
+	//*****************************************************************//
+
+	/**
+	 * ManagerConfig constructor.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public function __construct(){
+		$event = EventHandler::getInstance();
+		$event->register(new ManagerConfigAddSettings($this), 'EventApplyDefaultSettings');
+	}
+
+	/**
+	 * Return instance of ManagerConfig.
+	 *
+	 * Please refer to the {@link Singleton} interface for complete
+	 * description.
+	 *
+	 * @see Singleton
+	 * @uses ManagerConfig::$instance
+	 * @return ManagerConfig
+	 * @internal
 	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
@@ -11,11 +96,13 @@ class ManagerConfig extends CorelibManagerExtension {
 		return self::$instance;
 	}
 
-	public function __construct(){
-		$event = EventHandler::getInstance();
-		$event->register(new ManagerConfigAddSettings($this), 'EventApplyDefaultSettings');
-	}
-
+	/**
+	 * Get resource directory from extension settings.
+	 *
+	 * @param string $handle
+	 * @return string directory on success, else return false.
+	 * @internal
+	 */
 	public function getResourceDir($handle){
 		if($resources = $this->getPropertyXML('resources')){
 			$xpath = new DOMXPath($resources->ownerDocument);
@@ -29,127 +116,54 @@ class ManagerConfig extends CorelibManagerExtension {
 			return false;
 		}
 	}
-
-	public function getSystemCheckResults(){
-		if($checks = $this->getPropertyXML('systemchecks')){
-			$i = 0;
-			while($check = $checks->childNodes->item($i++)){
-				if($check instanceof DOMElement){
-					switch($check->getAttribute('type')){
-						case 'permission':
-							$oi = 0;
-							while($object = $check->childNodes->item($oi++)){
-								$result = $object->appendChild($checks->ownerDocument->createElement('result'));
-								switch ($object->nodeName){
-									case 'folder':
-										$folder = Manager::parseConstantTags($object->getAttribute('folder'));
-										if(is_dir($folder)){
-											$is_dir = 'true';
-										} else {
-											$is_dir = 'false';
-										}
-										$result->appendChild($checks->ownerDocument->createElement('dir', $is_dir));
-										if($object->getAttribute('readable') == 'true'){
-											if(is_readable($folder)){
-												$readable = 'true';
-											} else {
-												$readable = 'false';
-											}
-											$result->appendChild($checks->ownerDocument->createElement('readable', $readable));
-										}
-										if($object->getAttribute('writable') == 'true'){
-											if(is_writable($folder)){
-												$writable = 'true';
-											} else {
-												$writable = 'false';
-											}
-
-											$result->appendChild($checks->ownerDocument->createElement('writable', $writable));
-										}
-										break;
-									case 'file':
-										$file = Manager::parseConstantTags($object->getAttribute('file'));
-										$object->setAttribute('file', $file);
-										if(is_file($file)){
-											$is_file = 'true';
-										} else {
-											$is_file = 'false';
-										}
-
-										$result->appendChild($checks->ownerDocument->createElement('file', $is_file));
-										if($object->getAttribute('readable') == 'true'){
-											if(is_readable($file)){
-												$readable = 'true';
-											} else {
-												$readable = 'false';
-											}
-											$result->appendChild($checks->ownerDocument->createElement('readable', $readable));
-										}
-										if($object->getAttribute('writable') == 'true'){
-											if(is_writable($file)){
-												$writable = 'true';
-											} else {
-												$writable = 'false';
-											}
-											$result->appendChild($checks->ownerDocument->createElement('writable', $writable));
-										}
-										break;
-								}
-							}
-							break;
-					}
-				}
-			}
-		}
-		return $this->getPropertyOutput('systemchecks');
-	}
 }
 
-class ManagerDashboard implements Output {
-	/**
-	 * @var ManagerConfig
-	 */
-	private $config = null;
-	/**
-	 * @var PageFactoryDOMXSLTemplate
-	 */
-	private $template = null;
 
-	public function __construct(PageFactoryDOMXSLTemplate $template){
-		$this->config = ManagerConfig::getInstance();
-		$this->template = $template;
-	}
-
-	public function getXML(DOMDocument $xml){
-		$widgets = $xml->createElement('dashboard');
-
-		$dashboard = $this->config->getPropertyXML('dashboard');
-		for ($i = 0; $item = $dashboard->childNodes->item($i); $i++){
-			if($item->nodeName == 'widget'){
-				eval('$widget = new '.$item->getAttribute('handler').'();');
-				$widget->setTemplate($this->template);
-				$widget->setSettings($item);
-				$widgets->appendChild($widget->getXML($xml));
-			}
-		}
-		return $widgets;
-	}
-
-	public function &getArray(){
-
-	}
-}
-
+//*****************************************************************//
+//********** ManagerConfigAddSettings class properties ************//
+//*****************************************************************//
+/**
+ * Manager extension config add settings event action.
+ *
+ * @category corelib
+ * @package Base
+ * @subpackage Manager
+ *
+ * @internal
+ */
 class ManagerConfigAddSettings extends EventAction {
+
+
+	//*****************************************************************//
+	//*************** ManagerConfigAddSettings class ******************//
+	//*****************************************************************//
 	/**
 	 * @var ManagerConfig
+	 * @internal
 	 */
 	private $config = null;
 
+
+	//*****************************************************************//
+	//********** ManagerConfigAddSettings class methods ***************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param ManagerConfig $config
+	 * @return void
+	 * @internal
+	 */
 	public function __construct(ManagerConfig $config){
 		$this->config = $config;
 	}
 
+	/**
+	 * Update on event.
+	 *
+	 * @see EventAction::update()
+	 * @internal
+	 */
 	public function update(Event $event){
 		$event->getPage()->addSettings($this->config->getPropertyOutput('menu'));
 	}

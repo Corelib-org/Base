@@ -31,7 +31,7 @@
  * @copyright Copyright (c) 2010
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
- * @version 2.0.0 ($Id: ErrorHandler.php 5143 2010-02-16 12:41:35Z wayland $)
+ * @version 1.0.0 ($Id: ErrorHandler.php 5143 2010-02-16 12:41:35Z wayland $)
  */
 
 //*****************************************************************//
@@ -81,7 +81,7 @@ class MySQLi_DatabaseTool extends DatabaseDAO implements Singleton,DAO_DatabaseT
 	}
 
 	/**
-	 * Get table status from all tables.
+	 * Get table revision status from all tables.
 	 *
 	 * @see DAO_DatabaseTool::getObjectsAndRevisions()
 	 */
@@ -121,6 +121,7 @@ class MySQLi_DatabaseTool extends DatabaseDAO implements Singleton,DAO_DatabaseT
 				$this->masterQuery(new MySQLiQuery($query));
 			}
 		}
+		return true;
 	}
 }
 ?>

@@ -279,12 +279,8 @@ class Database implements Singleton {
 	 * @internal
 	 */
 	private function _error(Query $query){
-		try {
-			if($query->getErrno()){
-				throw new BaseException($query->getError(), $query->getErrno());
-			}
-		} catch (BaseException $e){
-			echo $e;
+		if($query->getErrno()){
+			throw new BaseException($query->getError(), $query->getErrno());
 			return false;
 		}
 		return true;

@@ -102,10 +102,10 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 			$this->time += $line['time'];
 			if(!isset($duplicates[md5($line['query'])])){
 				$duplicates[md5($line['query'])] = ($key + 1);
-				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }">#'.($key + 1).' Query ('.round($line['time'], 4).'s) ';
+				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }">#'.($key + 1).' Query ('.(round($line['time'], 4) * 1000).'ms) ';
 			} else {
 				$duplicate_count++;
-				$result .= '<h2 class="warning" onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.round($line['time'], 4).'s) <b>(#'.$duplicates[md5($line['query'])].')</b></u> ';
+				$result .= '<h2 class="warning" onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.(round($line['time'], 4) * 1000).'ms) <b>(#'.$duplicates[md5($line['query'])].')</b></u> ';
 			}
 			$result .= '<small>'.substr($line['query'], 0, 200).'</small></h2>';
 

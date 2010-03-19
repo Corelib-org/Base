@@ -72,6 +72,15 @@ interface DAO_View {
 	public function update(DatabaseViewHelper $helper, $xml, $object);
 
 	/**
+	 * Clear view cache object.
+	 *
+	 * @param DatabaseViewHelper $helper
+	 * @param Object $object
+	 * @return boolean true on success, else return false
+	 */
+	public function clean(DatabaseViewHelper $helper, $object);
+
+	/**
 	 * Get database join statement.
 	 *
 	 * Get the join statement which should be used when creating lists
@@ -97,7 +106,7 @@ interface DAO_View {
  * @package Base
  * @subpackage Views
  */
-abstract class View /* extends EventAction */  implements Output {
+abstract class View extends EventAction implements Output {
 
 
 	//*****************************************************************//
@@ -122,6 +131,14 @@ abstract class View /* extends EventAction */  implements Output {
 	 * @internal
 	 */
 	private $keys = array();
+
+	/**
+	 * Key value get callbacks.
+	 *
+	 * @var array
+	 * @internal
+	 */
+	private $callbacks = array();
 
 	/**
 	 * @var DatabaseViewHelper
@@ -222,8 +239,9 @@ abstract class View /* extends EventAction */  implements Output {
 	 * @param string $value key value
 	 * @return boolean true on success, else return false
 	 */
-	public function addKey($key, $value){
+	public function addKey($key, $callback, $value){
 		$this->keys[$key] = $value;
+		$this->callbacks[$key] = $callback;
 		return true;
 	}
 
@@ -249,7 +267,7 @@ abstract class View /* extends EventAction */  implements Output {
 	 */
 	public function getListHelper(){
 		if(is_null($this->helper)){
-			$this->helper = new DatabaseViewHelper('viewcache_'.get_class($this), $this->keys);
+			$this->helper = new DatabaseViewHelper('viewcache_'.get_class($this), $this->keys, $this->callbacks);
 		}
 		return $this->helper;
 	}
@@ -270,6 +288,17 @@ abstract class View /* extends EventAction */  implements Output {
 		array_shift($args);
 		call_user_func_array(array($class, '__construct'), $args);
 		return $class->getXML($xml);
+	}
+
+	/**
+	 * Clean object cache data.
+	 *
+	 * @see EventAction::update()
+	 * @internal
+	 */
+	public function update(Event $event){
+		$this->_getDAO();
+		$this->dao->clean($this->getListHelper(), $event->getModel());
 	}
 
 	/**
@@ -351,7 +380,10 @@ abstract class View /* extends EventAction */  implements Output {
 			$this->xml = (string) $array['cached_xml_data'];
 		}
 		if(isset($array['cached_object_data'])){
-			$this->_setProperties(unserialize($array['cached_object_data']));
+			$data = unserialize($array['cached_object_data']);
+			if(!is_null($data)){
+				$this->_setProperties($data);
+			}
 		}
 	}
 
@@ -400,6 +432,12 @@ class DatabaseViewHelper extends DatabaseListHelper {
 	private $keys = array();
 
 	/**
+	 * @var array column key callbacks
+	 * @internal
+	 */
+	private $callbacks = array();
+
+	/**
 	 * @var DAO_View
 	 * @internal
 	 */
@@ -417,8 +455,9 @@ class DatabaseViewHelper extends DatabaseListHelper {
 	 * @return void
 	 * @internal
 	 */
-	public function __construct($table, array $keys){
+	public function __construct($table, array $keys, array $callbacks){
 		$this->keys = $keys;
+		$this->callbacks = $callbacks;
 		$this->table = $table;
 	}
 
@@ -440,6 +479,16 @@ class DatabaseViewHelper extends DatabaseListHelper {
 	 */
 	public function getKeyNames(){
 		return array_keys($this->keys);
+	}
+
+	/**
+	 * Get key callbacks.
+	 *
+	 * @return array list of key callbacks.
+	 * @internal
+	 */
+	public function getKeyCallbacks(){
+		return array_values($this->callbacks);
 	}
 
 	/**

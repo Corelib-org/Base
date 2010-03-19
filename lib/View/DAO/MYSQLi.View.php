@@ -143,6 +143,34 @@ class MySQLi_View extends DatabaseDAO implements Singleton,DAO_View {
 	}
 
 	/**
+	 * lear view cache object.
+	 *
+	 * @see DAO_View::clean()
+	 */
+	public function clean(DatabaseViewHelper $helper, $object){
+		$keys = $helper->getKeyNames();
+		$callbacks = $helper->getKeyCallbacks();
+		foreach($keys as $id => $key){
+			$columns[] = '`'.View::KEY_PREFIX.$key.'`=\''.$this->escapeString($object->$callbacks[$id]()).'\'';
+		}
+		$query = 'DELETE FROM `'.$helper->getTable().'`
+		          WHERE '.implode(' AND ', $columns);
+		$query = new MySQLiQuery($query);
+		try {
+			$this->masterQuery($query);
+		} catch(BaseException $error) {
+			if($query->getErrno() == 1146){
+				$this->_createTable();
+				$this->update($helper, $xml, $object);
+			} else {
+				trigger_error('Unknown error in view.', E_USER_ERROR);
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Get database join statement.
 	 *
 	 * @see DAO_View::getJoinStatement()
@@ -155,7 +183,6 @@ class MySQLi_View extends DatabaseDAO implements Singleton,DAO_View {
 
 		$join = ' LEFT JOIN `'.$helper->getTable().'`
 		                 ON '.implode(' AND ', $columns);
-		$columns = ', `'.$helper->getColumn().'`';
 		return $join;
 	}
 

@@ -161,7 +161,7 @@ interface DAO_${classname} {
 abstract class ${classname}View extends View {
 
 	public function __construct($id = null, $array = array()){
-		$this->addKey(${classname}::FIELD_ID, $id);
+		$this->addKey(${classname}::FIELD_ID, 'getID', $id);
 		parent::__construct($array);
 	}
 

@@ -169,9 +169,9 @@ class ${classname}List implements Output,CacheableOutput {
 	 * Set model view list.
 	 *
 	 * @uses ${classname}List::$view
-	 * @param ${classname}ViewList $view
+	 * @param ${classname}View $view
 	 */
-	public function setView(${classname}ViewList $view){
+	public function setView(${classname}View $view){
 		$this->view = $view;
 	}
 

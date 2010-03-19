@@ -321,7 +321,7 @@ class CacheManager {
 	 * @var boolean if cached true, else false
 	 * @internal
 	 */
-	private $cached = false;
+	private $cached = null;
 
 	/**
 	 * @var integer time to live

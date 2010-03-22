@@ -1,0 +1,89 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<part xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>Getting Started</title>
+	<chapter>
+		<title>Introduction</title>
+		<section>
+			<title>What is corelib</title>
+			<para>
+				Corelib is a framework build in <glossterm linkend="php">PHP</glossterm> and designed with 
+				the aim to create a very stable and extensible <glossterm linkend="framework">framework</glossterm>,
+				and low error rate. This is done by standardizing the development process and structure, as well
+				as by encapsulating the process into several enclosed and abstract processes.
+			</para>
+		</section>
+		<section>
+			<title>What can corelib do?</title>
+			<para>
+				Corelib can be used to a number of different things:
+			</para>
+			<itemizedlist>
+				<listitem>Generating XHTML pages</listitem>
+				<listitem>Generating PDF Documents <emphasis>(Requires a XSL:FO converter)</emphasis></listitem>
+			</itemizedlist>
+		</section>
+	</chapter>
+	<chapter>
+		<title>How does it work?</title>
+		<para>
+			Corelib has different kind of layers but the large many would say that it implements a <glossterm linkend="mvc">MVC</glossterm> pattern.
+			However it actualy implements a less know pattern called <glossterm linkend="mva">MVA</glossterm>.
+			This works pretty much the same way a <glossterm linkend="mvc">MVC</glossterm> pattern works, however it allows us to change the the models and change the way a view
+			is rendered.
+		</para>
+		<para>
+			Below the differenct processes is listed
+		</para>
+		<itemizedlist>
+			<listitem>
+				<para>Model (<glossterm linkend="arp">Active record pattern / ARP</glossterm>)</para>
+				<orderedlist>
+					<listitem>Model instance</listitem>
+					<listitem>Abstract database layer (<glossterm linkend="dal">Data access Layer / DAL</glossterm>)</listitem>
+					<listitem>DAO (<glossterm linkend="dao">Data access object / DAO</glossterm>)</listitem>
+					<listitem>Database</listitem>
+				</orderedlist>
+			</listitem>
+			<listitem>
+				<para>Adapter / Controller</para>
+				<orderedlist>
+					<listitem>Detect request type</listitem>
+					<listitem>load GET/POST lookup reference</listitem>
+					<listitem>Resolve and load page object</listitem>
+					<listitem>Execute action</listitem>
+					<listitem>Activate template engine / redirect (if post request)</listitem>
+				</orderedlist>
+			</listitem>
+			<listitem>
+				<para>View</para>
+				<itemizedlist>
+					<listitem>
+						<para>Using the XSLT Template engine</para>
+						<para>When the XSLT Template engine is in use differenct actions are made in the following order:</para>
+						<orderedlist>
+							<listitem>Activate template engine</listitem>
+							<listitem>Send HTTP Headers</listitem>
+							<listitem>Build XML Document</listitem>
+							<listitem>Apply XSLT Stylesheets</listitem>
+							<listitem>Send output to client</listitem>
+						</orderedlist>							
+					</listitem>
+				</itemizedlist>
+			</listitem>
+		</itemizedlist>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="figures/mvc.eps" format="EPS"/>
+			</imageobject>
+			<imageobject>
+				<imagedata fileref="figures/mvc.png" format="PNG"/>
+			</imageobject>
+			<caption>
+				<para>
+					This figures show grafically how the different corelib layers work.
+				</para>
+			</caption>
+		</mediaobject>
+	</chapter>
+</part>

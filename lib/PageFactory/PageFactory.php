@@ -781,10 +781,12 @@ class PageFactory implements Singleton {
 				}
 			}
 
+			header('HTTP/1.1 404 Not Found');
 			if(!isset($pages['/404/'])){
 				trigger_error('404 Error unspecified!', E_USER_ERROR);;
 			}
 			$this->url = '/404/';
+
 		}
 		if(is_array($pages[$this->url])){
 			if(!isset($pages[$this->url]['page'])){

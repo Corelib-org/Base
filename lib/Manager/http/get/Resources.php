@@ -43,7 +43,7 @@
  *
  * @ignore
  */
-class WebPage extends ManagerPage {
+class WebPage extends PageBase {
 
 	public function getResource($handler, $resource){
 		$manager = Manager::getInstance();

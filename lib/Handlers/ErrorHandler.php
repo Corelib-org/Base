@@ -170,6 +170,8 @@ class ErrorHandler implements Singleton {
 			 * XXX This works as a workaround for php bug #49177, see: http://bugs.php.net/bug.php?id=49177 for more information
 			 */
 			if($code != E_STRICT || !(version_compare(PHP_VERSION, '5.2') == 1 && version_compare(PHP_VERSION, '5.3') == -1)){
+				header('HTTP/1.1 500 Internal Server Error');
+
 				$this->errors[] = array('code' => $code,
 				                        'description' => $description,
 				                        'file' => $file,
@@ -383,20 +385,20 @@ class ErrorHandler implements Singleton {
 	private function _getRequestContentAsHTML(){
 		$return = '<b>$_SERVER</b><table>';
 		foreach($_SERVER as $key => $data){
-			$return .= '<tr><td style="font-size: 10px;">'.$key.'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.$data.'</td></tr>';
+			$return .= '<tr><td style="font-size: 10px;">'.htmlspecialchars($key).'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.htmlspecialchars($data).'</td></tr>';
 		}
 		$return .= '</table>';
 		if(sizeof($_GET) > 0){
 		$return .= '<br/><b>$_GET</b><table>';
 			foreach($_GET as $key => $data){
-				$return .= '<tr><td style="font-size: 10px;">'.$key.'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.$data.'</td></tr>';
+				$return .= '<tr><td style="font-size: 10px;">'.htmlspecialchars($key).'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.htmlspecialchars($data).'</td></tr>';
 			}
 			$return .= '</table>';
 		}
 		if(sizeof($_POST) > 0){
 			$return .= '<br/><b>$_POST</b><table>';
 			foreach($_POST as $key => $data){
-				$return .= '<tr><td style="font-size: 10px;">'.$key.'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.$data.'</td></tr>';
+				$return .= '<tr><td style="font-size: 10px;">'.htmlspecialchars($key).'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.htmlspecialchars($data).'</td></tr>';
 			}
 			$return .= '</table>';
 		}

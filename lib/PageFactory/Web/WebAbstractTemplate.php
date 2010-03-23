@@ -340,6 +340,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			header('Content-Type: '.$type);
 			ob_end_flush();
 		} else {
+			header('HTTP/1.1 303 See Other');
 			header('Location: '.$this->location);
 			ob_end_clean();
 		}

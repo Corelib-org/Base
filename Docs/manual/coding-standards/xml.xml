@@ -1,5 +1,16 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<title>XML</title>
+	<para>
+		It is recommended that you follow w3's guide lines. which can be found here: 
+		<link xlink:href="http://www.w3.org/TR/REC-xml/">http://www.w3.org/TR/REC-xml/</link>
+	</para>
+	<para>
+		Attributes and element names should always be as descriptive as possible and dash '-'
+		should always be used as a word seperator.
+	</para>
+	<para>
+		Correct indentation is also a must.
+	</para>
 </section>

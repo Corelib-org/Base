@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<!DOCTYPE glossary PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<glossary xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<glossentry xml:id="php">
+		<glossterm>PHP: Hypertext Preprocessor</glossterm>
+		<acronym>PHP</acronym>
+		<glossdef>
+			<para><acronym>PHP</acronym> (recursive acronym for PHP: Hypertext Preprocessor) is a widely-used open source general-purpose scripting language that is especially suited for web development and can be embedded into <acronym>HTML</acronym>.</para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="mva">
+		<glossterm>Model-view-adapter</glossterm>
+		<acronym>mva</acronym>
+		<glossdef>
+			<para><link xlink:href="http://en.wikipedia.org/wiki/Model-view-adapter">Model-view-adapter on wikipedia</link></para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="mvc">
+		<glossterm>Model-view-controller</glossterm>
+		<acronym>mvc</acronym>
+		<glossdef>
+			<para><link xlink:href="http://en.wikipedia.org/wiki/Model-view-controller">Model-view-controller on wikipedia</link></para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="arp">
+		<glossterm>Active record pattern</glossterm>
+		<acronym>arp</acronym>
+		<glossdef>
+			<para><link xlink:href="http://en.wikipedia.org/wiki/Active_record_pattern">Active record pattern on wikipedia</link></para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="dal">
+		<glossterm>Data access Layer</glossterm>
+		<acronym>dal</acronym>
+		<glossdef>
+			<para><link xlink:href="http://en.wikipedia.org/wiki/Data_access_layer">Data access Layer on wikipedia</link></para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="dao">
+		<glossterm>Data access object</glossterm>
+		<acronym>dao</acronym>
+		<glossdef>
+			<para><link xlink:href="http://en.wikipedia.org/wiki/Data_access_object">Data access objects on wikipedia</link></para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="html">
+		<glossterm>Hyper Text Markup Language</glossterm>
+		<acronym>HTML</acronym>
+		<glossdef>
+			<para>Missing.</para>
+		</glossdef>
+	</glossentry>
+	<glossentry xml:id="framework">
+		<glossterm>Framework</glossterm>
+		<glossdef>
+			<para>Missing.</para>
+		</glossdef>
+	</glossentry>
+</glossary>

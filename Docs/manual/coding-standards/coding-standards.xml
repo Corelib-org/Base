@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+<part xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
 	<title>Coding standards</title>
 	<para>
 		It helps if the standard annoys everyone in some way so everyone
@@ -14,4 +14,4 @@
 	<xi:include href="xslt.xml"/>	
 	<xi:include href="xhtml.xml"/>	
 	<xi:include href="css.xml"/>	
-</section>
+</part>

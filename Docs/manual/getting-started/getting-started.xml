@@ -1,14 +1,14 @@
 <?xml version='1.0'?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
-<part xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
+<chapter xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<title>Getting Started</title>
-	<chapter>
+	<section>
 		<title>Introduction</title>
 		<section>
 			<title>What is corelib</title>
 			<para>
 				Corelib is a framework build in <glossterm linkend="php">PHP</glossterm> and designed with 
-				the aim to create a very stable and extensible <glossterm linkend="framework">framework</glossterm>,
+				the aim to create a very stable and extensible <glossterm linkend="framework">framework</glossterm>
 				and low error rate. This is done by standardizing the development process and structure, as well
 				as by encapsulating the process into several enclosed and abstract processes.
 			</para>
@@ -23,8 +23,8 @@
 				<listitem>Generating PDF Documents <emphasis>(Requires a XSL:FO converter)</emphasis></listitem>
 			</itemizedlist>
 		</section>
-	</chapter>
-	<chapter>
+	</section>
+	<section>
 		<title>How does it work?</title>
 		<para>
 			Corelib has different kind of layers but the large many would say that it implements a <glossterm linkend="mvc">MVC</glossterm> pattern.
@@ -33,7 +33,7 @@
 			is rendered.
 		</para>
 		<para>
-			Below the differenct processes is listed
+			Below the differenct processes is listed.
 		</para>
 		<itemizedlist>
 			<listitem>
@@ -52,7 +52,7 @@
 					<listitem>load GET/POST lookup reference</listitem>
 					<listitem>Resolve and load page object</listitem>
 					<listitem>Execute action</listitem>
-					<listitem>Activate template engine / redirect (if post request)</listitem>
+					<listitem>Activate template engine</listitem>
 				</orderedlist>
 			</listitem>
 			<listitem>
@@ -72,18 +72,5 @@
 				</itemizedlist>
 			</listitem>
 		</itemizedlist>
-		<mediaobject>
-			<imageobject>
-				<imagedata fileref="figures/mvc.eps" format="EPS"/>
-			</imageobject>
-			<imageobject>
-				<imagedata fileref="figures/mvc.png" format="PNG"/>
-			</imageobject>
-			<caption>
-				<para>
-					This figures show grafically how the different corelib layers work.
-				</para>
-			</caption>
-		</mediaobject>
-	</chapter>
-</part>
+	</section>
+</chapter>

@@ -1,5 +1,13 @@
 <?xml version='1.0'?>
 <!DOCTYPE section PUBLIC "-//OASIS//DTD DocBook V5.0//EN" "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd">
-<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude">
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xlink="http://www.w3.org/1999/xlink">
 	<title>XSLT</title>
+	<para>
+		As XML all W3 recommendations must be followed. for information about XSL/XSLT 
+		<link xlink:href="http://www.w3.org/TR/xslt20/">http://www.w3.org/TR/xslt20/</link>, and XPath 
+		<link xlink:href="http://www.w3.org/TR/1999/REC-xpath-19991116/">http://www.w3.org/TR/1999/REC-xpath-19991116/</link>
+	</para>
+	<para>
+		As with XML, correct indentation is also a must. 
+	</para>
 </section>

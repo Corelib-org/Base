@@ -347,6 +347,11 @@ class MySQLiQuery extends Query {
 	 * @internal
 	 */
 	protected $insertid = null;
+	/**
+	 * @var integer affected rows
+	 * @internal
+	 */
+	protected $affected_rows = null;
 
 	/**
 	 * Run query and populate object.
@@ -364,6 +369,7 @@ class MySQLiQuery extends Query {
 		$this->error = $this->instance->error;
 		$this->errno = $this->instance->errno;
 		$this->insertid = $this->instance->insert_id;
+		$this->affected_rows = $this->instance->affected_rows;
 	}
 
 	/**
@@ -453,7 +459,7 @@ class MySQLiQuery extends Query {
 	 * @return integer
 	 */
 	public function getAffectedRows(){
-		return $this->instance->affected_rows;
+		return $this->affected_rows;
 	}
 
 	/**

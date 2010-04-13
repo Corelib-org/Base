@@ -51,7 +51,7 @@
 		<post>
 			<page>
 				<url>/corelib/system/database/</url>
-				<file>{CORELIB}/Base/lib/Manager/http/post/system.php</file>
+				<file>{CORELIB}/Base/lib/Manager/http/post/System.php</file>
 				<exec>database</exec>
 			</page>			
 		</post>

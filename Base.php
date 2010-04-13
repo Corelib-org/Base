@@ -160,7 +160,7 @@ if(!defined('TEMPORARY_DIR')){
 /**
  * 	Load Interfaces File.
  */
-require_once(CORELIB.'/Base/Lib/Interfaces.php');
+require_once(CORELIB.'/Base/lib/Interfaces.php');
 
 //*****************************************************************//
 //************************* Base Classes **************************//
@@ -245,7 +245,9 @@ class Base implements Singleton {
 	 * @internal
 	 */
 	private function __construct(){
-		mb_internal_encoding('UTF-8');
+		if(is_callable('mb_internal_encoding')){
+			mb_internal_encoding('UTF-8');
+		}
 		umask(BASE_UMASK);
 		if(php_sapi_name() == 'cli'){
 			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n");
@@ -303,7 +305,7 @@ class Base implements Singleton {
 
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;
-		}else if(is_readable(BASE_CLASS_CACHE_FILE)){
+		} else if(is_readable(BASE_CLASS_CACHE_FILE)){
 			/**
 			 * @ignore
 			 */

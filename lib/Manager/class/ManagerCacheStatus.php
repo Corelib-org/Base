@@ -99,7 +99,11 @@ class ManagerCacheStatus implements Output {
 	 */
 	public function clear(){
 		foreach ($this->cache as $file => $size){
-			unlink($file);
+			if(is_dir($file)){
+				rmdir($file);
+			} else {
+				unlink($file);
+			}
 		}
 		$this->cache = array();
 		return true;
@@ -142,6 +146,7 @@ class ManagerCacheStatus implements Output {
 					$this->_findFiles($dir.$entry);
 				}
 			}
+			$this->cache[$dir.$entry] = 0;
 		}
 	}
 }

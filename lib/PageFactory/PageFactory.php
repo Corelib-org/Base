@@ -639,14 +639,10 @@ class PageFactory implements Singleton {
  		$page->resolvePageController();
 
 		if($page->getCacheType() != PAGE_FACTORY_CACHE_STATIC){
-			try {
-				if(class_exists(PAGE_FACTORY_CLASS_NAME, false)){
-					eval('$page->build(new '.PAGE_FACTORY_CLASS_NAME.'());');
-				} else {
-					throw new BaseException('Could not find WebPage Class.');
-				}
-			} catch (BaseException $e) {
-				echo $e;
+			if(class_exists(PAGE_FACTORY_CLASS_NAME, false)){
+				eval('$page->build(new '.PAGE_FACTORY_CLASS_NAME.'());');
+			} else {
+				throw new BaseException('Could not find WebPage Class.');
 			}
 		}
 
@@ -784,6 +780,7 @@ class PageFactory implements Singleton {
 			header('HTTP/1.1 404 Not Found');
 			if(!isset($pages['/404/'])){
 				trigger_error('404 Error unspecified!', E_USER_ERROR);;
+				return false;
 			}
 			$this->url = '/404/';
 

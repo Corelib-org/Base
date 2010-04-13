@@ -99,6 +99,8 @@ class MySQLi_View extends DatabaseDAO implements Singleton,DAO_View {
 			$this->masterQuery($query);
 		} catch(BaseException $error) {
 			if($query->getErrno() == 1146){
+				var_dump($helper);
+				exit;
 				$this->_createTable($helper);
 				return $this->read($helper);
 			} else {
@@ -132,7 +134,7 @@ class MySQLi_View extends DatabaseDAO implements Singleton,DAO_View {
 			$this->masterQuery($query);
 		} catch(BaseException $error) {
 			if($query->getErrno() == 1146){
-				$this->_createTable();
+				$this->_createTable($helper);
 				$this->update($helper, $xml, $object);
 			} else {
 				trigger_error('Unknown error in view.', E_USER_ERROR);
@@ -160,8 +162,7 @@ class MySQLi_View extends DatabaseDAO implements Singleton,DAO_View {
 			$this->masterQuery($query);
 		} catch(BaseException $error) {
 			if($query->getErrno() == 1146){
-				$this->_createTable();
-				$this->update($helper, $xml, $object);
+				$this->_createTable($helper);
 			} else {
 				trigger_error('Unknown error in view.', E_USER_ERROR);
 				return false;

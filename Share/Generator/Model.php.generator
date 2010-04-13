@@ -287,7 +287,12 @@ class ${classname} implements Output,CacheableOutput {
 	 */
 	public function delete(){
 		$this->_getDAO(false);
-		return $this->dao->delete($this->id);
+		$event = EventHandler::getInstance();
+		$event->trigger(new ${classname}ModifyBeforeDelete($this));
+		if($state = $this->dao->delete($this->id)){
+			$event->trigger(new ${classname}ModifyAfterDelete($this));
+		}
+		return $state;	
 	}
 
 	/**

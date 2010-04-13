@@ -152,3 +152,14 @@ table.list tfoot td.count {
 	background-color: #f9f9f9;
 	text-align: right;
 }
+
+.GeneratorLineRemove {
+	color: #AA1111;	
+	font-weight: bold;
+	background-color: #FFDDDD;	
+}
+.GeneratorLineAdd {
+	color: #118811;
+	font-weight: bold;
+	background-color: #DDFFDD;	
+}

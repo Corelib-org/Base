@@ -767,12 +767,12 @@ class InputHandler implements Singleton,Output {
 	/**
 	 * URL encode array recursive.
 	 *
-	 * @param array $array
-	 * @param array $parent parent value.
+	 * @param mixed $array
+	 * @param mixed $parent parent value.
 	 * @return string url encoded array
 	 * @internal
 	 */
-	private function _urlencodeArray(array $array, array $parent=null){
+	private function _urlencodeArray($array, $parent=null){
 		$return = '';
 		if(is_array($array)){
 			while(list($key,$val) = each($array)){

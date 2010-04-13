@@ -248,6 +248,24 @@ class i18n implements Singleton,Output {
 	 */
 	private $language_files = array();
 
+	/**
+	 * @var string cookie name
+	 * @internal
+	 */
+	private $cookie_name = null;
+
+	/**
+	 * @var string cookie path
+	 * @internal
+	 */
+	private $cookie_path = null;
+
+	/**
+	 * @var string cookie timeout
+	 * @internal
+	 */
+	private $cookie_timeout = null;
+
 
 	//*****************************************************************//
 	//*********************** i18n class methods **********************//
@@ -258,9 +276,10 @@ class i18n implements Singleton,Output {
 	 * @return void
 	 * @internal
 	 */
-	protected function __construct(){
-		EventHandler::getInstance()->register(new i18nDetectLanguageEventActions(), 'EventRequestStart');
-		EventHandler::getInstance()->register(new i18nApplyDefaultSettingsEventActions(), 'EventApplyDefaultSettings');
+	protected function __construct($cookie_name=I18N_COOKIE_NAME, $cookie_path=I18N_COOKIE_PATH, $cookie_timeout=I18N_COOKIE_TIMEOUT){
+		$this->cookie_name = $cookie_name;
+		$this->cookie_path = $cookie_path;
+		$this->cookie_timeout = $cookie_timeout;
 		$this->getTimezone();
 	}
 
@@ -277,6 +296,8 @@ class i18n implements Singleton,Output {
 	public static function getInstance(){
 		if(is_null(self::$instance)){
 			self::$instance = new i18n();
+			EventHandler::getInstance()->register(new i18nDetectLanguageEventActions(), 'EventRequestStart');
+			EventHandler::getInstance()->register(new i18nApplyDefaultSettingsEventActions(), 'EventApplyDefaultSettings');
 		}
 		return self::$instance;
 	}
@@ -285,13 +306,14 @@ class i18n implements Singleton,Output {
 	 * Add locale.
 	 *
 	 * @param i18nLocale $locale
-	 * @return boolean true on success, else return false
+	 * @return i18nLocale
 	 */
 	public function addLocale(i18nLocale $locale){
 		if(sizeof($this->locales) > 0){
 			$this->fallback = $locale;
 		}
 		$this->locales[$locale->getLanguage()] = $locale;
+		return $locale;
 	}
 
 	/**
@@ -336,8 +358,21 @@ class i18n implements Singleton,Output {
 			setlocale(LC_COLLATE, $this->locale->getLocale());
 			setlocale(LC_CTYPE, $this->locale->getLocale());
 			setlocale(LC_MONETARY, $this->locale->getLocale());
-			setcookie(I18N_COOKIE_NAME, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+			setcookie($this->cookie_name, $language, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Get current locale.
+	 *
+	 * @return i18nLocale if current locale is set, else return false
+	 */
+	public function getLocale(){
+		if($this->locale instanceof i18nLocale){
+			return $this->locale;
 		} else {
 			return false;
 		}
@@ -353,7 +388,7 @@ class i18n implements Singleton,Output {
 		$this->timezone = $timezone;
 		ini_set('date.timezone', $this->timezone);
 		date_default_timezone_set($this->timezone);
-		setcookie(I18N_COOKIE_NAME.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
+		setcookie($this->cookie_name.'_timezone', $timezone, time()+I18N_COOKIE_TIMEOUT, I18N_COOKIE_PATH);
 		EventHandler::getInstance()->trigger(new i18nEventTimezoneChange($this->timezone));
 		return true;
 	}
@@ -365,10 +400,10 @@ class i18n implements Singleton,Output {
 	 */
 	public function getTimezone(){
 		if(is_null($this->timezone)){
-			if(!isset($_COOKIE[I18N_COOKIE_NAME.'_timezone'])){
+			if(!isset($_COOKIE[$this->cookie_name.'_timezone'])){
 				$this->setTimezone(I18N_DEFAULT_TIMEZONE);
 			} else {
-				$this->setTimezone($_COOKIE[I18N_COOKIE_NAME.'_timezone']);
+				$this->setTimezone($_COOKIE[$this->cookie_name.'_timezone']);
 			}
 		}
 		return $this->timezone;
@@ -383,7 +418,7 @@ class i18n implements Singleton,Output {
 	 * @return string
 	 */
 	public function detectLanguage(){
-		if(!isset($_COOKIE[I18N_COOKIE_NAME]) || !isset($this->locales[$_COOKIE[I18N_COOKIE_NAME]])){
+		if(!isset($_COOKIE[$this->cookie_name]) || !isset($this->locales[$_COOKIE[$this->cookie_name]])){
 			if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
 				$locales = explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
 				while (list(,$val) = each($locales)){
@@ -414,7 +449,7 @@ class i18n implements Singleton,Output {
 				$this->setLocale($this->fallback->getLanguage());
 			}
 		} else {
-			$this->setLocale($_COOKIE[I18N_COOKIE_NAME]);
+			$this->setLocale($_COOKIE[$this->cookie_name]);
 		}
 		return true;
 	}
@@ -452,7 +487,6 @@ class i18n implements Singleton,Output {
 		reset($this->language_files);
 		return $i18n;
 	}
-
 }
 
 

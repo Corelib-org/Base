@@ -293,7 +293,7 @@ class Base implements Singleton {
 			 * @see BASE_DISABLE_ERROR_HANDLER
 			 * @internal
 			 */
-			require_once(CORELIB.'/Base/Lib/Handlers/ErrorHandler.php');
+			require_once(CORELIB.'/Base/lib/Handlers/ErrorHandler.php');
 		}
 
 		/**
@@ -301,7 +301,7 @@ class Base implements Singleton {
 		 *
 		 * @internal
 		 */
-		require_once(CORELIB.'/Base/Lib/LoopbackStream.php');
+		require_once(CORELIB.'/Base/lib/LoopbackStream.php');
 
 		if(!is_file(BASE_CLASS_CACHE_FILE)){
 			$this->class_cache_updated = true;

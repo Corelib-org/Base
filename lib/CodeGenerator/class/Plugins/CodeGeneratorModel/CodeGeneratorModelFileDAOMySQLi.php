@@ -115,7 +115,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 			$count = $this->getTable()->countColumns();
 			$i = 0;
 			while(list(,$column) = $this->getTable()->eachColumn()){
-				if(!$block->hasStatementRegex('/'.$this->getTable()->getClassName().'\:\:'.$column->getFieldConstantName().'/')){
+				if(!$block->hasStatementRegex('/'.$this->getTable()->getClassName().'\:\:'.$column->getFieldConstantName().'\./')){
 					if($column->getSmartType() == CodeGeneratorColumn::SMARTTYPE_TIMESTAMP || $column->getSmartType() == CodeGeneratorColumn::SMARTTYPE_TIMESTAMP_SET_ON_CREATE){
 						$col = 'UNIX_TIMESTAMP('.$this->_createFieldName($column).') AS '.$this->_createFieldName($column);
 					} else if($column->getType() == CodeGeneratorColumn::TYPE_BOOLEAN){
@@ -123,8 +123,18 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 					} else {
 						$col = $this->_createFieldName($column);
 					}
-					if($block->getLineCount() && $i == 0){
-						$prefix = '  ';
+					if($block->getLineCount() == 2){
+						if($i > 0){
+							$prefix = ', ';
+						} else {
+							$prefix = '  ';
+						}
+					} else if($i == 0){
+						if($block->getLineCount() > 2){
+							$prefix = ', ';
+						} else {
+							$prefix = '  ';
+						}
 					} else {
 						$prefix = ', ';
 					}
@@ -170,7 +180,8 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 
 			$content = preg_replace('/^(\s*)\$query\s*=\s*MySQLiTools::makeUpdateStatement.*?$/ms', $update, $this->content);
 
-			$content = preg_replace('/(^\s*WHERE\s*).*?$/m','\\1'.implode(' AND ', $where).'\';', $content);
+			$content = preg_replace('/(^\s*WHERE\s*).*?FIELD_ID.*?$(?<!;)/m','\\1'.implode(' AND ', $where).'', $content);
+			$content = preg_replace('/(^\s*WHERE\s*).*?FIELD_ID.*?$(?<=;)/m','\\1'.implode(' AND ', $where).'\';', $content);
 			$content = preg_replace('/(MySQLiQueryStatement\s*\(.*?)(\$values\s*,\s*)(\$id)/','\\1$values_create, '.implode(', ', $dao).', $values', $content);
 		}
 		return true;
@@ -203,7 +214,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						}
 						break;
 				}
-				if($column->getName() == 'sort_order'){
+				if($column->getName() == 'sort_order' && !$block->hasStatement('$this->_getMaxOrder()')){
 					$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$data->set('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().', $this->_getMaxOrder() + 1);'));
 				}
 			}
@@ -258,9 +269,11 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						}
 						break;
 				}
-				if($column->getName() == 'sort_order'){
+				/*
+				if($column->getName() == 'sort_order' && !$block->hasStatement('$this->_getMaxOrder()')){
 					$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$data->set('.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().', $this->_getMaxOrder() + 1);'));
 				}
+				*/
 			}
 			while(list(,$index) = $this->getTable()->eachIndex()){
 				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE){
@@ -303,11 +316,13 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 		if($block = $this->_getCodeBlock($content, 'Delete actions')){
 			while(list(,$column) = $this->getTable()->eachColumn()){
 				if($column->getName() == 'sort_order'){
-					$parameters = array();
-					while(list(,$key) = $column->getTable()->getPrimaryKey()->eachColumn()){
-						$parameters[] = '$'.$key->getFieldVariableName();
+					if(!$block->hasStatement('$this->_cleanSortOrder')){
+						$parameters = array();
+						while(list(,$key) = $column->getTable()->getPrimaryKey()->eachColumn()){
+							$parameters[] = '$'.$key->getFieldVariableName();
+						}
+						$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->_cleanSortOrder('.implode(', ', $parameters).');'));
 					}
-					$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->_cleanSortOrder('.implode(', ', $parameters).');'));
 				}
 			}
 			$this->_writeCodeBlock($content, $block);
@@ -384,7 +399,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = \'SELECT '.$this->_createFieldName($column)));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM  `'.$column->getTable()->getName().'`'));
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          ORDER BY `'.$column->getTable()->getName().'` DESC'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          ORDER BY '.$this->_createFieldName($column).'` DESC'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          LIMIT 1\';'));
 
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->query(new MySQLiQuery($query));'));
@@ -417,11 +432,11 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						foreach($docblocks as $doc){
 							$docblock->addComponent($doc);
 						}
-						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'integer object sort_order'));
-
 						foreach($parameters as $parameter){
 							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter($parameter));
 						}
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'integer object sort_order'));
+
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = \'SELECT '.$this->_createFieldName($column)));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM  `'.$column->getTable()->getName().'`'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          WHERE '.implode(' AND ', $where)));
@@ -439,15 +454,13 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						}
 						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'integer maximum sort_order'));
 
-						foreach($parameters as $parameter){
-							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter($parameter));
-						}
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = \'SELECT '.$this->_createFieldName($column)));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM  `'.$column->getTable()->getName().'`'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          ORDER BY '.$this->_createFieldName($column).' DESC'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          LIMIT 1\';'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->query(new MySQLiQuery($query));'));
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $query->fetchArray();'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $query->fetchArray();'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $query[\'sort_order\'];'));
 					}
 
 					$method = '_cleanSortOrder';
@@ -471,7 +484,7 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          SET '.$this->_createFieldName($column).'='.$this->_createFieldName($column).'-1'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          WHERE '.$this->_createFieldName($column).' > \\\'\'.$this->escapeString($order).\'\\\'\';'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->query(new MySQLiQuery($query));'));
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $query->fetchArray();'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
 					}
 
 				}

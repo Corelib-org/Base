@@ -654,7 +654,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 				$constructs[] = '$'.$column->getFieldVariableName().' = null';
 				$dao[] = '$'.$column->getFieldVariableName();
 				if($class){
-					$constructs_body[] = "\t\t".'$this->'.$column->getFieldVariableName().' = new '.$class.'($this->'.$column->getFieldVariableName().');';
+					$constructs_body[] = "\t\t".'$this->'.$column->getFieldVariableName().' = new '.$class.'($'.$column->getFieldVariableName().');';
 					$read[] = '$this->'.$column->getFieldVariableName().'->getID()';
 				} else {
 					$constructs_body[] = "\t\t".'$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';';
@@ -667,6 +667,8 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			$content = preg_replace('/(\$this->dao->read\()(\$this->id)(\))/', '\\1'.implode(', ', $read).'\\3', $content);
 			$content = preg_replace('/(\$this->dao->update\()(\$this->id)/', '\\1'.implode(', ', $read), $content);
 			$content = preg_replace('/(\$this->dao->delete\()(\$this->id)(\))/', '\\1'.implode(', ', $read).'\\3', $content);
+			$content = preg_replace('/(\$this->dao->moveUp\()(\$this->id)(\))/', '\\1'.implode(', ', $read).'\\3', $content);
+			$content = preg_replace('/(\$this->dao->moveDown\()(\$this->id)(\))/', '\\1'.implode(', ', $read).'\\3', $content);
 			$content = preg_replace('/(function (update|delete|read)\()(\$id)/', '\\1'.implode(', ', $dao), $content);
 
 			$content = preg_replace('/\s*\/\*\*\n(\s*\*.*?)*\n\s*\*\/(\n\s*public\s*function\s+create)/m','\\2', $content);

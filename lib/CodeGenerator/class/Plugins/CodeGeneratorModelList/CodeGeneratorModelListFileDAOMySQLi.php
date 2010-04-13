@@ -107,7 +107,7 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 				}
 			}
 			while(list(,$column) = $this->getTable()->eachColumn()){
-				if($column->isSortable()){
+				if($column->isSortable() && $column->getKey() != CodeGeneratorColumn::KEY_PRIMARY){
 					$constant = $column->getTable()->getClassName().'::'.$column->getFieldConstantName();
 					if(!in_array($constant, $columns)){
 						$columns[] = $column->getTable()->getClassName().'::'.$column->getFieldConstantName();
@@ -146,7 +146,7 @@ class CodeGeneratorModelListFileDAOMySQLi extends CodeGeneratorModelFileDAOMySQL
 			                    CodeGeneratorColumn::SMARTTYPE_TIMESTAMP_SET_ON_CREATE);
 
 			while(list(,$column) = $this->getTable()->eachColumn()){
-				if($column->isSortable()){
+				if($column->isSortable() && $column->getKey() != CodeGeneratorColumn::KEY_PRIMARY){
 					if(in_array($column->getSmartType(), $smarttypes)){
 						if(!$block->hasStatement('if ( $'.$column->getFieldVariableName().'_from')){
 							$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$column->getFieldVariableName().'_from = $filter->get('.$this->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'_from\')'));

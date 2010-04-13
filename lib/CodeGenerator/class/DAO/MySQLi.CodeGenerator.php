@@ -209,6 +209,7 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 						$cls_field->setReadOnly(true);
 					}
 					$cls_field->setKey($index->getType());
+					$cls_field->setSortable(true);
 				}
 			}
 

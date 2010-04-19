@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section>
 	<title>Setting up a corelib site.</title>
-	 <para>To set up a corelib site, you need a distribution of corelib and a webserver of your choice. Unpack the distribution and put it on your server, and make sure you have administrative permissions. Next you take a copy of the config.php.dist file located in etc/dist/, and put it in the etc/ folder. You need to rename it to config.php for the system to recognize it.</para>
+	 <para>To set up a corelib site, you need a distr	ibution of corelib and a webserver of your choice. Unpack the distribution and put it on your server, and make sure you have administrative permissions. Next you take a copy of the config.php.dist file located in etc/dist/, and put it in the etc/ folder. You need to rename it to config.php for the system to recognize it.</para>
 	 <section>
 	 	<title>The config file in details:</title>
 	 	<para>The config file contains the site specific configuration, which can be anything from function calls, constant definitions, and class loads. In the config file you need to define the CORELIB constant, which must contain the full path to the corelib library. Following this you must include the Base.php file from the corelib/Base folder. The code looks as follows:</para>

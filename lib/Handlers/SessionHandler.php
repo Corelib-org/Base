@@ -355,7 +355,7 @@ class SessionHandler implements Singleton,Output {
 	 */
 	public function getXML(DOMDocument $xml){
 		$session = $xml->createElement('session');
-		$session->appendChild($xml->createElement('session_id', $this->getID()));
+		$session->setAttribute('id', $this->getID());
 		$session->appendChild($this->engine->getXML($xml));
 		return $session;
 	}
@@ -728,7 +728,7 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	 * @return DOMElement
 	 */
 	public function getXML(DOMDocument $xml){
-		$session = $xml->createElement('session');
+		$session = $xml->createElement('variables');
 		$this->_getXMLArray($session, $_SESSION);
 		return $session;
 	}

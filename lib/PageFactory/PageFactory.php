@@ -747,74 +747,80 @@ class PageFactory implements Singleton {
 			return true;
 		}
 
-		if(!isset($pages[$this->url])){
-			if(isset($pages)){
-				foreach($pages as $val){
-					if(is_array($val)){
-						if(isset($val['type']) && $val['type'] != 'regex' ){
-							$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec'], $this->url);
-							$val['expr'] = $this->resolvers[$val['type']]->getExpression();
-							$val['exec'] = $this->resolvers[$val['type']]->getExecute();
-						}
-						if( isset($val['expr']) && $val['expr'] !== false && preg_match($val['expr'], $this->url) ){
-							if(!is_file($val['page'])){
-								trigger_error('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
-							}
 
-							if(!isset($val['engine'])){
-								$this->_enableEngine(PAGE_FACTORY_ENGINE);
-								$val['engine'] = PAGE_FACTORY_ENGINE;
-							} else {
-								$this->_enableEngine($val['engine']);
-							}
-
-							$this->_setCacheSettings($val);
-							$this->callback = preg_replace($val['expr'], $val['exec'], addcslashes($this->url, '\''));
-							require_once($val['page']);
-							return true;
-						}
-					}
+		if(isset($pages)){
+			if(!$page = $this->_resolvePageController($pages)){
+				$this->url = '/404/';
+				if(!$page = $this->_resolvePageController($pages)){
+					trigger_error('404 Error unspecified!', E_USER_ERROR);
+					return false;
+				} else {
+					header('HTTP/1.1 404 Not Found');
 				}
 			}
 
-			header('HTTP/1.1 404 Not Found');
-			if(!isset($pages['/404/'])){
-				trigger_error('404 Error unspecified!', E_USER_ERROR);;
-				return false;
+			if($page){
+				if(isset($page['precondition'])){
+					if(!eval('return ('.$page['precondition'].');')){
+						$this->url = '/404/';
+						if(!$page = $this->_resolvePageController($pages)){
+							trigger_error('403 Error unspecified!', E_USER_ERROR);
+							return false;
+						} else {
+							header('HTTP/1.1 403 Forbidden');
+						}
+					}
+				}
+				if(!isset($page['page'])){
+					throw new BaseException('file not set.', E_USER_ERROR);
+				}
+				if(!is_file($page['page'])){
+					trigger_error('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
+				}
+				if(!isset($page['engine'])){
+					$page['engine'] = PAGE_FACTORY_ENGINE;
+				}
+				$this->callback = $page['exec'];
+				$this->_enableEngine($page['engine']);
+				$this->_setCacheSettings($page);
+				require_once($page['page']);
 			}
-			$this->url = '/404/';
-
 		}
-		if(is_array($pages[$this->url])){
-			if(!isset($pages[$this->url]['page'])){
-				throw new BaseException('file not set.', E_USER_ERROR);
-			}
-			if(!isset($pages[$this->url]['exec'])){
-				$pages[$this->url]['exec'] = 'build';
-			}
-			$page = $pages[$this->url]['page'];
-			$this->callback = $pages[$this->url]['exec'].'()';
+		return true;
 
-			if(!isset($pages[$this->url]['engine'])){
-				$this->_enableEngine(PAGE_FACTORY_ENGINE);
-				$pages[$this->url]['engine'] = PAGE_FACTORY_ENGINE;
-			} else {
-				$this->_enableEngine($pages[$this->url]['engine']);
-			}
-			$this->_setCacheSettings($pages[$this->url]);
-		} else {
-			$page = $pages[$this->url];
-			$pages[$this->url] = array('page' => $pages[$this->url]);
-			$this->_enableEngine(PAGE_FACTORY_ENGINE);
-			$this->_setCacheSettings($pages[$this->url]);
-		}
 
-		if(!is_file($page)){
-			throw new BaseException('Unable to open: '.$page.'. File not found.', E_USER_ERROR);
-		}
+
 
 		require_once($page);
 		return true;
+	}
+
+	private function _resolvePageController(array &$pages){
+		if(!isset($pages[$this->url])){
+			foreach($pages as $val){
+				if(is_array($val)){
+					if(isset($val['type']) && $val['type'] != 'regex' ){
+						$this->resolvers[$val['type']]->resolve($val['expr'], $val['exec'], $this->url);
+						$val['expr'] = $this->resolvers[$val['type']]->getExpression();
+						$val['exec'] = $this->resolvers[$val['type']]->getExecute();
+					}
+					if( isset($val['expr']) && $val['expr'] !== false && preg_match($val['expr'], $this->url) ){
+						$val['exec'] = preg_replace($val['expr'], $val['exec'], addcslashes($this->url, '\''));
+						return $val;
+					}
+				}
+			}
+			return false;
+		}
+		if(is_array($pages[$this->url])){
+			if(!isset($pages[$this->url]['exec'])){
+				$pages[$this->url]['exec'] = 'build';
+			}
+			$pages[$this->url]['exec'] .= '()';
+			return $pages[$this->url];
+		} else {
+			return array('page' => $pages[$this->url], 'exec'=>'build()');
+		}
 	}
 
 	/**

@@ -167,9 +167,10 @@ class ErrorHandler implements Singleton {
 		if(error_reporting() != 0){
 			/**
 			 * XXX This if loop is a hot fix for disabling E_STRICT errors for all php 5.2.x version.
+			 * XXX This have been extended to ommit php version's before 5.3.2
 			 * XXX This works as a workaround for php bug #49177, see: http://bugs.php.net/bug.php?id=49177 for more information
 			 */
-			if($code != E_STRICT || !(version_compare(PHP_VERSION, '5.2') == 1 && version_compare(PHP_VERSION, '5.3') == -1)){
+			if($code != E_STRICT || !(version_compare(PHP_VERSION, '5.2') == 1 && version_compare(PHP_VERSION, '5.3.3') == -1)){
 				header('HTTP/1.1 500 Internal Server Error');
 
 				$this->errors[] = array('code' => $code,

@@ -220,7 +220,11 @@ class InputHandler implements Singleton,Output {
 			 */
 			define('INPUT_HANDLER_RESET_GET_POST', true);
 		}
-		set_magic_quotes_runtime(false);
+
+		// XXX Added check, due to php 5.3 deprecation of set_magic_quotes_runtime()
+		if(version_compare(PHP_VERSION, '5.3') == -1){
+			set_magic_quotes_runtime(false);
+		}
 
 		if(isset($_POST)){
 			$this->post = &$_POST;
@@ -231,6 +235,7 @@ class InputHandler implements Singleton,Output {
 		if(INPUT_HANDLER_RESET_GET_POST){
 			unset($_POST, $_GET);
 		}
+
 		if(get_magic_quotes_gpc()){
 			$this->get = $this->_stripslashes($this->get);
 			$this->post = $this->_stripslashes($this->post);

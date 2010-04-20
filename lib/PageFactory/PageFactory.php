@@ -762,7 +762,7 @@ class PageFactory implements Singleton {
 			if($page){
 				if(isset($page['precondition'])){
 					if(!eval('return ('.$page['precondition'].');')){
-						$this->url = '/404/';
+						$this->url = '/403/';
 						if(!$page = $this->_resolvePageController($pages)){
 							trigger_error('403 Error unspecified!', E_USER_ERROR);
 							return false;
@@ -787,14 +787,14 @@ class PageFactory implements Singleton {
 			}
 		}
 		return true;
-
-
-
-
-		require_once($page);
-		return true;
 	}
 
+	/**
+	 * Resolve a url.
+	 *
+	 * @param array $pages
+	 * @return mixed array containing page data, else return false.
+	 */
 	private function _resolvePageController(array &$pages){
 		if(!isset($pages[$this->url])){
 			foreach($pages as $val){

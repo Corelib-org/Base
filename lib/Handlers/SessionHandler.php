@@ -648,7 +648,6 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 	 * @return boolean true on success, else return false
 	 */
 	public function remove($name){
-		session_unregister($name);
 		unset($_SESSION[$name]);
 	}
 

@@ -617,10 +617,14 @@ class MySQLiQueryStatement extends MySQLiQuery {
 			}
 		}
 
-		$bind = $this->bind['param'];
-		array_unshift($bind, implode('', $this->bind['types']));
+		$types = implode('', $this->bind['types']);
 
-		call_user_func_array(array($this->statement, 'bind_param'), $bind);
+		$params = array(&$types);
+		foreach ($this->bind['param'] as $key => $param){
+			$params[] = &$this->bind['param'][$key];
+		}
+
+		call_user_func_array(array($this->statement, 'bind_param'), $params);
 
 		foreach ($this->blob as $key => $val){
 			$this->statement->send_long_data($key, $val);

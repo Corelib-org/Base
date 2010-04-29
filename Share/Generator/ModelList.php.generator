@@ -294,7 +294,7 @@ class ${classname}List implements Output,CacheableOutput {
 
 				$list->appendChild($item->getXML($xml));
 			} else {
-				$list->appendChild($this->view->getViewXML($out[${classname}::FIELD_ID], $out, $xml));
+				$list->appendChild($this->view->getViewXML($xml, $out[${classname}::FIELD_ID], $out));
 			}
 			if(!is_null($this->cache)){
 				$this->cache->getCacheManagerOutput($item);

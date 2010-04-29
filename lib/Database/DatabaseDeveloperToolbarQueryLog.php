@@ -117,7 +117,7 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.trim($line['query']).'</pre><br/>';
 
 
-			if(is_array($line['analysis'])){
+			if(is_array($line['analysis']) && sizeof($line['analysis']) > 0){
 				$result .= '<h3>Analysis</h3><table style="width: 100%; border-spacing: 0px;"><thead><tr>';
 				foreach ($line['analysis']['columns'] as $column){
 					$result .= '<th style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$column.'</th>';

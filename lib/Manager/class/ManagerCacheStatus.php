@@ -99,9 +99,9 @@ class ManagerCacheStatus implements Output {
 	 */
 	public function clear(){
 		foreach ($this->cache as $file => $size){
-			if(is_dir($file)){
+			if(is_dir($file) && $file != BASE_CACHE_DIRECTORY){
 				rmdir($file);
-			} else {
+			} else if($file != BASE_CACHE_DIRECTORY) {
 				unlink($file);
 			}
 		}
@@ -134,7 +134,8 @@ class ManagerCacheStatus implements Output {
 	 * @internal
 	 */
 	private function _findFiles($dir){
-		if(substr($dir, 0, -1) != '/'){
+
+		if(substr($dir, -1) != '/'){
 			$dir = $dir.'/';
 		}
 		if(is_dir($dir) && is_readable($dir)){

@@ -287,6 +287,7 @@ abstract class View extends EventAction implements Output {
 		$args = func_get_args();
 		array_shift($args);
 		call_user_func_array(array($class, '__construct'), $args);
+		$this->_setViewSettings($class);
 		return $class->getXML($xml);
 	}
 
@@ -386,6 +387,18 @@ abstract class View extends EventAction implements Output {
 			}
 		}
 	}
+
+	/**
+	 * Set view settings.
+	 *
+	 * If a view has special settings this method is called
+	 * to set settings on new xml views. implement it to set
+	 * your own settings.
+	 *
+	 * @param View $view
+	 * @return void
+	 */
+	protected function _setViewSettings(View $view){ }
 
 	/**
 	 * Get Current DAO object instance.

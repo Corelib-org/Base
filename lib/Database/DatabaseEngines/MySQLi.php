@@ -51,12 +51,6 @@ define('DATABASE_ORDER_DESC', 'DESC');
  */
 define('DATABASE_ORDER_ASC', 'ASC');
 
-// DEPRECATED???
-// define('DATABASE_TIMESTAMP_FORMAT', 'Y-m-d H:i:s');
-// define('DATABASE_GT', '>');
-// define('DATABASE_LT', '<');
-// define('DATABASE_EQUAL', '=');
-
 
 //*****************************************************************//
 //***************** MySQLi Database Engine class ******************//

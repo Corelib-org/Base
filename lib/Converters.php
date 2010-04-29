@@ -428,6 +428,7 @@ class DateConverterParseFormat implements Converter {
 	 */
 	private $format = null;
 
+	private $date_format = null;
 
 	//*****************************************************************//
 	//*********** DateConverterParseFormat class methods **************//
@@ -449,16 +450,26 @@ class DateConverterParseFormat implements Converter {
 	 * @internal
 	 */
 	public function convert($data) {
-		preg_match($this->format, $data, $matches);
-		$format = $data;
-		foreach ($matches as $key => $match){
-			if(is_string($key)){
-				$format = preg_replace('/'.$match.'/', '%'.$key, $format, 1);
+		if(!is_integer($data)){
+			preg_match($this->format, $data, $matches);
+			$format = $data;
+			foreach ($matches as $key => $match){
+
+				if(is_string($key)){
+					$format = preg_replace('/'.$match.'/', '%'.$key, $format, 1);
+				}
 			}
+
+			$date = strptime($data, $format);
+			$date = mktime($date['tm_hour'], $date['tm_min'], $date['tm_sec'], ($date['tm_mon'] + 1), $date['tm_mday'], ($date['tm_year']+1900));
+			return $date;
+		} else {
+			if(is_null($this->date_format)){
+				$delimiter = $this->format{0};
+				$this->date_format = preg_replace('/^.*?#format:(.*?)\)'.preg_quote($delimiter, '/').'$/', '\\1', $this->format);
+			}
+			return strftime($this->date_format, $data);
 		}
-		$date = strptime($data, $format);
-		$date = mktime($date['tm_hour'], $date['tm_min'], $date['tm_sec'], ($date['tm_mon'] + 1), $date['tm_mday'], ($date['tm_year']+1900));
-		return $date;
 	}
 }
 ?>

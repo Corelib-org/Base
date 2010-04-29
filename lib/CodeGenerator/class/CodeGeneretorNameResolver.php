@@ -399,8 +399,7 @@ class CodeGeneretorNameResolverEngineDefault implements CodeGeneretorNameResolve
 		}  else {
 			$var = $column->getName();
 		}
-
-		if($column->getTable()->getClassVariable() == $var){
+		if($column->getTable()->getClassVariable() == $var && empty($column->getReference())){
 			throw new BaseException('Field and class name variable collision class: '.$column->getTable()->getName().' ('.$column->getTable()->getClassName().') and colum: '.$column->getName(), E_USER_ERROR);
 		}
 		return $var;

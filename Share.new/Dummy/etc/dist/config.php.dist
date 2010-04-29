@@ -1,0 +1,27 @@
+<?php
+/*
+ *	Setup Path to corelib
+ */
+if(!defined('CORELIB')){
+	define('CORELIB', '/Users/webroot/corelib/');
+}
+include_once(CORELIB.'/Base/Base.php');
+
+$base = Base::getInstance();
+$base->addClassPath('lib/');
+
+define('SOFTWARE_VERSION', 'Corelib Dummy Site v1.0');
+
+// define('HTTP_REDIRECT_BASE', 'http://path.to/site/');
+
+define('ABSTRACTS_ENABLE_AUTHORIZATION', false);
+
+define('ABSTRACTS_ENABLE_DATABASE', false);
+	define('DATABASE_MASTER_HOSTNAME', '');
+	define('DATABASE_MASTER_USERNAME', '');
+	define('DATABASE_MASTER_PASSWORD', '');
+	define('DATABASE_MASTER_DATABASE', '');
+
+define('PAGE_FACTORY_CACHE_ENABLE', false);
+define('PAGE_FACTORY_CACHE_DEBUG', false);	
+?>

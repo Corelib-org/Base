@@ -1,5 +1,0 @@
-<FilesMatch "\.css$">
-    Order allow,deny
-    Allow from all
-    Satisfy All
-</FilesMatch>

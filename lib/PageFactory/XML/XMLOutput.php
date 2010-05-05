@@ -59,27 +59,10 @@ class XMLOutput implements Output {
 	 */
 	private $xml;
 
-	/**
-	 * @var DOMDocument
-	 * @internal
-	 */
-	private static $DOMDocument = null;
-
 
 	//*****************************************************************//
 	//******************** XMLOutput class methods ********************//
 	//*****************************************************************//
-	/**
-	 * Create new instance.
-	 *
-	 * @return void
-	 */
-	public function __construct(){
-		if(!self::$DOMDocument instanceof DOMDocument){
-			self::$DOMDocument = new DOMDocument('1.0', 'UTF-8');
-		}
-	}
-
 	/**
 	 * Create DOMElement.
 	 *
@@ -89,7 +72,7 @@ class XMLOutput implements Output {
 	 * @return DOMElement
 	 */
 	public function createElement($element, $content=null){
-		return self::$DOMDocument->createElement($element, $content);
+		return new DOMElement($element, $content);
 	}
 
 	/**
@@ -110,8 +93,9 @@ class XMLOutput implements Output {
 	 * @return DOMElement
 	 */
 	public function setXMLDocumentFile($filename){
-		self::$DOMDocument->load($filename);
-		return $this->setXML(self::$DOMDocument->documentElement);
+		$document = new DOMDocument('1.0', 'UTF-8');
+		$document->load($filename);
+		return $this->setXML($document->documentElement);
 	}
 
 	/**

@@ -48,7 +48,7 @@ if(!defined('DATABASE_SHOW_QUERY_LOG')){
 	 *
 	 * Default: false
 	 */
-	define('DATABASE_SHOW_QUERY_LOG', false);
+	define('DATABASE_SHOW_QUERY_LOG', true);
 }
 
 
@@ -250,17 +250,16 @@ class Database implements Singleton {
 	 * @internal
 	 */
 	private function _runQuery(DatabaseEngine $instance, Query $query){
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && DATABASE_SHOW_QUERY_LOG){
 			$start = microtime(true);
 			$instance->query($query);
 			$e = new Exception();
 			$this->query_log[] = array('query' => $query->getQuery(),
-			                           'error' => array('code' => $query->getErrno(),
-			                                            'message' => $query->getError()),
-			                           'time' => round(microtime(true) - $start, 5),
-			                           'backtrace' => $e->getTraceAsString(),
-			                           'analysis' => $instance->analyse($query));
-
+									   'error' => array('code' => $query->getErrno(),
+														'message' => $query->getError()),
+									   'time' => round(microtime(true) - $start, 5),
+									   'backtrace' => $e->getTraceAsString(),
+									   'analysis' => $instance->analyse($query));
 		} else {
 			$instance->query($query);
 		}
@@ -639,7 +638,7 @@ abstract class DatabaseDAO {
 	}
 }
 
-if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && DATABASE_SHOW_QUERY_LOG){
 	PageFactoryDeveloperToolbar::getInstance()->addItem(new DatabaseDeveloperToolbarQueryLog());
 }
 ?>

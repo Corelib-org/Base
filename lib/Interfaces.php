@@ -271,7 +271,8 @@ abstract class CompositeOutput extends Composite implements Output {
 	 *
 	 * @see Composite::addComponent()
 	 */
-	public function addComponent(CompositeOutput $component){
+	public function addComponent(Composite $component){
+		assert("instanceof CompositeOutput");
 		return parent::addComponent($component);
 	}
 

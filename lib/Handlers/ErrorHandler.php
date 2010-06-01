@@ -169,17 +169,31 @@ class ErrorHandler implements Singleton {
 			 * XXX This if loop is a hot fix for disabling E_STRICT errors for all php 5.2.x version.
 			 * XXX This works as a workaround for php bug #49177, see: http://bugs.php.net/bug.php?id=49177 for more information
 			 */
-			// if($code != E_STRICT || !version_compare(PHP_VERSION, '5.2') == 1){
-				header('HTTP/1.1 500 Internal Server Error');
-
+			if($code != E_STRICT || !version_compare(PHP_VERSION, '5.3') == -1){
+ 				header('HTTP/1.1 500 Internal Server Error');
 				$this->errors[] = array('code' => $code,
 				                        'description' => $description,
 				                        'file' => $file,
 				                        'line' => $line,
 				                        'symbol' => $symbol,
 				                        'backtrace' => debug_backtrace());
-			// }
+			}
 		}
+	}
+
+	/**
+	 * Trigger assert
+	 *
+	 * This method is used by PHP's internal assert handler
+	 *
+	 * @param string $file filename
+	 * @param integer $line line number
+	 * @param string $message infomtion about failed assert
+	 * @return void
+	 * @internal
+	 */
+	public function assert($file, $line, $message=null){
+		$this->trigger(E_USER_ERROR, 'Assertion Failed: '.$message, $file, $line);
 	}
 
 	/**
@@ -455,8 +469,9 @@ class BaseException extends Exception {
 if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
 	if(BASE_RUNLEVEL > BASE_RUNLEVEL_PROD){
 		assert_options(ASSERT_ACTIVE, true);
-		assert_options(ASSERT_BAIL, true);
-		assert_options(ASSERT_WARNING, true);
+		assert_options(ASSERT_BAIL, false);
+		assert_options(ASSERT_WARNING, false);
+		assert_options(ASSERT_CALLBACK, array(ErrorHandler::getInstance(), 'assert'));
 	} else {
 		assert_options(ASSERT_ACTIVE, false);
 	}

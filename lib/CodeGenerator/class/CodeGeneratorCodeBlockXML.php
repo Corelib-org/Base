@@ -75,9 +75,19 @@ class CodeGeneratorCodeBlockXML extends CodeGeneratorCodeBlock {
 	 * @param CodeGeneratorCodeBlockXMLStatement $component
 	 * @return CodeGeneratorCodeBlockXMLStatement
 	 */
-	public function addComponent(CodeGeneratorCodeBlockXMLStatement $component){
-		$this->components[] = $component;
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockXMLStatement');
+		parent::addComponent($component, $reference);
 		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlockXML
+	 */
+	public function getComposite(){
+		return $this;
 	}
 }
 
@@ -189,9 +199,19 @@ class CodeGeneratorCodeBlockXMLElement extends CodeGeneratorCodeBlockXMLStatemen
 	 * @param CodeGeneratorCodeBlockXMLStatement $component
 	 * @return CodeGeneratorCodeBlockXMLStatement
 	 */
-	public function addComponent(CodeGeneratorCodeBlockXMLStatement $component){
-		$this->components[] = $component;
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockXMLStatement');
+		parent::addComponent($component, $reference);
 		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlockXMLElement
+	 */
+	public function getComposite(){
+		return $this;
 	}
 }
 ?>

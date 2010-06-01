@@ -326,7 +326,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 		if(!is_null($this->expires)){
 			header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', $this->expires));
-			header('Cache-Control: private, no-store');
+			header('Cache-Control: private, max-age='.($this->expires - time()).', must-revalidate');
 			header('Pragma:');
 		}
 

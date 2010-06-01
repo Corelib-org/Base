@@ -207,7 +207,7 @@ class CodeGeneratorCodeBlock extends CodeGeneratorCodeBlockComposite {
 
 
 	//*****************************************************************//
-	//*********** CodeGenrator Code block class methods ***************//
+	//*********** CodeGenerator Code block class methods **************//
 	//*****************************************************************//
 	/**
 	 * Create new instance of object.
@@ -320,9 +320,19 @@ class CodeGeneratorCodeBlock extends CodeGeneratorCodeBlockComposite {
 	 * @param CodeGeneratorCodeBlockStatement $component
 	 * @return return CodeGeneratorCodeBlockStatement
 	 */
-	public function addComponent(CodeGeneratorCodeBlockStatement $component){
-		$this->components[] = $component;
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockStatement');
+		parent::addComponent($component, $reference);
 		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlock
+	 */
+	public function getComposite(){
+		return $this;
 	}
 
 	/**

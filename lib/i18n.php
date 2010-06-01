@@ -142,7 +142,7 @@ class i18nLocale {
 	}
 
 	/**
-	 * Add new date format.
+	 * Add new date output format.
 	 *
 	 * @param string $ident identifying name
 	 * @param string $format date format
@@ -154,6 +154,23 @@ class i18nLocale {
 
 		$this->date_formats[$ident] = $format;
 		return true;
+	}
+
+	/**
+	 * Get date output format based on ident.
+	 *
+	 * @param string dateformat ident
+	 * @see i18nLocale::addDateFormat()
+	 * @return string if format was found, else return false
+	 */
+	public function getDateFormat($ident){
+		assert('is_string($ident)');
+
+		if(isset($this->date_formats[$ident])){
+			return $this->date_formats[$ident];
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -373,6 +390,14 @@ class i18n implements Singleton,Output {
 	public function getLocale(){
 		if($this->locale instanceof i18nLocale){
 			return $this->locale;
+		} else {
+			return false;
+		}
+	}
+
+	public function getDateConverter($ident){
+		if($format  = $this->getLocale()->getDateFormat($ident)){
+			return new DateConverter($format);
 		} else {
 			return false;
 		}

@@ -400,6 +400,58 @@ class StringConverterFileSize implements Converter {
 
 
 //*****************************************************************//
+//********************** DateConverter class *********************//
+//*****************************************************************//
+/**
+ * Convert unixtime to human readable date.
+ *
+ * This converter is based on php's function strftime
+ *
+ * @link http://dk.php.net/strftime
+ * @category corelib
+ * @package Base
+ * @subpackage Converters
+ */
+class DateConverter implements Converter {
+
+
+	//*****************************************************************//
+	//**************** DateConverter class properties *****************//
+	//*****************************************************************//
+	/**
+	 * @var string charecter list.
+	 * @internal
+	 */
+	private $format = null;
+
+	private $date_format = null;
+
+	//*****************************************************************//
+	//***************** DateConverter class methods *******************//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $format regular expression
+	 * @return void
+	 */
+	public function __construct($format){
+		$this->format = $format;
+	}
+
+	/**
+	 * Convert data.
+	 *
+	 * @see Converter::convert()
+	 * @internal
+	 */
+	public function convert($data) {
+		return strftime($this->format, $data);
+	}
+}
+
+
+//*****************************************************************//
 //*************** DateConverterParseFormat class ******************//
 //*****************************************************************//
 /**

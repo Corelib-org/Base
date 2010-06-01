@@ -302,9 +302,19 @@ class CodeGeneratorCodeBlockPHPClassMethod extends CodeGeneratorCodeBlockPHPStat
 	 * @param CodeGeneratorCodeBlockPHPStatement $component
 	 * @return CodeGeneratorCodeBlockPHPStatement
 	 */
-	public function addComponent(CodeGeneratorCodeBlockPHPStatement $component){
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockPHPStatement');
 		$this->components[] = $component;
 		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlockPHPClassMethod
+	 */
+	public function getComposite(){
+		return $this;
 	}
 
 	/**
@@ -480,9 +490,19 @@ class CodeGeneratorCodeBlockPHPIf extends CodeGeneratorCodeBlockPHPStatement {
 	 * @param CodeGeneratorCodeBlockPHPStatement $component
 	 * @return CodeGeneratorCodeBlockPHPStatement
 	 */
-	public function addComponent(CodeGeneratorCodeBlockPHPStatement $component){
-		$this->components[] = $component;
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockPHPStatement');
+		parent::addComponent($component, $reference);
 		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlockPHPIf
+	 */
+	public function getComposite(){
+		return $this;
 	}
 
 	/**
@@ -513,7 +533,8 @@ class CodeGeneratorCodeBlockPHPIf extends CodeGeneratorCodeBlockPHPStatement {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
-	private function _setParent(CodeGeneratorCodeBlockPHPIf $parent){
+	private function _setParent(Composite $parent){
+		assert('$parent instanceof CodeGeneratorCodeBlockPHPIf');
 		$this->parent = $parent;
 		return true;
 	}
@@ -620,9 +641,19 @@ class CodeGeneratorCodeBlockPHPDoc extends CodeGeneratorCodeBlockPHPStatement {
 	 * @param CodeGeneratorCodeBlockPHPDocTag $component
 	 * @return CodeGeneratorCodeBlockPHPDocTag
 	 */
-	public function addComponent(CodeGeneratorCodeBlockPHPDocTag $component){
-		$this->components[] = $component;
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockPHPDocTag');
+		parent::addComponent($component, $reference);
 		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlockPHPDoc
+	 */
+	public function getComposite(){
+		return $this;
 	}
 
 	/**

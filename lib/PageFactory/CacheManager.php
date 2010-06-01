@@ -710,7 +710,7 @@ class CacheManager {
 		}
 
 		if(is_array($this->page)){
-			file_put_contents($this->getFilename().self::PAGE_FILE_SUFFIX, '<?php include(\''.$this->page['file'].'\'); $this->page = array(\'page\' => \''.$this->page['file'].'\', \'exec\' => \''.$this->page['method'].'\', \'engine\' => \''.$this->page['engine'].'\'); ?>');
+			file_put_contents($this->getFilename().self::PAGE_FILE_SUFFIX, '<?php'."\n".'include(\''.$this->page['file'].'\');'."\n".'$this->page = array(\'page\' => \''.$this->page['file'].'\','."\n".'                    \'exec\' => \''.$this->page['method'].'\', \'engine\' => \''.$this->page['engine'].'\');'."\n".'?>');
 		}
 
 		$this->data_updated = false;

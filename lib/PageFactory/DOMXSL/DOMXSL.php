@@ -216,7 +216,8 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 *
 	 * @see PageFactoryTemplateEngine::setTemplate()
 	 */
-	public function setTemplate(PageFactoryDOMXSLTemplate $template){
+	public function setTemplate(PageFactoryTemplate $template){
+		assert('$template instanceof PageFactoryDOMXSLTemplate');
 		$return = parent::setTemplate($template);
 		$this->_prepareXML();
 

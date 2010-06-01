@@ -966,7 +966,7 @@ class InputValidatorInteger extends InputValidatorRegex {
 	 * @internal
 	 */
 	public function __construct(){
-		parent::__construct('/^[0-9]+$/');
+		parent::__construct('/^-?[0-9]+$/');
 	}
 }
 

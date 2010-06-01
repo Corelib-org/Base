@@ -775,7 +775,8 @@ class PageFactory implements Singleton {
 					throw new BaseException('file not set.', E_USER_ERROR);
 				}
 				if(!is_file($page['page'])){
-					trigger_error('Unable to open: '.$val['page'].'. File not found.', E_USER_ERROR);
+					trigger_error('Unable to open: '.$page['page'].'. File not found.', E_USER_ERROR);
+					return false;
 				}
 				if(!isset($page['engine'])){
 					$page['engine'] = PAGE_FACTORY_ENGINE;
@@ -876,6 +877,7 @@ class PageFactory implements Singleton {
 	private function _enableEngine($classname){
 		$engine = '$this->engine = new '.$classname.'();';
 		eval($engine);
+		assert('$this->engine instanceof PageFactoryTemplateEngine');
 		$this->engine->setCacheManager($this->cache);
 	}
 
@@ -913,11 +915,12 @@ class PageFactory implements Singleton {
 					$template->cleanup();
 				}
 				if($this->write_to_cache && PAGE_FACTORY_CACHE_ENABLE){
+
 					$this->cache->setData($content);
 				}
 			}
 
-			if($this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
+			if(PAGE_FACTORY_CACHE_ENABLE && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
 				echo $this->cache->read();
 				return true;
 			}

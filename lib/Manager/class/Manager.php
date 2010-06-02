@@ -368,7 +368,7 @@ class Manager implements Singleton {
 	/**
 	 * Singleton Object Reference.
 	 *
-	 * @var UnknownCorelibManagerExtension
+	 * @var Manager
 	 * @internal
 	 */
 	private static $instance = null;

@@ -189,7 +189,7 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 
 				$output  = '<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/toolbar.css" />';
 				$output .= '<div id="developer-toolbar">';
-				$output .= '<div style="float: right"><a href="javascript:void(0)" onclick="document.getElementById(\'developer-toolbar\').style.display=\'none\';"><img src="corelib/resource/manager/images/icons/toolbar/close.png" alt="Close toolbar" title="Close toolbar"/></a></div>';
+				$output .= '<div style="float: right"><a href="javascript:void(0)" onclick="document.getElementById(\'developer-toolbar\').style.display=\'none\';"><img src="corelib/resource/manager/images/icons/toolbar/close.png" alt="Close toolbar" title="Close toolbar" style="border: 0px;"/></a>&#160;</div>';
 				$output .= '<div class="toolbar">'.$toolbar.'</div><div class="data">'.$data.'</div></div>';
 				return $output;
 			}

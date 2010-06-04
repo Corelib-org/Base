@@ -106,7 +106,10 @@ class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
 	 * @return string empty string
 	 * @internal
 	 */
-	public function draw(){ return ''; }
+	public function draw(){
+		$this->page->draw($this);
+		return '';
+	}
 
 	/**
 	 * Add page settings.

@@ -256,6 +256,8 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 * @return void
 	 */
 	public function __construct(){
+		ob_start();
+		
 		if(!defined('HTTP_STATUS_MESSAGE_FILE')){
 			/**
 			 * HTTP status message file.
@@ -301,7 +303,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 * @return boolean true of no locations header is sent, else return false
 	 */
 	public function init(){
-		ob_start();
 		return is_null($this->location);
 	}
 

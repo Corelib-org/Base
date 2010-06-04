@@ -704,14 +704,17 @@ class Manager implements Singleton {
 	 * @internal
 	 */
 	protected function _searchDir($dir){
-		$d = dir($dir);
-		while (false !== ($entry = $d->read())) {
-			if(preg_match('/\.cxd$/', $entry)){
-				$this->_loadExtension($dir.'/'.$entry);
-			} else if(is_dir($dir.'/'.$entry) && $entry != '.' && $entry != '..'){
-				$this->_searchDir($dir.'/'.$entry);
-			} else if($entry != '.' && $entry != '..'){
-				EventHandler::getInstance()->trigger(new ManagerFileSearch($dir.'/'.$entry));
+		if(is_readable($dir)){
+			$d = dir($dir);
+
+			while (false !== ($entry = $d->read())) {
+				if(preg_match('/\.cxd$/', $entry)){
+					$this->_loadExtension($dir.'/'.$entry);
+				} else if(is_dir($dir.'/'.$entry) && $entry != '.' && $entry != '..'){
+					$this->_searchDir($dir.'/'.$entry);
+				} else if($entry != '.' && $entry != '..'){
+					EventHandler::getInstance()->trigger(new ManagerFileSearch($dir.'/'.$entry));
+				}
 			}
 		}
 	}

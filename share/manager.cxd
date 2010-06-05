@@ -53,9 +53,9 @@
 				<url>/corelib/system/database/</url>
 				<file>{CORELIB}/Base/lib/Manager/http/post/System.php</file>
 				<exec>database</exec>
-			</page>			
+			</page>
 		</post>
-	</pages>	
+	</pages>
 	<props>
 		<menu locked="false">
 			<group id="tools" title="Tools">
@@ -63,7 +63,7 @@
 				<item url="/corelib/system/database/">Database updater</item>
 				<item url="/corelib/generator/">Code generator</item>
 			</group>
-			<!-- 
+			<!--
 			<group title="System">
 				<item url="/corelib/manager/extensions/">Extensions</item>
 				<item url="/corelib/system/configuration/">Configuration</item>
@@ -72,24 +72,24 @@
 			<group title="About" id="about" url="/corelib/about/">
 				<item url="/corelib/about/markup/">Markup</item>
 			</group>
-			
-			
+
+
 			<!--  group title="Configuration" id="configuration" url="/corelib/system/configuration/"/ -->
-			<!-- 
+			<!--
 			<group title="Database Tool" id="database" url="/corelib/system/database/"/>
 			<group title="Code generation Tool" id="database" url="/corelib/generator/"/>
 			-->
 			<!--  group title="Markup" id="markup" url="/corelib/markup/"/ -->
 		</menu>
 		<resources>
-			<resource handle="manager">{CORELIB}/Base/Share/web/</resource>
+			<resource handle="manager">{CORELIB}/Base/share/web/</resource>
 		</resources>
 		<database>
 			<!--
 			<engine id="MySQLi">
 			</engine> -->
 		</database>
-		
+
 		<code-generator>
 			<group name="Code generator examples">
 				<table name="tbl_example">
@@ -98,26 +98,26 @@
 					</generator>
 					<generator name="CodeGeneratorModelList"/>
 					<generator name="CodeGeneratorGUI">
-					
-					
+
+
 						<layout name="CodeGeneratorGUILayout">
 							<!--
 							/**
 							 * Default values for a list.
-							 * 
+							 *
 							 * attribute: render-mode maybe omittet, default value is: table
 							 * attribute: xsl-mode maybe omittet, default value is: xhtml-list
-							 * children: one or more field element containing a name attributte which is the 
-							 *           name of the column to write. If no fields are listed, all fields 
+							 * children: one or more field element containing a name attributte which is the
+							 *           name of the column to write. If no fields are listed, all fields
 							 *           will be written into the output.
 							 *
 							 * See more examples below
 							 */
 							 -->
-							<list xsl-mode="xhtml-list" render-mode="table" draw-actions="true"> 
+							<list xsl-mode="xhtml-list" render-mode="table" draw-actions="true">
 								<field name="name"/>
 								<field name="create_timestamp"/>
-							</list> 
+							</list>
 							<list xsl-mode="xhtml-list-full" render-mode="table"/>
 							<list xsl-mode="xhtml-list-ul" render-mode="ul">
 								<field name="name"/>
@@ -129,9 +129,9 @@
 								<field name="name"/>
 							</list>
 						</layout>
-						
-						
-						<!-- 
+
+
+						<!--
 						/**
 						 * Default list action values.
 						 *
@@ -157,9 +157,9 @@
 						 <list name="CodeGeneratorGUIList" xsl-mode="xhtml-list" action="default" method="details" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content" page-limit="20"/>
 						 -->
 						<list/>
-						
-						
-						<!-- 
+
+
+						<!--
 						/**
 						 * Default edit action values.
 						 *
@@ -177,9 +177,9 @@
 						 <edit name="CodeGeneratorGUIEdit" action="default" method="edit" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content"/>
 						 -->
 						<edit/>
-						
-						
-						<!-- 
+
+
+						<!--
 						/**
 						 * Default create action values.
 						 *
@@ -197,9 +197,9 @@
 						 <create name="CodeGeneratorGUICreate" action="default" method="edit" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content"/>
 						 -->
 						<create/>
-						
-	
-						<!-- 
+
+
+						<!--
 						/**
 						 * Default view action values.
 						 *
@@ -217,9 +217,9 @@
 						 <view name="CodeGeneratorGUIView" action="default" method="view" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content"/>
 						 -->
 						<view/>
-						
-						
-						<!-- 
+
+
+						<!--
 						/**
 						 * Default delete action values.
 						 *
@@ -228,10 +228,10 @@
 						 <delete/>
 						 -->
 						<delete/>
-						
+
 					</generator>
 				</table>
 			</group>
 		</code-generator>
-	</props>	
+	</props>
 </extension>

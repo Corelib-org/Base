@@ -57,10 +57,14 @@ class WebPage extends PageBase {
 
 		switch ($extension){
 			case 'css':
-				header('Content-Type: text/css');
+				header('Content-Type: text/css; charset=utf-8');
 				echo file_get_contents($resource);
 				break;
-			case 'jpg' || 'epg':
+			case 'jpg':
+				header('Content-Type: image/jpeg');
+				echo file_get_contents($resource);
+				break;
+			case 'epg':
 				header('Content-Type: image/jpeg');
 				echo file_get_contents($resource);
 				break;
@@ -73,7 +77,7 @@ class WebPage extends PageBase {
 				echo file_get_contents($resource);
 				break;
 			case '.js':
-				header('Content-Type: text/javascript');
+				header('Content-Type: text/javascript; charset=utf-8');
 				echo file_get_contents($resource);
 				break;
 			default:

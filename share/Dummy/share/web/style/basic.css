@@ -12,15 +12,43 @@ Email: 		kenneth@bravura.dk
 	margin: 0;
 	padding: 0;
 }
-body { }
-h1 { }
-h2 { }
+
+body {
+	background-color: #EFEFEF;
+	font-family: sans-serif;
+	color: #333333;
+}
+
+h1 {
+	font-weight: normal;
+	margin-bottom: 10px;
+}
+
+h2 {
+	font-weight: normal;
+	margin-bottom: 10px;
+	margin-top: 20px;
+}
 h3 { }
-p { }
+p {
+	margin-bottom: 30px;
+	line-height: 20px;
+	font-size: 15px;
+}
 a { }
 a:hover	{ }
 hr { }
 
 pre {
 	text-align: left;
+}
+
+code {
+	display: block;
+	padding: 10px;
+	border: 1px solid #AAAAAA;
+	background-color: #FFFFE0;
+	margin-bottom: 10px;
+	margin-top: 10px;
+
 }

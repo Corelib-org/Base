@@ -6,6 +6,33 @@ Author: 	Kenneth M¿rk
 Email: 		kenneth@bravura.dk
 -----------------------------------------------------------------*/
 
+#page-container {
+	background-color:#FFFFFF;
+	border:1px solid #CFCFCF;
+	width: 700px;
+	margin: auto;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+#page-header, #page-footer, #page-content-container {
+	margin: 20px;
+}
+
+#page-header {
+	font-size: 12px;
+	margin-bottom: 30px;
+}
+
+
+#page-header > img {
+	height: 50px;
+}
+
+#page-footer {
+	font-size: 12px;
+}
+
 .floatLeft {
 	float:left;
 }

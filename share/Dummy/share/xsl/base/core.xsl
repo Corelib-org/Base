@@ -30,6 +30,7 @@
 
 				<link rel="shortcut icon" href="share/web/images/favicon.ico" />
 				<link rel="stylesheet" type="text/css" href="share/web/style/basic.css" />
+
 				<xsl:for-each select="/page/settings/stylesheet">
 					<link rel="stylesheet" type="text/css" href="{.}" />
 				</xsl:for-each>

@@ -409,7 +409,7 @@ class CacheManager {
 	public function __construct($filename){
 		$dir = dirname($filename);
 		if(!is_dir($dir)){
-			mkdir($dir, 0777, true);
+			@mkdir($dir, 0777, true);
 		}
 		$this->filename = realpath($dir).'/'.basename($filename);
 		EventHandler::getInstance()->register(new CacheManagerUpdate($this), 'CacheUpdateEvent');

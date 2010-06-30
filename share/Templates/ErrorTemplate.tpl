@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 		<title>Fatal Error</title>
 		<script type="text/javascript">
-			<!--
+			// <![CDATA[
 				function toggleErrorDescription(element){
 					if(element.style.display == 'none'){
 						element.style.display = 'block';
@@ -13,9 +13,9 @@
 						element.style.display = 'none';
 					}
 				}
-			// -->
+			// ]]>
 		</script>
-	</head data="ffffe0">
+	</head>
 	<body style="background: #ffffFF; margin: 20px">
 	<!--
 		<div style="margin: auto; border: 1px solid #CCCCCC; background: #ffffe0; width: 80%; margin-bottom: 20px; text-align: left;" align="center">
@@ -39,7 +39,7 @@
 				</p>
 			</div>
 		</div> -->
-		
+
 		!ERROR_TEMPLATE {
 			<table style="border: 1px solid #CCCCCC; background: #ffffe0; width: 80%; margin-bottom: 20px; text-align: left;" align="center">
 				<tr>
@@ -60,7 +60,7 @@
 			 			</div>
 			 		</td>
 				</tr>
-				
+
 				<tr>
 			 		<td style="font-family: Verdana, Arial; font-size: 12px; line-height: 13px; color: #666666;">
 			 			<div style="margin-left: 10px; font-weight: bold; font-size: 12px;"><a href="javascript:void(0);" onclick="toggleErrorDescription(document.getElementById('!REQUEST_CONTENT_ID!'));">Request Information &#187;</a></div>
@@ -68,13 +68,13 @@
 			 				!REQUEST_CONTENT!
 			 			</div>
 						<script type="text/javascript">
-							<!--
-							document.getElementById('!REQUEST_CONTENT_ID!').style.display = 'none';
-							// -->
-						</script>			 			
+							// <![CDATA[
+								document.getElementById('!REQUEST_CONTENT_ID!').style.display = 'none';
+							// ]]>
+						</script>
 					</td>
-				</tr>				
-				
+				</tr>
+
 				<tr>
 			 		<td style="font-family: Verdana, Arial; font-size: 12px; line-height: 13px; color: #666666;">
 			 			<div style="margin-left: 10px; font-weight: bold; font-size: 12px;"><a href="javascript:void(0);" onclick="toggleErrorDescription(document.getElementById('!ERROR_FILE_CONTENT_ID!'));">Source &#187;</a></div>
@@ -82,13 +82,13 @@
 			 				!ERROR_FILE_CONTENT!
 			 			</div>
 						<script type="text/javascript">
-							<!--
-							document.getElementById('!ERROR_FILE_CONTENT_ID!').style.display = 'none';
-							// -->
-						</script>			 			
+							// <![CDATA[
+								document.getElementById('!ERROR_FILE_CONTENT_ID!').style.display = 'none';
+							// ]]>
+						</script>
 					</td>
 				</tr>
-				
+
 				<tr>
 			 		<td style="font-family: Verdana, Arial; font-size: 10px; line-height: 13px; color: #666666;">
 			 			<div style="margin-left: 10px; font-weight: bold; font-size: 12px;"><a href="javascript:void(0);" onclick="toggleErrorDescription(document.getElementById('!STACK_TRACE_ID!'));">Stack trace &#187;</a></div>
@@ -96,9 +96,9 @@
 			 				!STACK_TRACE!
 			 			</div>
 						<script type="text/javascript">
-							<!--
-							document.getElementById('!STACK_TRACE_ID!').style.display = 'none';
-							// -->
+							// <![CDATA[
+								document.getElementById('!STACK_TRACE_ID!').style.display = 'none';
+							// ]]>
 						</script>
 					</td>
 				</tr>

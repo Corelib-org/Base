@@ -122,7 +122,7 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 				foreach ($line['analysis']['columns'] as $column){
 					$result .= '<th style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$column.'</th>';
 				}
-				$result .= '<tr></thead>';
+				$result .= '</tr></thead>';
 				foreach ($line['analysis']['rows'] as $rows){
 					$result .= '<tr>';
 					foreach ($rows as $columns){

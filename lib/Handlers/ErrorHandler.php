@@ -237,12 +237,15 @@ class ErrorHandler implements Singleton {
 	 * @return string error handler content.
 	 */
 	public function __toString(){
+		header('Content-Type: text/html; charset=utf-8');
 		$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
 		$content = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', $template);
+		$buffer = '';
 		foreach ($this->errors as $error){
-			$buffer .= preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$this->_getError($error, $content).' \\3', $template);
+			$buffer .= $this->_getError($error, $content);
 		}
-		return $buffer;
+		$template = preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$buffer.' \\3', $template);
+		return $template;
 	}
 
 	/**

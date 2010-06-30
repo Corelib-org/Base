@@ -154,6 +154,12 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 		return $item;
 	}
 
+	public function inject(&$data){
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
+			$data = str_replace('</body', $this->draw().'</body', $data);
+		}
+	}
+
 	/**
 	 * Create toolbar.
 	 *
@@ -162,39 +168,54 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	 * @return string toolbar.
 	 * @internal
 	 */
-	public function __toString(){
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
-			$headers = headers_list();
-			$show_bar = false;
-			foreach($headers as $header){
-				if(stristr($header, 'Content-Type') && stristr($header, 'text/html')){
-					$show_bar = true;
-					break;
-				}
-			}
-
-			if($show_bar){
-				$data = '';
-				$toolbar = '';
-				foreach($this->items as $item){
-					$id = 'developer-toolbar-'.RFC4122::generate();
-					$tool = $item->getToolbarItem();
-					if($content = $item->getContent()){
-						$toolbar .= '<a onclick="if(document.getElementById(\''.$id.'\').style.display == \'none\'){ document.getElementById(\''.$id.'\').style.display = \'block\' } else { document.getElementById(\''.$id.'\').style.display = \'none\' }">'.$tool.'</a	> &nbsp; ';
-						$data .= '<div id="'.$id.'" style="display: none;">'.$content.'</div>';
-					} else {
-						$toolbar .= $tool.'  &nbsp;  ';
-					}
-				}
-
-				$output  = '<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/toolbar.css" />';
-				$output .= '<div id="developer-toolbar">';
-				$output .= '<div style="float: right"><a href="javascript:void(0)" onclick="document.getElementById(\'developer-toolbar\').style.display=\'none\';"><img src="corelib/resource/manager/images/icons/toolbar/close.png" alt="Close toolbar" title="Close toolbar" style="border: 0px;"/></a>&#160;</div>';
-				$output .= '<div class="toolbar">'.$toolbar.'</div><div class="data">'.$data.'</div></div>';
-				return $output;
+	public function draw(){
+		$headers = headers_list();
+		$show_bar = false;
+		foreach($headers as $header){
+			if(stristr($header, 'Content-Type') && stristr($header, 'html')){
+				$show_bar = true;
+				break;
 			}
 		}
-		return '';
+
+		if($show_bar){
+			$data = '';
+			$toolbar = '';
+			foreach($this->items as $item){
+				$id = 'developer-toolbar-'.RFC4122::generate();
+				$tool = $item->getToolbarItem();
+				if($content = $item->getContent()){
+					$toolbar .= '<a onclick="if(document.getElementById(\''.$id.'\').style.display == \'none\'){ document.getElementById(\''.$id.'\').style.display = \'block\' } else { document.getElementById(\''.$id.'\').style.display = \'none\' }">'.$tool.'</a	> &nbsp; ';
+					$data .= '<div id="'.$id.'" style="display: none;">'.$content.'</div>';
+				} else {
+					$toolbar .= $tool.'  &nbsp;  ';
+				}
+			}
+
+			$output  = '<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/toolbar.css" />';
+			$output .= '<div id="developer-toolbar">';
+			$output .= '<div style="float: right"><a href="javascript:void(0)" onclick="document.getElementById(\'developer-toolbar\').style.display=\'none\';"><img src="corelib/resource/manager/images/icons/toolbar/close.png" alt="Close toolbar" title="Close toolbar" style="border: 0px;"/></a>&#160;</div>';
+			$output .= '<div class="toolbar">'.$toolbar.'</div><div class="data">'.$data.'</div></div>';
+			return $output;
+		}
+	}
+
+	/**
+	 * Convert object to string.
+	 *
+	 * converting the developer toolbar to a string results in the html code
+	 * returned by {@link PageFactoryDeveloperToolbar::draw()} this method is
+	 * deprecated and is only here for backwards compatibility.
+	 *
+	 * @uses PageFactoryDeveloperToolbar::draw()
+	 */
+	public function __toString(){
+		trigger_error('PageFactoryDeveloperToolbar::__toString() is deprecated', E_USER_DEPRECATED);
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
+			return $this->draw();
+		} else {
+			return '';
+		}
 	}
 }
 ?>

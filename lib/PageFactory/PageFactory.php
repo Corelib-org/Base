@@ -648,7 +648,8 @@ class PageFactory implements Singleton {
 
 		$eventHandler->trigger(new EventRequestEnd());
 
-		$data = $page->draw().PageFactoryDeveloperToolbar::getInstance();
+		$data = $page->draw();
+		PageFactoryDeveloperToolbar::getInstance()->inject($data);
 
 		if(Errorhandler::getInstance()->hasErrors()){
 			echo Errorhandler::getInstance();

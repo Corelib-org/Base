@@ -250,7 +250,7 @@ class Base implements Singleton {
 		}
 		umask(BASE_UMASK);
 		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
-			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n");
+			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
 		} else {
 			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
 		}

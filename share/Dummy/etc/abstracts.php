@@ -34,6 +34,13 @@
  */
 
 
+
+$base = Base::getInstance();
+$base->addClassPath('lib/');
+
+define('SOFTWARE_VERSION', 'Corelib Dummy Site v1.0');
+
+
 //*****************************************************************//
 //**************** Abstract dummy help contants *******************//
 //*****************************************************************//
@@ -68,6 +75,7 @@ if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
 	 */
 	define('ABSTRACTS_ENABLE_DATABASE', false);
 }
+
 
 
 //*****************************************************************//

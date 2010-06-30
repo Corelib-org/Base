@@ -51,7 +51,7 @@
 	 -->
 	<xsl:template name="page-footer">
 		<div id="page-footer">
-			This page is powered by corelib.
+			This page is powered by Corelib.
 		</div>
 	</xsl:template>
 

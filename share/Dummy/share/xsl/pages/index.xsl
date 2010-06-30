@@ -27,7 +27,7 @@
 
 		<h2>What's next</h2>
 		<p>
-			<a href="corelib/">Access corelib web administration interface</a><br/>
+			<a href="corelib/">Access Corelib web administration interface</a><br/>
 			<a href="http://www.corelib.org/documentation">Learn more from the online manual</a><br/>
 		</p>
 	</xsl:template>

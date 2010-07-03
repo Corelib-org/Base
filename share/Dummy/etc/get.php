@@ -27,7 +27,6 @@
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @package Dummy
- * @subpackage Website
  * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
  * @filesource
@@ -35,6 +34,13 @@
 
 // Generic Pages
 $pages['/'] = 'lib/http/get/index.php';
+
+$pages['/404/'] = array('page'=>'lib/http/get/errors.php',
+						'exec'=>'error404');
+
+$pages['/500/'] = array('page'=>'lib/http/get/errors.php',
+						'exec'=>'error500');
+
 
 /*
 EXAMPLES ON USING CUSTOM METHOD OVERRIDES

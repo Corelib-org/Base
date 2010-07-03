@@ -101,7 +101,7 @@ abstract class DatabaseHelper {
  * The DatabaseListHelper class is the fundament of
  * various DatabaseListHelpers
  *
- * @package corelib
+ * @package Base
  * @subpackage Database
  */
 abstract class DatabaseListHelper extends DatabaseHelper {
@@ -130,7 +130,7 @@ abstract class DatabaseListHelper extends DatabaseHelper {
  * The DatabaseListHelperOrder class manages the
  * sorting should be applied on select queries
  *
- * @package corelib
+ * @package Base
  * @subpackage Database
  */
 class DatabaseListHelperOrder extends DatabaseListHelper {
@@ -172,7 +172,7 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
  * The DatabaseListHelperFilter class manages the
  * filters that should be applied on select queries
  *
- * @package corelib
+ * @package Base
  * @subpackage Database
  */
 class DatabaseListHelperFilter extends DatabaseListHelper {
@@ -189,7 +189,7 @@ class DatabaseListHelperFilter extends DatabaseListHelper {
  * The DatabaseDataHandler class manages the changes
  * made when modififying data
  *
- * @package corelib
+ * @package Base
  * @subpackage Database
  */
 class DatabaseDataHandler extends DatabaseHelper {

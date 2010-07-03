@@ -27,18 +27,15 @@
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @package Dummy
- * @subpackage Website
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
- * @filesource
  */
 
 
 
-$base = Base::getInstance();
-$base->addClassPath('lib/');
+Base::getInstance()->addClassPath('lib/');
 
-define('SOFTWARE_VERSION', 'Corelib Dummy Site v1.0');
+define('SOFTWARE_VERSION', 'Corelib Dummy Site v1.0.0');
 
 
 //*****************************************************************//
@@ -88,7 +85,6 @@ if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
  * around the controller layer.
  *
  * @package Dummy
- * @subpackage Website
  */
 abstract class DummyPage extends PageBase { }
 
@@ -100,7 +96,6 @@ abstract class DummyPage extends PageBase { }
  * HTTP GET request
  *
  * @package Dummy
- * @subpackage Website
  * @since Version 5.0
  */
 abstract class DummyPageGet extends DummyPage {
@@ -147,7 +142,6 @@ abstract class DummyPageGet extends DummyPage {
  * HTTP POST request
  *
  * @package Dummy
- * @subpackage Website
  * @since Version 5.0
  */
 abstract class DummyPagePost extends DummyPage {

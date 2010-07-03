@@ -35,7 +35,6 @@
  * @copyright Copyright (c) 2005-2010 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @package Dummy
- * @subpackage Website
  * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
  * @filesource
@@ -95,8 +94,10 @@ define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
  *
  * This constant allows you to enable user authorization support.
  * enabling this setting loads the UserAuthorization class in abstracts.php
+ * please note: setting this constant to true required the corelib Users
+ * extension.
  *
- * @var boolean true or false.
+ * @var boolean true to enable or false to disable.
  */
 define('ABSTRACTS_ENABLE_AUTHORIZATION', false);
 

@@ -518,6 +518,11 @@ class Manager implements Singleton {
 				$p['exec'] = $exec->item(0)->nodeValue;
 			}
 
+			$engine = $page->getElementsByTagName('engine');
+			if($engine->length > 0){
+				$p['engine'] = $engine->item(0)->nodeValue;
+			}
+
 			$url = $page->getElementsByTagName('url');
 			if($url->length > 0){
 				$rurl = $url->item(0)->nodeValue;
@@ -554,7 +559,7 @@ class Manager implements Singleton {
 		while(strstr($filename, '//')){
 			$filename = str_replace('//', '/', $filename);
 		}
-		if(!is_file($filename)){
+		if(!@is_file($filename)){
 			return false;
 		}
 		return $filename;

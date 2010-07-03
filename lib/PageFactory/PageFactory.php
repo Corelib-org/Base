@@ -652,7 +652,7 @@ class PageFactory implements Singleton {
 		PageFactoryDeveloperToolbar::getInstance()->inject($data);
 
 		if(Errorhandler::getInstance()->hasErrors()){
-			echo Errorhandler::getInstance();
+			echo Errorhandler::getInstance()->draw();
 			$data = false;
 		} else {
 			if(!$return){

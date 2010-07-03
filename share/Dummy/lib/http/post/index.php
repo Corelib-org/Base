@@ -24,20 +24,20 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  *
  * @package Dummy
- * @subpackage Website
+ * @subpackage Controllers-Post
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2009 Steffen Sørensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
- * @internal
+ * @ignore
  */
 
 /**
  * Default post controller
  *
  * @package Dummy
- * @subpackage Website
+ * @subpackage Controllers-Post
  * @ignore
  */
 class WebPage extends DummyPagePost {
@@ -48,8 +48,7 @@ class WebPage extends DummyPagePost {
 	 * @return void
 	 */
 	public function build(){
-		$this->xsl->addTemplate('pages/index.xsl');
-		$this->addTemplateDefinition($this->xsl);
+
 	}
 }
 ?>

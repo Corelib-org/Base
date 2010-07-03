@@ -205,6 +205,7 @@ class ErrorHandler implements Singleton {
 	 *
 	 * @param string output buffer
 	 * @return string new output buffer
+	 * @see ErrorHandler::draw();
 	 * @internal
 	 */
 	public function fatal($buffer){
@@ -213,23 +214,34 @@ class ErrorHandler implements Singleton {
 		} else {
 			preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin\s.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
 			while(list($key, $val) = each($result[0])){
-				$this->trigger(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
-				$buffer = $this->__toString();
-
-				if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
-					if(BASE_ADMIN_EMAIL !== false){
-						mail(BASE_ADMIN_EMAIL, '['.$_SERVER['SERVER_NAME'].' - Corelib error handler] '.$result[2][$key], $buffer, 'Content-Type: text/html');
-					}
-					if(defined('BASE_ERROR_FATAL_REDIRECT')){
-						$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
-					} else {
-						$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib</a></i></body></html>';
-					}
-				}
+ 				$this->trigger(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
 			}
-			return $buffer;
+			return $this->draw();
 		}
 	}
+
+	/**
+	 * Draw error and send correct headers.
+	 *
+	 * @return string error message
+	 */
+	public function draw(){
+		header('Content-Type: text/html; charset=utf-8');
+		$buffer = $this->__toString();
+		$checksum = md5($buffer);
+		if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
+			if(BASE_ADMIN_EMAIL !== false){
+				mail(BASE_ADMIN_EMAIL, '['.$_SERVER['SERVER_NAME'].' - Corelib error handler - '.$checksum.'] '.$result[2][$key], $buffer, 'Content-Type: text/html');
+			}
+			if(defined('BASE_ERROR_FATAL_REDIRECT')){
+				$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
+			} else {
+				$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib v'.CORELIB_BASE_VERSION.'</a></i></body></html>';
+			}
+		}
+		return $buffer;
+	}
+
 
 	/**
 	 * Convert error handler to string.
@@ -237,7 +249,6 @@ class ErrorHandler implements Singleton {
 	 * @return string error handler content.
 	 */
 	public function __toString(){
-		header('Content-Type: text/html; charset=utf-8');
 		$template = file_get_contents(CORELIB.'/Base/Share/Templates/ErrorTemplate.tpl');
 		$content = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', $template);
 		$buffer = '';
@@ -247,6 +258,7 @@ class ErrorHandler implements Singleton {
 		$template = preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$buffer.' \\3', $template);
 		return $template;
 	}
+
 
 	/**
 	 * Merge error template with error content.

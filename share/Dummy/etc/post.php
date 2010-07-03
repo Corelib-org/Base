@@ -27,7 +27,6 @@
  * @copyright Copyright (c) 2005-2008 Steffen Soerensen
  * @license http://www.gnu.org/copyleft/gpl.html
  * @package Dummy
- * @subpackage Website
  * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
  * @filesource

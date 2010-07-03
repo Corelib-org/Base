@@ -88,7 +88,7 @@ class File {
 		assert('is_string($file)');
 
 		if(!is_file($file)){
-			$this->file = realpath(dirname($file)).'/'.$file;
+			$this->file = realpath(dirname($file)).'/'.basename($file);
 		} else if(!is_dir($file)){
 			$this->file = realpath($file);
 		} else {
@@ -228,6 +228,16 @@ class File {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * Format line as CSV and write to file.
+	 */
+	public function fputcsv($fields, $delimiter=',', $enclosure='"', $escape='\\'){
+		if(is_null($this->pointer)){
+			$this->fopen('w+');
+		}
+		return fputcsv($this->pointer, $fields, $delimiter, $enclosure);
 	}
 
 	/**

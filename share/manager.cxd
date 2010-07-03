@@ -31,6 +31,7 @@
 				<expr>/^\/corelib\/resource\/(.*?)\/(.*?)\/$/</expr>
 				<exec>getResource('\1', '\2')</exec>
 				<file>{CORELIB}/Base/lib/Manager/http/get/Resources.php</file>
+				<engine>FileSystemTemplateEngine</engine>
 			</page>
 			<page>
 				<url>/corelib/generator/</url>

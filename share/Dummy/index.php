@@ -24,7 +24,6 @@
  * This copyright notice MUST APPEAR in all copies of the script!
  *
  * @package Dummy
- * @subpackage Website
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @copyright Copyright (c) 2009 Steffen Sørensen

@@ -11,7 +11,7 @@
  * If you did not receive a copy of the Bravura License and are
  * unable to obtain it through the web, please send a note to
  * license@bravura.dk so we can mail you a copy immediately.
-
+ *
  *
  * @category corelib
  * @package Base
@@ -31,8 +31,8 @@
 /**
  * RFC 4122 A Universally Unique IDentifier (UUID) URN Namespace Generator Class
  *
- * @package corelib
- * @subpackage Base
+ * @package Base
+ * @subpackage Algorithms
  */
 class RFC4122 {
 	//*****************************************************************//

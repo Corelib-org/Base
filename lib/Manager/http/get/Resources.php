@@ -45,45 +45,61 @@
  */
 class WebPage extends PageBase {
 
+	/**
+	 * @var PageFactoryFileSystemTemplate
+	 */
+	protected $template = null;
+
+	public function __init(){
+		parent::__init();
+		$this->template = new PageFactoryFileSystemTemplate();
+		$this->addTemplateDefinition($this->template);
+	}
+
 	public function getResource($handler, $resource){
 		$manager = Manager::getInstance();
 		$resource = $manager->getResource($handler, $resource);
 		$extension = substr($resource, -3);
 
-		header('Last-Modified: '.gmdate('D, d M Y H:i:s \G\M\T', filemtime($resource)));
- 		header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-		header('Cache-Control: public, max-age=86400');
-		header('Pragma:');
+		if($resource && is_file($resource)){
+			switch ($extension){
+				case 'css':
+					$this->template->setContentType('text/css; charset=utf-8');
+					break;
+				case 'jpg':
+					$this->template->setContentType('image/jpg');
+					break;
+				case 'epg':
+					$this->template->setContentType('image/jpeg');
+					break;
+				case 'gif':
+					$this->template->setContentType('image/gif');
+					break;
+				case 'png':
+					$this->template->setContentType('image/png');
+					break;
+				case '.js':
+					$this->template->setContentType('text/javascript; charset=utf-8');
+					break;
+				default:
 
-		switch ($extension){
-			case 'css':
-				header('Content-Type: text/css; charset=utf-8');
-				echo file_get_contents($resource);
-				break;
-			case 'jpg':
-				header('Content-Type: image/jpeg');
-				echo file_get_contents($resource);
-				break;
-			case 'epg':
-				header('Content-Type: image/jpeg');
-				echo file_get_contents($resource);
-				break;
-			case 'gif':
-				header('Content-Type: image/gif');
-				echo file_get_contents($resource);
-				break;
-			case 'png':
-				header('Content-Type: image/png');
-				echo file_get_contents($resource);
-				break;
-			case '.js':
-				header('Content-Type: text/javascript; charset=utf-8');
-				echo file_get_contents($resource);
-				break;
-			default:
-				trigger_error('Illegal Resource type!', E_USER_ERROR);
+					break;
+			}
+			$this->_sendFile($resource);
+		} else {
+			exit('404');
 		}
-		exit;
+	}
+
+	private function _sendFile($filename){
+		$this->template->setContentFilename(basename($filename));
+		$this->template->setExpire(time() + 86400);
+		$this->template->setLastModified(filemtime($filename));
+
+		$file = new File($filename);
+		while ($data = $file->fread()){
+			echo $data;
+		}
 	}
 }
 ?>

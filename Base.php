@@ -246,7 +246,7 @@ class Base implements Singleton {
 	 */
 	private function __construct(){
 		if(is_callable('mb_internal_encoding')){
-			mb_internal_encoding('UTF-8');
+			mb_internal_encoding('utf-8');
 		}
 		umask(BASE_UMASK);
 		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
@@ -360,7 +360,6 @@ class Base implements Singleton {
 	 */
 	public function loadClass($class){
 		assert('is_string($class)');
-
 		__autoload($class);
 		return true;
 	}
@@ -378,7 +377,7 @@ class Base implements Singleton {
 	 */
 	public function findClass($class){
 		assert('is_string($class)');
-
+		assert('$class != "WebPage"');
 		if(!isset($this->class_cache[$class])){
 			if($file = $this->_classSearch($class)){
 				$this->class_cache[$class] = $file;
@@ -414,6 +413,7 @@ class Base implements Singleton {
 	 * @internal
 	 */
 	private function _classSearch($class){
+		set_time_limit(300);
 		$file = false;
 		while(list(,$val) = each($this->class_paths)){
 			if($file = $this->_searchDir($val, $class)){

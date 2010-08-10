@@ -617,7 +617,6 @@ class MySQLiQueryStatement extends MySQLiQuery {
 		foreach ($this->bind['param'] as $key => $param){
 			$params[] = &$this->bind['param'][$key];
 		}
-
 		call_user_func_array(array($this->statement, 'bind_param'), $params);
 
 		foreach ($this->blob as $key => $val){

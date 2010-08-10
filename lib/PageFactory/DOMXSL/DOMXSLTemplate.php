@@ -87,7 +87,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @var string XML encoding
 	 * @internal
 	 */
-	private $xml_encoding = 'UTF-8';
+	private $xml_encoding = 'utf-8';
 
 	/**
 	 * @var array list of php functions exported to xslt

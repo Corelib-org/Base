@@ -390,6 +390,8 @@ class i18n implements Singleton,Output {
 	public function getLocale(){
 		if($this->locale instanceof i18nLocale){
 			return $this->locale;
+		} else if(!is_null($this->fallback)){
+			return $this->fallback;
 		} else {
 			return false;
 		}
@@ -487,8 +489,8 @@ class i18n implements Singleton,Output {
 	 */
 	public function getXML(DOMDocument $xml){
 		$i18n = $xml->createElement('i18n');
-		$i18n->setAttribute('language', $this->locale->getLanguage());
-		$i18n->setAttribute('locale', $this->locale->getLocale());
+		$i18n->setAttribute('language', $this->getLocale()->getLanguage());
+		$i18n->setAttribute('locale', $this->getLocale()->getLocale());
 		$i18n->setAttribute('timezone', $this->getTimezone());
 
 		while (list(,$val) = each($this->language_files)){

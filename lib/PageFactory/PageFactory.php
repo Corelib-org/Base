@@ -362,6 +362,7 @@ abstract class PageFactoryTemplateEngine {
 
 		if(!is_null($callback)){
 			$eval = '$this->page->'.$callback.';';
+
 			eval($eval);
 		} else {
 			$this->page->build();
@@ -785,6 +786,7 @@ class PageFactory implements Singleton {
 				$this->callback = $page['exec'];
 				$this->_enableEngine($page['engine']);
 				$this->_setCacheSettings($page);
+
 				require_once($page['page']);
 			}
 		}

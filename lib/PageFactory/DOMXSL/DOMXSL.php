@@ -32,6 +32,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html
  * @link http://www.corelib.org/
  * @version 1.0.0 ($Id$)
+ * @todo impliment XSLT profiling and developer toolbar item
  */
 
 //*****************************************************************//
@@ -157,6 +158,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 			$proc = new XsltProcessor();
 			$proc->importStylesheet($this->xsl);
+			// $proc->setProfiling('var/db/profile.txt');
 
 			if($functions = $this->template->getRegisteredPHPFunctions()){
 				$proc->registerPHPFunctions($functions);
@@ -166,7 +168,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 			if($input->isSetGet('xml') && BASE_RUNLEVEL == BASE_RUNLEVEL_DEVEL){
 				$this->template->setContentType('text/xml');
-				$this->template->setContentCharset('UTF-8');
+				$this->template->setContentCharset('utf-8');
 				return $this->xml->saveXML();
 			} else {
 

@@ -211,6 +211,23 @@ class File {
 	}
 
 	/**
+	 * Gets line from file.
+	 *
+	 * @param integer $buffer buffer length
+	 * @return mixed string buffer, else return false
+	 */
+	public function fgets($buffer=1024){
+		if(is_null($this->pointer)){
+			$this->fopen();
+		}
+		if($this->feof() !== true){
+			return fgets($this->pointer, $buffer);
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Gets line and parse for CSV fields.
 	 *
 	 * @param integer $buffer buffer length

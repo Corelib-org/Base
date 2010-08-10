@@ -445,8 +445,7 @@ class ErrorHandler implements Singleton {
  * @package Base
  * @subpackage ErrorHandler
  */
-class BaseException extends Exception {
-
+class BaseException extends Exception implements Serializable {
 
 	//*****************************************************************//
 	//***************** BaseException class methods *******************//
@@ -475,6 +474,16 @@ class BaseException extends Exception {
 		trigger_error('Uncought exception: '.get_class($this).' - '.$this->getMessage(), E_USER_ERROR);
 		return parent::__toString();
 	}
+
+
+	public function serialize(){
+		return serialize(array($this->message, $this->code, $this->file, $this->line));
+	}
+
+	public function unserialize($serialized){
+		list($this->message, $this->code, $this->file, $this->line) = unserialize($serialized);
+	}
+
 }
 
 

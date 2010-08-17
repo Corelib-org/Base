@@ -48,14 +48,14 @@ class WebPage extends ManagerPage {
 	public function database(){
 		$this->addContent(new DatabaseTool());
 		$this->xsl->addJavaScript('corelib/resource/manager/javascript/database.js');
-		$this->xsl->addTemplate('Base/Share/xsl/pages/system/database.xsl');
+		$this->xsl->addTemplate('Base/share/xsl/pages/system/database.xsl');
 	}
 
 	public function cache(){
 		$cache = new ManagerCacheStatus();
 		$cache->setCacheSizeConverter(new StringConverterFileSize(2));
 		$this->addContent($cache);
-		$this->xsl->addTemplate('Base/Share/xsl/pages/system/cache.xsl');
+		$this->xsl->addTemplate('Base/share/xsl/pages/system/cache.xsl');
 	}
 
 	public function cacheClear(){

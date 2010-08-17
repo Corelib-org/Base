@@ -140,7 +140,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @var string xsl file
 	 * @internal
 	 */
-	const CACHE_PAGE_XSL = 'Base/Share/xsl/cache.xsl';
+	const CACHE_PAGE_XSL = 'Base/share/xsl/cache.xsl';
 
 
 	//*****************************************************************//

@@ -207,8 +207,7 @@ class SessionHandler implements Singleton,Output {
 	 * @internal
 	 */
 	public function init(){
-		$engine = '$this->engine = '.SESSION_ENGINE.'::getInstance();';
-		eval($engine);
+		$this->engine = call_user_func(SESSION_ENGINE.'::getInstance');
 		assert('$this->engine instanceof SessionHandlerEngine');
 		assert('$this->engine instanceof Output');
 		return $this->engine->init($this->lifetime, $this->path, $this->domain, $this->secure);

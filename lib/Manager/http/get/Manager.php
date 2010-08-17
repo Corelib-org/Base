@@ -50,11 +50,11 @@ class WebPage extends ManagerPage {
 	}
 
 	public function about(){
-		$this->xsl->addTemplate('Base/Share/xsl/pages/manager/about.xsl');
+		$this->xsl->addTemplate('Base/share/xsl/pages/manager/about.xsl');
 	}
 
 	public function markup(){
-		$this->xsl->addTemplate('Base/Share/xsl/pages/manager/markup.xsl');
+		$this->xsl->addTemplate('Base/share/xsl/pages/manager/markup.xsl');
 	}
 
 }

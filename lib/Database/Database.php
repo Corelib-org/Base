@@ -135,8 +135,7 @@ class Database implements Singleton {
 	 * @return DatabaseDAO
 	 */
 	public static function getDAO($class){
-		$eval = 'return '.self::$dao_prefix.'_'.$class.'::getInstance();';
-		return eval($eval);
+		return call_user_func(self::$dao_prefix.'_'.$class.'::getInstance');
 	}
 
 	/**

@@ -169,7 +169,8 @@ class CodeGeneretorNameResolver implements CodeGeneretorNameResolverEngine,Singl
 	 * @internal
 	 */
 	private function __construct(){
-		eval('$this->engine = new '.CODE_GENERATOR_NAME_RESOLVER_ENGINE.'();');
+		$engine = CODE_GENERATOR_NAME_RESOLVER_ENGINE;
+		$this->engine = new $engine();
 	}
 
 	/**

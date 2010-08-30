@@ -548,17 +548,20 @@ class Manager implements Singleton {
 	public function getResource($handle, $resource){
 		assert('is_string($handle)');
 		assert('is_string($resource)');
+
 		$config = ManagerConfig::getInstance();
 		if(!$dir = $config->getResourceDir($handle)){
 			return false;
 		} else if(!is_dir($dir)){
 			throw new BaseException('No Such file or directory: '.$dir);
 		}
+
 		$filename = $dir.'/'.$resource;
-		$filename = str_replace('../', '/', $filename);
+		// $filename = str_replace('../', '/', $filename);
 		while(strstr($filename, '//')){
 			$filename = str_replace('//', '/', $filename);
 		}
+
 		if(!@is_file($filename)){
 			return false;
 		}
@@ -616,7 +619,7 @@ class Manager implements Singleton {
 
 				$handler = $setup->getElementsByTagName('handler');
 				if($handler->length > 0){
-					eval('$handler = '.$handler->item(0)->nodeValue.'::getInstance();');
+					$handler = call_user_func($handler->item(0)->nodeValue.'::getInstance');
 					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
 						switch ($prop->nodeName){
 							case 'name':

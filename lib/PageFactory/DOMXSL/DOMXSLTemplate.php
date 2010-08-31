@@ -143,7 +143,11 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 			exit;
 		}
 		$this->xsl_core = $xslcore;
-		$this->setContentType('application/xhtml+xml; charset=utf-8');
+		if(strstr($this->getUserAgent(), 'MSIE')){
+			$this->setContentType('application/xhtml+xml');
+		} else {
+			$this->setContentType('text/html');
+		}
 	}
 
 	/**

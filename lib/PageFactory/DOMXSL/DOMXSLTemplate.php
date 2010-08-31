@@ -143,10 +143,18 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 			exit;
 		}
 		$this->xsl_core = $xslcore;
+
+		//
+		// IE Hack.
+		//
+		// Internet explorer does'nt understand the application/xhtml+xml header
+		// instead just send a normal text/html header for clients using internet
+		// explorer.
+		//
 		if(strstr($this->getUserAgent(), 'MSIE')){
-			$this->setContentType('application/xhtml+xml');
-		} else {
 			$this->setContentType('text/html');
+		} else {
+			$this->setContentType('application/xhtml+xml');
 		}
 	}
 

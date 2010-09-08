@@ -362,7 +362,6 @@ abstract class PageFactoryTemplateEngine {
 
 		if(!is_null($callback)){
 			$eval = '$this->page->'.$callback.';';
-
 			eval($eval);
 		} else {
 			$this->page->build();

@@ -423,6 +423,7 @@ class MySQLiQuery extends Query {
 	public function getInsertID(){
 		return $this->insertid;
 	}
+
 	/**
 	 * Fetch row as array
 	 *
@@ -431,6 +432,26 @@ class MySQLiQuery extends Query {
 	 */
 	public function fetchArray(){
 		return $this->result->fetch_array();
+	}
+
+	/**
+	 * Fetch row as array
+	 *
+	 * @uses MySQLiQuery::$result
+	 * @return array
+	 */
+	public function fetchRow(){
+		return $this->result->fetch_row();
+	}
+
+	/**
+	 * Fetch row as an associative array
+	 *
+	 * @uses MySQLiQuery::$result
+	 * @return array
+	 */
+	public function fetchAssoc(){
+		return $this->result->fetch_assoc();
 	}
 
 	/**
@@ -524,6 +545,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	public function __construct($query, $item=null /*, [$items...] */){
 		parent::__construct($query);
 		$bind = func_get_args();
+
 		if(sizeof($bind) > 0){
 			array_shift($bind);
 			call_user_func_array(array($this, 'bind'), $bind);

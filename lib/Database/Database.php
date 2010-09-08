@@ -484,6 +484,18 @@ abstract class Query {
 	 */
 	abstract public function fetchArray();
 	/**
+	 * Fetch row from result.
+	 *
+	 * @return array row
+	 */
+	abstract public function fetchRow();
+	/**
+	 * Fetch row as associative array from result.
+	 *
+	 * @return array row
+	 */
+	abstract public function fetchAssoc();
+	/**
 	 * Fetch fields from result.
 	 *
 	 * @return array fields

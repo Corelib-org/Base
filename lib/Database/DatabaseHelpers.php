@@ -91,7 +91,6 @@ abstract class DatabaseHelper {
 	}
 }
 
-
 //*****************************************************************//
 //******************* DatabaseListHelper class ********************//
 //*****************************************************************//
@@ -422,5 +421,47 @@ class DatabaseDataHandler extends DatabaseHelper {
 			return false;
 		}
 	}
+}
+
+
+
+
+
+class DatabaseRelationMapHelper {
+
+	private $relations = array();
+
+	const CREATE = 1;
+	const REMOVE = 2;
+
+	public function add($id, $obj){
+		$this->_registerAction($id, $obj, self::CREATE);
+	}
+
+	public function remove($id, $obj){
+		$this->_registerAction($id, $obj, self::REMOVE);
+	}
+
+	public function each(){
+		if(list($key, $action) = each($this->relations)){
+			return array($action[0], $action[1]);
+		} else {
+			reset($this->relations);
+			return false;
+		}
+	}
+
+	public function count(){
+		return sizeof($this->relations);
+	}
+
+	private function _registerAction($id, $obj, $action){
+		$this->_validate($obj);
+		$this->relations[$id] = array($obj, $action);
+	}
+
+	private function _validate($obj){
+	}
+
 }
 ?>

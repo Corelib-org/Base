@@ -394,7 +394,7 @@ class MySQLiQuery extends Query {
 	 * @return string error description
 	 */
 	public function getError(){
-		return $this->error."\n<br/><br/>".$this->query;
+		return $this->error.' (#'.$this->errno.')'."\n<br/><br/>".$this->query;
 	}
 	/**
 	 * Get error code.
@@ -633,18 +633,21 @@ class MySQLiQueryStatement extends MySQLiQuery {
 			}
 		}
 
-		$types = implode('', $this->bind['types']);
+		// If no data have been bound to query don't try to bind anything.
+		if(sizeof($this->bind) > 0){
+			$types = implode('', $this->bind['types']);
 
-		$params = array(&$types);
-		foreach ($this->bind['param'] as $key => $param){
-			$params[] = &$this->bind['param'][$key];
+			$params = array(&$types);
+			foreach ($this->bind['param'] as $key => $param){
+				$params[] = &$this->bind['param'][$key];
+			}
+
+			call_user_func_array(array($this->statement, 'bind_param'), $params);
+
+			foreach ($this->blob as $key => $val){
+				$this->statement->send_long_data($key, $val);
+			}
 		}
-		call_user_func_array(array($this->statement, 'bind_param'), $params);
-
-		foreach ($this->blob as $key => $val){
-			$this->statement->send_long_data($key, $val);
-		}
-
 		$this->statement->execute();
 		$this->error = $this->statement->error;
 		$this->errno = $this->statement->errno;

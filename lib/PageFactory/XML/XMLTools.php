@@ -80,6 +80,9 @@ class XMLTools {
 	 */
 	static public function makePagerXML(DOMDocument $xml, $count, $per_page_count=20, $current_page){
 		$pager = $xml->createElement('pager');
+		$pager->setAttribute('count', $count);
+		$pager->setAttribute('per-page-count', $per_page_count);
+		$pager->setAttribute('offset', $per_page_count * ($current_page - 1));
 		for ($i = 1; $i <= ceil($count / $per_page_count); $i++){
 			$page = $pager->appendChild($xml->createElement('page', $i));
 			if($i == $current_page){

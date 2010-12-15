@@ -112,7 +112,7 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 				if($converters > 0 || in_array($column->getSmartType(), $smarttypes)){
 					if(!$block->hasStatement('! is_null ( $this->'.$this->_makeConverterVariableName($column).' ) ')){
 						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$this->_makeConverterVariableName($column).')'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $item->set'.$column->getFieldMethodName().'Converter($this->'.$this->_makeConverterVariableName($column).');'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$item->set'.$column->getFieldMethodName().'Converter($this->'.$this->_makeConverterVariableName($column).');'));
 					}
 				}
 			}
@@ -134,7 +134,7 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 		if($block = $this->_getCodeBlock($content, 'Order methods')){
 			while(list(,$column) = $this->getTable()->eachColumn()){
 				$method = 'set'.$column->getFieldMethodName().'OrderDesc';
-				if(!$block->hasMethod($method) && $column->isSortable() && $column->getKey() != CodeGeneratorColumn::KEY_PRIMARY){
+				if(!$block->hasMethod($method) && $column->isSortable() && ($column->getReference() || $column->getKey() != CodeGeneratorColumn::KEY_PRIMARY)){
 					$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
 					$docblock = new CodeGeneratorCodeBlockPHPDoc('Set '.$column->getFieldVariableName().' sort order descending');
 					$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
@@ -170,7 +170,7 @@ class CodeGeneratorModelListFile extends CodeGeneratorModelFile {
 		if($block = $this->_getCodeBlock($content, 'Filter methods')){
 			while(list(,$column) = $this->getTable()->eachColumn()){
 				$method = 'set'.$column->getFieldMethodName().'Filter';
-				if(!$block->hasMethod($method) && $column->isSortable() && $column->getKey() != CodeGeneratorColumn::KEY_PRIMARY){
+				if(!$block->hasMethod($method) && $column->isSortable() && ($column->getReference() || $column->getKey() != CodeGeneratorColumn::KEY_PRIMARY)){
 					$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
 					$docblock = new CodeGeneratorCodeBlockPHPDoc('Set filter for '.$column->getFieldVariableName());
 					$method->setDocBlock($docblock);

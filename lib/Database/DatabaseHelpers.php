@@ -143,7 +143,10 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 	 *
 	 * @see DatabaseHelper::set()
 	 */
-	public function set($column, $setting=DATABASE_ORDER_DESC){
+	public function set($column, $setting){
+		if(empty($setting) || is_null($setting)){
+			$setting = DATABASE_ORDER_DESC;
+		}
 		return parent::set($column, $setting);
 	}
 

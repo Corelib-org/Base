@@ -1,7 +1,7 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Base Functions and Classes.
+ * Corelib Base Functions and Classes. 
  *
  * <i>No Description</i>
  *

@@ -84,6 +84,13 @@ abstract class CodeGeneratorFile implements Output {
 	private $table = null;
 
 	/**
+	 * Template file.
+	 *
+	 * @var string filename
+	 */
+	private $template = null;
+
+	/**
 	 * Target filename.
 	 *
 	 * @var string filename
@@ -310,6 +317,7 @@ abstract class CodeGeneratorFile implements Output {
 	 */
 	protected function _loadContent($template){
 		if(assert('is_string($template)') && assert('is_file($template)')){
+			$this->template = $template;
 			if(is_file($this->getFilename())){
 				$this->content = file_get_contents($this->getFilename());
 			} else {
@@ -382,6 +390,7 @@ abstract class CodeGeneratorFile implements Output {
 	 * @internal
 	 */
 	public function write(){
+		$this->_loadContent($this->template);
 		$this->generate();
 
 		$this->content = trim($this->content);

@@ -197,7 +197,7 @@ class i18n implements Singleton,Output {
 	 * @return i18nLocale
 	 */
 	public function addLocale(i18nLocale $locale){
-		if(sizeof($this->locales) > 0){
+		if(sizeof($this->locales) == 0){
 			$this->fallback = $locale;
 		}
 		$this->locales[$locale->getLanguage()] = $locale;
@@ -343,7 +343,7 @@ class i18n implements Singleton,Output {
 						}
 					}
 				}
-			} else if($this->fallback){
+			} else if($this->fallback instanceof i18nLocale){
 				$this->setLocale($this->fallback->getLanguage());
 			} else {
 				throw new BaseException('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);

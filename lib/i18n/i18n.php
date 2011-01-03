@@ -345,6 +345,8 @@ class i18n implements Singleton,Output {
 				}
 			} else if($this->fallback){
 				$this->setLocale($this->fallback->getLanguage());
+			} else {
+				throw new BaseException('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);
 			}
 		} else {
 			$this->setLocale($_COOKIE[$this->cookie_name]);

@@ -163,6 +163,7 @@ class EventHandler implements Singleton {
 			}
 		}
 
+
 		if(is_array($this->instance_actions)){
 			foreach ($this->instance_actions as $instance => $actions){
 				if($event instanceof $instance){

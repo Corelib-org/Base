@@ -3,7 +3,7 @@
 /**
  * Corelib Base Functions and Classes.
  *
- * <i>No Description</i> 
+ * <i>No Description</i>
  *
  * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify

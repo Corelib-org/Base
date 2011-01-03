@@ -343,7 +343,7 @@ class i18n implements Singleton,Output {
 						}
 					}
 				}
-			} else {
+			} else if($this->fallback){
 				$this->setLocale($this->fallback->getLanguage());
 			}
 		} else {

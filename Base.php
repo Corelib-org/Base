@@ -316,6 +316,8 @@ class Base implements Singleton {
 			die;
 		}
 		$GLOBALS['base'] = $this;
+
+
 	}
 
 	/**

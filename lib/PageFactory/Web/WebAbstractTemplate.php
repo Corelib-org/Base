@@ -426,6 +426,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		$this->location = str_ireplace('//', '/', $this->location);
 		$this->location = str_ireplace('http:/', 'http://', $this->location);
 		$this->location = str_ireplace('https:/', 'https://', $this->location);
+		throw new BaseException('set location called');
 		return true;
 	}
 

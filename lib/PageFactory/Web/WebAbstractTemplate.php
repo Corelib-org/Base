@@ -257,7 +257,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 */
 	public function __construct(){
 		ob_start();
-		
+
 		if(!defined('HTTP_STATUS_MESSAGE_FILE')){
 			/**
 			 * HTTP status message file.
@@ -407,7 +407,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 * @return boolean true on success, else return false
 	 */
 	public function setLocation($location, $param=null){
-		if($location{0} != '/' && !preg_match('/^http:/', $location)){
+		if($location{0} != '/' && !preg_match('/^http(s)?:/', $location)){
 			$location = '/'.$location;
 		}
 		if(!is_null($param)){

@@ -502,14 +502,21 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 			}
 
 			while(list(,$index) = $this->getTable()->eachIndex()){
-				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE){
+				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE || $index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
 					$changes = array();
 					$available = array();
 
-					$method = 'getBy'.$index->getIndexMethodName();
+					if($index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+						$method = 'getByID';
+						$indexname = 'ID';
+					} else {
+						$method = 'getBy'.$index->getIndexMethodName();
+						$indexname = $index->getName();
+					}
 					if(!$block->hasMethod($method)){
+
 						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
-						$docblock = $method->setDocBlock(new CodeGeneratorCodeBlockPHPDoc('Get row by '.$index->getName()));
+						$docblock = $method->setDocBlock(new CodeGeneratorCodeBlockPHPDoc('Get row by '.$indexname));
 
 						$where = array();
 						while(list(,$column) = $index->eachColumn()){
@@ -531,44 +538,46 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
 					}
 
+					if($index->getType() != CodeGeneratorColumn::KEY_PRIMARY){
 					$method = 'is'.$index->getIndexMethodName().'Available';
-					if(!$block->hasMethod($method)){
-						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
-						$docblock = $method->setDocBlock(new CodeGeneratorCodeBlockPHPDoc('Check if '.$index->getName().' is available.'));
-						$where = array();
-						$nwhere = array();
-						$select = array();
-						$parameters = array();
+						if(!$block->hasMethod($method)){
+							$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
+							$docblock = $method->setDocBlock(new CodeGeneratorCodeBlockPHPDoc('Check if '.$index->getName().' is available.'));
+							$where = array();
+							$nwhere = array();
+							$select = array();
+							$parameters = array();
 
-						while(list(,$column) = $this->getTable()->getPrimaryKey()->eachColumn()){
-							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, false).' $'.$column->getFieldVariableName()));
-							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
-							$parameters[] = '`'.$column->getName().'` != \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
+							while(list(,$column) = $this->getTable()->getPrimaryKey()->eachColumn()){
+								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, false).' $'.$column->getFieldVariableName()));
+								$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+								$parameters[] = '`'.$column->getName().'` != \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
+							}
+
+							while(list(,$column) = $index->eachColumn()){
+								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, true).' $'.$column->getFieldVariableName()));
+								$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+								$select[] = $this->_createFieldName($column);
+								$where[] = $this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
+								$nwhere[] = $this->_createFieldName($column).' != \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
+
+							}
+							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
+
+							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = \'SELECT '.implode(', ', $select)));
+							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM `'.$this->getTable()->getName().'`'));
+							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          WHERE '.implode(' AND ', $where).'\';'));
+
+							$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($id)'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query .= \' AND '.implode(' AND ', $parameters).'\';'));
+
+							$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->slaveQuery(new MySQLiQuery($query));'));
+
+							$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$query->getNumRows() > 0'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
+							$else = $if->addAlternate();
+							$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
 						}
-
-						while(list(,$column) = $index->eachColumn()){
-							$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, true).' $'.$column->getFieldVariableName()));
-							$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
-							$select[] = $this->_createFieldName($column);
-							$where[] = $this->_createFieldName($column).' = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
-							$nwhere[] = $this->_createFieldName($column).' != \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
-
-						}
-						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
-
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = \'SELECT '.implode(', ', $select)));
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          FROM `'.$this->getTable()->getName().'`'));
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('          WHERE '.implode(' AND ', $where).'\';'));
-
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($id)'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query .= \' AND '.implode(' AND ', $parameters).'\';'));
-
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$query = $this->slaveQuery(new MySQLiQuery($query));'));
-
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$query->getNumRows() > 0'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
-						$else = $if->addAlternate();
-						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
 					}
 				}
 			}

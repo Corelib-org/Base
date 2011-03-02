@@ -104,6 +104,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		$this->_writeRelationshipHelperListOptionProperties($this->content);
 		$this->_writeRelationshipCommitActions($this->content);
 		$this->_writeRelationshipOutput($this->content);
+		$this->_writePrivateDataRetrievalMethods($this->content);
+		$this->_writeAlternateConstructorMethods($this->content);
+		$this->_writeORMCacheCleanup($this->content);
 	}
 
 	/**
@@ -542,46 +545,6 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			}
 			while(list(,$index) = $this->getTable()->eachIndex()){
 				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE){
-					$methodname = 'getBy'.$index->getIndexMethodName();
-					if(!$block->hasMethod($methodname)){
-						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $methodname));
-						$docblock = new CodeGeneratorCodeBlockPHPDoc('Get data by '.$index->getName());
-						$method->setDocBlock($docblock);
-						$parameters = array();
-
-						while(list(,$column) = $index->eachColumn()){
-							switch ($column->getType()){
-								case CodeGeneratorColumn::TYPE_BOOLEAN:
-									$type = 'bool';
-									break;
-								case CodeGeneratorColumn::TYPE_FLOAT:
-									$type = 'float';
-									break;
-								case CodeGeneratorColumn::TYPE_INTEGER:
-									$type = 'integer';
-									break;
-								case CodeGeneratorColumn::TYPE_STRING:
-									$type = 'string';
-									break;
-							}
-							$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
-							if($class = $this->_getReferenceClass($column)){
-								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' '.$column->getName()));
-								$param->setType($class);
-								$parameters[] = '$'.$column->getFieldVariableName().'->getID()';
-							} else {
-								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $type.' '.$column->getName()));
-								$parameters[] = '$'.$column->getFieldVariableName();
-							}
-						}
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->_getDAO(false);'));
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->_setFromArray($this->dao->'.$methodname.'('.implode(', ', $parameters).'));'));
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('is_null($this->id)'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
-						$else = $if->addAlternate();
-						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
-						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
-					}
 					$methodname = 'is'.$index->getIndexMethodName().'Available';
 					if(!$block->hasMethod($methodname)){
 						$parameters = array();
@@ -882,7 +845,168 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			return false;
 		}
 	}
+
+	private function _writePrivateDataRetrievalMethods(&$content){
+		if($block = $this->_getCodeBlock($content, 'Private data retrieval helper methods')){
+ 			while(list(,$index) = $this->getTable()->eachIndex()){
+				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE || $index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+					if($index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+						$methodname = 'getByID';
+						$indexname = 'ID';
+					} else {
+						$methodname = 'getBy'.$index->getIndexMethodName();
+						$indexname = $index->getName();
+					}
+					if(!$block->hasMethod('_'.$methodname)){
+						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('private', '_'.$methodname));
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Get data by '.$indexname);
+						$method->setDocBlock($docblock);
+						$parameters = array();
+
+						while(list(,$column) = $index->eachColumn()){
+							switch ($column->getType()){
+								case CodeGeneratorColumn::TYPE_BOOLEAN:
+									$type = 'bool';
+									break;
+								case CodeGeneratorColumn::TYPE_FLOAT:
+									$type = 'float';
+									break;
+								case CodeGeneratorColumn::TYPE_INTEGER:
+									$type = 'integer';
+									break;
+								case CodeGeneratorColumn::TYPE_STRING:
+									$type = 'string';
+									break;
+							}
+							$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+							if($class = $this->_getReferenceClass($column)){
+								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' '.$column->getName()));
+								$param->setType($class);
+								$parameters[] = '$'.$column->getFieldVariableName().'->getID()';
+							} else {
+								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $type.' '.$column->getName()));
+								$parameters[] = '$'.$column->getFieldVariableName();
+							}
+						}
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->_getDAO(false);'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->_setFromArray($this->dao->'.$methodname.'('.implode(', ', $parameters).'));'));
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('is_null($this->id)'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
+						$else = $if->addAlternate();
+						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
+					}
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	private function _writeAlternateConstructorMethods(&$content){
+		if($block = $this->_getCodeBlock($content, 'Alternative constructors')){
+ 			while(list(,$index) = $this->getTable()->eachIndex()){
+				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE || $index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+					if($index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+						$methodname = 'getByID';
+						$indexname = 'ID';
+					} else {
+						$methodname = 'getBy'.$index->getIndexMethodName();
+						$indexname = $index->getName();
+					}
+					if(!$block->hasMethod($methodname)){
+						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public static', $methodname));
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Create model instance based on '.$indexname);
+						$method->setDocBlock($docblock);
+						$parameters = array();
+
+						while(list(,$column) = $index->eachColumn()){
+							switch ($column->getType()){
+								case CodeGeneratorColumn::TYPE_BOOLEAN:
+									$type = 'bool';
+									break;
+								case CodeGeneratorColumn::TYPE_FLOAT:
+									$type = 'float';
+									break;
+								case CodeGeneratorColumn::TYPE_INTEGER:
+									$type = 'integer';
+									break;
+								case CodeGeneratorColumn::TYPE_STRING:
+									$type = 'string';
+									break;
+							}
+							$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+							if($class = $this->_getReferenceClass($column)){
+								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' '.$column->getName()));
+								$param->setType($class);
+								$parameters[] = '$'.$column->getFieldVariableName().'->getID()';
+							} else {
+								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $type.' '.$column->getName()));
+								$parameters[] = '$'.$column->getFieldVariableName();
+							}
+						}
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('uses', $this->getTable()->getClassName().'::_'.$methodname.'()'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('uses', 'ORMCache::getInstance()'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('uses', 'ORMCache::storeInstance()'));
+
+
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!$'.$this->getTable()->getClassVariable().' = ORMCache::getInstance(__CLASS__, __FUNCTION__, '.implode(', ', $parameters).')'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().' = new '.$this->getTable()->getClassName().'();'));
+
+						$if = $if->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().'->_'.$methodname.'('.implode(', ', $parameters).')'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('ORMCache::storeInstance(__CLASS__, __FUNCTION__, $'.$this->getTable()->getClassVariable().', '.implode(', ', $parameters).');'));
+						$else = $if->addAlternate();
+						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $'.$this->getTable()->getClassVariable().';'));
+					}
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	private function _writeORMCacheCleanup(&$content){
+		if($block = $this->_getCodeBlock($content, 'ORMCache cleanup after commit')){
+ 			while(list(,$index) = $this->getTable()->eachIndex()){
+				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE || $index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+					if($index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+						$methodname = 'getByID';
+					} else {
+						$methodname = 'getBy'.$index->getIndexMethodName();
+					}
+					if(!$block->hasStatementRegex('/ORMCache::removeInstance\(__CLASS__, \''.$methodname.'\'/')){
+						$parameters = array();
+						while(list(,$column) = $index->eachColumn()){
+							if($class = $this->_getReferenceClass($column)){
+								$parameters[] = '$this->'.$column->getFieldVariableName().'->getID()';
+							} else {
+								$parameters[] = '$this->'.$column->getFieldVariableName();
+							}
+						}
+
+						$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('ORMCache::removeInstance(__CLASS__, \''.$methodname.'\', '.implode(', ', $parameters).');'));
+					}
+
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
 /*
+
  	private function _commitServices(){
 		$changed = false;
 		while(list($relation, $link) = $this->service_relations->each()){

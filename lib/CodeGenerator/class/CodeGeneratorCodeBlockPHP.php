@@ -104,7 +104,7 @@ class CodeGeneratorCodeBlockPHP extends CodeGeneratorCodeBlock {
 	 * @return boolean true if method exists, else return false
 	 */
 	public function hasMethod($method){
-		return preg_match('/(private|protected|public)\s*function\s*'.preg_quote($method, '/').'\s*\(.*?\)\s*\{/ms', $this->getSource());
+		return preg_match('/(private|protected|public)\s*(static)?\s*function\s*'.preg_quote($method, '/').'\s*\(.*?\)\s*\{/ms', $this->getSource());
 	}
 
 }

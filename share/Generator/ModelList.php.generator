@@ -77,9 +77,8 @@ class ${classname}List implements Output,CacheableOutput {
 	//*****************************************************************//
 	/**
 	 * @var DAO_${classname}List
-	 * @internal
 	 */
-	private $dao = null;
+	protected $dao = null;
 
 	/* Converter properties */
 	/* Converter properties end */
@@ -274,7 +273,6 @@ class ${classname}List implements Output,CacheableOutput {
 
 		if($this->paging){
 			$count = $this->getCount();
-			$list->setAttribute('count', $count);
 			$this->setOffset($this->limit * ($this->paging_page - 1));
 			$list->appendChild(XMLTools::makePagerXML($xml, $count, $this->limit, $this->paging_page));
 		}
@@ -343,7 +341,7 @@ class ${classname}List implements Output,CacheableOutput {
 	 * @return boolean true
 	 * @internal
 	 */
-	private function _getDAO(){
+	protected function _getDAO(){
 		if(is_null($this->dao)){
 			$this->dao = Database::getDAO('${classname}List');
 		}

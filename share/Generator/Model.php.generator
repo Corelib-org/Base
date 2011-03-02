@@ -190,6 +190,15 @@ class ${classname} implements Output,CacheableOutput {
 	/* Enum constants */
 	/* Enum constants end */
 
+	/* Relationship helper properties */
+	/* Relationship helper properties end */
+
+	/* Relationship list properties */
+	/* Relationship list properties end */
+
+	/* Relationship list option properties */
+	/* Relationship list option properties end */
+
 	/**
 	 * @var DAO_${classname}
 	 */
@@ -230,8 +239,13 @@ class ${classname} implements Output,CacheableOutput {
 			$this->_setFromArray($array);
 		}
 		$this->datahandler = new DatabaseDataHandler();
+
+		/* Relationship helper init */
+		/* Relationship helper init end */
 	}
 
+	/* Alternative constructors */
+	/* Alternative constructors end */
 
 	//*****************************************************************//
 	//*************************** Get methods *************************//
@@ -275,6 +289,13 @@ class ${classname} implements Output,CacheableOutput {
 
 
 	//*****************************************************************//
+	//***************** Relationship helper methods *******************//
+	//*****************************************************************//
+	/* Relationship helper methods */
+	/* Relationship helper methods end */
+
+
+	//*****************************************************************//
 	//********************** Data change methods **********************//
 	//*****************************************************************//
 	/**
@@ -292,7 +313,7 @@ class ${classname} implements Output,CacheableOutput {
 		if($state = $this->dao->delete($this->id)){
 			$event->trigger(new ${classname}ModifyAfterDelete($this));
 		}
-		return $state;	
+		return $state;
 	}
 
 	/**
@@ -335,6 +356,10 @@ class ${classname} implements Output,CacheableOutput {
 		} else {
 			$r = $this->_update();
 		}
+
+		/* Relationship commit actions */
+		/* Relationship commit actions end */
+
 		if($r !== false){
 			$event->trigger(new ${classname}ModifyAfterCommit($this));
 		}
@@ -354,6 +379,10 @@ class ${classname} implements Output,CacheableOutput {
 		$${classvar} = $xml->createElement('${element}');
 		/* Get XML method */
 		/* Get XML method end */
+
+		/* Relationship output */
+		/* Relationship output end */
+
 		return $${classvar};
 	}
 

@@ -1,9 +1,9 @@
 <?php
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Base Functions and Classes. 
+ * Corelib Base Functions and Classes.
  *
- * <i>No Description</i> 
+ * <i>No Description</i>
  *
  * This script is part of the corelib project. The corelib project is
  * free software; you can redistribute it and/or modify
@@ -74,13 +74,13 @@ define('CORELIB_COPYRIGHT_YEAR', '2010');
 //****************** Basic Configuration Check ********************//
 //*****************************************************************//
 if(!defined('CORELIB')){
-	trigger_error('CORELIB Constant Undefined', E_USER_ERROR);
+	trigger_error('CORELIB Constant Undefined', E_USER_WARNING);
 	/**
 	 * 	Corelib Path Constant.
 	 *
 	 * 	This constanst holds the path to the corelib
 	 */
-	define('CORELIB', '/path/to/corelib/');
+	define('CORELIB', dirname(__FILE__).'/../');
 }
 
 if(!defined('CURRENT_WORKING_DIR')){

@@ -141,6 +141,12 @@ class CodeGeneratorCodeBlockPHPStatement extends CodeGeneratorCodeBlockStatement
 			return 'null';
 		} else if(is_null($value)){
 			return 'null';
+		} else if(is_bool($value)){
+			if($value){
+				return 'true';
+			} else {
+				return 'false';
+			}
 		} else {
 			return '\''.addcslashes($value, '\'').'\'';
 		}
@@ -572,6 +578,83 @@ class CodeGeneratorCodeBlockPHPIf extends CodeGeneratorCodeBlockPHPStatement {
 	}
 }
 
+
+//*****************************************************************//
+//************* CodeGenrator PHP Code statement while *************//
+//*****************************************************************//
+/**
+ * CodeGenerator php code class method statement.
+ *
+ * Class is used to make the code generator write a valid
+ * class method.
+ *
+ * @author Steffen Sørensen <ss@corelib.org>
+ * @package Base
+ * @subpackage CodeGenerator
+ * @category corelib
+ * @since Version 5.0
+ */
+class CodeGeneratorCodeBlockPHPWhile extends CodeGeneratorCodeBlockPHPStatement {
+
+
+	//*****************************************************************//
+	//******* CodeGenrator PHP Code statement while properties ********//
+	//*****************************************************************//
+	/**
+	 * @var string condition
+	 */
+	private $condition = null;
+
+
+	//*****************************************************************//
+	//********* CodeGenrator PHP Code statement while methods *********//
+	//*****************************************************************//
+	/**
+	 * Create new instance.
+	 *
+	 * @param string $condition
+	 * @return void
+	 */
+	public function __construct($condition){
+		$this->condition = $condition;
+	}
+
+	/**
+	 * Add new statement to stack.
+	 *
+	 * @see Composite::addComponent()
+	 * @param CodeGeneratorCodeBlockPHPStatement $component
+	 * @return CodeGeneratorCodeBlockPHPStatement
+	 */
+	public function addComponent(Composite $component, $reference=null){
+		assert('$component instanceof CodeGeneratorCodeBlockPHPStatement');
+		parent::addComponent($component, $reference);
+		return $component;
+	}
+
+	/**
+	 * Get composite.
+	 *
+	 * @return CodeGeneratorCodeBlockPHPIf
+	 */
+	public function getComposite(){
+		return $this;
+	}
+
+	/**
+	 * Get source code.
+	 *
+	 * @param integer $indent_offset
+	 * @return string generated source code.
+	 */
+	public function getSource($indent_offset=0){
+		$while  = $this->_getPrefix($indent_offset);
+		$while .= 'while('.$this->condition.'){'."\n";
+		$while .= $this->_renderComponents($indent_offset);
+		$while .= $this->_getPrefix($indent_offset).'}';
+		return $while;
+	}
+}
 
 
 //*****************************************************************//

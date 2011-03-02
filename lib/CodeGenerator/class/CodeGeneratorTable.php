@@ -80,6 +80,14 @@ class CodeGeneratorTable {
 	private $indexes = array();
 
 	/**
+	 * table mappings.
+	 *
+	 * @var array table mappings
+	 * @internal
+	 */
+	private $mappings = array();
+
+	/**
 	 * Name resolver.
 	 *
 	 * @var CodeGeneretorNameResolver
@@ -199,6 +207,17 @@ class CodeGeneratorTable {
 	}
 
 	/**
+	 * Add table mapping.
+	 *
+	 * @uses CodeGeneratorTable::$mappings
+	 * @param CodeGeneratorTableMapping $mapping
+	 * @return CodeGeneratorTableMapping
+	 */
+	public function addTableMapping(CodeGeneratorTableMapping $mapping){
+		return $this->mappings[] = $mapping;
+	}
+
+	/**
 	 * Set primary key.
 	 *
 	 * @uses CodeGeneratorTable::$primary
@@ -244,6 +263,24 @@ class CodeGeneratorTable {
 			return $index;
 		} else {
 			reset($this->indexes);
+			return false;
+		}
+	}
+
+	/**
+	 * Iterate over table mapping.
+	 *
+	 * Do iteration over table mapprings and return a object representing
+	 * each mapping.
+	 *
+	 * @uses CodeGeneratorTable::$mappings
+	 * @return CodeGeneratorTableMapping table mapping
+	 */
+	public function eachTableMapping(){
+		if($mapping = each($this->mappings)){
+			return $mapping;
+		} else {
+			reset($this->mappings);
 			return false;
 		}
 	}

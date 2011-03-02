@@ -237,10 +237,25 @@ class CodeGenerator implements Output {
 		$generators = $xpath->query('generator', $table);
 		$this->classes[$table->getAttribute('name')]['generators'] = array();
 
+		$mappings = $xpath->query('table-mapping', $table);
+		for ($i = 0; $i < $mappings->length; $i++){
+			if($reference_key = $mappings->item($i)->getAttribute('reference-key')){
+				if($foreign_key = $mappings->item($i)->getAttribute('foreign-key')){
+					$mapping = new CodeGeneratorTableMapping($this->dao->analyseTable($mappings->item($i)->getAttribute('name')), $reference_key, $foreign_key);
+					$this->classes[$table->getAttribute('name')]['table']->addTableMapping($mapping);
+				} else {
+					$mapping = new CodeGeneratorTableMapping($this->dao->analyseTable($mappings->item($i)->getAttribute('name')), $reference_key);
+					$this->classes[$table->getAttribute('name')]['table']->addTableMapping($mapping);
+				}
+			}
+		}
+
 		for ($i = 0; $i < $generators->length; $i++){
 			$class = $generators->item($i)->getAttribute('name');
 			$class = new $class($this->classes[$table->getAttribute('name')]['table'], $generators->item($i), $prefix, $group);
 			$class->init();
+			// $generators = $xpath->query('generator', $table);
+
   			$this->classes[$table->getAttribute('name')]['generators'][] = $class;
 		}
 		return true;
@@ -269,8 +284,6 @@ class CodeGenerator implements Output {
 			$class->init();
   			$this->classes[$view->getAttribute('name')]['generators'][] = $class;
 		}
-//		var_Dump($this->classes[$view->getAttribute('name')]['table']);
-//		exit;
 	}
 
 	/**

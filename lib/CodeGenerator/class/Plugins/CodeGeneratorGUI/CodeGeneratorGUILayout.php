@@ -251,6 +251,7 @@ class CodeGeneratorGUILayout extends CodeGeneratorGUIFileXSL {
 
 				$table = $outer->addComponent(new CodeGeneratorCodeBlockXMLElement('table'));
 				$table->setAttribute('class', 'list');
+				$table->setAttribute('id', $this->getTable()->getTableReadableVariableName().'-list');
 				$thead = $table->addComponent(new CodeGeneratorCodeBlockXMLElement('thead'));
 				$tfoot = $table->addComponent(new CodeGeneratorCodeBlockXMLElement('tfoot'));
 				$tbody = $table->addComponent(new CodeGeneratorCodeBlockXMLElement('tbody'));
@@ -287,9 +288,7 @@ class CodeGeneratorGUILayout extends CodeGeneratorGUIFileXSL {
 					$list = $xpath->query('view|edit|delete', $this->settings->parentNode);
 					if($list->length > 0){
 						for($i = 0; $i < $list->length; $i++){
-							$a = $td->addComponent(new CodeGeneratorCodeBlockXMLElement('a'));
-							$a->setAttribute('href', str_replace('${id}', '{@id}', $list->item($i)->getAttribute('gui-url')));
-							$a->addComponent(new CodeGeneratorCodeBlockXMLStatement($list->item($i)->getAttribute('method')));
+							$td->addComponent($this->writeListActionLink($list->item($i)));
 						}
 					}
 				}
@@ -311,6 +310,38 @@ class CodeGeneratorGUILayout extends CodeGeneratorGUIFileXSL {
 				$apply->setAttribute('select', 'concat(@count, \' '.$this->getTable()->getTableReadableVariableName().'\')');
 				break;
 		}
+
+	}
+
+	/**
+	 * Write list action link.
+	 *
+	 * write list action link and return {@link CodeGeneratorCodeBlockXMLElement}.
+	 * This method can be overwritten if layout should be different.
+	 *
+	 * @param DOMElement $action
+	 * @see CodeGeneratorGUILayout::writeListActionLinkContent()
+	 * @return CodeGeneratorCodeBlockXMLElement
+	 */
+	public function writeListActionLink(DOMElement $action){
+		$a = new CodeGeneratorCodeBlockXMLElement('a');
+		$a->setAttribute('href', str_replace('${id}', '{@id}', $action->getAttribute('gui-url')));
+		$a->addComponent($this->writeListActionLinkContent($action));
+		return $a;
+	}
+
+	/**
+	 * Write list action link content.
+	 *
+	 * write list action link content and return {@link CodeGeneratorCodeBlockXMLElement}.
+	 * This method can be overwritten if layout should be different.
+	 *
+	 * @param DOMElement $action
+	 * @see CodeGeneratorGUILayout::writeListActionLink()
+	 * @return CodeGeneratorCodeBlockXMLElement
+	 */
+	public function writeListActionLinkContent(DOMElement $action){
+		return new CodeGeneratorCodeBlockXMLStatement($action->getAttribute('method'));
 	}
 
 	/**

@@ -164,7 +164,8 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 			while(list(,$column) = $primary->eachColumn()){
 				$dao[] = '$'.$column->getFieldVariableName();
 				$where[] = '`\'.'.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'` = \\\'\'.$this->escapeString($'.$column->getFieldVariableName().').\'\\\'';
-				$where_update[] = '`\'.'.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'`=?';
+				$replace[] = $column->getTable()->getClassName().'::'.$column->getFieldConstantName();
+				// $where_update[] = '`\'.'.$column->getTable()->getClassName().'::'.$column->getFieldConstantName().'.\'`=?';
 			}
 			$content = preg_replace('/\s*\/\*\*\n\s*\*.*?\n\s*\*\/(\n\s*public\s*function\s+create)/m','\\1', $content);
 			$content = preg_replace('/public\s*function\s+create\s*\(.*?(\/\*\*|function)/ms','\\1', $content);
@@ -173,16 +174,26 @@ class CodeGeneratorModelFileDAOMySQLi extends CodeGeneratorFilePHP {
 			$content = preg_replace('/(function\s+delete\s*\()(.*?)(\))/','\\1'.implode(', ', $dao).'\\3', $content);
 			$content = preg_replace('/(function\s+update\s*\()(.*?)(,\s*DatabaseDataHandler)/','\\1'.implode(', ', $dao).'\\3', $content);
 
-			$update  = '\\1/* Special create fields */\\1/* Special create fields end */\\1';
-			$update .= '\\1$columns_create = $data->getUpdatedColumns();';
-			$update .= '\\1$values_create = $data->getUpdatedColumnValues();\\1';
-			$update .= '\\1$query = MySQLiTools::makeInsertStatement(\''.$this->getTable()->getName().'\', $columns_create, \'ON DUPLICATE KEY UPDATE \'.MySQLiTools::makeUpdateColumns($columns));';
+
+			if($this->getTable()->countColumns() == $primary->countColumns()){
+				$update = '\\1$query = MySQLiTools::makeReplaceStatement(\''.$this->getTable()->getName().'\', array('.implode(', ', $replace).'));';
+			} else {
+				$update  = '\\1/* Special create fields */\\1/* Special create fields end */\\1';
+				$update .= '\\1$columns_create = $data->getUpdatedColumns();';
+				$update .= '\\1$values_create = $data->getUpdatedColumnValues();\\1';
+				$update .= '\\1$query = MySQLiTools::makeInsertStatement(\''.$this->getTable()->getName().'\', $columns_create, \'ON DUPLICATE KEY UPDATE \'.MySQLiTools::makeUpdateColumns($columns));';
+			}
 
 			$content = preg_replace('/^(\s*)\$query\s*=\s*MySQLiTools::makeUpdateStatement.*?$/ms', $update, $this->content);
 
 			$content = preg_replace('/(^\s*WHERE\s*).*?FIELD_ID.*?$(?<!;)/m','\\1'.implode(' AND ', $where).'', $content);
 			$content = preg_replace('/(^\s*WHERE\s*).*?FIELD_ID.*?$(?<=;)/m','\\1'.implode(' AND ', $where).'\';', $content);
-			$content = preg_replace('/(MySQLiQueryStatement\s*\(.*?)(\$values\s*,\s*)(\$id)/','\\1$values_create, '.implode(', ', $dao).', $values', $content);
+
+			if($this->getTable()->countColumns() == $primary->countColumns()){
+				$content = preg_replace('/(MySQLiQueryStatement\s*\(.*?)(\$values\s*,\s*)(\$id)/','\\1'.implode(', ', $dao).'', $content);
+			} else {
+				$content = preg_replace('/(MySQLiQueryStatement\s*\(.*?)(\$values\s*,\s*)(\$id)/','\\1$values_create, '.implode(', ', $dao).', $values', $content);
+			}
 		}
 		return true;
 	}

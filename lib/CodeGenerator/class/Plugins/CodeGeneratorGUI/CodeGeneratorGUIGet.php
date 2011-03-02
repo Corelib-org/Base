@@ -135,7 +135,7 @@ class CodeGeneratorGUIGet extends CodeGeneratorGUIFilePHP {
 	 * @return boolean true on success, else return false
 	 */
 	public function writeAbstractPageClassName(&$content){
-			$abstracts = file_get_contents('etc/abstracts.php');
+		$abstracts = file_get_contents('etc/abstracts.php');
 		if(preg_match_all('/abstract class (.*?PageGet|.*?Page) extends .*?Page.*?/', $abstracts, $match)){
 			foreach($match[1] as $class){
 				if(preg_match('/.*?PageGet/', $class)){

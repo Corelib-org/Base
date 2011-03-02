@@ -97,6 +97,13 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		$this->_writeUtilityMethods($this->content);
 		$this->_writeRelationChanges($this->content);
 		$this->_writeCacheManager($this->content);
+		$this->_writeRelationshipHelperInit($this->content);
+		$this->_writeRelationshipHelperProperties($this->content);
+		$this->_writeRelationshipHelperMethods($this->content);
+		$this->_writeRelationshipHelperListProperties($this->content);
+		$this->_writeRelationshipHelperListOptionProperties($this->content);
+		$this->_writeRelationshipCommitActions($this->content);
+		$this->_writeRelationshipOutput($this->content);
 	}
 
 	/**
@@ -700,6 +707,193 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			return false;
 		}
 	}
+
+	public function _writeRelationshipHelperInit(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship helper init')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$property = $mapping->getReferenceKey()->getFieldVariableName().'_relations';
+					$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$property.' = new ORMRelationHelper(\''.$mapping->getTable()->getClassName().'\');'));
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function _writeRelationshipHelperProperties(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship helper properties')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$property = $mapping->getReferenceKey()->getFieldVariableName().'_relations';
+					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, null));
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function _writeRelationshipHelperListOptionProperties(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship list option properties')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$property = $mapping->getReferenceKey()->getFieldVariableName().'_list_output';
+					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, false));
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function _writeRelationshipHelperListProperties(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship list properties')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$property = $mapping->getReferenceKey()->getFieldVariableName().'_list';
+					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, null));
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function _writeRelationshipCommitActions(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship commit actions')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$class = $mapping->getReferenceKey()->getReferenceClassName(false);
+					if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->_commit'.$class.'\(\s*\)\s*\).*?\{/')){
+						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$this->_commit'.$class.'()'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$r = true;'));
+					}
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function _writeRelationshipOutput(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship output')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$class = $mapping->getReferenceKey()->getReferenceClassName(false);
+					$property = $mapping->getReferenceKey()->getFieldVariableName();
+					if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property.'_list_output\s*\).*?\{/')){
+						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$this->'.$property.'_list_output'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().'->appendChild($this->'.$property.'_list->getXML($xml));'));
+					}
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function _writeRelationshipHelperMethods(&$content){
+		if($block = $this->_getCodeBlock($content, 'Relationship helper methods')){
+			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
+				if($foreign_key = $mapping->getForeignKey()){
+					$field = $mapping->getReferenceKey()->getFieldVariableName();
+					$property = $field.'_relations';
+					$class = $mapping->getReferenceKey()->getReferenceClassName();
+					$method = 'add'.$class;
+
+					if(!$block->hasMethod($method)){
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Add relationship to '.$class);
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' $'.$mapping->getReferenceKey()->getFieldVariableName().' Object to add a relationship to'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
+
+						$method = new CodeGeneratorCodeBlockPHPClassMethod('public', $method);
+						$method->setDocBlock($docblock);
+						$method->addParameter(new CodeGeneratorCodeBlockPHPParameter($class.' $'.$mapping->getReferenceKey()->getFieldVariableName()));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$property.'->add($'.$field.');'));
+						$block->addComponent($method);
+					}
+
+					$method = 'remove'.$class;
+					if(!$block->hasMethod($method)){
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Remove relationship from '.$class);
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' $'.$mapping->getReferenceKey()->getFieldVariableName().' Object to remove a relationship from'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
+
+						$method = new CodeGeneratorCodeBlockPHPClassMethod('public', $method);
+						$method->setDocBlock($docblock);
+						$method->addParameter(new CodeGeneratorCodeBlockPHPParameter($class.' $'.$mapping->getReferenceKey()->getFieldVariableName()));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$property.'->remove($'.$field.');'));
+						$block->addComponent($method);
+					}
+
+					$method = 'get'.$mapping->getReferenceKey()->getReferenceClassName(false);
+					$property = $mapping->getReferenceKey()->getFieldVariableName();
+					if(!$block->hasMethod($method)){
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Get list of relationships to '.$class);
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', '$output boolean if true, add list to output (eg. {@link '.$this->getTable()->getClassName().'::getXML()})'));
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', $mapping->getTable()->getClassName().'List'));
+
+						$method = new CodeGeneratorCodeBlockPHPClassMethod('public', $method);
+						$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$output', 'false'));
+						$method->setDocBlock($docblock);
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$property.'_list = new '.$mapping->getTable()->getClassName().'List();'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$property.'_list->set'.$this->getTable()->getClassName().'Filter($this);'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$property.'_list_output = $output;'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$property.'_list;'));
+						$block->addComponent($method);
+					}
+
+					$method = '_commit'.$mapping->getReferenceKey()->getReferenceClassName(false);
+					$property = $mapping->getReferenceKey()->getFieldVariableName();
+					if(!$block->hasMethod($method)){
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Commit '.$class.' relationship changes');
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true if any changes was made, else return false'));
+
+						$method = new CodeGeneratorCodeBlockPHPClassMethod('private', $method);
+						$method->setDocBlock($docblock);
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$changed = false;'));
+						$while = $method->addComponent(new CodeGeneratorCodeBlockPHPWhile('list($'.$property.', $relationship) = $this->'.$field.'_relations->each()'));
+						$while->addComponent(new CodeGeneratorCodeBlockPHPStatement('$relationship->set'.$this->getTable()->getClassName().'($this);'));
+						$while->addComponent(new CodeGeneratorCodeBlockPHPStatement('$relationship->set'.$class.'($'.$property.');'));
+						$while->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$field.'_relations->commit($'.$property.', $relationship);'));
+						$while->addComponent(new CodeGeneratorCodeBlockPHPStatement('$changed = true;'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $changed;'));
+						$block->addComponent($method);
+					}
+
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+/*
+ 	private function _commitServices(){
+		$changed = false;
+		while(list($relation, $link) = $this->service_relations->each()){
+			$link->setServer($this);
+			$link->setService($relation);
+			$this->service_relations->commit($relation, $link);
+			$changed = true;
+		}
+		return $changed;
+	}
+*/
 
 	/**
 	 * Write element name.

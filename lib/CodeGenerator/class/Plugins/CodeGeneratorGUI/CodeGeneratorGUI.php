@@ -66,7 +66,7 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 		if($this->settings->getElementsByTagName('layout')->length > 0){
 			$layout = $this->settings->getElementsByTagName('layout')->item(0);
 			if(strlen(trim($layout->getAttribute('name'))) <= 0){
-				$layout->setAttribute('name', 'CodeGeneratorGUILayout');
+				$layout->setAttribute('name', $this->_getDefaultCodeGeneratorGUILayout());
 			}
 			$this->_addFile($this->_createFileInstance($layout->getAttribute('name'), $layout));
 		}
@@ -76,7 +76,7 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 		if($list->length > 0){
 			for($i = 0; $i < $list->length; $i++){
 				if(strlen(trim($list->item($i)->getAttribute('name'))) <= 0){
-					$list->item($i)->setAttribute('name', 'CodeGeneratorGUIList');
+					$list->item($i)->setAttribute('name', $this->_getDefaultCodeGeneratorGUIList());
 				}
 				if(strlen(trim($list->item($i)->getAttribute('xsl-mode'))) <= 0){
 					$list->item($i)->setAttribute('xsl-mode', 'xhtml-list');
@@ -109,7 +109,7 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 		if($list->length > 0){
 			for($i = 0; $i < $list->length; $i++){
 				if(strlen(trim($list->item($i)->getAttribute('name'))) <= 0){
-					$list->item($i)->setAttribute('name', 'CodeGeneratorGUIView');
+					$list->item($i)->setAttribute('name', $this->_getDefaultCodeGeneratorGUIView());
 				}
 				if(strlen(trim($list->item($i)->getAttribute('method'))) <= 0){
 					$list->item($i)->setAttribute('method', 'view');
@@ -139,7 +139,7 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 		if($list->length > 0){
 			for($i = 0; $i < $list->length; $i++){
 				if(strlen(trim($list->item($i)->getAttribute('name'))) <= 0){
-					$list->item($i)->setAttribute('name', 'CodeGeneratorGUIEdit');
+					$list->item($i)->setAttribute('name', $this->_getDefaultCodeGeneratorGUIEdit());
 				}
 				if(strlen(trim($list->item($i)->getAttribute('method'))) <= 0){
 					$list->item($i)->setAttribute('method', 'edit');
@@ -169,7 +169,7 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 		if($list->length > 0){
 			for($i = 0; $i < $list->length; $i++){
 				if(strlen(trim($list->item($i)->getAttribute('name'))) <= 0){
-					$list->item($i)->setAttribute('name', 'CodeGeneratorGUICreate');
+					$list->item($i)->setAttribute('name', $this->_getDefaultCodeGeneratorGUICreate());
 				}
 				if(strlen(trim($list->item($i)->getAttribute('method'))) <= 0){
 					$list->item($i)->setAttribute('method', 'create');
@@ -201,12 +201,89 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 			}
 			$list->item(0)->setAttribute('gui-url', $this->createURL($file, '/${id}/delete/'));
 		}
+		$query = $xpath->query('list|view|edit|create|delete', $this->settings);
+		if($query->length > 0){
+			$get = $this->_addFile($this->_createFileInstance($this->_getDefaultCodeGeneratorGUIGet(), $this->settings));
+			$post = $this->_addFile($this->_createFileInstance($this->_getDefaultCodeGeneratorGUIPost(), $this->settings));
+			$this->addLookRegistryFiles($get, $post);
+		}
+	}
 
-		$get = $this->_addFile($this->_createFileInstance('CodeGeneratorGUIGet', $this->settings));
-		$post = $this->_addFile($this->_createFileInstance('CodeGeneratorGUIPost', $this->settings));
+	/**
+	 * Get gui default get generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUIGet(){
+		return 'CodeGeneratorGUIGet';
+	}
 
-		$this->addLookRegistryFiles($get, $post);
+	/**
+	 * Get gui default post generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUIPost(){
+		return 'CodeGeneratorGUIPost';
+	}
 
+	/**
+	 * Get gui default layout generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUILayout(){
+		return 'CodeGeneratorGUILayout';
+	}
+
+	/**
+	 * Get gui default list generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUIList(){
+		return 'CodeGeneratorGUIList';
+	}
+
+	/**
+	 * Get gui default view generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUIView(){
+		return 'CodeGeneratorGUIView';
+	}
+
+	/**
+	 * Get gui default edit generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUIEdit(){
+		return 'CodeGeneratorGUIEdit';
+	}
+
+	/**
+	 * Get gui default create generator class.
+	 *
+	 * This method may be overwritten to change how the files are added to the registry.
+	 *
+	 * @return string class name
+	 */
+	protected function _getDefaultCodeGeneratorGUICreate(){
+		return 'CodeGeneratorGUICreate';
 	}
 
 	/**
@@ -227,10 +304,10 @@ class CodeGeneratorGUI extends CodeGeneratorPlugin {
 	/**
 	 * Convert class url name to plural.
 	 *
-	 * @param string $url
+	 * @param CodeGeneratorFile $url
 	 * @return string new url
 	 */
-	public function createURL($file, $url){
+	public function createURL(CodeGeneratorFile $file, $url){
 		$base = dirname(preg_replace('/^.*pages\/(.*)$/', '\\1', $file->getFilename()));
 		$base = explode('/', $base);
 		$base[sizeof($base) - 1] = $base[sizeof($base) - 1].'s';

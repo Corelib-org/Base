@@ -416,8 +416,8 @@ class CodeGeneratorColumn {
 	 * @uses CodeGeneretorNameResolver::getReferenceClassName()
 	 * @return string class name
 	 */
-	public function getReferenceClassName(){
-		return $this->resolver->getReferenceClassName($this);
+	public function getReferenceClassName($plural_to_singular=true){
+		return $this->resolver->getReferenceClassName($this, $plural_to_singular);
 	}
 
 	/**

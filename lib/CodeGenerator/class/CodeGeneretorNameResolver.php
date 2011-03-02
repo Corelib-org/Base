@@ -76,7 +76,7 @@ interface CodeGeneretorNameResolverEngine {
 	 * @param CodeGeneratorColumn $column
 	 * @return string class name
 	 */
-	public function getReferenceClassName(CodeGeneratorColumn $column);
+	public function getReferenceClassName(CodeGeneratorColumn $column, $plural_to_singular=true);
 
 	/**
 	 * Get field constant name from column.
@@ -216,8 +216,8 @@ class CodeGeneretorNameResolver implements CodeGeneretorNameResolverEngine,Singl
 	 * @param CodeGeneratorColumn $column
 	 * @return string class name
 	 */
-	public function getReferenceClassName(CodeGeneratorColumn $column){
-		return $this->engine->getReferenceClassName($column);
+	public function getReferenceClassName(CodeGeneratorColumn $column, $plural_to_singular=true){
+		return $this->engine->getReferenceClassName($column, $plural_to_singular);
 	}
 
 	/**
@@ -360,13 +360,15 @@ class CodeGeneretorNameResolverEngineDefault implements CodeGeneretorNameResolve
 	 * @param CodeGeneratorTable $column
 	 * @return string Class name
 	 */
-	public function getReferenceClassName(CodeGeneratorColumn $column){
+	public function getReferenceClassName(CodeGeneratorColumn $column, $plural_to_singular=true){
 		if($name = $column->getReference()){
 			$name = preg_replace('/^pk_/', '', $name);
 			$name = str_replace('_', ' ', $name);
 			$name = ucwords($name);
 			$name = str_replace(' ', '', $name);
-			$name = $this->_convertPluralToSingular($name);
+			if($plural_to_singular){
+				$name = $this->_convertPluralToSingular($name);
+			}
 			return $name;
 		} else {
 			return false;
@@ -461,8 +463,10 @@ class CodeGeneretorNameResolverEngineDefault implements CodeGeneretorNameResolve
 	 * @internal
 	 */
 	private function _convertPluralToSingular($string){
-		if(preg_match('/(ses|oes)$/', $string)){
+		if(preg_match('/(oes)$/', $string)){
 			$string = preg_replace('/es$/', '', $string);
+		} else if(preg_match('/(ses)$/', $string)){
+			$string = preg_replace('/s$/', '', $string);
 		} else if(preg_match('/(ies)$/', $string)){
 			$string = preg_replace('/ies$/', 'y', $string);
 		} else if(preg_match('/s$/', $string)){

@@ -15,6 +15,17 @@
 		<code-generator>
 			<group name="Animal types and breeds">
 				<table name="tbl_example">
+					<!--
+					/**
+					 * Table mappings allows for nm orm classes to be mappet in the object.
+					 *
+					 * attribute: name name of the table for which to create the link
+					 * attribute: foreign-key name of the column containing the key linking to current table
+					 * attribute: reference-key name of the column containing the key linking to the other table
+					 */
+					 -->
+					<table-mapping name="tbl_example_has_examples" foreign-key="fk_example" reference-key="fk_other_example"/>
+
 					<generator name="CodeGeneratorModel">
 						<field name="name" converter="true" writable="true" readable="true"/>
 					</generator>

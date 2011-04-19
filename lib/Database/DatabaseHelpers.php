@@ -70,8 +70,11 @@ abstract class DatabaseHelper {
 	 * @param mixed $setting
 	 * @return boolean true
 	 */
-	public function set($column, $setting){
-		$this->settings[$column] = $setting;
+	public function set($column, $setting, $callback=null){
+		if(is_object($setting) && !is_callable(array($setting, $callback))){
+			throw new BaseException('Value callback method is not callable: '.$callback, E_USER_ERROR);
+		}
+		$this->settings[$column] = array($setting, $callback);
 		return true;
 	}
 
@@ -82,9 +85,13 @@ abstract class DatabaseHelper {
 	 * @param string $column database (table) column
 	 * @return mixed if the value is set, else it will return null
 	 */
-	public function get($column){
+	public function get($column, $object=false){
 		if(isset($this->settings[$column])){
-			return $this->settings[$column];
+			if(is_object($this->settings[$column][0]) && !$object){
+				return call_user_func(array($this->settings[$column][0], $this->settings[$column][1]));
+			} else {
+				return $this->settings[$column][0];
+			}
 		} else {
 			return null;
 		}
@@ -143,7 +150,7 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 	 *
 	 * @see DatabaseHelper::set()
 	 */
-	public function set($column, $setting){
+	public function set($column, $setting, $callback=null){
 		if(empty($setting) || is_null($setting)){
 			$setting = DATABASE_ORDER_DESC;
 		}
@@ -262,12 +269,12 @@ class DatabaseDataHandler extends DatabaseHelper {
 	 * @param mixed $history value of the column before the change
 	 * @return boolean true
 	 */
-	public function set($column, $setting, $history=self::NO_HISTORY){
+	public function set($column, $setting, $callback=null, $history=self::NO_HISTORY){
 		$this->updated_columns[$column] = $column;
 		if($history !== self::NO_HISTORY){
 			$this->history_values[$column] = $history;
 		}
-		return parent::set($column, $setting);
+		return parent::set($column, $setting, $callback);
 	}
 
 	/**
@@ -354,7 +361,7 @@ class DatabaseDataHandler extends DatabaseHelper {
 			if(!in_array($key, $this->special_exclude) || ($arg !== false && in_array($key, $arg))){
 
 				if(!$arg || in_array($key, $arg) || isset($arg[$key])){
-					$values[$key] = $val;
+					$values[$key] = $this->get($key);
 				}
 			}
 		}
@@ -424,47 +431,5 @@ class DatabaseDataHandler extends DatabaseHelper {
 			return false;
 		}
 	}
-}
-
-
-
-
-
-class DatabaseRelationMapHelper {
-
-	private $relations = array();
-
-	const CREATE = 1;
-	const REMOVE = 2;
-
-	public function add($id, $obj){
-		$this->_registerAction($id, $obj, self::CREATE);
-	}
-
-	public function remove($id, $obj){
-		$this->_registerAction($id, $obj, self::REMOVE);
-	}
-
-	public function each(){
-		if(list($key, $action) = each($this->relations)){
-			return array($action[0], $action[1]);
-		} else {
-			reset($this->relations);
-			return false;
-		}
-	}
-
-	public function count(){
-		return sizeof($this->relations);
-	}
-
-	private function _registerAction($id, $obj, $action){
-		$this->_validate($obj);
-		$this->relations[$id] = array($obj, $action);
-	}
-
-	private function _validate($obj){
-	}
-
 }
 ?>

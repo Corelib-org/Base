@@ -1293,6 +1293,12 @@ class InputValidatorModelExists implements InputValidator {
 	private $class = null;
 
 	/**
+	 * @var string Read callback
+	 * @internal
+	 */
+	private $callback = null;
+
+	/**
 	 * @var object instance of {@link InputValidatorModelExists::$class} class name.
 	 * @internal
 	 */
@@ -1303,13 +1309,15 @@ class InputValidatorModelExists implements InputValidator {
 	//********** InputValidatorModelExists class methods **************//
 	//*****************************************************************//
 	/**
-	 * Create new instance
+	 * Create new instance.
 	 *
 	 * @param string $class class name
+	 * @param string $callback callback method name
 	 * @return void
 	 */
-	public function __construct($class){
+	public function __construct($class, $callback='getById'){
 		$this->class = $class;
+		$this->callback = $callback;
 	}
 
 	/**
@@ -1320,10 +1328,13 @@ class InputValidatorModelExists implements InputValidator {
 	 */
 	public function validate($content){
 		$this->instance = new $this->class($content);
-		if(is_callable(array($this->instance, 'read'))){
-			return $this->instance->read();
+		if(method_exists($this->class, $this->callback)){
+			if(call_user_func_array(array($this->class, $this->callback), func_get_args())){
+				return true;
+			} else {
+				return false;
+			}
 		} else {
-			$this->instance = false;
 			return false;
 		}
 	}

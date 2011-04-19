@@ -277,6 +277,16 @@ class MySQLiEngine implements DatabaseEngine {
 	}
 
 	/**
+	 * Convert unix timestamp to database timestamp.
+	 *
+	 * @param integer $timestamp unix timestamp to convert
+	 * @return string database compatible timestamp
+	 */
+	public function createTimestamp($timestamp){
+		return strftime('%Y-%m-%d %X', $timestamp);
+	}
+
+	/**
 	 * Connect to database.
 	 *
 	 * @uses MySQLiEngine::$hostname

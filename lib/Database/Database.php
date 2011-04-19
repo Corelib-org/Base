@@ -325,6 +325,16 @@ class Database implements Singleton {
 	}
 
 	/**
+	 * Convert unix timestamp to database timestamp.
+	 *
+	 * @param integer $timestamp unix timestamp to convert
+	 * @return string database compatible timestamp
+	 */
+	public function createTimestamp($timestamp){
+		return $this->master->createTimestamp($timestamp);
+	}
+
+	/**
 	 * Get query log.
 	 *
 	 * @uses Database::$query_log
@@ -621,6 +631,16 @@ abstract class DatabaseDAO {
 	 */
 	public function rollback(){
 		return $this->database->rollback();
+	}
+
+	/**
+	 * Convert unix timestamp to database timestamp.
+	 *
+	 * @param integer $timestamp unix timestamp to convert
+	 * @return string database compatible timestamp
+	 */
+	public function createTimestamp($timestamp){
+		return $this->database->createTimestamp($timestamp);
 	}
 
 	/**

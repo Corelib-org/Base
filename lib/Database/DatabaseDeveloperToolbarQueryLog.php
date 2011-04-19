@@ -114,7 +114,7 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 				$result .= '<p>'.$line['error']['message'].'</p>';
 			}
 
-			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.trim($line['query']).'</pre><br/>';
+			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.trim(htmlspecialchars($line['query'])).'</pre><br/>';
 
 
 			if(is_array($line['analysis']) && sizeof($line['analysis']) > 0){

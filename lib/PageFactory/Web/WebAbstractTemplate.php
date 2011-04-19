@@ -418,7 +418,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			}
 		}
 		if(preg_match('/^http:\/\//', $location) || preg_match('/^https:\/\//', $location)){
-			$this->location = $location;
+			$this->location = $location.$param;
 		} else {
 			$this->location = $this->http_redirect_base.$location.$param;
 		}

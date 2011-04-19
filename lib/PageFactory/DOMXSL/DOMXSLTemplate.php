@@ -100,6 +100,20 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @internal
 	 */
 	private $output_converter = null;
+	
+	
+	/**
+	 * @var string Theme name
+	 * @internal
+	 */
+	private $xsl_theme = null;
+	
+	
+	/**
+	 * @var string Theme path 
+	 *
+	 */
+	private $xsl_theme_path = null;
 
 
 	//*****************************************************************//
@@ -127,13 +141,23 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param string $xslcore xsl core filename
 	 * @return void
 	 */
-	public function __construct($xslcore = null){
+	public function __construct($xslcore = null, $xsltheme = null){
 		parent::__construct();
-		if(is_null($xslcore)){
-			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.'base/core.xsl';
-		} else if ($xslcore{0} != '/'){
-			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$xslcore;
+		
+		$theme_path = '';
+		if(!is_null($xsltheme)){
+			$theme_path = $xsltheme;
+			if(!empty($theme_path) && substr($theme_path, strlen($theme_path)-1) != '/'){
+				$theme_path .='/';
+			}
 		}
+		
+		if(is_null($xslcore)){
+			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$theme_path.'base/core.xsl';
+		} else if ($xslcore{0} != '/'){
+			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$theme_path.$xslcore;
+		}
+		
 		try {
 			if(!is_file($xslcore)){
 				throw new BaseException('No such file or directory: '.$xslcore);
@@ -142,7 +166,10 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 			echo $e;
 			exit;
 		}
+		
 		$this->xsl_core = $xslcore;
+		$this->xsl_theme = $xsltheme;
+		$this->xsl_theme_path = $theme_path;
 
 		//
 		// IE Hack.
@@ -196,7 +223,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		if($template_file{0} ==	'/' || preg_match('/^[a-zA-Z]:/', $template_file)){
 			$template = $template_file;
 		} else {
-			if(!$template = realpath(DOMXSL_TEMPLATE_XSL_PATH.$template_file)){
+			if(!$template = realpath(DOMXSL_TEMPLATE_XSL_PATH.$this->xsl_theme_path.$template_file)){
 				trigger_error('XSL Template file not found: '.DOMXSL_TEMPLATE_XSL_PATH.$template_file, E_USER_ERROR);
 				return false;
 			}

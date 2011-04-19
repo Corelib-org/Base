@@ -107,6 +107,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		$this->_writePrivateDataRetrievalMethods($this->content);
 		$this->_writeAlternateConstructorMethods($this->content);
 		$this->_writeORMCacheCleanup($this->content);
+		$this->_writeCacheStoreCleanup($this->content);
 	}
 
 	/**
@@ -145,6 +146,10 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 				if(!$block->hasClassProperty($property)){
 					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('private', $property, null));
 				}
+				if($class = $column->getReferenceClassName() && !$block->hasClassProperty($property.'_id')){
+					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('private', $property.'_id', null));
+				}
+
 			}
 			$this->_writeCodeBlock($content, $block);
 			return true;
@@ -202,11 +207,12 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 		if($block = $this->_getCodeBlock($content, 'Get methods')){
 			$xpath = new DOMXPath($this->getSettings()->ownerDocument);
 			while(list(,$column) = $this->getTable()->eachColumn()){
-				$method = 'get'.$column->getFieldMethodName();
+				$method_name = 'get'.$column->getFieldMethodName();
 
 				$readable = $xpath->query('field[@name = "'.$column->getName().'" and @readable="false"]', $this->getSettings())->length;
-				if(!$block->hasMethod($method) && $readable == 0){
-					$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method));
+				if(!$block->hasMethod($method_name) && $readable == 0){
+
+
 
 					switch ($column->getType()){
 						case CodeGeneratorColumn::TYPE_BOOLEAN:
@@ -225,30 +231,48 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 							$type = 'mixed';
 					}
 
+					$property_name = $column->getFieldVariableName();
+
 					if($class = $column->getReferenceClassName()){
 						$type = $class;
-					}
 
-					$docblock = new CodeGeneratorCodeBlockPHPDoc('Get '.$column->getFieldVariableName());
+						$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method_name));
+						$docblock = new CodeGeneratorCodeBlockPHPDoc('Get '.$column->getFieldVariableName());
+						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', $type.' '.$property_name));
+						$method->setDocBlock($docblock);
+						$method_name .= 'ID';
+
+						$property_name .= '_id';
+						$type = 'integer';
+
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('is_null($this->'.$column->getFieldVariableName().')'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = '.$class.'::getByID($this->'.$property_name.');'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$column->getFieldVariableName().';'));
+
+
+					}
+					$method = $block->addComponent(new CodeGeneratorCodeBlockPHPClassMethod('public', $method_name));
+					$docblock = new CodeGeneratorCodeBlockPHPDoc('Get '.$column->getFieldVariableName().' ID');
 					$method->setDocBlock($docblock);
 
 					$converters = $xpath->query('field[@name = "'.$column->getName().'" and @converter="true"]', $this->getSettings())->length;
 					$smarttypes = array(CodeGeneratorColumn::SMARTTYPE_SECONDS,
-					                    CodeGeneratorColumn::SMARTTYPE_TIMESTAMP,
-					                    CodeGeneratorColumn::SMARTTYPE_TIMESTAMP_SET_ON_CREATE);
+										CodeGeneratorColumn::SMARTTYPE_TIMESTAMP,
+										CodeGeneratorColumn::SMARTTYPE_TIMESTAMP_SET_ON_CREATE);
 
 					if($converters > 0 || in_array($column->getSmartType(), $smarttypes)){
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$this->_makeConverterVariableName($column).')'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$this->_makeConverterVariableName($column).'->convert($this->'.$column->getFieldVariableName().');'));
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$property_name.')'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$this->_makeConverterVariableName($column).'->convert($this->'.$property_name.');'));
 
 						$g = $if->addAlternate();
- 						$g->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$column->getFieldVariableName().';'));
- 						$type = 'mixed';
+						$g->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$property_name.';'));
+						$type = 'mixed';
 					} else {
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$column->getFieldVariableName().';'));
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$property_name.';'));
 					}
 
-					$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', $type.' '.$column->getFieldVariableName()));
+					$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', $type.' '.$property_name));
+
 				}
 			}
  			$this->_writeCodeBlock($content, $block);
@@ -301,11 +325,17 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 					$method->setDocBlock($docblock);
 					$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
 
-					$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';'));
 					if($class){
 						$param->setType($class);
-						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->datahandler->set(self::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().'->getID());'));
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($'.$column->getFieldVariableName().'->getID())'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().'_id = $'.$column->getFieldVariableName().'->getID();'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->datahandler->set(self::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().', \'getID\');'));
+						$else = $if->addAlternate();
+						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('throw new BaseException(\''.$type.' is not a valid object: '.$type.'::getID() returned null\');'));
+
 					} else {
+						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->datahandler->set(self::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().');'));
 					}
 					$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return true;'));
@@ -453,7 +483,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 					if(!$class){
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = '.$type.'$array[self::'.$contant.'];'));
 					} else {
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = new '.$class.'('.$type.'$array[self::'.$contant.']);'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().'_id = '.$type.'$array[self::'.$contant.'];'));
 					}
 				}
 			}
@@ -478,24 +508,28 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 
 				$readable = $xpath->query('field[@name = "'.$column->getName().'" and @readable="false"]', $this->getSettings())->length;
 				$property = $column->getFieldVariableName();
-				if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property.'\s*\).*?\{/') && $readable == 0){
-					$reference_class = $xpath->query('field[@name = "'.$column->getName().'" and @reference-class=true()]', $this->getSettings());
-					if($reference_class->length > 0){
-						$class = $reference_class->item(0)->getAttribute('reference-class');
-					} else if($column->getReferenceClassName()){
-						$class = $column->getReferenceClassName();
-					} else {
-						$class = false;
-					}
+				$property_name = $property;
+				$reference_class = $xpath->query('field[@name = "'.$column->getName().'" and @reference-class=true()]', $this->getSettings());
+				if($reference_class->length > 0){
+					$class = $reference_class->item(0)->getAttribute('reference-class');
+				} else if($column->getReferenceClassName()){
+					$class = $column->getReferenceClassName();
+				} else {
+					$class = false;
+				}
+				if($class){
+					$property_name .= '_id';
+				}
 
-					$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$property.')'));
+				if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property_name.'\s*\).*?\{/') && $readable == 0){
+					$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$property_name.')'));
 					if($column->getType() == CodeGeneratorColumn::TYPE_BOOLEAN){
 						$bif = $if->addComponent(new CodeGeneratorCodeBlockPHPIf('!$this->'.$property));
 						$bif->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$column->getTable()->getClassVariable().'->setAttribute(\''.$column->getFieldReadableVariableName().'\', \'false\');'));
 						$belse = $bif->addAlternate();
 						$belse->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$column->getTable()->getClassVariable().'->setAttribute(\''.$column->getFieldReadableVariableName().'\', \'true\');'));
 					} else if($class){
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$column->getTable()->getClassVariable().'->setAttribute(\''.$column->getFieldReadableVariableName().'\', $this->'.$column->getFieldVariableName().'->getID());'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$column->getTable()->getClassVariable().'->setAttribute(\''.$column->getFieldReadableVariableName().'\', $this->'.$column->getFieldVariableName().'_id);'));
 					} else {
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$column->getTable()->getClassVariable().'->setAttribute(\''.$column->getFieldReadableVariableName().'\', $this->get'.$column->getFieldMethodName().'());'));
 					}
@@ -676,7 +710,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
 				if($foreign_key = $mapping->getForeignKey()){
 					$property = $mapping->getReferenceKey()->getFieldVariableName().'_relations';
-					$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$property.' = new ORMRelationHelper(\''.$mapping->getTable()->getClassName().'\');'));
+					if(!$block->hasStatementRegex('/\$this->'.$property.'\s+=/')){
+						$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$property.' = new ORMRelationHelper(\''.$mapping->getTable()->getClassName().'\');'));
+					}
 				}
 			}
 			$this->_writeCodeBlock($content, $block);
@@ -691,7 +727,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
 				if($foreign_key = $mapping->getForeignKey()){
 					$property = $mapping->getReferenceKey()->getFieldVariableName().'_relations';
-					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, null));
+					if(!$block->hasClassProperty($property)){
+						$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, null));
+					}
 				}
 			}
 			$this->_writeCodeBlock($content, $block);
@@ -706,7 +744,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
 				if($foreign_key = $mapping->getForeignKey()){
 					$property = $mapping->getReferenceKey()->getFieldVariableName().'_list_output';
-					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, false));
+					if(!$block->hasClassProperty($property)){
+						$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, false));
+					}
 				}
 			}
 			$this->_writeCodeBlock($content, $block);
@@ -721,7 +761,9 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
 				if($foreign_key = $mapping->getForeignKey()){
 					$property = $mapping->getReferenceKey()->getFieldVariableName().'_list';
-					$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, null));
+					if(!$block->hasClassProperty($property)){
+						$block->addComponent(new CodeGeneratorCodeBlockPHPClassProperty('public', $property, null));
+					}
 				}
 			}
 			$this->_writeCodeBlock($content, $block);
@@ -736,7 +778,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 			while(list(,$mapping) = $this->getTable()->eachTableMapping()){
 				if($foreign_key = $mapping->getForeignKey()){
 					$class = $mapping->getReferenceKey()->getReferenceClassName(false);
-					if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->_commit'.$class.'\(\s*\)\s*\).*?\{/')){
+					if(!$block->hasStatementRegex('/if\s*\(.*?\$this->_commit'.$class.'/')){
 						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$this->_commit'.$class.'()'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$r = true;'));
 					}
@@ -755,7 +797,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 				if($foreign_key = $mapping->getForeignKey()){
 					$class = $mapping->getReferenceKey()->getReferenceClassName(false);
 					$property = $mapping->getReferenceKey()->getFieldVariableName();
-					if(!$block->hasStatementRegex('/if\s*\(\s*.*?\(\s*\$this->'.$property.'_list_output\s*\).*?\{/')){
+					if(!$block->hasStatementRegex('/if\s*\(.*?\$this->'.$property.'_list_output/')){
 						$if = $block->addComponent(new CodeGeneratorCodeBlockPHPIf('$this->'.$property.'_list_output'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().'->appendChild($this->'.$property.'_list->getXML($xml));'));
 					}
@@ -943,9 +985,11 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $class.' '.$column->getName()));
 								$param->setType($class);
 								$parameters[] = '$'.$column->getFieldVariableName().'->getID()';
+								$parameters_obj[] = '$'.$column->getFieldVariableName();
 							} else {
 								$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $type.' '.$column->getName()));
 								$parameters[] = '$'.$column->getFieldVariableName();
+								$parameters_obj[] = '$'.$column->getFieldVariableName();
 							}
 						}
 						$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
@@ -957,8 +1001,8 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!$'.$this->getTable()->getClassVariable().' = ORMCache::getInstance(__CLASS__, __FUNCTION__, '.implode(', ', $parameters).')'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().' = new '.$this->getTable()->getClassName().'();'));
 
-						$if = $if->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().'->_'.$methodname.'('.implode(', ', $parameters).')'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('ORMCache::storeInstance(__CLASS__, __FUNCTION__, $'.$this->getTable()->getClassVariable().', '.implode(', ', $parameters).');'));
+						$if = $if->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().'->_'.$methodname.'('.implode(', ', $parameters_obj).')'));
+						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('ORMCache::storeInstance(__CLASS__, __FUNCTION__, $'.$this->getTable()->getClassVariable().'->_cacheStoreCleanup(), '.implode(', ', $parameters).');'));
 						$else = $if->addAlternate();
 						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('return false;'));
 						$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $'.$this->getTable()->getClassVariable().';'));
@@ -986,7 +1030,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 						$parameters = array();
 						while(list(,$column) = $index->eachColumn()){
 							if($class = $this->_getReferenceClass($column)){
-								$parameters[] = '$this->'.$column->getFieldVariableName().'->getID()';
+								$parameters[] = '$this->'.$column->getFieldVariableName().'_id';
 							} else {
 								$parameters[] = '$this->'.$column->getFieldVariableName();
 							}
@@ -995,6 +1039,30 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 						$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('ORMCache::removeInstance(__CLASS__, \''.$methodname.'\', '.implode(', ', $parameters).');'));
 					}
 
+				}
+			}
+			$this->_writeCodeBlock($content, $block);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	private function _writeCacheStoreCleanup(&$content){
+		if($block = $this->_getCodeBlock($content, '_cacheStore method content')){
+ 			while(list(,$index) = $this->getTable()->eachIndex()){
+				if($index->getType() == CodeGeneratorColumn::KEY_UNIQUE || $index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+					if($index->getType() == CodeGeneratorColumn::KEY_PRIMARY){
+						$methodname = 'getByID';
+					} else {
+						$methodname = 'getBy'.$index->getIndexMethodName();
+					}
+					while(list(,$column) = $index->eachColumn()){
+						if(!$block->hasStatementRegex('/\$this->'.$column->getFieldVariableName().'\s+=/') && $this->_getReferenceClass($column)){
+							$block->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = null;'));
+						}
+					}
 				}
 			}
 			$this->_writeCodeBlock($content, $block);

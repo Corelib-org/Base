@@ -190,9 +190,13 @@ class CodeGeneratorGUIPost extends CodeGeneratorGUIFilePHP {
 		$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$id'));
 
 		$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$input = InputHandler::getInstance();'));
-		$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().' = new '.$this->getTable()->getClassName().'($id);'));
+		// $method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().' = new '.$this->getTable()->getClassName().'($id);'));
 
-		$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$this->_validate'.$this->getTable()->getClassName().'Input($'.$this->getTable()->getClassVariable().', '.$this->getFields($edit).')'));
+
+
+		$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().' = '.$this->getTable()->getClassName().'::getByID($id)'));
+
+		$if = $if->addComponent(new CodeGeneratorCodeBlockPHPIf('$this->_validate'.$this->getTable()->getClassName().'Input($'.$this->getTable()->getClassVariable().', '.$this->getFields($edit).')'));
 		$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().'->commit();'));
 		$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->post->setLocation(\''.$this->getListURL($edit).'\');'));
 		$else = $if->addAlternate();

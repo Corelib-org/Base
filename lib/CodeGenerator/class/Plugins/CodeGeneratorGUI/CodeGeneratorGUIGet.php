@@ -186,9 +186,8 @@ class CodeGeneratorGUIGet extends CodeGeneratorGUIFilePHP {
 	 */
 	public function writeEditMethod(CodeGeneratorCodeBlockPHPClassMethod $method, DOMElement $edit){
 		$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$id'));
-		$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().' = new '.$this->getTable()->getClassName().'($id);'));
 
-		$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().'->read()'));
+		$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().' = '.$this->getTable()->getClassName().'::getByID($id)'));
 		$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->xsl->addTemplate(\''.$edit->getAttribute('gui-xsl-filename').'\');'));
 		$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->addContent($'.$this->getTable()->getClassVariable().');'));
 		$else = $if->addAlternate();
@@ -204,9 +203,8 @@ class CodeGeneratorGUIGet extends CodeGeneratorGUIFilePHP {
 	 */
 	public function writeDeleteMethod(CodeGeneratorCodeBlockPHPClassMethod $method, DOMElement $delete){
 		$method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$id'));
-		$method->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().' = new '.$this->getTable()->getClassName().'($id);'));
 
-		$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().'->read()'));
+		$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('$'.$this->getTable()->getClassVariable().' = '.$this->getTable()->getClassName().'::getByID($id)'));
 		$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$'.$this->getTable()->getClassVariable().'->delete();'));
 
 		if($url = $this->getListURL($delete)){

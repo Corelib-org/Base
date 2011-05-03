@@ -381,11 +381,17 @@ class Base implements Singleton {
 		assert('is_string($class)');
 		assert('$class != "WebPage"');
 		if(!isset($this->class_cache[$class])){
-			if($file = $this->_classSearch($class)){
+			if(preg_match('/^((.*?)\\\)?([A-Za-z0-9_]+)$/', $class, $match)){
+				list(,,$namespace, $classname) = $match;
+			} else {
+				$namespace = null;
+				$classname = $class;
+			}
+			if($file = $this->_classSearch($classname, $namespace)){
 				$this->class_cache[$class] = $file;
 				$this->class_cache_updated = true;
 			} else {
-				trigger_error('File containing class '.$class.' could not be found', E_USER_WARNING);
+				throw new BaseException('File containing class '.$class.' could not be found', E_USER_WARNING);
 			}
 		}
 		if(isset($this->class_cache[$class])){
@@ -414,11 +420,11 @@ class Base implements Singleton {
 	 * @uses Base::$class_paths
 	 * @internal
 	 */
-	private function _classSearch($class){
+	private function _classSearch($class, $namespace=null){
 		set_time_limit(300);
 		$file = false;
 		while(list(,$val) = each($this->class_paths)){
-			if($file = $this->_searchDir($val, $class)){
+			if($file = $this->_searchDir($val, $class, $namespace)){
 				break;
 			}
 		}
@@ -435,17 +441,19 @@ class Base implements Singleton {
 	 * @return string filename containing the class, else return false
 	 * @internal
 	 */
-	private function _searchDir($dir, $class){
+	private function _searchDir($dir, $class, $namespace=null){
 		$fp = dir($dir);
 		while($entry = $fp->read()){
 			if($entry{0} != '.' && is_dir($dir.'/'.$entry)){
-				if($file = $this->_searchDir($dir.'/'.$entry, $class)){
+				if($file = $this->_searchDir($dir.'/'.$entry, $class, $namespace)){
 					return $file;
 				}
 			} else if($entry{0} != '.' && is_readable($dir.'/'.$entry)){
 				$content = file_get_contents($dir.'/'.$entry);
-				if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $content, $match)){
-					return $dir.'/'.$entry;
+				if(is_null($namespace) || preg_match('/^\s*namespace\s+('.preg_quote($namespace).')\s*;$/im', $content, $match)){
+					if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $content, $match)){
+						return $dir.'/'.$entry;
+					}
 				}
 			}
 		}

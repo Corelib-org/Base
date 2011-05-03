@@ -64,8 +64,8 @@ class HEXHide {
 	 * @return string Hash with hidden number
 	 */
 	public static function hide($number, $seed=null){
-		asset('is_integer($number)');
-		asset('is_null($seed) || is_string($seed)');
+		assert('is_integer($number)');
+		assert('is_null($seed) || is_string($seed)');
 		if(is_null($seed)){
 			$seed = sha1(microtime()).md5(strrev(microtime()));
 		}
@@ -85,7 +85,7 @@ class HEXHide {
 	 * @return integer Hidden integer
 	 */
 	public static function find($hex){
-		asset('is_string($hex)');
+		assert('is_string($hex)');
 		$offset = self::_getHiddenOffset($hex);
 		$offset = substr($hex, $offset, strlen($hex));
 		$endbytes = hexdec($offset{0});

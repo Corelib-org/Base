@@ -381,7 +381,7 @@ class Base implements Singleton {
 		assert('is_string($class)');
 		assert('$class != "WebPage"');
 		if(!isset($this->class_cache[$class])){
-			if(preg_match('/^((.*?)\\\)?([A-Za-z0-9_]+)$/', $class, $match)){
+			if(preg_match('/^((.*?)\\\)+([A-Za-z0-9_]+)$/', $class, $match)){
 				list(,,$namespace, $classname) = $match;
 			} else {
 				$namespace = null;

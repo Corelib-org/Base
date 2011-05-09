@@ -540,6 +540,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 */
 	private $blob = array();
 
+	private static $statements = array();
 
 	//*****************************************************************//
 	//************** MySQLiQueryStatement class methods ***************//
@@ -554,8 +555,8 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 */
 	public function __construct($query, $item=null /*, [$items...] */){
 		parent::__construct($query);
-		$bind = func_get_args();
 
+		$bind = func_get_args();
 		if(sizeof($bind) > 0){
 			array_shift($bind);
 			call_user_func_array(array($this, 'bind'), $bind);
@@ -636,10 +637,16 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 */
 	public function execute(){
 		if(is_null($this->statement)){
-			if(!$this->statement = $this->instance->prepare($this->getQuery())){
-				$this->error = $this->instance->error;
-				$this->errno = $this->instance->errno;
-				return false;
+			$query = $this->getQuery();
+			if(isset(self::$statements[$query])){
+				$this->statement = self::$statements[$query];
+			} else {
+				if(!$this->statement = $this->instance->prepare($query)){
+					$this->error = $this->instance->error;
+					$this->errno = $this->instance->errno;
+					return false;
+				}
+				self::$statements[$query] = $this->statement;
 			}
 		}
 
@@ -651,6 +658,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 			foreach ($this->bind['param'] as $key => $param){
 				$params[] = &$this->bind['param'][$key];
 			}
+
 
 			call_user_func_array(array($this->statement, 'bind_param'), $params);
 
@@ -702,7 +710,7 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 * @internal
 	 */
 	public function __destruct(){
-		@$this->statement->close();
+		@$this->statement->free_result();
 	}
 }
 
@@ -883,8 +891,8 @@ class MySQLiTools {
 	 * @param string $param extra parameters
 	 * @return string
 	 */
-	static public function makeInsertStatement($table, array $fields, $param=''){
-		return 'INSERT INTO `'.$table.'` '.self::_makeInsertReplaceValues($fields).' '.$param;
+	static public function makeInsertStatement($table, array $fields, $param='', $options=''){
+		return 'INSERT '.$options.' INTO `'.$table.'`  '.self::_makeInsertReplaceValues($fields).' '.$param;
 	}
 
 	/**

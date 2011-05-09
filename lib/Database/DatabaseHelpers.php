@@ -162,7 +162,7 @@ class DatabaseListHelperOrder extends DatabaseListHelper {
 	 *
 	 * @return string column with sort order, if no sort isset return false
 	 */
-	public function get($column){
+	public function get($column, $object=false){
 		if($order = parent::get($column)){
 			return '`'.$column.'` '.$order;
 		} else {

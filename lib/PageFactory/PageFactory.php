@@ -258,6 +258,7 @@ interface PageFactoryPageResolver {
  * @author Steffen Sørensen <ss@corelib.org>
  */
 abstract class PageFactoryTemplate {
+
 	/**
 	 * Template init method
 	 *
@@ -342,6 +343,10 @@ abstract class PageFactoryTemplateEngine {
 	//*****************************************************************//
 	//************ PageFactoryTemplateEngine class methods ************//
 	//*****************************************************************//
+
+	public function __construct(){
+	}
+
 	/**
 	 * Build page based on PageBase object and callback method.
 	 *
@@ -779,6 +784,7 @@ class PageFactory implements Singleton {
 					trigger_error('Unable to open: '.$page['page'].'. File not found.', E_USER_ERROR);
 					return false;
 				}
+
 				if(!isset($page['engine'])){
 					$page['engine'] = PAGE_FACTORY_ENGINE;
 				}
@@ -877,8 +883,7 @@ class PageFactory implements Singleton {
 	 * @internal
 	 */
 	private function _enableEngine($classname){
-		$engine = '$this->engine = new '.$classname.'();';
-		eval($engine);
+		$this->engine = new $classname();
 		assert('$this->engine instanceof PageFactoryTemplateEngine');
 		$this->engine->setCacheManager($this->cache);
 	}

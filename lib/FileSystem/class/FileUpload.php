@@ -121,10 +121,10 @@ class FileUpload extends File {
 	public function mv($target){
 		$target = $this->_resolveTarget($target);
 		try {
-			if($target == $this->getFullName()){
+			if($target == $this->getRealname()){
 				throw new BaseException('Unable to copy file to it self');
 			} else {
-				if(move_uploaded_file($this->getFullName(), $target)){
+				if(move_uploaded_file($this->getRealname(), $target)){
 					return new File($target);
 				} else {
 					return false;

@@ -113,7 +113,9 @@ class LoopbackStream {
 			$request  = 'GET '.$this->path.$this->query.' HTTP/1.1'."\r\n";
 			$request .= 'User-Agent: Corelib v'.CORELIB_BASE_VERSION."\r\n";
 			$request .= 'Accept: text/html,application/xhtml+xml'."\r\n";
-			$request .= 'Accept-Language: '.$_SERVER['HTTP_ACCEPT_LANGUAGE']."\r\n";
+			if(isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])){
+				$request .= 'Accept-Language: '.$_SERVER['HTTP_ACCEPT_LANGUAGE']."\r\n";
+			}
 			$request .= 'Host: '.$this->hostname."\r\n";
 			$request .= 'Cache-Control: max-age=0'."\r\n";
 			$request .= 'Connection: close'."\r\n";
@@ -144,6 +146,22 @@ class LoopbackStream {
 	 */
 	public function stream_stat(){
 		return fstat($this->socket);
+	}
+
+	public function url_stat(){
+		return array('dev' => 0,
+					 'ino' => 0,
+					 'mode' => 0,
+					 'nlink' => 0,
+					 'uid' => 0,
+					 'gid' => 0,
+					 'rdev' => 0,
+					 'size' => 0,
+					 'atime' => time(),
+					 'mtime' => time(),
+					 'ctime' => time(),
+					 'blksize' => 0,
+					 'blocks' => 0);
 	}
 
 	/**

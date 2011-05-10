@@ -96,6 +96,8 @@ class ErrorHandler implements Singleton {
 	 */
 	private $errors = array();
 
+	private $template = null;
+
 
 	//*****************************************************************//
 	//**************** ErrorHandler class constants *******************//
@@ -118,7 +120,9 @@ class ErrorHandler implements Singleton {
 	 * @return void
 	 * @internal
 	 */
-	private function __construct(){ }
+	private function __construct(){
+		$this->template = realpath(CORELIB.'/Base/share/Templates/ErrorTemplate.tpl');
+	}
 
 	/**
 	 * 	Return instance of ErrorHandler.
@@ -169,7 +173,7 @@ class ErrorHandler implements Singleton {
 			 * XXX This if loop is a hot fix for disabling E_STRICT errors for all php 5.2.x version.
 			 * XXX This works as a workaround for php bug #49177, see: http://bugs.php.net/bug.php?id=49177 for more information
 			 */
-			if($code != E_STRICT || !version_compare(PHP_VERSION, '5.3') == -1){
+			if(version_compare(PHP_VERSION, '5.3') >= 0 || $code != E_STRICT){
  				header('HTTP/1.1 500 Internal Server Error');
 				$this->errors[] = array('code' => $code,
 				                        'description' => $description,
@@ -208,14 +212,18 @@ class ErrorHandler implements Singleton {
 	 * @see ErrorHandler::draw();
 	 * @internal
 	 */
-	public function fatal($buffer){
-		if(!strstr($buffer, '<b>Fatal error</b>:')){
+	public function fatal($buffer=''){
+		if(!strstr($buffer, ini_get('error_prepend_string'))){
+		// if(!stristr($buffer, '<b>Fatal error</b>:') && !stristr($buffer, '<b>Catchable fatal error</b>:')){
 			return false;
 		} else {
-			preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin\s.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
+			// preg_match_all('/\<br \/\>\s\<b\>(.*?)\<\/b\>:\s*(.*?)\sin\s.*?\<b\>(.*?)\<\/b\>\s*on\s*line\s*\<b\>(.*?)<\/b\>\<br \/\>/s', $buffer, $result);
+			preg_match_all('/'.ini_get('error_prepend_string').'\n(.*?):(.*?)\s+in\s+(.*?)on\s+line\s+([0-9]+)/s', $buffer, $result);
+			// $e = error_get_last();
 			while(list($key, $val) = each($result[0])){
- 				$this->trigger(E_USER_ERROR, $result[2][$key], $result[3][$key], $result[4][$key]);
+ 				$this->trigger(E_USER_ERROR, trim($result[2][$key]), trim($result[3][$key]), trim($result[4][$key]));
 			}
+
 			return $this->draw();
 		}
 	}
@@ -236,7 +244,7 @@ class ErrorHandler implements Singleton {
 			if(defined('BASE_ERROR_FATAL_REDIRECT')){
 				$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
 			} else {
-				$buffer ='<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib v'.CORELIB_BASE_VERSION.'</a></i></body></html>';
+				$buffer = '<html><head><title>500 Internal Server Error</title></head><body><h1>Internal Server Error</h1>The server encountered an internal error or misconfiguration and was unable to complete your request.<p>ID: '.$checksum.'</p><hr><i><a href="http://www.corelib.org/">Corelib v'.CORELIB_BASE_VERSION.'</a></i></body></html>';
 			}
 		}
 		return $buffer;
@@ -249,12 +257,14 @@ class ErrorHandler implements Singleton {
 	 * @return string error handler content.
 	 */
 	public function __toString(){
-		$template = file_get_contents(CORELIB.'/Base/share/Templates/ErrorTemplate.tpl');
+		$template = file_get_contents($this->template);
 		$content = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', $template);
+
 		$buffer = '';
-		foreach ($this->errors as $error){
-			$buffer .= $this->_getError($error, $content);
+		foreach ($this->errors as $key => $error){
+			$buffer .= $this->_getError($key, $error, $content);
 		}
+
 		$template = preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$buffer.' \\3', $template);
 		return $template;
 	}
@@ -268,20 +278,20 @@ class ErrorHandler implements Singleton {
 	 * @return string
 	 * @internal
 	 */
-	private function _getError(array &$error, $content){
+	private function _getError($id, array &$error, $content){
 		$return = str_replace('!ERROR_NAME!', $error['code'].': '.$this->_getErrorCodeDescription($error['code']), $content);
 		$return = str_replace('!ERROR_DESC!', $error['description'], $return);
 		$return = str_replace('!ERROR_FILE!', $error['file'], $return);
 		$return = str_replace('!ERROR_LINE!', $error['line'], $return);
 		$return = str_replace('!ERROR_FILE_CONTENT!', $this->_getSource($error), $return);
-		$return = str_replace('!ERROR_FILE_CONTENT_ID!', RFC4122::generate(), $return);
+		$return = str_replace('!ERROR_FILE_CONTENT_ID!', 'error-file-content-id-'.$id, $return);
 		$return = str_replace('!CORELIB_VERSION!', CORELIB_BASE_VERSION, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT!', CORELIB_COPYRIGHT, $return);
 		$return = str_replace('!CORELIB_COPYRIGHT_YEAR!', CORELIB_COPYRIGHT_YEAR, $return);
 		$return = str_replace('!STACK_TRACE!', $this->getTraceAsHTML($error['backtrace']), $return);
-		$return = str_replace('!STACK_TRACE_ID!', RFC4122::generate(), $return);
+		$return = str_replace('!STACK_TRACE_ID!', 'stack-trace-'.$id, $return);
 		$return = str_replace('!REQUEST_CONTENT!', $this->_getRequestContentAsHTML(), $return);
-		$return = str_replace('!REQUEST_CONTENT_ID!', RFC4122::generate(), $return);
+		$return = str_replace('!REQUEST_CONTENT_ID!', 'request-content-id-'.$id, $return);
 		return $return;
 	}
 
@@ -295,9 +305,12 @@ class ErrorHandler implements Singleton {
 	private function _getErrorCodeDescription($code){
 		switch ($code) {
 			case E_USER_ERROR:
-				return 'Error';
+				return 'Fatal error';
 				break;
 			case E_USER_WARNING:
+				return 'Warning';
+				break;
+			case E_WARNING:
 				return 'Warning';
 				break;
 			case E_USER_NOTICE:
@@ -345,7 +358,16 @@ class ErrorHandler implements Singleton {
 						$args[] = $arg;
 					}
 				}
-				$return .= '#'.($key + 1).' '.$level['file'].'('.$level['line'].')'.' '.htmlspecialchars($function).'('.implode(', ', $args).')'."<br/>";
+
+				$fileinfo = '';
+				if(isset($level['file'])){
+					$fileinfo .= $level['file'];
+				}
+				if(isset($level['line'])){
+					$fileinfo .= '('.$level['file'].')';
+				}
+
+				$return .= '#'.($key + 1).' '.$fileinfo.' '.htmlspecialchars($function).'('.implode(', ', $args).')'."<br/>";
 			}
 		}
 		return $return;
@@ -414,17 +436,20 @@ class ErrorHandler implements Singleton {
 	private function _getRequestContentAsHTML(){
 		$return = '<b>$_SERVER</b><table>';
 		foreach($_SERVER as $key => $data){
+			if(is_array($data)){
+				$data = 'Array';
+			}
 			$return .= '<tr><td style="font-size: 10px;">'.htmlspecialchars($key).'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.htmlspecialchars($data).'</td></tr>';
 		}
 		$return .= '</table>';
-		if(sizeof($_GET) > 0){
-		$return .= '<br/><b>$_GET</b><table>';
+		if(isset($_GET) && sizeof($_GET) > 0){
+			$return .= '<br/><b>$_GET</b><table>';
 			foreach($_GET as $key => $data){
 				$return .= '<tr><td style="font-size: 10px;">'.htmlspecialchars($key).'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.htmlspecialchars($data).'</td></tr>';
 			}
 			$return .= '</table>';
 		}
-		if(sizeof($_POST) > 0){
+		if(isset($_POST) && sizeof($_POST) > 0){
 			$return .= '<br/><b>$_POST</b><table>';
 			foreach($_POST as $key => $data){
 				$return .= '<tr><td style="font-size: 10px;">'.htmlspecialchars($key).'</td><td style="font-size: 10px; padding-right: 10px; padding-left: 10px;">=</td><td style="font-size: 10px;"> '.htmlspecialchars($data).'</td></tr>';
@@ -471,7 +496,7 @@ class BaseException extends Exception implements Serializable {
 	}
 
 	public function __toString(){
-		trigger_error('Uncought exception: '.get_class($this).' - '.$this->getMessage(), E_USER_ERROR);
+		// trigger_error('Uncought exception: '.get_class($this).' - '.$this->getMessage(), E_USER_ERROR);
 		return parent::__toString();
 	}
 
@@ -499,8 +524,10 @@ if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === fals
 	} else {
 		assert_options(ASSERT_ACTIVE, false);
 	}
-	ini_set('html_errors',true);
+	ini_set('html_errors',false);
+	ini_set('error_prepend_string','Corelib-ErrorHandler-'.time());
 	set_error_handler(array(ErrorHandler::getInstance(), 'trigger'));
 	ob_start(array(ErrorHandler::getInstance(), 'fatal'));
+	// register_shutdown_function(array(ErrorHandler::getInstance(), 'fatal'));
 }
 ?>

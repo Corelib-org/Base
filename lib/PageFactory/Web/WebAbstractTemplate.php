@@ -44,9 +44,8 @@ if(!defined('BASE_URL')){
 	 * @var string base url
 	 */
 	define('BASE_URL', 'http://'.$_SERVER['SERVER_NAME'].'/');
-
-	Base::getInstance()->loadClass('WebInteralLoopbackStream');
 }
+Base::getInstance()->loadClass('WebInteralLoopbackStream');
 
 
 //*****************************************************************//

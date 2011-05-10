@@ -66,10 +66,15 @@ class WebInteralLoopbackStream extends LoopbackStream {
 	 * @internal
 	 */
 	public function stream_open($path , $mode , $options , &$opened_path){
+		if(!defined('BASE_URL')){
+			Base::getInstance()->loadClass('PageFactoryWebAbstractTemplate');
+		}
+
 		$url = parse_url($path);
 		$path = str_replace($url['scheme'].'://', BASE_URL, $path);
 		return parent::stream_open($path , $mode , $options , &$opened_path);
 	}
 }
+
 stream_wrapper_register('internal', 'WebInteralLoopbackStream');
 ?>

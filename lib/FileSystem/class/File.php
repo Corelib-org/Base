@@ -181,6 +181,9 @@ class File {
 	 * @return unknown_type
 	 */
 	public function fseek($offset, $whence=SEEK_SET){
+		if(is_null($this->pointer)){
+			$this->fopen();
+		}
 		return fseek($this->pointer, $offset, $whence);
 	}
 
@@ -255,6 +258,17 @@ class File {
 			$this->fopen('w+');
 		}
 		return fputcsv($this->pointer, $fields, $delimiter, $enclosure);
+	}
+	/**
+	 * Returns the current position of the file read/write pointer.
+	 *
+	 * @return int Returns the position of the file pointer as an integer, if an error occurs, returns FALSE
+	 */
+	public function ftell(){
+		if(is_null($this->pointer)){
+			$this->fopen();
+		}
+		return ftell($this->pointer);
 	}
 
 	/**

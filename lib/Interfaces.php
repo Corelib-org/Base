@@ -173,7 +173,7 @@ abstract class Composite {
 			$this->components[$reference] = $component;
 			return $reference;
 		} else {
-			throw new BaseException('Not allowed here');
+			throw new BaseException('Class is not a composite: '.get_class($this));
 			return false;
 		}
 	}

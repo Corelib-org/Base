@@ -124,6 +124,30 @@ abstract class CorelibManagerExtension implements Singleton {
 	}
 
 	/**
+	 * Set extension id.
+	 *
+	 * @param string $name extension id
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
+	final public function setID($id){
+		$this->id = $id;
+		return true;
+	}
+
+	/**
+	 * Set extension manager.
+	 *
+	 * @param Manager $manager
+	 * @return boolean true on success, else return false
+	 * @internal
+	 */
+	final public function setManager(Manager $manager){
+		$this->manager = $manager;
+		return true;
+	}
+
+	/**
 	 * Set extension description.
 	 *
 	 * @param string $description
@@ -144,6 +168,14 @@ abstract class CorelibManagerExtension implements Singleton {
 		return $this->name;
 	}
 
+	/**
+	 * Get extension ID.
+	 *
+	 * @return string extension id
+	 */
+	final public function getID(){
+		return $this->id;
+	}
 	/**
 	 * Get extension description.
 	 *
@@ -181,6 +213,26 @@ abstract class CorelibManagerExtension implements Singleton {
 	 */
 	public function install(){
 
+	}
+
+	/**
+	 * Enable extension.
+	 *
+	 * @return boolean true on success, else return false
+	 * @see Manager::enableExtension()
+	 */
+	public function enable(){
+		return $this->manager->enableExtension($this);
+	}
+
+	/**
+	 * Disable extension.
+	 *
+	 * @return boolean true on success, else return false
+	 * @see Manager::disableExtenstion()
+	 */
+	public function disable(){
+		return $this->manager->disableExtension($this);
 	}
 
 	/**
@@ -388,6 +440,12 @@ class Manager implements Singleton {
 	private $extensions = null;
 
 	/**
+	 * @var DOMDocument extension settings DOMDocument
+	 * @internal
+	 */
+	private $settings = null;
+
+	/**
 	 * @var string manager datadir
 	 * @internal
 	 */
@@ -398,6 +456,12 @@ class Manager implements Singleton {
 	 * @internal
 	 */
 	private $extension_file = '';
+
+	/**
+	 * @var string extension settings file.
+	 * @internal
+	 */
+	private $extension_setting_file = '';
 
 	/**
 	 * @var array extension data
@@ -414,6 +478,12 @@ class Manager implements Singleton {
 	 * @internal
 	 */
 	const EXTENSIONS_FILE = 'extensions.xml';
+
+	/**
+	 * @var string extension filename
+	 * @internal
+	 */
+	const EXTENSION_SETTINGS_FILE = 'extension-settings.xml';
 
 
 	//*****************************************************************//
@@ -464,11 +534,16 @@ class Manager implements Singleton {
 	 */
 	public function init(){
 		$this->extension_file = $this->datadir.self::EXTENSIONS_FILE;
+		$this->extension_settings_file = $this->datadir.self::EXTENSION_SETTINGS_FILE;
+
+		$this->_loadExtensionSettings();
+
 		if(!is_file($this->extension_file) || MANAGER_DEVELOPER_MODE){
-			$this->_reloadManagerExtensions();
+			$this->_reloadManagerExtensions(true);
 		} else {
 			$this->_reloadManagerExtensionsData();
 		}
+
 		return true;
 	}
 
@@ -589,6 +664,45 @@ class Manager implements Singleton {
 	}
 
 	/**
+	 * Get extension handler by extension id.
+	 *
+	 * @return CorelibManagerExtension if extension exists, else return false
+	 */
+	public function getExtensionHandlerByID($extension){
+		if(isset($this->extensions_data[$extension])){
+			return $this->extensions_data[$extension]['handler'];
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Enable extension
+	 *
+	 * @param CorelibManagerExtension $extension
+	 * @return boolean true on success, else return false.
+	 */
+	public function enableExtension(CorelibManagerExtension $extension){
+		$settings = $this->_getExtensionSettings($extension);
+		$settings->setAttribute('enabled', 'true');
+		$this->_saveExtensionSettings();
+		return true;
+	}
+
+	/**
+	 * Enable extension
+	 *
+	 * @param CorelibManagerExtension $extension
+	 * @return boolean true on success, else return false.
+	 */
+	public function disableExtension(CorelibManagerExtension $extension){
+		$settings = $this->_getExtensionSettings($extension);
+		$settings->setAttribute('enabled', 'false');
+		$this->_saveExtensionSettings();
+		return true;
+	}
+
+	/**
 	 * Parse constant tags.
 	 *
 	 * Replace constant tags {CONSTANT} with the actual
@@ -615,11 +729,13 @@ class Manager implements Singleton {
 		$xpath = new DOMXPath($this->extensions);
 		$properties = $this->extensions->getElementsByTagName('extension');
 		for ($i = 0; $item = $properties->item($i); $i++){
+			$id = $properties->item($i)->getAttribute('id');
 			if($setup = $item->getElementsByTagName('setup')->item(0)){
-
 				$handler = $setup->getElementsByTagName('handler');
 				if($handler->length > 0){
 					$handler = call_user_func($handler->item(0)->nodeValue.'::getInstance');
+					$handler->setManager($this);
+					$handler->setID($id);
 					for ($p = 0; $prop = $setup->childNodes->item($p); $p++){
 						switch ($prop->nodeName){
 							case 'name':
@@ -644,26 +760,36 @@ class Manager implements Singleton {
 					$handler = null;
 				}
 
-				$this->extensions_data[] = array('handler' => $handler, 'node'=>$item);
+
+				if(is_null($id)){
+					throw new BaseException('Extension id not set');
+				}
+				if(isset($this->extensions_data[$id])){
+				 	throw new BaseException('Extension id not unique: '.$id.' with handler '.get_class($handler).' conflicts with handler '.get_class($this->extensions_data[$id]['handler']));
+				}
+				$this->extensions_data[$id] = array('handler' => $handler, 'node'=>$item);
 			}
 		}
 
 
 		foreach ($this->extensions_data as $extension){
 			if($extension['handler'] instanceof CorelibManagerExtension){
-				$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\' and @enabled = \'true\']/props/child::*');
-				for ($p = 0; $prop = $props->item($p); $p++){
-					$extension['handler']->addBaseProperty($prop);
-				}
+				$enable = $extension['node']->getAttribute('enabled');
+				if(is_null($enable) || $enable == 'true'){
+					$props = $xpath->query('//extensions/extension[@id = \''.$extension['node']->getAttribute('id').'\' and @enabled = \'true\']/props/child::*');
+					for ($p = 0; $prop = $props->item($p); $p++){
+						$extension['handler']->addBaseProperty($prop);
+					}
 
-				$xdata = $xpath->query('//extensions/extension[@enabled = \'true\']/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
-				for ($p = 0; $xitem = $xdata->item($p); $p++){
-					$extension['handler']->addProperty($xitem);
-				}
+					$xdata = $xpath->query('//extensions/extension[@enabled = \'true\']/extendprops[@id = \''.$extension['node']->getAttribute('id').'\']/child::*');
+					for ($p = 0; $xitem = $xdata->item($p); $p++){
+						$extension['handler']->addProperty($xitem);
+					}
 
-				$extension['handler']->loaded();
-				if($install){
-					$extension['handler']->install();
+					$extension['handler']->loaded();
+					if($install){
+						$extension['handler']->install();
+					}
 				}
 			}
 		}
@@ -676,20 +802,59 @@ class Manager implements Singleton {
 	 * @return void
 	 * @internal
 	 */
-	protected function _reloadManagerExtensions(){
+	protected function _reloadManagerExtensions($install=false){
 		$this->extensions = new DOMDocument('1.0', 'UTF-8');
 		$this->extensions->appendChild($this->extensions->createElement('extensions'));
+
 		foreach ($this->extension_dirs as $val){
 			$this->_searchDir($val);
 		}
 		reset($this->extension_dirs);
 		@chmod($this->extension_file, 0666);
 
+
+
+		// XXX
+		// XXX Add settings loader here
+		// XXX
+		$xpath_extensions = new DOMXPath($this->extensions);
+		$xpath_settings = new DOMXPath($this->settings);
+		$extension_settings = $xpath_settings->query('//settings/extension');
+
+		for ($i = 0; $item = $extension_settings->item($i); $i++){
+			$id = $item->getAttribute('id');
+
+			$extension = $xpath_extensions->query('//extensions/extension[@id=\''.$id.'\']');
+			if($extension->length > 0){
+				$node = $extension->item(0);
+				$enable = $item->getAttribute('enabled');
+				if(!is_null($enable)){
+					$node->setAttribute('enabled', $enable);
+				}
+			} else {
+				$item->parentNode->removeChild($item);
+			}
+		}
+		$this->settings->save($this->extension_settings_file);
+
 		if(!is_file($this->extension_file) || MANAGER_DEVELOPER_MODE){
 			$this->extensions->save($this->extension_file);
 		}
 
-		$this->_reloadManagerExtensionsData(true);
+		$this->_reloadManagerExtensionsData($install);
+	}
+
+	/**
+	 * Get extension xml element by extension id.
+	 *
+	 * @return DOMElement if extension exists, else return false
+	 */
+	private function _getExtensionNodeByID($extension){
+		if(isset($this->extensions_data[$extension])){
+			return $this->extensions_data[$extension]['node'];
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -701,6 +866,50 @@ class Manager implements Singleton {
 		if(!$this->extensions instanceof DOMDocument){
 			$this->extensions = new DOMDocument('1.0', 'UTF-8');
 			$this->extensions->load($this->extension_file);
+		}
+	}
+
+	/**
+	 * Save extension settings xml file.
+	 *
+	 * @return void
+	 */
+	private function _saveExtensionSettings(){
+		$this->settings->save($this->extension_settings_file);
+		if(is_file($this->extension_file)){
+			unlink($this->extension_file);
+		}
+	}
+
+	/**
+	 * Load extension settings xml file.
+	 *
+	 * @return void
+	 */
+	private function _loadExtensionSettings(){
+		$this->settings = new DOMDocument('1.0', 'UTF-8');
+		if(!is_file($this->extension_settings_file)){
+			$this->settings->appendChild($this->settings->createElement('settings'));
+		} else {
+			$this->settings->load($this->extension_settings_file);
+		}
+	}
+
+	/**
+	 * Get extension settings.
+	 *
+	 * @param CorelibManagerExtension $extension
+	 * @return DOMElement
+	 */
+	protected function _getExtensionSettings(CorelibManagerExtension $extension){
+		$xpath = new DOMXPath($this->settings);
+		$query = $xpath->query('//settings/extension[@id=\''.$extension->getID().'\']');
+		if($query->length == 0){
+			$settings = $this->settings->documentElement->appendChild($this->settings->createElement('extension'));
+			$settings->setAttribute('id', $extension->getID());
+			return $settings;
+		} else {
+			return $query->item(0);
 		}
 	}
 
@@ -757,7 +966,7 @@ class Manager implements Singleton {
 	/**
 	 * @ignore
 	 */
-	private function __clone(){	}
+	private function __clone(){ }
 }
 
 
@@ -937,14 +1146,14 @@ abstract class ManagerPage extends PageBase {
 		}
 
 		if(@$_SERVER['PHP_AUTH_USER'] !== CORELIB_MANAGER_USERNAME || @$_SERVER['PHP_AUTH_PW'] !== CORELIB_MANAGER_PASSWORD){
-		    header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
-		    header('HTTP/1.0 401 Unauthorized');
-		    echo '<h1>Access Denied</h1>';
-		    if(isset($password_error) && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-		    	echo '<p>Notice: Constant <b>CORELIB_MANAGER_PASSWORD</b> is not defined</p>';
-		    	echo '<p>Before you can log in this constant must be defined.</p>';
-		    }
-		    exit;
+			header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
+			header('HTTP/1.0 401 Unauthorized');
+			echo '<h1>Access Denied</h1>';
+			if(isset($password_error) && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+				echo '<p>Notice: Constant <b>CORELIB_MANAGER_PASSWORD</b> is not defined</p>';
+				echo '<p>Before you can log in this constant must be defined.</p>';
+			}
+			exit;
 		}
 
 		define('DOMXSL_TEMPLATE_XSL_PATH', CORELIB);

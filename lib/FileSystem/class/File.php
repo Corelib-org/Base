@@ -230,6 +230,21 @@ class File {
 		}
 	}
 
+	public function freadCRSafe($buffer=1024){
+		if(is_null($this->pointer)){
+			$this->fopen();
+		}
+
+		$position = $this->ftell();
+		if(($line = $this->fgets($buffer)) !== false){
+			$line = preg_split('/(?<!\n)\r(?!\n)/', $line, 2);
+			$this->fseek(strlen($line[0]) + $position + 1);
+			return $line[0];
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Gets line and parse for CSV fields.
 	 *

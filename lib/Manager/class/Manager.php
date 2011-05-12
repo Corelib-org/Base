@@ -724,6 +724,7 @@ class Manager implements Singleton {
 	 * @internal
 	 */
 	private function _reloadManagerExtensionsData($install = false){
+		$this->extensions_data = array();
 		$this->_loadExtensionsXML();
 		$event = EventHandler::getInstance();
 		$xpath = new DOMXPath($this->extensions);

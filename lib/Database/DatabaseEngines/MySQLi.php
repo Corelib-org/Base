@@ -638,15 +638,16 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	public function execute(){
 		if(is_null($this->statement)){
 			$query = $this->getQuery();
-			if(isset(self::$statements[$query])){
-				$this->statement = self::$statements[$query];
+			$md5 = md5($query);
+			if(isset(self::$statements[$md5])){
+				$this->statement = self::$statements[$md5];
 			} else {
 				if(!$this->statement = $this->instance->prepare($query)){
 					$this->error = $this->instance->error;
 					$this->errno = $this->instance->errno;
 					return false;
 				}
-				self::$statements[$query] = $this->statement;
+				self::$statements[$md5] = $this->statement;
 			}
 		}
 

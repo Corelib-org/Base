@@ -151,21 +151,21 @@ class SessionHandler implements Singleton,Output {
 		}
 		if(!defined('SESSION_DOMAIN')){
 			/**
-			 * Define Session Domain
+			 * Define Session Domain.
 			 */
 			define('SESSION_DOMAIN', null);
 		}
 		$this->domain = SESSION_DOMAIN;
 		if(!defined('SESSION_LIFETIME')){
 			/**
-			 * Define session lifetime
+			 * Define session lifetime.
 			 */
 			define('SESSION_LIFETIME', 0);
 		}
 		$this->lifetime = SESSION_LIFETIME;
 		if(!defined('SESSION_PATH')){
 			/**
-			 * Define Session Path
+			 * Define Session Path.
 			 */
 			define('SESSION_PATH', '/');
 		}

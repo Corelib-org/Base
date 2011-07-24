@@ -450,9 +450,17 @@ class Base implements Singleton {
 				}
 			} else if($entry{0} != '.' && is_readable($dir.'/'.$entry)){
 				$content = file_get_contents($dir.'/'.$entry);
-				if(is_null($namespace) || preg_match('/^\s*namespace\s+('.preg_quote($namespace).')\s*;$/im', $content, $match)){
-					if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $content, $match)){
-						return $dir.'/'.$entry;
+				if(is_null($namespace)){
+					if(!preg_match('/^\s*namespace\s+/im', $content, $match)){
+						if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $content, $match)){
+							return $dir.'/'.$entry;
+						}
+					}
+				} else {
+					if(preg_match('/^\s*namespace\s+('.preg_quote($namespace).')\s*;$/im', $content, $match)){
+						if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $content, $match)){
+							return $dir.'/'.$entry;
+						}
 					}
 				}
 			}
@@ -529,6 +537,8 @@ function __autoload($class){
 		 * @ignore
 		 */
 		require_once($filename);
+
+
 		return true;
 	} else {
 		return false;

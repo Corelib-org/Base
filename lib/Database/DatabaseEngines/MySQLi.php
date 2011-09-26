@@ -705,6 +705,22 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	}
 
 	/**
+	 * Get error description.
+	 *
+	 * @uses MySQLiQuery::$error
+	 * @uses MySQLiQuery::$query
+	 * @return string error description
+	 */
+	public function getError(){
+		$values = array();
+		foreach ($this->bind['param'] as $key => $param){
+			$values[] = $param;
+		}
+
+		return $this->error.' (#'.$this->errno.')'."\n<br/><br/>".$this->query.' Values: '.implode(', ', $values);
+	}
+
+	/**
 	 * Destroy object.
 	 *
 	 * @uses MySQLiQueryStatement::$statement

@@ -72,7 +72,7 @@ class WebInteralLoopbackStream extends LoopbackStream {
 
 		$url = parse_url($path);
 		$path = str_replace($url['scheme'].'://', BASE_URL, $path);
-		return parent::stream_open($path , $mode , $options , &$opened_path);
+		return parent::stream_open($path, $mode, $options, $opened_path);
 	}
 }
 

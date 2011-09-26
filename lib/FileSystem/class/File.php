@@ -237,9 +237,14 @@ class File {
 
 		$position = $this->ftell();
 		if(($line = $this->fgets($buffer)) !== false){
-			$line = preg_split('/(?<!\n)\r(?!\n)/', $line, 2);
-			$this->fseek(strlen($line[0]) + $position + 1);
-			return $line[0];
+			list($line, $next) = preg_split('/(?<!\n)\r(?!\n)/', $line, 2);
+
+			if(!empty($next)){
+				$position++;
+			}
+
+			$this->fseek(strlen($line) + $position);
+			return $line;
 		} else {
 			return false;
 		}

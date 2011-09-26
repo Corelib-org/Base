@@ -1327,15 +1327,20 @@ class InputValidatorModelExists implements InputValidator {
 	 * @return boolean true i content is valid, else return false
 	 */
 	public function validate($content){
-		$this->instance = new $this->class($content);
-		if(method_exists($this->class, $this->callback)){
-			if(call_user_func_array(array($this->class, $this->callback), func_get_args())){
-				return true;
+		// $this->instance = new $this->class($content);
+		if(is_null($this->callback)){
+			$this->instance = new $this->class($content);
+			return $this->instance->read();
+		} else {
+			if(method_exists($this->class, $this->callback)){
+				if(call_user_func_array(array($this->class, $this->callback), func_get_args())){
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
-		} else {
-			return false;
 		}
 	}
 

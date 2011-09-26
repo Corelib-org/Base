@@ -9,10 +9,10 @@
 	 * @param content optional page header content
 	 */
 	-->
-	<xsl:template name="page-header">
+	<xsl:template match="page/content" mode="xhtml-page-header">
 		<div id="page-header">
 			<img src="share/web/images/corelib/logo.jpg"/>
-			<xsl:call-template name="page-navigation"/>
+			<xsl:apply-templates select="." mode="xhtml-page-navigation"/>
 		</div>
 	</xsl:template>
 
@@ -21,7 +21,7 @@
 	 * Page navigation
 	 */
 	-->
-	<xsl:template name="page-navigation">
+	<xsl:template match="page/content" mode="xhtml-page-navigation">
 		<div id="page-navigation">
 			<a href="http://www.corelib.org/">Corelib website</a> |
 			<a href="http://www.corelib.org/getting-started">Getting started</a> |
@@ -37,7 +37,7 @@
 	 * @param content content of page-contant-container
 	 */
 	 -->
-	<xsl:template name="page-content-container">
+	<xsl:template match="page/content" mode="xhtml-page-content-container">
 		<xsl:param name="content"/>
 		<div id="page-content-container">
 			<xsl:copy-of select="$content"/>
@@ -49,7 +49,7 @@
 	 * Page footer
 	 */
 	 -->
-	<xsl:template name="page-footer">
+	<xsl:template match="page/content" mode="xhtml-page-footer">
 		<div id="page-footer">
 			This page is powered by Corelib.
 		</div>

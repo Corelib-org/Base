@@ -73,7 +73,19 @@ if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
 	define('ABSTRACTS_ENABLE_DATABASE', false);
 }
 
-
+// Check to see if ABSTRACTS_ENABLE_ORM_CACHE is set true
+// If set to true the ORM caching classes is automatically loaded
+if(defined('ABSTRACTS_ENABLE_ORM_CACHE') && ABSTRACTS_ENABLE_ORM_CACHE){
+	$engine = ORMCache::setEngine(new ORMCacheMemcacheEngine());
+	$engine->addServer('localhost');
+} else if(!defined('ABSTRACTS_ENABLE_ORM_CACHE')){
+	/**
+	 * Enable autoloading of ORM caching features.
+	 *
+	 * @var boolean true if enabled, else false
+	 */
+	define('ABSTRACTS_ENABLE_ORM_CACHE', false);
+}
 
 //*****************************************************************//
 //**************** Control layer abstract classes *****************//

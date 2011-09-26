@@ -237,6 +237,10 @@ class MySQLi_CodeGenerator extends DatabaseDAO implements Singleton,DAO_CodeGene
 			if($reference = $this->_lookupReference($cls_table, $cls_field)){
 				$cls_field->setReference($reference);
 			}
+
+			if($out['Null'] == strtoupper('YES')){
+				$cls_field->setNull(true);
+			}
 		}
 		return $cls_table;
 	}

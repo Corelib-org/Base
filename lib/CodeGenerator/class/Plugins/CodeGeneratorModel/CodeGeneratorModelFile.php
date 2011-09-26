@@ -261,7 +261,7 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 										CodeGeneratorColumn::SMARTTYPE_TIMESTAMP_SET_ON_CREATE);
 
 					if($converters > 0 || in_array($column->getSmartType(), $smarttypes)){
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$property_name.')'));
+						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($this->'.$this->_makeConverterVariableName($column).')'));
 						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('return $this->'.$this->_makeConverterVariableName($column).'->convert($this->'.$property_name.');'));
 
 						$g = $if->addAlternate();
@@ -323,14 +323,28 @@ class CodeGeneratorModelFile extends CodeGeneratorFilePHP {
 					$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('param', $this->_getColumnDataType($column, true).' $'.$column->getFieldVariableName()));
 					$docblock->addComponent(new CodeGeneratorCodeBlockPHPDocTag('return', 'boolean true on success, else return false'));
 					$method->setDocBlock($docblock);
-					$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+					if($column->isNull()){
+						$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName(), 'null'));
+					} else {
+						$param = $method->addParameter(new CodeGeneratorCodeBlockPHPParameter('$'.$column->getFieldVariableName()));
+					}
 
 					if($class){
 						$param->setType($class);
-						$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($'.$column->getFieldVariableName().'->getID())'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().'_id = $'.$column->getFieldVariableName().'->getID();'));
-						$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->datahandler->set(self::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().', \'getID\');'));
+
+						if($column->isNull()){
+							$if = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('is_null($'.$column->getFieldVariableName().')'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';'));
+							$if->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().'_id = $'.$column->getFieldVariableName().';'));
+							$notnull = $if->addAlternate('!is_null($'.$column->getFieldVariableName().'->getID())');
+						} else {
+							$notnull = $method->addComponent(new CodeGeneratorCodeBlockPHPIf('!is_null($'.$column->getFieldVariableName().'->getID())'));
+							$if = $notnull;
+						}
+
+						$notnull->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().' = $'.$column->getFieldVariableName().';'));
+						$notnull->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->'.$column->getFieldVariableName().'_id = $'.$column->getFieldVariableName().'->getID();'));
+						$notnull->addComponent(new CodeGeneratorCodeBlockPHPStatement('$this->datahandler->set(self::'.$column->getFieldConstantName().', $'.$column->getFieldVariableName().', \'getID\');'));
 						$else = $if->addAlternate();
 						$else->addComponent(new CodeGeneratorCodeBlockPHPStatement('throw new BaseException(\''.$type.' is not a valid object: '.$type.'::getID() returned null\');'));
 

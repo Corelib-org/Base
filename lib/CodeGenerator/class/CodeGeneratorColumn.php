@@ -124,6 +124,11 @@ class CodeGeneratorColumn {
 	private $values = array();
 
 	/**
+	 * @var boolean null
+	 */
+	private $null = false;
+
+	/**
 	 * Name resolver.
 	 *
 	 * @var CodeGeneretorNameResolver
@@ -326,6 +331,16 @@ class CodeGeneratorColumn {
 	}
 
 	/**
+	 * Set if column can be null.
+	 *
+	 * @param boolean $null
+	 * @return boolean true if succesfull, else return false
+	 */
+	public function setNull($null){
+		$this->null = $null;
+	}
+
+	/**
 	 * Set index type.
 	 *
 	 * @uses CodeGeneratorColumn::$key
@@ -502,6 +517,15 @@ class CodeGeneratorColumn {
 	 */
 	public function isWritable(){
 		return !$this->readonly;
+	}
+
+	/**
+	 * Check and see if column can have a null value.
+	 *
+	 * @return boolean true if column can have a null, else return false
+	 */
+	public function isNull(){
+		return $this->null;
 	}
 
 	/**

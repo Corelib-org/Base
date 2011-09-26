@@ -221,7 +221,11 @@ class ErrorHandler implements Singleton {
 			preg_match_all('/'.ini_get('error_prepend_string').'\n(.*?):(.*?)\s+in\s+(.*?)on\s+line\s+([0-9]+)/s', $buffer, $result);
 			// $e = error_get_last();
 			while(list($key, $val) = each($result[0])){
- 				$this->trigger(E_USER_ERROR, trim($result[2][$key]), trim($result[3][$key]), trim($result[4][$key]));
+				if(preg_match('/^Uncaught exception/', trim($result[2][$key]))){
+	 				$this->trigger(E_USER_ERROR, trim($result[2][$key]), '<pre>'.trim($result[3][$key]), trim($result[4][$key]));
+				} else {
+					$this->trigger(E_USER_ERROR, trim($result[2][$key]), trim($result[3][$key]), trim($result[4][$key]));
+				}
 			}
 
 			return $this->draw();
@@ -257,16 +261,24 @@ class ErrorHandler implements Singleton {
 	 * @return string error handler content.
 	 */
 	public function __toString(){
-		$template = file_get_contents($this->template);
-		$content = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', $template);
+		if(php_sapi_name() == 'cli'){
+			$buffer = '';
+			foreach ($this->errors as $key => $error){
+				$buffer .= $this->_getErrorString($key, $error);
+			}
+			return $buffer;
+		} else {
+			$template = file_get_contents($this->template);
+			$content = preg_replace('/^.*?\!ERROR_TEMPLATE {(.*?)}.*/ms', '\\1', $template);
 
-		$buffer = '';
-		foreach ($this->errors as $key => $error){
-			$buffer .= $this->_getError($key, $error, $content);
+			$buffer = '';
+			foreach ($this->errors as $key => $error){
+				$buffer .= $this->_getError($key, $error, $content);
+			}
+
+			$template = preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$buffer.' \\3', $template);
+			return $template;
 		}
-
-		$template = preg_replace('/^(.*?)\!ERROR_TEMPLATE {.*?}(.*?)$/ms', '\\1 '.$buffer.' \\3', $template);
-		return $template;
 	}
 
 
@@ -292,6 +304,36 @@ class ErrorHandler implements Singleton {
 		$return = str_replace('!STACK_TRACE_ID!', 'stack-trace-'.$id, $return);
 		$return = str_replace('!REQUEST_CONTENT!', $this->_getRequestContentAsHTML(), $return);
 		$return = str_replace('!REQUEST_CONTENT_ID!', 'request-content-id-'.$id, $return);
+		return $return;
+	}
+
+	/**
+	 * Get plaintext error description.
+	 *
+	 * @param array $error error information
+	 * @param string $content template
+	 * @return string
+	 * @internal
+	 */
+	private function _getErrorString($id, array &$error){
+		$return  = $this->_getErrorCodeDescription($error['code']).': ';
+		$return .= $error['description'].' in ';
+		$return .= $error['file'].' on line '.$error['line']."\n";
+		$return .= $this->getTraceAsString($error['backtrace'])."\n";
+
+/*		$return = str_replace('!ERROR_DESC!', $error['description'], $return);
+		$return = str_replace('!ERROR_FILE!', $error['file'], $return);
+		$return = str_replace('!ERROR_LINE!', $error['line'], $return);
+		$return = str_replace('!ERROR_FILE_CONTENT!', $this->_getSource($error), $return);
+		$return = str_replace('!ERROR_FILE_CONTENT_ID!', 'error-file-content-id-'.$id, $return);
+		$return = str_replace('!CORELIB_VERSION!', CORELIB_BASE_VERSION, $return);
+		$return = str_replace('!CORELIB_COPYRIGHT!', CORELIB_COPYRIGHT, $return);
+		$return = str_replace('!CORELIB_COPYRIGHT_YEAR!', CORELIB_COPYRIGHT_YEAR, $return);
+		$return = str_replace('!STACK_TRACE!', $this->getTraceAsHTML($error['backtrace']), $return);
+		$return = str_replace('!STACK_TRACE_ID!', 'stack-trace-'.$id, $return);
+		$return = str_replace('!REQUEST_CONTENT!', $this->_getRequestContentAsHTML(), $return);
+		$return = str_replace('!REQUEST_CONTENT_ID!', 'request-content-id-'.$id, $return);
+*/
 		return $return;
 	}
 
@@ -364,10 +406,52 @@ class ErrorHandler implements Singleton {
 					$fileinfo .= $level['file'];
 				}
 				if(isset($level['line'])){
-					$fileinfo .= '('.$level['file'].')';
+					$fileinfo .= ':'.$level['line'];
 				}
 
 				$return .= '#'.($key + 1).' '.$fileinfo.' '.htmlspecialchars($function).'('.implode(', ', $args).')'."<br/>";
+			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Get trace as plaintext.
+	 *
+	 * @param array $trace
+	 * @return string
+	 */
+	public function getTraceAsString(array &$trace){
+		$return = '';
+		foreach ($trace as $key => $level){
+			if(isset($level['class']) && !empty($level['class'])){
+				$function = $level['class'].'->'.$level['function'];
+			} else {
+				$function = $level['function'];
+			}
+			$args = array();
+			if(isset($level['args'])){
+				foreach ($level['args'] as $arg){
+					if(is_array($arg)){
+						$args[] = 'array('.sizeof($arg).')';
+					} else if(is_object($arg)){
+						$args[] = get_class($arg);
+					} else if(is_string($arg)) {
+						$args[] = '\''.substr($arg, 0, 30).'\'';
+					} else {
+						$args[] = $arg;
+					}
+				}
+
+				$fileinfo = '';
+				if(isset($level['file'])){
+					$fileinfo .= $level['file'];
+				}
+				if(isset($level['line'])){
+					$fileinfo .= ':'.$level['line'];
+				}
+
+				$return .= '#'.($key + 1).' '.$fileinfo.' '.$function.'('.implode(', ', $args).')'."\n";
 			}
 		}
 		return $return;

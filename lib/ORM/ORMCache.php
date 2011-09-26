@@ -181,7 +181,7 @@ class ORMCache {
 			$args = func_get_args();
 			unset($args[2]);
 			$key = call_user_func_array(array(__CLASS__, '_makeKey'), $args);
-			return self::$engine->storeInstance(call_user_func_array(array(__CLASS__, '_makeKey'), $args), $object);
+			return self::$engine->storeInstance($key, $object);
 		} else {
 			return false;
 		}
@@ -192,43 +192,8 @@ class ORMCache {
 	 *
 	 * @return string object identification key
 	 */
-	private static function _makeKey($classname, $function){
+	private static function _makeKey($classname, $function=null){
 		return implode('/', func_get_args());
 	}
 }
-
-
-
-
-
-/*
-
-class TestClass {
-	private $username = null;
-
-	public static function getByUsername($username){
-		if(!$object = ORMCache::getInstance(__CLASS__, __FUNCTION__, $username)){
-			$object = new TestClass();
-			if($object->_getByUsername($username)){
-				ORMCache::storeInstance(__CLASS__, __FUNCTION__, $object, $username);
-			} else {
-				return false;
-			}
-		}
-		return $object;
-	}
-
-	private function _getByUsername($username){
-		$this->_getDAO(false);
-		$this->_setFromArray($this->dao->getByUsername($username));
-		if(is_null($this->id)){
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-}
-*/
-
 ?>

@@ -103,7 +103,7 @@ class ORMCacheMemcachedEngine implements ORMCacheEngine {
 	 * @param integer $port Server port
 	 * @param integer $weight Server weight
 	 */
-	public function addServer($hostname, $port, $weight=0){
+	public function addServer($hostname, $port=11211, $weight=0){
 		$this->memcached->addServer($hostname, $port, $weight);
 	}
 
@@ -152,7 +152,5 @@ class ORMCacheMemcachedEngine implements ORMCacheEngine {
 			throw new BaseException('Unable to remove cached class instance, memcache error: '.$this->memcached->getResultCode(), E_USER_ERROR);
 		}
 	}
-
 }
-
 ?>

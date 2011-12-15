@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
-	<xsl:output method="xml" indent="yes"/>			
+	<xsl:output method="xml" indent="yes"/>
 
-	<!-- 
-	/** 
-	 * Page header 
-	 * 
+	<!--
+	/**
+	 * Page header
+	 *
 	 * @param content optional page header content
 	 */
 	-->
@@ -16,11 +16,11 @@
 			</div>
 		</div>
 	</xsl:template>
-	
-	<!-- 
-	/** 
-	 * Page navigation 
-	 */ 
+
+	<!--
+	/**
+	 * Page navigation
+	 */
 	-->
 	<xsl:template name="page-navigation">
 		<div id="page-navigation" class="shadow" style="float: left;">
@@ -50,11 +50,11 @@
 			<div class="shadow"></div>
 		</div>
 	</xsl:template>
-	
-	<!-- 
-	/** 
-	 * Page content container 
-	 * 
+
+	<!--
+	/**
+	 * Page content container
+	 *
 	 * @param content content of page-contant-container
 	 */
 	 -->
@@ -69,12 +69,12 @@
 			</div>
 		</div>
 	</xsl:template>
-	
-	
-	<!-- 
-	/** 
+
+
+	<!--
+	/**
 	 * View selector
-	 * 
+	 *
 	 * @param selected selected view
 	 */
 	 -->
@@ -88,30 +88,30 @@
 	 		</xsl:apply-templates>
 	 	</select>
 	 </xsl:template>
-	 
+
 	 <xsl:template match="mode" mode="view-selector">
 	 	<xsl:param name="select"/>
 	 	<xsl:param name="id"/>
 		<xsl:element name="option">
 			<xsl:attribute name="value"><xsl:value-of select="@prefix"/><xsl:value-of select="$id"/><xsl:value-of select="@suffix"/></xsl:attribute>
 			<xsl:if test="$select = @id">
-				<xsl:attribute name="selected">true</xsl:attribute>	
+				<xsl:attribute name="selected">true</xsl:attribute>
 			</xsl:if>
 			<xsl:value-of select="@title"/>
 		</xsl:element>
 	 </xsl:template>
-		
-	<!-- 
-	/** 
+
+	<!--
+	/**
 	 * Pager
-	 * 
+	 *
 	 * @param prefix page change url prefix
 	 */
-	 -->		
+	 -->
 	<xsl:template match="pager">
 		<xsl:param name="prefix"/>
 		<xsl:variable name="pages">10</xsl:variable>
-		
+
 		<xsl:if test="count(page) > 1">
 			<div class="pager">
 				<xsl:variable name="start">
@@ -124,7 +124,7 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<xsl:variable name="end">
 					<xsl:choose>
 						<xsl:when test="count(page) > $pages and page[@current = 'true'] = true()">
@@ -142,11 +142,11 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				</xsl:variable>
-				
+
 				<xsl:if test="page[@current = 'true'] > 1">
 					<a href="{$prefix}?p={(page[@current = 'true'] - 1)}">&#171;</a><xsl:text>&#160;</xsl:text>
 				</xsl:if>
-				
+
 				<xsl:if test="$start &gt; 1">
 					<a href="{$prefix}?p={page[position() = 1]}"><xsl:value-of select="page[position() = 1]"/></a><xsl:text>&#160;...&#160;</xsl:text>
 				</xsl:if>
@@ -163,7 +163,7 @@
 				<xsl:if test="count(page) &gt; $end">
 					... <a href="{$prefix}?p={page[position() = last()]}"><xsl:value-of select="page[position() = last()]"/></a><xsl:text>&#160;</xsl:text>
 				</xsl:if>
-				
+
 				<xsl:choose>
 					<xsl:when test="page[@current = 'true'] &lt; count(page)">
 						<a href="{$prefix}?p={(page[@current = 'true'] + 1)}">&#187;</a>
@@ -174,14 +174,14 @@
 				</xsl:choose>
 			</div>
 		</xsl:if>
-	</xsl:template>	
+	</xsl:template>
 
 
 	<xsl:template name="h1">
 		<xsl:param name="headline"/>
 		<xsl:param name="backtitle"/>
 		<xsl:param name="nav"/>
-		
+
 		<span class="backtitle">
 			<xsl:choose>
 				<xsl:when test="$backtitle = true()">
@@ -198,11 +198,32 @@
 			</span>
 		</xsl:if>
 		<h1><xsl:value-of select="$headline"/></h1>
-	</xsl:template>	
-	
-	<!-- 
-	/** 
-	 * Page footer 
+	</xsl:template>
+
+	<xsl:template name="select-options-boolean">
+		<xsl:param name="selected">true</xsl:param>
+		<xsl:param name="value-true">True</xsl:param>
+		<xsl:param name="value-false">False</xsl:param>
+
+		<xsl:element name="option">
+			<xsl:attribute name="value">true</xsl:attribute>
+			<xsl:if test="$selected = 'true'">
+				<xsl:attribute name="selected">true</xsl:attribute>
+			</xsl:if>
+			<xsl:value-of select="$value-true"/>
+		</xsl:element>
+		<xsl:element name="option">
+			<xsl:attribute name="value">false</xsl:attribute>
+			<xsl:if test="$selected = 'false'">
+				<xsl:attribute name="selected">false</xsl:attribute>
+			</xsl:if>
+			<xsl:value-of select="$value-false"/>
+		</xsl:element>
+	</xsl:template>
+
+	<!--
+	/**
+	 * Page footer
 	 */
 	 -->
 	<xsl:template name="page-footer">
@@ -210,5 +231,5 @@
 			Corelib.org
 		</div>
 	</xsl:template>
-	
+
 </xsl:stylesheet>

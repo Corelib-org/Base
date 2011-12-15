@@ -100,12 +100,19 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 		foreach ($this->log as $key => $line){
 			$result .= '<div>';
 			$this->time += $line['time'];
+
+
+			$shard = '';
+			if(!empty($line['shard'])){
+				$shard = '('.$line['engine'].'/'.$line['shard'].')';
+			}
+
 			if(!isset($duplicates[md5($line['query'])])){
 				$duplicates[md5($line['query'])] = ($key + 1);
-				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }">#'.($key + 1).' Query ('.(round($line['time'], 4) * 1000).'ms) ';
+				$result .= '<h2 onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }">#'.($key + 1).' Query ('.(round($line['time'], 4) * 1000).'ms) '.$shard.' ';
 			} else {
 				$duplicate_count++;
-				$result .= '<h2 class="warning" onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.(round($line['time'], 4) * 1000).'ms) <b>(#'.$duplicates[md5($line['query'])].')</b></u> ';
+				$result .= '<h2 class="warning" onclick="if(document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display == \'none\'){ document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'block\' } else { document.getElementById(\'DatabaseQueryLog'.$key.'\').style.display = \'none\' }"><u>#'.($key + 1).' Query ('.(round($line['time'], 4) * 1000).'ms) <b>(#'.$duplicates[md5($line['query'])].') '.$shard.' </b></u> ';
 			}
 			$result .= '<small>'.substr($line['query'], 0, 200).'</small></h2>';
 
@@ -115,7 +122,6 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 			}
 
 			$result .= '<div id="DatabaseQueryLog'.$key.'" style="display: none;"><h3>SQL</h3><pre>'.trim(htmlspecialchars($line['query'])).'</pre><br/>';
-
 
 			if(is_array($line['analysis']) && sizeof($line['analysis']) > 0){
 				$result .= '<h3>Analysis</h3><table style="width: 100%; border-spacing: 0px;"><thead><tr>';
@@ -138,7 +144,7 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 			$result .= '<h3>Backtrace</h3><pre>'.$line['backtrace'].'</pre><br/>';
 			$result .= '<hr/><br/></div></div>';
 		}
-		$view = '<h1>Query Log (Queries: '.sizeof($this->log).', Duplicates: '.$duplicate_count.', Time: '.$this->time.'s )</h1>';
+		$view = '<h1>Query Log (Queries: '.sizeof($this->log).', Duplicates: '.$duplicate_count.', Time: '.round($this->time * 1000, 2).'ms )</h1>';
 		$view .= $result;
 		$this->content = $view;
 	}

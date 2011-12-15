@@ -82,7 +82,7 @@ class Database implements Singleton {
 	/**
 	 * @var string DAO Object prefix
 	 */
-	private static $dao_prefix = null;
+	private $dao_prefix = null;
 
 	/**
 	 * @var DatabaseEngine slave connection
@@ -93,6 +93,13 @@ class Database implements Singleton {
 	 * @var DatabaseEngine master connection
 	 */
 	private $master = null;
+
+	/**
+	 * Shard reference.
+	 *
+	 * @var array list of database shards servers
+	 */
+	private $shards = array();
 
 	/**
 	 * Query log.
@@ -135,7 +142,47 @@ class Database implements Singleton {
 	 * @return DatabaseDAO
 	 */
 	public static function getDAO($class){
-		return call_user_func(self::$dao_prefix.'_'.$class.'::getInstance');
+		$prefix = Database::getInstance()->_getPrefix($class);
+		$dao = call_user_func($prefix.'_'.$class.'::getInstance');
+		$dao->setClassName($class);
+		return $dao;
+	}
+
+	/**
+	 * Connect to database.
+	 *
+	 * @uses Database::masterConnect()
+	 * @uses Database::slaveConnect()
+	 * @param DatabaseEngine $master Master database connection
+	 * @param DatabaseEngine $slave Slave database connection
+	 */
+	public function connect(DatabaseEngine $master, DatabaseEngine $slave=null){
+		$this->masterConnect($master);
+		if(!is_null($slave)){
+			$this->slaveConnect($slave);
+		}
+	}
+
+	/**
+	 * Shard a class to a second database.
+	 *
+	 * @uses Database::$shards
+	 * @uses DatabaseEngine::getPrefix()
+	 * @param string $class Class name to shard
+	 * @param DatabaseEngine $master Master database connection
+	 * @param DatabaseEngine $slave Slave database connection
+	 */
+	public function shard($class, DatabaseEngine $master=null, DatabaseEngine $slave=null){
+		if(is_null($master)){
+			$this->shards[$class]['master'] = $master;
+			$this->shards[$class]['prefix'] = $master->getPrefix();
+		} else {
+			$this->shards[$class]['master'] = $this->master;
+			$this->shards[$class]['prefix'] = $this->master->getPrefix();
+		}
+		if(!is_null($slave)){
+			$this->shards[$class]['slave'] = $slave;
+		}
 	}
 
 	/**
@@ -149,7 +196,7 @@ class Database implements Singleton {
 	 */
 	public function masterConnect(DatabaseEngine $master){
 		$this->master = $master;
-		self::$dao_prefix = $this->master->getPrefix();
+		$this->dao_prefix = $this->master->getPrefix();
 		if(is_null($this->slave)){
 			$this->slave = $master;
 		}
@@ -180,11 +227,11 @@ class Database implements Singleton {
 	 * @param Query $query Query to execute
 	 * @return Query Executed Query
 	 */
-	public function query(Query $query){
+	public function query(Query $query, $shard=null){
 		if(preg_match('/INSERT|SELECT INTO|UPDATE|MERGE|DELETE|TRUNCATE/', $query->getQuery())){
-			$this->masterQuery($query);
+			$this->masterQuery($query, $shard);
 		} else {
-			$this->slaveQuery($query);
+			$this->slaveQuery($query, $shard);
 		}
 		$this->_error($query);
 		return $query;
@@ -198,8 +245,8 @@ class Database implements Singleton {
 	 * @param Query $query Query to execute
 	 * return Query Executed Query
 	 */
-	public function masterQuery(Query $query){
-		$this->_runQuery($this->master, $query);
+	public function masterQuery(Query $query, $shard=null){
+		$this->_runQuery($this->_getMasterConnection($shard), $query, $shard);
 		return $query;
 	}
 
@@ -213,8 +260,8 @@ class Database implements Singleton {
 	 * @param Query $query Query to execute
 	 * @return Query Executed Query
 	 */
-	public function slaveQuery(Query $query){
-		$this->_runQuery($this->slave, $query);
+	public function slaveQuery(Query $query, $shard=null){
+		$this->_runQuery($this->_getSlaveConnection($shard), $query, $shard);
 		return $query;
 	}
 
@@ -226,6 +273,50 @@ class Database implements Singleton {
 	 */
 	public function escapeString($string){
 		return $this->master->escapeString($string);
+	}
+
+	/**
+	 * Get DAO Class prefix.
+	 *
+	 * @param string class name
+	 * @return string prefix
+	 */
+	private function _getPrefix($class){
+		if(!isset($this->shards[$class])){
+			return $this->dao_prefix;
+		} else {
+			return $this->shards[$class]['prefix'];
+		}
+	}
+
+	/**
+	 * Get DAO Class master server.
+	 *
+	 * @param string class name
+	 * @return string prefix
+	 */
+	private function _getMasterConnection($shard=null){
+		if(is_null($shard) || !isset($this->shards[$shard])){
+			return $this->master;
+		} else {
+			return $this->shards[$shard]['master'];
+		}
+	}
+
+	/**
+	 * Get DAO Class prefix.
+	 *
+	 * @param string class name
+	 * @return string prefix
+	 */
+	private function _getSlaveConnection($shard=null){
+		if(isset($this->shards[$shard]['slave'])){
+			return $this->shards[$shard]['slave'];
+		} else if(is_null($shard) || !isset($this->shards[$shard]['master'])){
+			return $this->slave;
+		} else {
+			return $this->shards[$shard]['master'];
+		}
 	}
 
 	/**
@@ -248,7 +339,7 @@ class Database implements Singleton {
 	 * @return true on success, else false
 	 * @internal
 	 */
-	private function _runQuery(DatabaseEngine $instance, Query $query){
+	private function _runQuery(DatabaseEngine $instance, Query $query, $shard=null){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && DATABASE_SHOW_QUERY_LOG){
 			$start = microtime(true);
 			$instance->query($query);
@@ -258,7 +349,9 @@ class Database implements Singleton {
 														'message' => $query->getError()),
 									   'time' => round(microtime(true) - $start, 5),
 									   'backtrace' => $e->getTraceAsString(),
-									   'analysis' => $instance->analyse($query));
+									   'analysis' => $instance->analyse($query),
+									   'shard' => $shard,
+									   'engine' => get_class($instance));
 		} else {
 			$instance->query($query);
 		}
@@ -550,6 +643,8 @@ abstract class DatabaseDAO {
 	 */
 	private $database;
 
+	private $class = null;
+
 
 	//*****************************************************************//
 	//****************** DatabaseDAO class methods ********************//
@@ -561,6 +656,10 @@ abstract class DatabaseDAO {
 		$this->database = Database::getInstance();
 	}
 
+	final public function setClassName($class){
+		$this->class = $class;
+	}
+
 	/**
 	 * Execute a query.
 	 *
@@ -568,7 +667,7 @@ abstract class DatabaseDAO {
 	 * @uses DatabaseDAO::$database
 	 */
 	final protected function query(Query $query){
-		return $this->database->query($query);
+		return $this->database->query($query, $this->class);
 	}
 
 	/**
@@ -578,7 +677,7 @@ abstract class DatabaseDAO {
 	 * @uses DatabaseDAO::$database
 	 */
 	final protected function masterQuery(Query $query){
-		return $this->database->masterQuery($query);
+		return $this->database->masterQuery($query, $this->class);
 	}
 
 	/**
@@ -588,7 +687,7 @@ abstract class DatabaseDAO {
 	 * @uses DatabaseDAO::$database
 	 */
 	final protected function slaveQuery(Query $query){
-		return $this->database->slaveQuery($query);
+		return $this->database->slaveQuery($query, $this->class);
 	}
 
 	/**

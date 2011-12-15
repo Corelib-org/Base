@@ -299,13 +299,13 @@ class MySQLiEngine implements DatabaseEngine {
 	 * @internal
 	 */
 	private function _connect(){
-		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
-		if($this->connection->errno === 0){
+		$this->connection = @new mysqli($this->hostname, $this->username, $this->password, $this->database);
+		if($this->connection->connect_errno === 0){
 			$this->connection->query('SET NAMES '.$this->charset);
 			$this->connection->query('SET CHARACTER SET '.$this->charset);
 			return true;
 		} else {
-			return false;
+			throw new BaseException($this->connection->connect_error, E_USER_ERROR);
 		}
 	}
 }
@@ -713,8 +713,10 @@ class MySQLiQueryStatement extends MySQLiQuery {
 	 */
 	public function getError(){
 		$values = array();
-		foreach ($this->bind['param'] as $key => $param){
-			$values[] = $param;
+		if(isset($this->bind['param']) && is_array($this->bind['param'])){
+			foreach ($this->bind['param'] as $key => $param){
+				$values[] = $param;
+			}
 		}
 
 		return $this->error.' (#'.$this->errno.')'."\n<br/><br/>".$this->query.' Values: '.implode(', ', $values);

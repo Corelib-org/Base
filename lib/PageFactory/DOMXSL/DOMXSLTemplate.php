@@ -129,13 +129,13 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 */
 	public function __construct($xslcore = null){
 		parent::__construct();
-		
+
 		if(is_null($xslcore)){
 			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.'base/core.xsl';
 		} else if ($xslcore{0} != '/'){
 			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.$xslcore;
 		}
-		
+
 		try {
 			if(!is_file($xslcore)){
 				throw new BaseException('No such file or directory: '.$xslcore);
@@ -144,7 +144,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 			echo $e;
 			exit;
 		}
-		
+
 		$this->xsl_core = $xslcore;
 
 		//

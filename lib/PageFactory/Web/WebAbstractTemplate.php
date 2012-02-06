@@ -257,15 +257,6 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	public function __construct(){
 		ob_start();
 
-		if(!defined('HTTP_STATUS_MESSAGE_FILE')){
-			/**
-			 * HTTP status message file.
-			 *
-			 * @var string filename
-			 * @internal
-			 */
-			define('HTTP_STATUS_MESSAGE_FILE', 'share/messages.xml');
-		}
 		if(isset($_SERVER['SCRIPT_URL'])){
 			$this->script_url = $_SERVER['SCRIPT_URL'];
 		}
@@ -601,6 +592,17 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 * @return DOMElement
 	 */
 	public function getStatusMessage(){
+
+		if(!defined('HTTP_STATUS_MESSAGE_FILE')){
+			/**
+			 * HTTP status message file.
+			 *
+			 * @var string filename
+			 * @internal
+			 */
+			define('HTTP_STATUS_MESSAGE_FILE', 'share/messages.xml');
+		}
+
 		$session = SessionHandler::getInstance();
 		if($session->check(self::MSGID)){
 			$DOMMessages = new DOMDocument('1.0','UTF-8');

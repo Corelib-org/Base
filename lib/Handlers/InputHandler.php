@@ -1119,7 +1119,7 @@ class InputValidatorPhone extends InputValidatorRegex {
 	 * @return void
 	 * @internal
 	 */
-	public function __construct($content){
+	public function __construct(){
 		parent::__construct('/^\+?[\-\s0-9]{8,}$/');
 	}
 }

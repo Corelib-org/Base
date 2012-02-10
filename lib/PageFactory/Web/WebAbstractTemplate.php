@@ -126,6 +126,14 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	private $location = null;
 
 	/**
+	 * HTTP Status code
+	 *
+	 * @var string http status code
+	 * @internal
+	 */
+	private $status_code = '200 OK';
+
+	/**
 	 * Message ID.
 	 *
 	 * @var integer message id.
@@ -322,6 +330,8 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 
 		if(is_null($this->location)){
+			header('HTTP/1.1 '.$this->status_code);
+
 			header('Content-Location: '. $this->request_uri);
 
 			$type = $this->content_type;
@@ -384,6 +394,18 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		assert('is_string($charset)');
 		return ($this->content_charset = $charset);
 	}
+
+	/**
+	 * Set HTTP Status code and message.
+	 *
+	 * @param int $code HTTP Status code
+	 * @param string $message HTTP Status message
+	 * @return boolean true on success, else return false
+	 */
+	public function setStatusCode($code, $message=''){
+		$this->status_code = $code.' '.$message;
+	}
+
 
 	/**
 	 * Set Location header.

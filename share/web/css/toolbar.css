@@ -4,7 +4,7 @@ Developer toolbar StyleSheet
 Version:	1.0
 Author: 	Steffen Sørensen
 Email: 		ss@zornig.dk
-website:	Corelib - Base 
+website:	Corelib - Base
 -----------------------------------------------------------------*/
 
 #developer-toolbar {
@@ -12,11 +12,12 @@ website:	Corelib - Base
 	top: 0px;
 	position: fixed;
 	background-color: #ffffe0;
-	opacity: .8;
+	opacity: .0;
 	border-bottom: 1px solid #666680;
 	text-align: left;
 	font-size: 8pt;
 	font-family: Arial,Helvetica,Verdana,Sans serif;
+	color: #000000;
 }
 
 #developer-toolbar:hover {
@@ -28,11 +29,11 @@ website:	Corelib - Base
 	text-decoration: underline;
 	cursor: pointer;
 }
-	
+
 #developer-toolbar a:hover {
-	
+
 	color: #000000;
-		
+
 }
 
 #developer-toolbar .toolbar {
@@ -46,7 +47,7 @@ website:	Corelib - Base
 }
 
 #developer-toolbar .data > div {
-	margin: 10px;	
+	margin: 10px;
 }
 
 #developer-toolbar .data > div h1 {

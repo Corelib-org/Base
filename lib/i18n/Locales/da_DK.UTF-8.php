@@ -47,7 +47,7 @@
  */
 class i18nLocale_da_DK_UTF8 extends i18nLocale {
 	public function __construct(){
-		parent::__construct('en', 'en_GB.UTF-8');
+		parent::__construct('da', 'da_DK.UTF-8');
 	}
 }
 ?>

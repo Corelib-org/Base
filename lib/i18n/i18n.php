@@ -330,6 +330,8 @@ class i18n implements Singleton,Output {
 				}
 				asort($languages);
 				$languages = array_keys($languages);
+
+
 				while(sizeof($languages) > 0){
 					$language = array_pop($languages);
 					if(isset($this->locales[$language])){
@@ -342,6 +344,9 @@ class i18n implements Singleton,Output {
 							break;
 						}
 					}
+				}
+				if(is_null($this->locale)){
+					$this->setLocale($this->fallback->getLanguage());
 				}
 			} else if($this->fallback instanceof i18nLocale){
 				$this->setLocale($this->fallback->getLanguage());

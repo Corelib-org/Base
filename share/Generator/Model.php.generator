@@ -124,6 +124,7 @@ interface DAO_${classname} {
  	 * @return integer id on success, else return false
  	 */
 	public function create(DatabaseDataHandler $data);
+
 	/**
 	 * Update object data in database.
 	 *
@@ -132,13 +133,7 @@ interface DAO_${classname} {
 	 * @return boolean true on success, else return false
 	 */
 	public function update($id, DatabaseDataHandler $data);
-	/**
-	 * Get object data from database
-	 *
-	 * @param integer database reference ID
-	 * @return array on success, else return false
-	 */
-	public function read($id);
+
 	/**
 	 * Remove data from database.
 	 *
@@ -226,15 +221,12 @@ class ${classname} implements Output,CacheableOutput {
 	/**
 	 * Create model ${classname} instance.
 	 *
-	 * @uses ${classname}::$id
 	 * @uses ${classname}::_setFromArray()
 	 * @uses ${classname}::$datahandler
-	 * @param integer $id object id
 	 * @param array $array object data from another data source
 	 * @return void
 	 */
-	public function __construct($id = null, $array = array()){
-		$this->id = $id;
+	public function __construct($array = array()){
 		if(sizeof($array) > 0){
 			$this->_setFromArray($array);
 		}
@@ -311,28 +303,10 @@ class ${classname} implements Output,CacheableOutput {
 		$event = EventHandler::getInstance();
 		$event->trigger(new ${classname}ModifyBeforeDelete($this));
 		if($state = $this->dao->delete($this->id)){
+			$this->_cleanup();
 			$event->trigger(new ${classname}ModifyAfterDelete($this));
 		}
 		return $state;
-	}
-
-	/**
-	 * Read data from database.
-	 *
-	 * @uses ${classname}::$id
-	 * @uses ${classname}::$dao
-	 * @uses ${classname}::_getDAO()
-	 * @uses ${classname}::_setFromArrray()
-	 * @return boolean return true on success, else return false
-	 */
-	public function read(){
-		$this->_getDAO(false);
-		if($array = $this->dao->read($this->id)){
-			$this->_setFromArray($array);
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/**
@@ -361,6 +335,7 @@ class ${classname} implements Output,CacheableOutput {
 		/* Relationship commit actions end */
 
 		if($r !== false){
+			$this->_cleanup();
 			$event->trigger(new ${classname}ModifyAfterCommit($this));
 		}
 		return $r;
@@ -386,6 +361,14 @@ class ${classname} implements Output,CacheableOutput {
 		return $${classvar};
 	}
 
+
+	//*****************************************************************//
+	//************ Private data retrieval helper methods **************//
+	//*****************************************************************//
+	/* Private data retrieval helper methods */
+	/* Private data retrieval helper methods end */
+
+
 	//*****************************************************************//
 	//************************ Private methods ************************//
 	//*****************************************************************//
@@ -396,16 +379,12 @@ class ${classname} implements Output,CacheableOutput {
 	 * @uses ${classname}::read()
 	 * @uses ${classname}::DAO
 	 * @uses Database::getDAO()
-	 * @param boolean $read if true, then read data from database
 	 * @return boolean true
 	 * @internal
 	 */
-	private function _getDAO($read=true){
+	private function _getDAO(){
 		if(is_null($this->dao)){
 			$this->dao = Database::getDAO(self::DAO);
-			if($read){
-				$this->read();
-			}
 		}
 		return true;
 	}
@@ -422,7 +401,7 @@ class ${classname} implements Output,CacheableOutput {
 	 */
 	private function _create(){
 		if($this->id = $this->dao->create($this->datahandler)){
-			$this->read();
+			$this->_getById($this->id);
 			return true;
 		} else {
 			return false;
@@ -438,11 +417,37 @@ class ${classname} implements Output,CacheableOutput {
 	 */
 	private function _update(){
 		if($this->dao->update($this->id, $this->datahandler)){
-			$this->read();
+			$this->_getById($this->id);
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+
+	/**
+	 * Clean up actions.
+	 *
+	 * @return void
+	 * @internal
+	 */
+	private function _cleanup(){
+		/* ORMCache cleanup after commit */
+		/* ORMCache cleanup after commit end */
+	}
+
+
+	/**
+	 * Cache store cleanup.
+	 *
+	 * Cleanup object before saving cache.
+	 *
+	 * @return ${classname}
+	 */
+	private function _cacheStoreCleanup(){
+		/* _cacheStore method content */
+		/* _cacheStore method content end */
+		return $this;
 	}
 
 	/**

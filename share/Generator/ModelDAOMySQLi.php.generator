@@ -122,18 +122,6 @@ class MySQLi_${classname} extends DatabaseDAO implements Singleton,DAO_${classna
 	}
 
 	/**
-	 * @see DAO_${classname}::read()
-	 */
-	public function read($id){
-		$query = 'SELECT '.self::getSelectColumns().'
-		          FROM `${tablename}`
-		          WHERE `'.${classname}::FIELD_ID.'`=\''.$id.'\' LIMIT 1';
-		$query = $this->slaveQuery(new MySQLiQuery($query));
-
-		return $query->fetchArray();
-	}
-
-	/**
 	 * @see DAO_${classname}::delete()
 	 */
 	public function delete($id){

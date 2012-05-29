@@ -285,7 +285,7 @@ class ${classname}List implements Output,CacheableOutput {
 
 		while ($out = $res->fetchArray()) {
 			if(is_null($this->view)){
-				$item = new ${classname}($out[${classname}::FIELD_ID], $out);
+				$item = new ${classname}($out);
 
 				/* Set converters */
 				/* Set converters end */

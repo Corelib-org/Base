@@ -582,10 +582,18 @@ class PageFactory implements Singleton {
 		if(substr($this->url, -1) != '/'){
 			$this->url .= '/';
 		}
+
 		$dirname = dirname($_SERVER['SCRIPT_NAME']);
 		if($dirname != '/'){
 			$this->url = preg_replace('/^'.str_replace('/', '\/', preg_quote($dirname)).'/', '', $this->url);
 		}
+
+		// In rare cases it have been known that the URL is missing the leading slash, therefore
+		// it is added if it is missing.
+		if(substr($this->url, 0, 1) != '/'){
+			$this->url = '/'.$this->url;
+		}
+
 		$this->cache = new CacheManager(PAGE_FACTORY_CACHE_DIR.str_replace('/', '_', $_SERVER['REQUEST_URI']));
 
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){

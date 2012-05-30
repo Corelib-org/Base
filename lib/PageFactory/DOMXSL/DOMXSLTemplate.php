@@ -195,7 +195,8 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param string $template_file XSLT Template
 	 * @return boolean true on success, else return false
 	 */
-	public function addTemplate($template_file){
+	public function addTemplate($template_file, $unshift=false){
+
 		if($template_file{0} ==	'/' || preg_match('/^[a-zA-Z]:/', $template_file)){
 			$template = $template_file;
 		} else {
@@ -204,7 +205,12 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 				return false;
 			}
 		}
-		$this->xsl_templates[] = $template;
+		if(!$unshift){
+			$this->xsl_templates[] = $template;
+		} else {
+			array_unshift($this->xsl_templates, $template);
+		}
+
 		return true;
 	}
 

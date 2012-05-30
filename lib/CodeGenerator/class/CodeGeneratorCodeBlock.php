@@ -252,7 +252,7 @@ class CodeGeneratorCodeBlock extends CodeGeneratorCodeBlockComposite {
 
 		if($inblock){
 			$this->block = array();
-			throw new BaseException('code block not closed correctly, ending tag is missing in template: '.$block, E_USER_ERROR);
+			throw new BaseException('Code block not closed correctly, ending tag "'.$this->getEndToken().'" is missing in template: '.$block, E_USER_ERROR);
 		}
 	}
 

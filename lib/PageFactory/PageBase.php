@@ -128,6 +128,7 @@ abstract class PageBase {
 	 * a object constructor.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function __init(){ }
 
@@ -151,6 +152,7 @@ abstract class PageBase {
 	 * @param integer $cache cache type
 	 * @param integer $ttl time to live in seconds
 	 * @return Output
+	 * @api
 	 */
 	public function addContent(Output $content, $cache=PAGE_OUTPUT_CACHE_DISABLED, $ttl=false){
 		if($cache == PAGE_OUTPUT_CACHE_DYNAMIC  && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
@@ -168,6 +170,7 @@ abstract class PageBase {
 	 * @param integer $cache cache type
 	 * @param integer $ttl time to live in seconds
 	 * @return Output
+	 * @api
 	 */
 	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DISABLED, $ttl=false){
 		if($cache == PAGE_OUTPUT_CACHE_DYNAMIC  && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
@@ -183,6 +186,7 @@ abstract class PageBase {
 	 *
 	 * @param PageFactoryTemplate $template
 	 * @return PageFactoryTemplate
+	 * @api
 	 */
 	public function addTemplateDefinition(PageFactoryTemplate $template){
 		$this->templates[$template->getSupportedTemplateEngineName()] = $template;
@@ -194,6 +198,7 @@ abstract class PageBase {
 	 *
 	 * @param PageFactoryTemplateEngine $engine
 	 * @return boolean true on success else return false
+	 * @internal
 	 */
 	final public function draw(PageFactoryTemplateEngine $engine){
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
@@ -222,6 +227,7 @@ abstract class PageBase {
 	 * Check to see if page i cached.
 	 *
 	 * @return boolean true if cached, else return false
+	 * @internal
 	 */
 	protected function isCached(){
 		return $this->cache->isCached() && ($this->cache->getType() != PAGE_FACTORY_CACHE_STATIC);
@@ -246,6 +252,7 @@ abstract class PageBase {
 	 *
 	 * @param PageFactoryTemplateEngine $engine
 	 * @return PageFactoryTemplate on success, else return false
+	 * @internal
 	 */
 	private function _getTemplateDefinition(PageFactoryTemplateEngine $engine){
 		if(!isset($this->templates[get_class($engine)])){
@@ -271,7 +278,6 @@ abstract class PageBase {
  * @category corelib
  * @package Base
  * @subpackage PageFactory
- *
  * @author Steffen Sørensen <ss@corelib.org>
  */
 class EventApplyDefaultSettings implements Event {

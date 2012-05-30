@@ -129,6 +129,9 @@
 							<list xsl-mode="xhtml-list-simple" render-mode="simple">
 								<field name="name"/>
 							</list>
+							<list render-mode="select-options">
+								<field name="name"/>
+							</list>
 						</layout>
 
 

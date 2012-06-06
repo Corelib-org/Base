@@ -380,9 +380,13 @@ class Base implements Singleton {
 	public function findClass($class){
 		assert('is_string($class)');
 		assert('$class != "WebPage"');
+
 		if(!isset($this->class_cache[$class])){
-			if(preg_match('/^((.*?)\\\)+([A-Za-z0-9_]+)$/', $class, $match)){
-				list(,,$namespace, $classname) = $match;
+			if(preg_match('/^((.*?\\\)+)([\\A-Za-z0-9_]+)$/', $class, $match)){
+				list(,$namespace,, $classname) = $match;
+				if(substr($namespace, -1, 1) == '\\'){
+					$namespace = substr($namespace, 0, -1);
+				}
 			} else {
 				$namespace = null;
 				$classname = $class;
@@ -531,7 +535,7 @@ class Base implements Singleton {
  * @uses Base::findClass()
  * @internal
  */
-function __autoload($class){
+function autoload($class){
 	if($filename = Base::getInstance()->findClass($class)){
 		/**
 		 * @ignore
@@ -544,4 +548,7 @@ function __autoload($class){
 		return false;
 	}
 }
+
+spl_autoload_register('autoload');
+
 ?>

@@ -1,4 +1,22 @@
 <?php
+/**
+ * Usage:
+ *
+
+use Corelib\Base\Logger;
+use Corelib\Base\Logger\Engine\Syslog;
+use Corelib\Base\Logger\Engine\Stdout;
+
+Logger::setEngine(new Stdout());
+Logger::setLevel(Logger::ALL); // Default log level is: Log::CRITICAL | Log::ERROR | Log::Warning, log level set exactly as error_reporting()
+Logger::error('Test Error');
+Logger::warning('Test Warning');
+Logger::critical('Test Critical');
+Logger::info('Test info');
+Logger::debug('Test debug');
+ */
+
+
 namespace Corelib\Base;
 
 class Logger {

@@ -126,14 +126,13 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 			if(is_array($line['analysis']) && sizeof($line['analysis']) > 0){
 				$result .= '<h3>Analysis</h3><table style="width: 100%; border-spacing: 0px;"><thead><tr>';
 				foreach ($line['analysis']['columns'] as $column){
-					$result .= '<th style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$column.'</th>';
+					$result .= '<th style="border: 1px solid; border-width: 0px 0px 1px 0px">'.htmlspecialchars($column).'</th>';
 				}
 				$result .= '</tr></thead>';
 				foreach ($line['analysis']['rows'] as $rows){
 					$result .= '<tr>';
 					foreach ($rows as $columns){
-
-						$result .= '<td style="border: 1px solid; border-width: 0px 0px 1px 0px">'.$columns.'</td>';
+						$result .= '<td style="border: 1px solid; border-width: 0px 0px 1px 0px">'.htmlspecialchars($columns).'</td>';
 					}
 					$result .= '</tr>';
 				}

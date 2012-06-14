@@ -1,10 +1,5 @@
 <?php
-namespace Corelib\Base\Logger\Engine;
-
-use Corelib\Base\Logger\Engine;
-use Corelib\Base\Logger;
-
-class Syslog extends Engine {
+class Syslog extends LoggerEngine {
 	private $syslog = null;
 
 	public function __construct($ident='corelib', $options=11, $facility=LOG_USER){

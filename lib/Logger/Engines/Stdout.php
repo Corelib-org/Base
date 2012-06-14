@@ -1,10 +1,5 @@
 <?php
-namespace Corelib\Base\Logger\Engine;
-
-use Corelib\Base\Logger\Engine;
-use Corelib\Base\Logger;
-
-class Stdout extends Engine {
+class LoggerEngineStdout extends LoggerEngine {
 	private $stdout = null;
 	private $stderr = null;
 
@@ -14,7 +9,7 @@ class Stdout extends Engine {
 	}
 
 	public function write($timestamp, $level, $message, $file=null, $line=null, $function=null){
-		$message = date('c').' '.str_pad($this->_getPriority($level), 9).' '.$this->_createLogLine($timestamp, $level, $message, $file, $line, $function)."\n";
+		$message = trim(date('c').' '.str_pad($this->_getPriority($level), 9).' '.$this->_createLogLine($timestamp, $level, $message, $file, $line, $function))."\n";
 		if($level & (Logger::CRITICAL ^ Logger::ERROR)){
 			fwrite($this->stderr, $message, strlen($message));
 		} else {

@@ -174,7 +174,9 @@ class ErrorHandler implements Singleton {
 			 * XXX This works as a workaround for php bug #49177, see: http://bugs.php.net/bug.php?id=49177 for more information
 			 */
 			if(version_compare(PHP_VERSION, '5.3') >= 0 || $code != E_STRICT){
- 				header('HTTP/1.1 500 Internal Server Error');
+				if(php_sapi_name() != 'cli'){
+					header('HTTP/1.1 500 Internal Server Error');
+				}
 				$this->errors[] = array('code' => $code,
 				                        'description' => $description,
 				                        'file' => $file,
@@ -182,7 +184,46 @@ class ErrorHandler implements Singleton {
 				                        'symbol' => $symbol,
 				                        'backtrace' => debug_backtrace());
 			}
+
+			// Log error to log engine
+			$logline = $description.' in '.$file.' on line '.$line;
+			switch($code){
+				case E_ERROR:
+					Logger::error($logline);
+					break;
+				case E_RECOVERABLE_ERROR:
+					Logger::error($logline);
+					break;
+				case E_STRICT:
+					Logger::warning($logline);
+					break;
+				case E_WARNING:
+					Logger::warning($logline);
+					break;
+				case E_NOTICE:
+					Logger::notice($logline);
+					break;
+				case E_USER_ERROR:
+					Logger::error($logline);
+					break;
+				case E_USER_WARNING:
+					Logger::warning($logline);
+					break;
+				case E_USER_NOTICE:
+					Logger::notice($logline);
+					break;
+				case E_DEPRECATED:
+					Logger::warning($logline);
+					break;
+				case E_USER_DEPRECATED:
+					Logger::warning($logline);
+					break;
+				default:
+					Logger::warning($logline);
+					break;
+			}
 		}
+
 	}
 
 	/**

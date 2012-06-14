@@ -154,6 +154,7 @@ if(!defined('TEMPORARY_DIR')){
 	define('TEMPORARY_DIR', 'var/tmp/');
 }
 
+
 //*****************************************************************//
 //******************* Load Base Support Files *********************//
 //*****************************************************************//
@@ -249,14 +250,6 @@ class Base implements Singleton {
 			mb_internal_encoding('utf-8');
 		}
 		umask(BASE_UMASK);
-		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
-			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
-		} else {
-			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
-		}
-		if(is_callable('date_default_timezone_set')){
-			date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
-		}
 
 		if(!defined('BASE_ADMIN_EMAIL')){
 			/**
@@ -294,6 +287,25 @@ class Base implements Singleton {
 			 * @internal
 			 */
 			require_once(CORELIB.'/Base/lib/Handlers/ErrorHandler.php');
+
+			require_once(CORELIB.'/Base/lib/Logger/Logger.php');
+			require_once(CORELIB.'/Base/lib/Logger/Engine.php');
+
+
+			if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
+				fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
+
+				require_once(CORELIB.'/Base/lib/Logger/Engines/Stdout.php');
+
+				Logger::setEngine(new LoggerEngineStdout());
+
+			} else {
+				header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
+			}
+
+			if(is_callable('date_default_timezone_set')){
+				date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
+			}
 		}
 
 		/**
@@ -316,8 +328,6 @@ class Base implements Singleton {
 			die;
 		}
 		$GLOBALS['base'] = $this;
-
-
 	}
 
 	/**
@@ -397,8 +407,11 @@ class Base implements Singleton {
 			} else {
 				throw new BaseException('File containing class '.$class.' could not be found', E_USER_WARNING);
 			}
+			Logger::warning('Loaded class: '.$class);
+			return $file;
 		}
 		if(isset($this->class_cache[$class])){
+			Logger::debug('Loaded class from cache: '.$class);
 			return $this->class_cache[$class];
 		} else {
 			return false;
@@ -535,20 +548,18 @@ class Base implements Singleton {
  * @uses Base::findClass()
  * @internal
  */
-function autoload($class){
+function __autoload($class){
 	if($filename = Base::getInstance()->findClass($class)){
 		/**
 		 * @ignore
 		 */
 		require_once($filename);
-
-
 		return true;
 	} else {
 		return false;
 	}
 }
 
-spl_autoload_register('autoload');
+spl_autoload_register('__autoload');
 
 ?>

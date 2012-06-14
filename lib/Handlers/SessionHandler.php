@@ -72,7 +72,7 @@ define('SESSION_INIT_BY_GET_INSTANCE', 2);
  * @package Base
  * @subpackage SessionHandler
  */
-class SessionHandler implements Singleton,Output {
+class Session implements Singleton,Output {
 
 
 	//*****************************************************************//
@@ -195,7 +195,7 @@ class SessionHandler implements Singleton,Output {
 	 */
 	public static function getInstance(){
 		if(is_null(self::$instance)){
-			self::$instance = new SessionHandler();
+			self::$instance = new Session();
 		}
 		return self::$instance;
 	}
@@ -783,7 +783,7 @@ class SessionHandlerInitEvent extends EventAction  {
 	 * @see Observer::update()
 	 */
 	public function update(Event $event){
-		$session = SessionHandler::getInstance();
+		$session = Session::getInstance();
 		if(SESSION_INIT_METHOD == SESSION_INIT_BY_EVENT){
 			$session->init();
 		}
@@ -808,4 +808,14 @@ class EventSessionConfigured implements Event {
 
 $event = EventHandler::getInstance();
 $event->register(new SessionHandlerInitEvent(), 'EventSessionConfigured');
+
+
+if(!class_exists('SessionHandler', false)){
+	class SessionHandler implements Singleton {
+		public static function getInstance(){
+			return Session::getInstance();
+		}
+	}
+}
+
 ?>

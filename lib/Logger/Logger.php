@@ -3,9 +3,7 @@
  * Usage:
  *
 
-use Corelib\Base\Logger;
-use Corelib\Base\Logger\Engine\Syslog;
-use Corelib\Base\Logger\Engine\Stdout;
+
 
 Logger::setEngine(new Stdout());
 Logger::setLevel(Logger::ALL); // Default log level is: Log::CRITICAL | Log::ERROR | Log::Warning, log level set exactly as error_reporting()
@@ -16,12 +14,9 @@ Logger::info('Test info');
 Logger::debug('Test debug');
  */
 
-
-namespace Corelib\Base;
-
 class Logger {
-	// Default Loglevel Log::CRITICAL | Log::ERROR | Log::Warning
-	private static $level = 7;
+	// Default Loglevel Logger::CRITICAL | Logger::ERROR | Logger::WARNING | Logger::Notice
+	private static $level = 15;
 	private static $engine = null;
 
 	const CRITICAL = 1;
@@ -34,7 +29,7 @@ class Logger {
 	const ALL = 2047;
 	const NONE = 0;
 
-	static function setEngine(Logger\Engine $engine){
+	static function setEngine(LoggerEngine $engine=null){
 		self::$engine = $engine;
 	}
 
@@ -43,7 +38,7 @@ class Logger {
 	}
 
 	static private function _write($message, $level){
-		if(self::$level & $level){
+		if(self::$level & $level && !is_null(self::$engine)){
 			$backtrace = debug_backtrace();
 			array_shift($backtrace);
 
@@ -54,10 +49,10 @@ class Logger {
 
 			if(sizeof($backtrace) > 0){
 				$file = $backtrace[0]['file'];
-				$line = $backtrace[0]['line'];
+				$line = trim($backtrace[0]['line']);
 
 				if(isset($backtrace[1]['class'])){
-					$function .= ' '.$backtrace[1]['class'].'::';
+					$function .= $backtrace[1]['class'].'::';
 				}
 				if(isset($backtrace[1]['function'])){
 					$function .= $backtrace[1]['function'].'()';
@@ -86,4 +81,5 @@ class Logger {
 		self::_write($message, self::DEBUG);
 	}
 }
+
 ?>

@@ -340,18 +340,23 @@ class Database implements Singleton {
 	 * @internal
 	 */
 	private function _runQuery(DatabaseEngine $instance, Query $query, $shard=null){
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && DATABASE_SHOW_QUERY_LOG){
-			$start = microtime(true);
-			$instance->query($query);
-			$e = new Exception();
-			$this->query_log[] = array('query' => $query->getQuery(),
-									   'error' => array('code' => $query->getErrno(),
-														'message' => $query->getError()),
-									   'time' => round(microtime(true) - $start, 5),
-									   'backtrace' => $e->getTraceAsString(),
-									   'analysis' => $instance->analyse($query),
-									   'shard' => $shard,
-									   'engine' => get_class($instance));
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+			Logger::info(get_class($instance).': '.$query->getQuery());
+
+			if(DATABASE_SHOW_QUERY_LOG){
+				$start = microtime(true);
+				$instance->query($query);
+				$e = new Exception();
+
+				$this->query_log[] = array('query' => $query->getQuery(),
+										   'error' => array('code' => $query->getErrno(),
+															'message' => $query->getError()),
+										   'time' => round(microtime(true) - $start, 5),
+										   'backtrace' => $e->getTraceAsString(),
+										   'analysis' => $instance->analyse($query),
+										   'shard' => $shard,
+										   'engine' => get_class($instance));
+			}
 		} else {
 			$instance->query($query);
 		}

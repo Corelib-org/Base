@@ -1,7 +1,5 @@
 <?php
-namespace Corelib\Base\Logger;
-
-abstract class Engine {
+abstract class LoggerEngine {
 	abstract public function write($timestamp, $level, $message, $file=null, $line=null, $function=null);
 
 	protected function _createLogLine($timestamp, $level, $message, $file=null, $line=null, $function=null){

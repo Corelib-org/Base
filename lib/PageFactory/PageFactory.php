@@ -562,7 +562,8 @@ class PageFactory implements Singleton {
 	 */
 	private function __construct(){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemExectutionTimeCalculator());
+			// PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemExectutionTimeCalculator());
+			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarProfiler());
 		}
 
 		$this->addResolver('meta', new PageFactoryResolverMeta());

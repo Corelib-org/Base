@@ -312,7 +312,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 * @see PageFactoryTemplate::cleanup()
 	 */
 	public function cleanup(){
-		$session = SessionHandler::getInstance();
+		$session = Session::getInstance();
 		if(!is_null($this->message_id)){
 			$session->set(self::MSGID, $this->message_id);
 		}
@@ -625,7 +625,7 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 			define('HTTP_STATUS_MESSAGE_FILE', 'share/messages.xml');
 		}
 
-		$session = SessionHandler::getInstance();
+		$session = Session::getInstance();
 		if($session->check(self::MSGID)){
 			$DOMMessages = new DOMDocument('1.0','UTF-8');
 			$DOMMessages->load(HTTP_STATUS_MESSAGE_FILE);

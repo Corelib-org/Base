@@ -267,6 +267,25 @@ class Base implements Singleton {
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 		}
+		
+		require_once(CORELIB.'/Base/lib/Logger/Logger.php');
+		require_once(CORELIB.'/Base/lib/Logger/Engine.php');
+		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
+			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
+
+			require_once(CORELIB.'/Base/lib/Logger/Engines/Stdout.php');
+
+			Logger::setEngine(new LoggerEngineStdout());
+
+		} else {
+			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
+		}
+
+		if(is_callable('date_default_timezone_set')){
+			date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
+		}
+
+
 		if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
 			if(!defined('BASE_DISABLE_ERROR_HANDLER')){
 				/**
@@ -287,25 +306,6 @@ class Base implements Singleton {
 			 * @internal
 			 */
 			require_once(CORELIB.'/Base/lib/Handlers/ErrorHandler.php');
-
-			require_once(CORELIB.'/Base/lib/Logger/Logger.php');
-			require_once(CORELIB.'/Base/lib/Logger/Engine.php');
-
-
-			if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
-				fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
-
-				require_once(CORELIB.'/Base/lib/Logger/Engines/Stdout.php');
-
-				Logger::setEngine(new LoggerEngineStdout());
-
-			} else {
-				header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
-			}
-
-			if(is_callable('date_default_timezone_set')){
-				date_default_timezone_set(BASE_DEFAULT_TIMEZONE);
-			}
 		}
 
 		/**

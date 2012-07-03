@@ -123,7 +123,11 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	/**
 	 * @ignore
 	 */
-	private function __construct(){ }
+	private function __construct(){
+		if(php_sapi_name() == 'cli' && !defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR')){
+			define('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR', false);
+		}
+	}
 
 	/**
 	 * 	Return instance of PageFactoryDeveloperToolbar.

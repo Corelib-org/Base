@@ -90,7 +90,7 @@ class EventHandler implements Singleton {
 	 * @internal
 	 */
 	private function __construct(){
-		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
+		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR){
 			$this->log = PageFactoryDeveloperToolbar::getInstance()->addItem(new EventHandlerLogToolbar());
 		}
 	}

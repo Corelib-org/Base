@@ -81,7 +81,13 @@ class DateConverter implements Converter {
 	 * @internal
 	 */
 	public function convert($data) {
-		return strftime($this->format, $data);
+		if(!is_integer($data)){
+			$timestamp = strptime($data, $this->format);
+			$timestamp  = mktime($timestamp['tm_hour'], $timestamp['tm_min'], $timestamp['tm_sec'], ($timestamp['tm_mon'] + 1), $timestamp['tm_mday'], ($timestamp['tm_year']+1900));
+			return $timestamp ;
+		} else {
+			return strftime($this->format, $data);
+		}
 	}
 }
 
@@ -146,7 +152,6 @@ class DateConverterParseFormat implements Converter {
 					$format = preg_replace('/'.$match.'/', '%'.$key, $format, 1);
 				}
 			}
-
 			$date = strptime($data, $format);
 			$date = mktime($date['tm_hour'], $date['tm_min'], $date['tm_sec'], ($date['tm_mon'] + 1), $date['tm_mday'], ($date['tm_year']+1900));
 			return $date;

@@ -160,7 +160,7 @@ if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
 	 *
 	 * @var string uri relative url
 	 */
-	define('PAGE_FACTORY_SERVER_TOKEN', 'SCRIPT_URL');
+	define('PAGE_FACTORY_SERVER_TOKEN', (isset($_SERVER['SCRIPT_URL']) ? 'SCRIPT_URL' : 'REDIRECT_URL'));
 }
 if(!defined('PAGE_FACTORY_GET_TOKEN')){
 	/**

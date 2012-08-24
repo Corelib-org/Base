@@ -190,6 +190,13 @@ class EventHandler implements Singleton {
 		if(!is_null($this->log)){
 			$this->log->add($event, $actions, debug_backtrace());
 		}
+		
+		$message = get_class($event) . ' triggered. Executed EventActions: ';
+		foreach($actions AS $action) {
+			$message .= get_class($action) . ' ';
+		}
+		
+		Logger::info($message);
 	}
 }
 

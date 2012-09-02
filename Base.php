@@ -267,7 +267,7 @@ class Base implements Singleton {
 			 */
 			define('BASE_RUNLEVEL', BASE_RUNLEVEL_DEVEL);
 		}
-		
+
 		require_once(CORELIB.'/Base/lib/Logger/Logger.php');
 		require_once(CORELIB.'/Base/lib/Logger/Engine.php');
 		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){

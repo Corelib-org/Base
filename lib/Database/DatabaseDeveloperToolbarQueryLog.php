@@ -144,7 +144,11 @@ class DatabaseDeveloperToolbarQueryLog extends PageFactoryDeveloperToolbarItem {
 			$result .= '<hr/><br/></div></div>';
 		}
 		$view = '<h1>Query Log (Queries: '.sizeof($this->log).', Duplicates: '.$duplicate_count.', Time: '.round($this->time * 1000, 2).'ms )</h1>';
-		$view .= $result;
+		if(sizeof($this->log) > 0){
+			$view .= $result;
+		} else {
+			$view .= '<i>No queries where executed</i>';
+		}
 		$this->content = $view;
 	}
 

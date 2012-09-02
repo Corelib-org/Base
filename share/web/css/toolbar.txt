@@ -1,0 +1,94 @@
+/*-----------------------------------------------------------------
+Developer toolbar StyleSheet
+
+Version:	1.0
+Author: 	Steffen Sørensen
+Email: 		ss@zornig.dk
+website:	Corelib - Base
+-----------------------------------------------------------------*/
+
+#developer-toolbar {
+	width: 100%;
+	top: 0px;
+	position: fixed;
+	background-color: #ffffe0;
+	opacity: .0;
+	border-bottom: 1px solid #666680;
+	text-align: left;
+	font-size: 8pt;
+	font-family: Arial,Helvetica,Verdana,Sans serif;
+	color: #000000;
+	padding-top: 2px;
+
+	transition: opacity 0.5s;
+	-moz-transition: opacity 0.5s; /* Firefox 4 */
+	-webkit-transition: opacity 0.5s; /* Safari and Chrome */
+	-o-transition: opacity 0.5s; /* Opera */
+}
+
+#developer-toolbar:hover {
+	opacity: 1;
+
+	transition: opacity 0.5s;
+	-moz-transition: opacity 0.5s; /* Firefox 4 */
+	-webkit-transition: opacity 0.5s; /* Safari and Chrome */
+	-o-transition: opacity 0.5s; /* Opera */
+}
+
+#developer-toolbar a:hover, #developer-toolbar a {
+	font-size: 8pt;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+#developer-toolbar a:hover {
+
+	color: #000000;
+
+}
+
+#developer-toolbar .toolbar {
+	line-height: 16px;
+	margin-left: 10px;
+}
+
+
+#developer-toolbar .data {
+	text-align: left;
+}
+
+#developer-toolbar .data > div {
+	margin: 10px;
+}
+
+#developer-toolbar .data > div h1 {
+	font-size: 12pt;
+	font-weight: normal;
+	color: #000000;
+	margin: 0px;
+}
+#developer-toolbar .data > div h2 {
+	font-size: 11pt;
+	font-weight: normal;
+	color: #000000;
+}
+#developer-toolbar .data > div h2.warning, #developer-toolbar .toolbar .warning {
+	color: #ff9600;
+}
+
+#developer-toolbar .data > div h3 {
+	background: none;
+	color: #000000;
+	font-weight: normal;
+	font-size: 10pt;
+	margin: 0px;
+}
+
+
+#developer-toolbar .toolbar img {
+	vertical-align: text-bottom;
+}
+
+#developer-toolbar .developer-toolbar-item {
+	border-bottom: 1px dashed #AAAAe0;
+}

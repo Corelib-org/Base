@@ -1,0 +1,165 @@
+/*-----------------------------------------------------------------
+Basic StyleSheet 
+Version:	1.0
+Author: 	Steffen Sørensen
+Email: 		ss@corelib.org
+website:	Corelib manager
+-----------------------------------------------------------------*/
+
+#page-header {
+	background-image: url('../images/header/background.gif');
+	height: 90px;
+	text-align: center;
+}
+#page-header > div {
+	background-image: url('../images/header/background.gif');
+	text-align: left;
+	width: 995px;
+	margin: auto;
+}
+
+#page-content-container {
+	text-align: left;
+	width: 995px;
+	margin: auto;
+	background-image: url('../images/header/shadow.png');
+	background-repeat: repeat-x;
+	background-color: #FFFFFF;
+	text-align: left;
+	border: 1px solid #ececec;
+	border-width: 0px 1px 0px 1px;
+}
+
+#page-content {
+	float: left; 
+	width: 772px; 
+	margin-top: 26px;
+	margin-bottom: 10px;
+}
+
+#page-navigation {
+	width: 180px;
+	color: #AAAAAA;
+	font-size: 15px;
+	margin-top: 0px;
+	margin-right: 20px;
+}
+
+#page-navigation-container {
+	border: 1px solid #ececec;
+	background-color: #fbfbfb;
+	border-width: 0px 1px 1px 0px;
+}
+
+#page-navigation a:link, #page-navigation a:visited, #page-navigation a:active {
+	color: #AAAAAA;
+	text-decoration: none;
+}
+#page-navigation a:hover {
+	color: #666666;
+	text-decoration: none;
+}
+
+#page-navigation > div > ul {
+	border: 1px solid #ececec;
+	border-width: 0px 0px 0px 0px;
+	margin: 23px 0px 0px 0px;
+	padding: 0px;
+	list-style: none;
+}
+#page-navigation > div > ul > li {
+	border: 1px solid #ececec;
+	border-width: 1px 0px 0px 0px;
+	padding: 1px 0px 1px 15px;
+	line-height: 21px;
+}
+#page-navigation > div > ul > ul {
+	border: 1px solid #ececec;
+	background-color: #fefefe;
+	border-width: 1px 0px 0px 0px;
+	margin: 0px;
+	padding: 3px 0px 3px 0px;
+	list-style: none;
+}
+#page-navigation > div > ul > ul > li {
+	padding: 0px;
+	padding-left: 15px;
+	line-height: 23px;
+}
+
+.backtitle {
+	line-height: 48px;
+	font-size: 75px;
+	width:0px;
+	color: #F5F5F5;
+	white-space: nowrap;
+	z-index: 0;
+	float:left;
+}
+
+.shadow  {
+	background-image: url('../images/shadow.png');
+	background-repeat: repeat-x;
+	min-height: 9px;
+}
+
+.left {
+	float: left;
+}
+.right {
+	float: right;
+}
+.clear {
+	clear: both;
+}
+
+td.functions, th.functions {
+	text-align: right;
+}
+td.checkbox {
+	text-align: center;
+	width: 30px;
+}
+tr.highlight {
+	background-color: #fbfbfb;
+}
+tr.selected {
+	background-color: #DDFFDD;
+}
+tbody tr:hover {
+	background-color: #FFFFDD;
+}
+table.noborders td {
+	border-width: 0px;
+}
+
+table.list .actions {
+	text-align: right;
+}
+
+table.list .actions img, table.list .symbols img {
+	border: 0px;
+	vertical-align: text-bottom;
+	opacity: .7;
+}
+
+
+table.list tfoot td.pager {
+	background-color: #f9f9f9;
+	text-align: left;
+}
+table.list tfoot td.count {
+	background-color: #f9f9f9;
+	text-align: right;
+}
+
+.GeneratorLineRemove {
+	color: #AA1111;	
+	font-weight: bold;
+	background-color: #FFDDDD;	
+}
+.GeneratorLineAdd {
+	color: #118811;
+	font-weight: bold;
+	background-color: #DDFFDD;	
+}

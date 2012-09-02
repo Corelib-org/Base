@@ -894,6 +894,7 @@ class PageFactory implements Singleton {
 	private function _enableEngine($classname){
 		$this->engine = new $classname();
 		assert('$this->engine instanceof PageFactoryTemplateEngine');
+		Logger::info('Activated template engine: '. get_class($this->engine), 1);
 		$this->engine->setCacheManager($this->cache);
 	}
 

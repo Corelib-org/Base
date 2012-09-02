@@ -29,16 +29,17 @@ class Logger {
 	const ALL = 2047;
 	const NONE = 0;
 
-	static function setEngine(LoggerEngine $engine=null){
+	static public function setEngine(LoggerEngine $engine=null){
 		self::$engine = $engine;
 	}
 
-	static function setLevel($level){
+	static public function setLevel($level){
 		self::$level = $level;
 	}
 
-	static private function _write($message, $level){
+	static private function _write($message, $level, $backtrace_stack=0){
 		if(self::$level & $level && !is_null(self::$engine)){
+
 			$backtrace = debug_backtrace();
 			array_shift($backtrace);
 
@@ -47,38 +48,41 @@ class Logger {
 			$line = null;
 			$function = null;
 
-			if(sizeof($backtrace) > 0){
-				$file = $backtrace[0]['file'];
-				$line = trim($backtrace[0]['line']);
 
-				if(isset($backtrace[1]['class'])){
-					$function .= $backtrace[1]['class'].'::';
+			if(sizeof($backtrace) > $backtrace_stack){
+				$file = $backtrace[$backtrace_stack]['file'];
+				$line = trim($backtrace[$backtrace_stack]['line']);
+
+				$backtrace_stack++;
+
+				if(isset($backtrace[$backtrace_stack]['class'])){
+					$function .= $backtrace[$backtrace_stack]['class'].'::';
 				}
-				if(isset($backtrace[1]['function'])){
-					$function .= $backtrace[1]['function'].'()';
+				if(isset($backtrace[$backtrace_stack]['function'])){
+					$function .= $backtrace[$backtrace_stack]['function'].'()';
 				}
 			}
 			self::$engine->write($timestamp, $level, $message, $file, $line, $function);
 		}
 	}
 
-	static public function critical($message){
-		self::_write($message, self::CRITICAL);
+	static public function critical($message, $backtrace_stack=0){
+		self::_write($message, self::CRITICAL, $backtrace_stack);
 	}
-	static public function error($message){
-		self::_write($message, self::ERROR);
+	static public function error($message, $backtrace_stack=0){
+		self::_write($message, self::ERROR, $backtrace_stack);
 	}
-	static public function warning($message){
-		self::_write($message, self::WARNING);
+	static public function warning($message, $backtrace_stack=0){
+		self::_write($message, self::WARNING, $backtrace_stack);
 	}
-	static public function notice($message){
-		self::_write($message, self::NOTICE);
+	static public function notice($message, $backtrace_stack=0){
+		self::_write($message, self::NOTICE, $backtrace_stack);
 	}
-	static public function info($message){
-		self::_write($message, self::INFO);
+	static public function info($message, $backtrace_stack=0){
+		self::_write($message, self::INFO, $backtrace_stack);
 	}
-	static public function debug($message){
-		self::_write($message, self::DEBUG);
+	static public function debug($message, $backtrace_stack=0){
+		self::_write($message, self::DEBUG, $backtrace_stack);
 	}
 }
 

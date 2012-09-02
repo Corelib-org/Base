@@ -115,7 +115,7 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 
 	private function _getPriorityColor($level){
 		if($level & Logger::CRITICAL){
-			return '#AAAAFF';
+			return '#CC1111';
 		} else if($level & Logger::ERROR){
 			return '#AAAAFF';
 		} else if($level & Logger::WARNING){

@@ -1,5 +1,5 @@
 <?php
-class LoggerEngineStdout extends LoggerEngine {
+class LoggerEngineStdout extends LoggerEngineFile {
 	private $stdout = null;
 	private $stderr = null;
 
@@ -9,7 +9,7 @@ class LoggerEngineStdout extends LoggerEngine {
 	}
 
 	public function write($timestamp, $level, $message, $file=null, $line=null, $function=null){
-		$message = trim(date('c').' '.str_pad($this->_getPriority($level), 9).' '.$this->_createLogLine($timestamp, $level, $message, $file, $line, $function))."\n";
+		$message = $this->_createLogLine($timestamp, $level, $message, $file, $line, $function);
 		if($level & (Logger::CRITICAL ^ Logger::ERROR)){
 			fwrite($this->stderr, $message, strlen($message));
 		} else {
@@ -20,22 +20,6 @@ class LoggerEngineStdout extends LoggerEngine {
 	public function __destruct(){
 		fclose($this->stdout);
 		fclose($this->stderr);
-	}
-
-	private function _getPriority($level){
-		if($level & Logger::CRITICAL){
-			return 'critical';
-		} else if($level & Logger::ERROR){
-			return 'error';
-		} else if($level & Logger::WARNING){
-			return 'warning';
-		} else if($level & Logger::NOTICE){
-			return 'notice';
-		} else if($level & Logger::INFO){
-			return 'info';
-		} else if($level & Logger::DEBUG){
-			return 'debug';
-		}
 	}
 }
 ?>

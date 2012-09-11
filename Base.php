@@ -273,10 +273,10 @@ class Base implements Singleton {
 		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
 			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
 
+			require_once(CORELIB.'/Base/lib/Logger/Engines/File.php');
 			require_once(CORELIB.'/Base/lib/Logger/Engines/Stdout.php');
 
 			Logger::setEngine(new LoggerEngineStdout());
-
 		} else {
 			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
 		}

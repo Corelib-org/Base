@@ -176,12 +176,14 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				if(stristr($this->template->getContentType(), 'xml') || stristr($this->template->getContentType(), 'html')){
 					$tranformToXML = true;
 				}
+				Logger::debug('Detected caching type: '.$this->_getCacheType());
 				$doc = $proc->transformToDoc($this->xml);
 				if($this->_getCacheType() == PAGE_FACTORY_CACHE_DYNAMIC){
 					$page = $this->_transformCachedPage($doc, $tranformToXML);
 				} else {
 					$page = $this->_transformPage($doc, $tranformToXML);
 				}
+				Logger::debug('Rendered page from xml and xsl');
 
 
 				$converter = $this->template->getOutputConverter();

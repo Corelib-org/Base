@@ -187,6 +187,7 @@ class ErrorHandler implements Singleton {
 
 			// Log error to log engine
 			$logline = $description.' in '.$file.' on line '.$line;
+
 			switch($code){
 				case E_ERROR:
 					Logger::error($logline);
@@ -268,7 +269,6 @@ class ErrorHandler implements Singleton {
 					$this->trigger(E_USER_ERROR, trim($result[2][$key]), trim($result[3][$key]), trim($result[4][$key]));
 				}
 			}
-
 			return $this->draw();
 		}
 	}
@@ -286,6 +286,8 @@ class ErrorHandler implements Singleton {
 			if(BASE_ADMIN_EMAIL !== false){
 				mail(BASE_ADMIN_EMAIL, '['.$_SERVER['SERVER_NAME'].' - Corelib error handler - '.$checksum.'] '.$result[2][$key], $buffer, 'Content-Type: text/html');
 			}
+			Logger::critical('Error logged with checksum: '.$checksum);
+
 			if(defined('BASE_ERROR_FATAL_REDIRECT')){
 				$buffer = '<html><head><meta http-equiv="refresh" content="0;URL='.BASE_ERROR_FATAL_REDIRECT.'?checksum='.$checksum.'"></head></hmtl>';
 			} else {

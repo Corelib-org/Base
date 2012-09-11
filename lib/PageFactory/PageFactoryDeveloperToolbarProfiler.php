@@ -117,7 +117,7 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 		if($level & Logger::CRITICAL){
 			return '#CC1111';
 		} else if($level & Logger::ERROR){
-			return '#AAAAFF';
+			return '#FFBBBB';
 		} else if($level & Logger::WARNING){
 			return '#FFAA00';
 		} else if($level & Logger::NOTICE){

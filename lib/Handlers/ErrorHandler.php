@@ -284,7 +284,15 @@ class ErrorHandler implements Singleton {
 		$checksum = md5($buffer);
 		if(BASE_RUNLEVEL < BASE_RUNLEVEL_DEVEL && php_sapi_name() != 'cli'){
 			if(BASE_ADMIN_EMAIL !== false){
-				mail(BASE_ADMIN_EMAIL, '['.$_SERVER['SERVER_NAME'].' - Corelib error handler - '.$checksum.'] '.$result[2][$key], $buffer, 'Content-Type: text/html');
+				$headers = array('Content-Type: text/html');
+
+				$subject = '';
+				if(isset($_SERVER['SERVER_NAME'])){
+					$subject .= '['.$_SERVER['SERVER_NAME'].'] ';
+					$headers[] = 'From: '.$_SERVER['SERVER_NAME'].' - Corelib error handler <noreply@'.$_SERVER['SERVER_NAME'].'>';
+				}
+				$subject .= 'Corelib error - '.$checksum;
+				mail(BASE_ADMIN_EMAIL, $subject, $buffer, implode("\n", $headers));
 			}
 			Logger::critical('Error logged with checksum: '.$checksum);
 

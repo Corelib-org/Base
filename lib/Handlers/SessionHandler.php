@@ -169,6 +169,12 @@ class Session implements Singleton,Output {
 			 */
 			define('SESSION_PATH', '/');
 		}
+		if(!defined('SESSION_COOKIE_NAME')){
+			/**
+			 * Define Session cookie name.
+			 */
+			define('SESSION_COOKIE_NAME', 'SSID');
+		}
 		$this->path = SESSION_PATH;
 		if(!defined('SESSION_SECURE')){
 			/**
@@ -588,7 +594,7 @@ class PHPSessionHandler implements SessionHandlerEngine,Singleton,Output {
 		$this->path = $path;
 		$this->domain = $domain;
 		$this->secure = $secure;
-		ini_set('session.name', 'SSID');
+		ini_set('session.name', SESSION_COOKIE_NAME);
 		if(php_sapi_name() != 'cli'){
 			session_start();
 		}

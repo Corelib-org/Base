@@ -341,7 +341,7 @@ class Database implements Singleton {
 	 */
 	private function _runQuery(DatabaseEngine $instance, Query $query, $shard=null){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-			Logger::info(get_class($instance).': '.$query->getQuery());
+			Logger::info(get_class($instance).': '.$query->getQuery(), 1);
 			$instance->query($query);
 			if(DATABASE_SHOW_QUERY_LOG){
 				$start = microtime(true);

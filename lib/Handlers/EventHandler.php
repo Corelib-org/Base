@@ -196,7 +196,7 @@ class EventHandler implements Singleton {
 			$message .= get_class($action) . ' ';
 		}
 		
-		Logger::info($message);
+		Logger::info($message, 1);
 	}
 }
 

@@ -419,6 +419,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 	 * @return boolean true on success, else return false
 	 */
 	public function setLocation($location, $param=null){
+		if(empty($location)){
+			$location = '/';
+		}
 		if($location{0} != '/' && !preg_match('/^http(s)?:/', $location)){
 			$location = '/'.$location;
 		}

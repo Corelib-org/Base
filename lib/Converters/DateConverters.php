@@ -57,7 +57,7 @@ class DateConverter implements Converter {
 	 * @var string charecter list.
 	 * @internal
 	 */
-	private $format = null;
+	protected $format = null;
 
 	private $date_format = null;
 

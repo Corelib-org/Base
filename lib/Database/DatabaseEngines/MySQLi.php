@@ -963,13 +963,17 @@ class MySQLiTools {
 	 * @return string
 	 */
 	static public function makeInStatement(array $values){
-		foreach ($values as $key => $val){
-			if(!is_numeric($val)){
-				$val = '\''.$val.'\'';
+		if(sizeof($values)){
+			foreach ($values as $key => $val){
+				if(!is_numeric($val)){
+					$val = '\''.$val.'\'';
+				}
+				$values[$key] = $val;
 			}
-			$values[$key] = $val;
+			return 'IN('.implode(', ', $values).') ';
+		} else {
+			return '=FALSE ';
 		}
-		return 'IN('.implode(', ', $values).')';
 	}
 
 	/**

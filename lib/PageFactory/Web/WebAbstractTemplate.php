@@ -330,7 +330,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
 		}
 
 		if(is_null($this->location)){
-			header('HTTP/1.1 '.$this->status_code);
+			if(!ErrorHandler::getInstance()->hasErrors()){
+				header('HTTP/1.1 '.$this->status_code);
+			}
 
 			header('Content-Location: '. $this->request_uri);
 

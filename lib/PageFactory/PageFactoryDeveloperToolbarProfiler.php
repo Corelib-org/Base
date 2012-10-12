@@ -86,9 +86,9 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 			$entries .= '<td class="number" style="width: 100px; text-align: right;">'.number_format(round(($val[0] - $this->start) , 4) * 1000, 2).' ms&#160;	</td>';
 			$entries .= '<td class="number" style="width: 100px; text-align: right;">+'.number_format(round(($val[0] - $last_timestamp) , 4) * 1000, 2).' ms&#160;	</td>';
 			$entries .= '<td>'.$this->_getPriority($val[1]).'</td>';
-			$entries .= '<td>'.$val[3].':'.$val[4].'</td>';
-			$entries .= '<td>'.$val[5].'</td>';
-			$entries .= '<td>'.$val[2].'</td>';
+			$entries .= '<td>'.htmlspecialchars($val[3]).':'.htmlspecialchars($val[4]).'</td>';
+			$entries .= '<td>'.htmlspecialchars($val[5]).'</td>';
+			$entries .= '<td>'.htmlspecialchars($val[2]).'</td>';
 			$entries .= '</tr>';
 			$last_timestamp = $val[0];
 		}

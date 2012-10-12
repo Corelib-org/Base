@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension id="c767e13a-f4f7-11e1-bf1e-002481f7a264" enabled="true" locked="true">
+	<setup>
+		<name>Default dummy site</name>
+		<description>Default dummy site corelib extension definition</description>
+	</setup>
+	<pages/>
+	<extendprops id="bace91bc-9132-11db-9dfa-0003ffb1de2c">
+		<database>
+			<engine id="MySQLi">
+				<scripts>share/doc/database/MySQL</scripts>
+			</engine>
+		</database>
+
+		<code-generator>
+			<table name="tbl_guestbook">
+				<generator name="CodeGeneratorModel"/>
+				<generator name="CodeGeneratorModelList"/>
+				<!--
+				<generator name="CodeGeneratorGUI">
+					<layout name="CodeGeneratorGUILayout">
+					-->
+						<!--
+						/**
+						 * Default values for a list.
+						 *
+						 * attribute: render-mode maybe omittet, default value is: table
+						 * attribute: xsl-mode maybe omittet, default value is: xhtml-list
+						 * children: one or more field element containing a name attributte which is the
+						 *           name of the column to write. If no fields are listed, all fields
+						 *           will be written into the output.
+						 *
+						 * See more examples below
+						 */
+						 -->
+						 <!--
+						<list xsl-mode="xhtml-list" render-mode="table" draw-actions="true">
+							<field name="name"/>
+							<field name="create_timestamp"/>
+						</list>
+						<list render-mode="select-options"/>
+
+					</layout>
+-->
+					<!--
+					/**
+					 * Default list action values.
+					 *
+					 * The list action will always be the default action in the action class.
+					 * If no list mode is available, the default mode will do nothing and most
+					 * likely return a error.
+					 *
+					 * attribute: name may be omitted, default value is CodeGeneratorGUIList
+					 *            and is the name of the class to be used to create the code.
+					 * attribute: xsl-mode may be omittet, default value is xhtml-list,
+					 *            if xsl-mode have not been defined in the layout section
+					 *            it will automatically be created.
+					 * attribute: action may be omittet, give the action a alternate name to use in the url.
+					 *            if omittet the name will be the same as the element (list).
+					 *            there is one magic name here and that is 'default', if default is defined
+					 *            the url will not contain the action, it will be omittet.
+					 *            the list element will have default as default value.
+					 * attribute: method may be omittet, give the method within the action class a alternate name.
+					 * attribute: layout may be omittet, give the layout file to use in the action. default is base/layouts/default.xsl
+					 * attribute: xsl-layout may be omittet, give the layout file to use in the action. default is base/layouts/default.xsl
+					 * attribute: page-limit may be omittet, give the number of rows on each page of the list, default is 20 a constant name may be used instead.
+					 */
+					 <list name="CodeGeneratorGUIList" xsl-mode="xhtml-list" action="default" method="details" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content" page-limit="20"/>
+					 -->
+					<!-- <list/> -->
+
+					<!--
+					/**
+					 * Default edit action values.
+					 *
+					 * attribute: name may be omitted, default value is CodeGeneratorGUIEdit
+					 *            and is the name of the class to be used to create the code.
+					 * attribute: action may be omittet, give the action a alternate name to use in the url.
+					 *            if omittet the name will be the same as the element (list).
+					 *            there is one magic name here and that is 'default', if default is defined
+					 *            the url will not contain the action, it will be omittet.
+					 *            the list element will have default as default value.
+					 * attribute: method may be omittet, give the method within the action class a alternate name.
+					 * attribute: layout may be omittet, give the layout file to use in the action. default is base/layouts/default.xsl
+					 * attribute: xsl-layout may be omittet, give the layout file to use in the action. default is base/layouts/default.xsl
+					 */
+					 <edit name="CodeGeneratorGUIEdit" action="default" method="edit" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content"/>
+					 -->
+					<!-- <edit/> -->
+
+					<!--
+					/**
+					 * Default create action values.
+					 *
+					 * attribute: name may be omitted, default value is CodeGeneratorGUICreate
+					 *            and is the name of the class to be used to create the code.
+					 * attribute: action may be omittet, give the action a alternate name to use in the url.
+					 *            if omittet the name will be the same as the element (list).
+					 *            there is one magic name here and that is 'default', if default is defined
+					 *            the url will not contain the action, it will be omittet.
+					 *            the list element will have default as default value.
+					 * attribute: method may be omittet, give the method within the action class a alternate name.
+					 * attribute: layout may be omittet, give the layout file to use in the action. default is base/layouts/default.xsl
+					 * attribute: xsl-layout may be omittet, give the layout file to use in the action. default is base/layouts/default.xsl
+					 */
+					 <create name="CodeGeneratorGUICreate" action="default" method="create" layout="base/layouts/default.xsl" xsl-layout-mode="xhtml-content"/>
+					 -->
+					<!-- <create/> -->
+
+					<!--
+					/**
+					 * Default delete action values.
+					 *
+					 * This elements has no attributes
+					 */
+					 <delete/>
+					 -->
+					<!-- <delete/> -->
+				<!-- </generator> -->
+			</table>
+		</code-generator>
+	</extendprops>
+</extension>

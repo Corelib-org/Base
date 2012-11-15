@@ -1,5 +1,4 @@
 <?php
-
 class PageFactoryDeveloperToolbarProfilerLogger extends LoggerEngine {
 
 	private $profiler;
@@ -75,20 +74,20 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 	 */
 	public function getContent(){
 		$entries = '<table style="width: 100%;">';
-		$entries .= '<thead style="font-weight:bold;"><tr><td>Time</td><td>Execution time</td><td>Since last log</td><td>Severity</td><td>File</td><td>Function</td><td>Message</td></tr></thead>';
+		$entries .= '<thead style="font-weight:bold;"><tr><td style="text-align: right; padding-right: 15px;">Time</td><td colspan="2" style="text-align: right;">Execution time</td><td></td><td>File</td><td>Function</td><td>Message</td></tr></thead>';
 
 		$last_timestamp = $this->start;
 
 
 		while(list(,$val) = each($this->entries)){
 			$entries .= '<tr style="background-color: '.$this->_getPriorityColor($val[1]).'">';
-			$entries .= '<td class="date" style="width: 150px; text-align: right;">'.date('c', $val[0]).'</td>';
-			$entries .= '<td class="number" style="width: 100px; text-align: right;">'.number_format(round(($val[0] - $this->start) , 4) * 1000, 2).' ms&#160;	</td>';
-			$entries .= '<td class="number" style="width: 100px; text-align: right;">+'.number_format(round(($val[0] - $last_timestamp) , 4) * 1000, 2).' ms&#160;	</td>';
-			$entries .= '<td>'.$this->_getPriority($val[1]).'</td>';
-			$entries .= '<td>'.htmlspecialchars($val[3]).':'.htmlspecialchars($val[4]).'</td>';
-			$entries .= '<td>'.htmlspecialchars($val[5]).'</td>';
-			$entries .= '<td>'.htmlspecialchars($val[2]).'</td>';
+			$entries .= '<td class="date" style="white-space: nowrap; text-align: right; padding-right: 15px;">'.date('c', $val[0]).'</td>';
+			$entries .= '<td class="number" style="white-space: nowrap; text-align: right;">'.number_format(round(($val[0] - $this->start) , 4) * 1000, 2).' ms</td>';
+			$entries .= '<td class="number" style="white-space: nowrap; text-align: right;">&#160;(+'.number_format(round(($val[0] - $last_timestamp) , 4) * 1000, 2).' ms)</td>';
+			$entries .= '<td style="padding-left: 15px; padding-right: 15px;">'.$this->_getPriority($val[1]).'</td>';
+			$entries .= '<td style="white-space: nowrap; padding-right: 15px;">'.htmlspecialchars($val[3]).':'.htmlspecialchars($val[4]).'</td>';
+			$entries .= '<td style="white-space: nowrap; padding-right: 15px;">'.htmlspecialchars($val[5]).'</td>';
+			$entries .= '<td style="padding-top: 10px; padding-bottom: 10px;">'.htmlspecialchars($val[2]).'</td>';
 			$entries .= '</tr>';
 			$last_timestamp = $val[0];
 		}

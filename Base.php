@@ -327,7 +327,6 @@ class Base implements Singleton {
 			echo '<h1> Class Cache File is unreadable </h1>Please check that <b>'.BASE_CLASS_CACHE_FILE.'</b> is readable and writable by the current user.'."\n";
 			die;
 		}
-		$GLOBALS['base'] = $this;
 	}
 
 	/**

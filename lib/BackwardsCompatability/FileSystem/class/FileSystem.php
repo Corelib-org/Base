@@ -90,7 +90,8 @@ define('FILE_SYSTEM_TEMPLATE_ENGINE', 'FileSystemTemplateEngine');
  * @since Version 5.0
  * @internal
  */
-class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
+
+//class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
 
 
 	//*****************************************************************//
@@ -106,7 +107,7 @@ class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
 	 * @return string empty string
 	 * @internal
 	 */
-	public function draw(){
+/*	public function draw(){
 		$this->page->draw($this);
 		return '';
 	}
@@ -119,7 +120,7 @@ class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
 	 * @since Version 5.0
 	 * @see PageFactoryTemplateEngine::addPageSettings()
 	 */
-	public function addPageSettings(Output $content){ }
+//	public function addPageSettings(Output $content){ }
 
 	/**
 	 * Add page content.
@@ -129,7 +130,7 @@ class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
 	 * @since Version 5.0
 	 * @see PageFactoryTemplateEngine::addPageContent()
 	 */
-	public function addPageContent(Output $settings){ }
+//	public function addPageContent(Output $settings){ }
 
 	/**
 	 * Get supported template definition.
@@ -139,8 +140,8 @@ class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
 	 * @return string this class name {@link FileSystemTemplateEngine}
 	 * @internal
 	 */
-	public function getSupportedTemplateDefinition(){ return __CLASS__; }
-}
+//	public function getSupportedTemplateDefinition(){ return __CLASS__; }
+// }
 
 
 //*****************************************************************//
@@ -160,7 +161,7 @@ class FileSystemTemplateEngine extends PageFactoryTemplateEngine {
  * @category corelib
  * @internal
  */
-class PageFactoryFileSystemTemplate extends PageFactoryWebAbstractTemplate {
+class PageFactoryFileSystemTemplate extends \Corelib\Base\PageFactory\Templates\HTTP {
 
 
 	//*****************************************************************//
@@ -235,7 +236,7 @@ class PageFactoryFileSystemTemplate extends PageFactoryWebAbstractTemplate {
 	 * @return void
 	 * @internal
 	 */
-	public function cleanup(){
+	public function prepare(){
 		if(!is_null($this->content_disposition)){
 			if(!is_null($this->content_filename)){
 				header('Content-Disposition: '.$this->content_disposition.'; filename="'.$this->content_filename.'"');
@@ -243,7 +244,19 @@ class PageFactoryFileSystemTemplate extends PageFactoryWebAbstractTemplate {
 				header('Content-Disposition: '.$this->content_disposition);
 			}
 		}
-		parent::cleanup();
+		parent::prepare();
+	}
+
+	public function render(){
+		return false;
+
+	}
+
+	public function addContent($content){
+		return $content;
+	}
+	public function addSettings($settings){
+		return $settings;
 	}
 }
 

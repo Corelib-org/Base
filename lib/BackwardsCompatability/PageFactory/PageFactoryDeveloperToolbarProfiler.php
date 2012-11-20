@@ -1,4 +1,5 @@
 <?php
+/*
 class PageFactoryDeveloperToolbarProfilerLogger extends LoggerEngine {
 
 	private $profiler;
@@ -15,20 +16,20 @@ class PageFactoryDeveloperToolbarProfilerLogger extends LoggerEngine {
 
 class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarItem {
 
-
+*/
 	//************************************************************************************//
 	//*************** PageFactoryDeveloperToolbarProfiler class properties ***************//
 	//************************************************************************************//
 	/**
 	 * @var float start microtime
 	 */
-	private $start = null;
+//	private $start = null;
 
 	/**
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $entries = array();
+//	private $entries = array();
 
 
 	//************************************************************************************//
@@ -43,6 +44,7 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 	 * @uses PageFactoryDeveloperToolbarProfiler::$start
 	 * @return void
 	 */
+/*
 	public function __construct(){
 		$this->start = microtime(true);
 		Logger::setEngine(new PageFactoryDeveloperToolbarProfilerLogger($this));
@@ -61,6 +63,7 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 	 *
 	 * @see PageFactoryDeveloperToolbarItem::getToolbarItem()
 	 */
+/*
 	public function getToolbarItem(){
 		return '<img src="corelib/resource/manager/images/icons/toolbar/parsetime.png" alt="parsetime" title="Page execution time"/> '.(round((microtime(true) - $this->start) , 4) * 1000).' ms.';
 	}
@@ -72,6 +75,7 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 	 * @return string
 	 * @internal
 	 */
+/*
 	public function getContent(){
 		$entries = '<table style="width: 100%;">';
 		$entries .= '<thead style="font-weight:bold;"><tr><td style="text-align: right; padding-right: 15px;">Time</td><td colspan="2" style="text-align: right;">Execution time</td><td></td><td>File</td><td>Function</td><td>Message</td></tr></thead>';
@@ -128,3 +132,4 @@ class PageFactoryDeveloperToolbarProfiler extends PageFactoryDeveloperToolbarIte
 		}
 	}
 }
+*/

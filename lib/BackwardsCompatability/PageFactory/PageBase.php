@@ -43,7 +43,7 @@
  * @since Version 5.0
  * @var integer
  */
-define('PAGE_OUTPUT_CACHE_DISABLED', 0);
+//define('PAGE_OUTPUT_CACHE_DISABLED', 0);
 
 /**
  * Page output dynamic caching mode.
@@ -51,7 +51,7 @@ define('PAGE_OUTPUT_CACHE_DISABLED', 0);
  * @since Version 5.0
  * @var integer
  */
-define('PAGE_OUTPUT_CACHE_DYNAMIC', 1);
+//define('PAGE_OUTPUT_CACHE_DYNAMIC', 1);
 
 /**
  * Page output static caching mode.
@@ -59,7 +59,7 @@ define('PAGE_OUTPUT_CACHE_DYNAMIC', 1);
  * @since Version 5.0
  * @var integer
  */
-define('PAGE_OUTPUT_CACHE_STATIC', 2);
+// define('PAGE_OUTPUT_CACHE_STATIC', 2);
 
 
 //*****************************************************************//
@@ -74,7 +74,7 @@ define('PAGE_OUTPUT_CACHE_STATIC', 2);
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-abstract class PageBase {
+// abstract class PageBase extends \Corelib\PageFactory\Page {
 
 
 	//*****************************************************************//
@@ -86,7 +86,7 @@ abstract class PageBase {
 	 * @var array
 	 * @internal
 	 */
-	private $settings = array();
+//	private $settings = array();
 
 	/**
 	 * List of content output.
@@ -94,7 +94,7 @@ abstract class PageBase {
 	 * @var array
 	 * @internal
 	 */
-	private $content = array();
+//	private $content = array();
 
 	/**
 	 * List of template definitinos.
@@ -102,7 +102,7 @@ abstract class PageBase {
 	 * @var array
 	 * @internal
 	 */
-	private $templates = array();
+//	private $templates = array();
 
 	/**
 	 * Cache manager reference.
@@ -110,7 +110,7 @@ abstract class PageBase {
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $cache = null;
+//	private $cache = null;
 
 
 	//*****************************************************************//
@@ -119,7 +119,7 @@ abstract class PageBase {
 	/**
 	 * @ignore
 	 */
-	public final function __construct(){ }
+//	public final function __construct(){ }
 
 	/**
 	 * PageBase init.
@@ -130,7 +130,7 @@ abstract class PageBase {
 	 * @return void
 	 * @api
 	 */
-	public function __init(){ }
+//	public function __init(){ }
 
 	/**
 	 * Set cache manager.
@@ -141,10 +141,11 @@ abstract class PageBase {
 	 * @return void
 	 * @internal
 	 */
+/*
 	final public function setCacheManager(CacheManager $cache){
 		$this->cache = $cache;
 	}
-
+*/
 	/**
 	 * Add Content to page.
 	 *
@@ -154,6 +155,7 @@ abstract class PageBase {
 	 * @return Output
 	 * @api
 	 */
+	/*
 	public function addContent(Output $content, $cache=PAGE_OUTPUT_CACHE_DISABLED, $ttl=false){
 		if($cache == PAGE_OUTPUT_CACHE_DYNAMIC  && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
 			$this->cache->addDynamicContent($content);
@@ -161,7 +163,7 @@ abstract class PageBase {
 			$this->content[] = array('object' => $content, 'cache'=>$cache, 'ttl'=>$ttl);
 		}
 		return $content;
-	}
+	}*/
 
 	/**
 	 * Add setting to page.
@@ -172,6 +174,7 @@ abstract class PageBase {
 	 * @return Output
 	 * @api
 	 */
+	/*
 	public function addSettings(Output $settings, $cache=PAGE_OUTPUT_CACHE_DISABLED, $ttl=false){
 		if($cache == PAGE_OUTPUT_CACHE_DYNAMIC  && $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC){
 			$this->cache->addDynamicSettings($settings);
@@ -179,7 +182,7 @@ abstract class PageBase {
 			$this->settings[] = array('object' => $settings, 'cache'=>$cache, 'ttl'=>$ttl);
 		}
 		return $settings;
-	}
+	} */
 
 	/**
 	 * Add template definition.
@@ -188,9 +191,11 @@ abstract class PageBase {
 	 * @return PageFactoryTemplate
 	 * @api
 	 */
-	public function addTemplateDefinition(PageFactoryTemplate $template){
-		$this->templates[$template->getSupportedTemplateEngineName()] = $template;
-		return $template;
+/*
+	public function addTemplateDefinition(\Corelib\PageFactory\Template $template){
+		return $this->setTemplate($template);
+		// $this->templates[$template->getSupportedTemplateEngineName()] = $template;
+		// return $template;
 	}
 
 	/**
@@ -200,6 +205,7 @@ abstract class PageBase {
 	 * @return boolean true on success else return false
 	 * @internal
 	 */
+/*
 	final public function draw(PageFactoryTemplateEngine $engine){
 		if($engine->setTemplate($this->_getTemplateDefinition($engine))){
 			EventHandler::getInstance()->trigger(new EventApplyDefaultSettings($this));
@@ -229,6 +235,7 @@ abstract class PageBase {
 	 * @return boolean true if cached, else return false
 	 * @internal
 	 */
+/*
 	protected function isCached(){
 		return $this->cache->isCached() && ($this->cache->getType() != PAGE_FACTORY_CACHE_STATIC);
 	}
@@ -240,6 +247,8 @@ abstract class PageBase {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+
+/*
 	private function _registerCacheInformation(array $item){
 		if($item['object'] instanceof CacheableOutput){
 			$this->cache->getCacheManagerOutput($item['object'], $item['cache'], $item['ttl']);
@@ -254,6 +263,7 @@ abstract class PageBase {
 	 * @return PageFactoryTemplate on success, else return false
 	 * @internal
 	 */
+/*
 	private function _getTemplateDefinition(PageFactoryTemplateEngine $engine){
 		if(!isset($this->templates[get_class($engine)])){
 			trigger_error('Unable to find template for given template engine: '.get_class($engine), E_USER_ERROR);
@@ -263,52 +273,10 @@ abstract class PageBase {
 		}
 	}
 }
-
+*/
 
 //*****************************************************************//
 //************ EventApplyDefaultSettings event class **************//
 //*****************************************************************//
-/**
- * Apple default settings.
- *
- * This event is triggered when the page is drawn
- * making it possible to inject content into a page
- * automatically.
- *
- * @category corelib
- * @package Base
- * @subpackage PageFactory
- * @author Steffen Sørensen <ss@corelib.org>
- */
-class EventApplyDefaultSettings implements Event {
 
-
-	//*****************************************************************//
-	//******* EventApplyDefaultSettings event class properties ********//
-	//*****************************************************************//
-	/**
-	 * @var PageBase
-	 * @internal
-	 */
-	private $page = null;
-
-	/**
-	 * Create new instance of object.
-	 *
-	 * @param PageBase $page
-	 * @return void
-	 */
-	public function __construct(PageBase $page){
-		$this->page = $page;
-	}
-
-	/**
-	 * Get current page.
-	 *
-	 * @return Page
-	 */
-	public function getPage(){
-		return $this->page;
-	}
-}
 ?>

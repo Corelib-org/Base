@@ -37,22 +37,22 @@
 //*****************************************************************//
 //****************** Basic Configuration Check ********************//
 //*****************************************************************//
-if(!defined('CACHE_MANAGER_REFERENCE_FILE')){
+//if(!defined('CACHE_MANAGER_REFERENCE_FILE')){
 	/**
 	 * Cache manager reference file.
 	 *
 	 * @var string filename
 	 */
-	define('CACHE_MANAGER_REFERENCE_FILE', BASE_CACHE_DIRECTORY.'cachemanager.xml');
-}
-if(!defined('CACHE_MANAGER_DEFAULT_TTL')){
+//	define('CACHE_MANAGER_REFERENCE_FILE', BASE_CACHE_DIRECTORY.'cachemanager.xml');
+//}
+//if(!defined('CACHE_MANAGER_DEFAULT_TTL')){
 	/**
 	 * Cache manager default Time-to-live
 	 *
 	 * @var integer ttl in seconds.
 	 */
-	define('CACHE_MANAGER_DEFAULT_TTL', 3600);
-}
+//	define('CACHE_MANAGER_DEFAULT_TTL', 3600);
+//}
 
 
 //*****************************************************************//
@@ -67,8 +67,9 @@ if(!defined('CACHE_MANAGER_DEFAULT_TTL')){
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @since Version 5.0
+ * @deprecated
  */
-interface CacheableOutput {
+// interface CacheableOutput { }
 
 
 	//*****************************************************************//
@@ -84,9 +85,10 @@ interface CacheableOutput {
 	 * @param CacheManagerOutput $cache
 	 * @return void
 	 */
+/*
 	public function setCacheManagerOutput(CacheManagerOutput $cache);
 }
-
+*/
 
 //*****************************************************************//
 //****************** CacheableOutput interface ********************//
@@ -105,7 +107,7 @@ interface CacheableOutput {
  * @author Steffen Sørensen <ss@corelib.org>
  * @since Version 5.0
  */
-interface CacheUpdateEvent { }
+// interface CacheUpdateEvent { }
 
 
 //*****************************************************************//
@@ -125,7 +127,7 @@ interface CacheUpdateEvent { }
  * @since Version 5.0
  * @internal
  */
-class CacheManagerUpdate extends EventInstanceAction {
+// class CacheManagerUpdate extends EventInstanceAction {
 
 
 	//*****************************************************************//
@@ -135,7 +137,7 @@ class CacheManagerUpdate extends EventInstanceAction {
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $cache = null;
+	// private $cache = null;
 
 
 	//*****************************************************************//
@@ -147,17 +149,18 @@ class CacheManagerUpdate extends EventInstanceAction {
 	 * @param CacheManager $cache
 	 * @return void
 	 */
+/*
 	public function __construct(CacheManager $cache){
 		$this->cache = $cache;
 	}
-
+*/
 	/**
 	 * @see EventAction::update($event)
 	 */
-	public function update(Event $event){
+/*	public function update(Event $event){
 		$this->cache->update($event->getModel());
 	}
-}
+} */
 
 
 //*****************************************************************//
@@ -177,8 +180,9 @@ class CacheManagerUpdate extends EventInstanceAction {
  * @since Version 5.0
  * @internal
  */
+/*
 class CacheManagerOutput {
-
+*/
 
 	//*****************************************************************//
 	//************* CacheManagerOutput class properties ***************//
@@ -187,25 +191,25 @@ class CacheManagerOutput {
 	 * @var CacheableOutput
 	 * @internal
 	 */
-	private $object;
+	// private $object;
 
 	/**
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $cache = null;
+	// private $cache = null;
 
 	/**
 	 * @var cache type
 	 * @internal
 	 */
-	private $type = null;
+	// private $type = null;
 
 	/**
 	 * @var array reference methods
 	 * @internal
 	 */
-	private $reference_methods = array();
+	// private $reference_methods = array();
 
 
 	//*****************************************************************//
@@ -220,6 +224,7 @@ class CacheManagerOutput {
 	 * @param integer $ttl time-to-live in seconds
 	 * @return void
 	 */
+/*
 	public function __construct(CacheManager $cache, CacheableOutput $object, $type, $ttl=false){
 		$this->cache = $cache;
 		$this->object = $object;
@@ -241,11 +246,12 @@ class CacheManagerOutput {
 	 * @param string $method method name to get record object
 	 * @return boolean true on success, else return false
 	 */
+/*
 	public function addObjectReferenceMethod($method){
 		$this->reference_methods[] = $method;
 		return true;
 	}
-
+*/
 	/**
 	 * Get Cache manager output object.
 	 *
@@ -255,15 +261,17 @@ class CacheManagerOutput {
 	 * @param CacheableOutput $object
 	 * @return boolean true on success, else return false
 	 */
+/*
 	public function getCacheManagerOutput(CacheableOutput $object){
 		return $this->cache->getCacheManagerOutput($object, $this->type, false);
 	}
-
+*/
 	/**
 	 * Get record object.
 	 *
 	 * @return mixed object on success, else return false
 	 */
+/*
 	public function getObject(){
 		if($this->type == PAGE_OUTPUT_CACHE_STATIC && ($this->cache->getType() == PAGE_FACTORY_CACHE_STATIC || $this->cache->getType() == PAGE_FACTORY_CACHE_DYNAMIC)){
 			return $this->object;
@@ -272,15 +280,18 @@ class CacheManagerOutput {
 		}
 	}
 
+*/
 	/**
 	 * Get object reference methods.
 	 *
 	 * @return array list of reference methods
 	 */
+/*
 	public function getObjectReferenceMethods(){
 		return $this->reference_methods;
 	}
-}
+*/
+// }
 
 
 //*****************************************************************//
@@ -297,7 +308,7 @@ class CacheManagerOutput {
  * @since Version 5.0
  * @internal
  */
-class CacheManager {
+// class CacheManager {
 
 
 	//*****************************************************************//
@@ -307,7 +318,7 @@ class CacheManager {
 	 * @var integer cache type
 	 * @internal
 	 */
-	private $type = PAGE_FACTORY_CACHE_DYNAMIC;
+//	private $type = PAGE_FACTORY_CACHE_DYNAMIC;
 
 	/**
 	 * Cache filename.
@@ -315,19 +326,19 @@ class CacheManager {
 	 * @var string filename
 	 * @internal
 	 */
-	private $filename = null;
+//	private $filename = null;
 
 	/**
 	 * @var boolean if cached true, else false
 	 * @internal
 	 */
-	private $cached = null;
+//	private $cached = null;
 
 	/**
 	 * @var integer time to live
 	 * @internal
 	 */
-	private $ttl = null;
+//	private $ttl = null;
 
 	/**
 	 * Cached data.
@@ -335,43 +346,43 @@ class CacheManager {
 	 * @var string
 	 * @internal
 	 */
-	private $data = null;
+//	private $data = null;
 
 	/**
 	 * @var boolean true if updated, else false
 	 * @internal
 	 */
-	private $data_updated = false;
+//	private $data_updated = false;
 
 	/**
 	 * @var array list Output objects
 	 * @internal
 	 */
-	private $output = array();
+//	private $output = array();
 
 	/**
 	 * @var DOMDocument Reference document
 	 * @internal
 	 */
-	private $reference = null;
+//	private $reference = null;
 
 	/**
 	 * @var array page information
 	 * @internal
 	 */
-	private $page = null;
+//	private $page = null;
 
 	/**
 	 * @var array list of content objects
 	 * @internal
 	 */
-	private $content = array();
+//	private $content = array();
 
 	/**
 	 * @var array list of content settings objects
 	 * @internal
 	 */
-	private $settings = array();
+//	private $settings = array();
 
 
 	//*****************************************************************//
@@ -381,19 +392,19 @@ class CacheManager {
 	 * @var string time to live files suffix
 	 * @internal
 	 */
-	const TTL_FILE_SUFFIX = '.ttl';
+//	const TTL_FILE_SUFFIX = '.ttl';
 
 	/**
 	 * @var string http header file suffix
 	 * @internal
 	 */
-	const HEADER_FILE_SUFFIX = '.headers';
+//	const HEADER_FILE_SUFFIX = '.headers';
 
 	/**
 	 * @var string page file suffix
 	 * @internal
 	 */
-	const PAGE_FILE_SUFFIX = '.page';
+//	const PAGE_FILE_SUFFIX = '.page';
 
 
 	//*****************************************************************//
@@ -406,7 +417,7 @@ class CacheManager {
 	 * @return void
 	 * @internal
 	 */
-	public function __construct($filename){
+/*	public function __construct($filename){
 		$dir = dirname($filename);
 		if(!is_dir($dir)){
 			@mkdir($dir, 0777, true);
@@ -422,6 +433,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function setType($type=PAGE_FACTORY_CACHE_DYNAMIC){
 		$this->type = $type;
 		return true;
@@ -436,6 +448,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function setPage($filename, $method, $engine){
 		$this->page['file'] = $filename;
 		$this->page['method'] = $method;
@@ -449,6 +462,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function getPage(){
 		if(is_null($this->page) && is_file($this->getFilename().self::PAGE_FILE_SUFFIX)){
 			include_once($this->getFilename().self::PAGE_FILE_SUFFIX);
@@ -464,6 +478,7 @@ class CacheManager {
 	 * @return mixed string callback, else return boolean false
 	 * @internal
 	 */
+/*
 	public function getCallback(){
 		if($this->getPage()){
 			return $this->page['exec'];
@@ -478,6 +493,7 @@ class CacheManager {
 	 * @return mixed string template engine, else return boolean false
 	 * @internal
 	 */
+/*
 	public function getEngine(){
 		if($this->getPage()){
 			return $this->page['engine'];
@@ -492,6 +508,7 @@ class CacheManager {
 	 * @return integer cache type
 	 * @internal
 	 */
+/*
 	public function getType(){
 		return $this->type;
 	}
@@ -505,6 +522,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function getCacheManagerOutput(CacheableOutput $output, $type, $ttl=false){
 		array_push($this->output, new CacheManagerOutput($this, $output, $type, $ttl));
 		return true;
@@ -516,6 +534,7 @@ class CacheManager {
 	 * @return string filename
 	 * @internal
 	 */
+/*
 	public function getFilename(){
 		return $this->filename;
 	}
@@ -527,6 +546,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function setData($data){
 		$this->_updateReference();
 
@@ -541,6 +561,7 @@ class CacheManager {
 	 * @return mixed integer time to live, else return false
 	 * @internal
 	 */
+/*
 	public function getTTL(){
 		if(is_null($this->ttl)){
 			if($this->hasTTL()){
@@ -557,6 +578,7 @@ class CacheManager {
 	 * @return string cached page
 	 * @internal
 	 */
+/*
 	public function read(){
 		if($this->data_updated){
 			$this->_write();
@@ -586,6 +608,7 @@ class CacheManager {
 	 * @return boolean true if page is cached, else return false
 	 * @internal
 	 */
+/*
 	public function isCached(){
 		if(is_null($this->cached) && !PAGE_FACTORY_CACHE_DEBUG){
 			$this->cached = is_file($this->getFilename());
@@ -601,6 +624,7 @@ class CacheManager {
 	 * @return boolean true if ttl exists, else return false
 	 * @internal
 	 */
+/*
 	public function hasTTL(){
 		return is_file($this->getFilename().self::TTL_FILE_SUFFIX);
 	}
@@ -616,6 +640,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function update(CacheableOutput $output){
 		$class = new ReflectionClass($output);
 		if($class->hasMethod('getID')){
@@ -649,6 +674,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function addDynamicContent(Output $content){
 		$this->content[get_class($content)][] = $content;
 		return true;
@@ -661,6 +687,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	public function addDynamicSettings(Output $settings){
 		$this->settings[get_class($settings)][] = $settings;
 		return true;
@@ -674,6 +701,7 @@ class CacheManager {
 	 * @return void
 	 * @internal
 	 */
+/*
 	public function __destruct(){
 		if($this->data_updated){
 			$this->_write();
@@ -686,6 +714,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	private function _write(){
 		if($ttl = $this->getTTL()){
 			if(time() > (filemtime($this->getFilename()) + $ttl)){
@@ -723,6 +752,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	private function _loadReferenceFile(){
 		if(is_null($this->reference)){
 			$this->reference = new DOMDocument('1.0', 'UTF-8');
@@ -741,6 +771,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	private function _saveReferenceFile(){
 		if(!is_null($this->reference)){
 			$this->reference->save(CACHE_MANAGER_REFERENCE_FILE);
@@ -753,6 +784,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	private function _updateReference(){
 		$this->_loadReferenceFile();
 		$xpath = new DOMXPath($this->reference);
@@ -780,6 +812,7 @@ class CacheManager {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+/*
 	private function _analyzeObject(CacheManagerOutput $output, DOMElement $page, DOMXpath $xpath){
 		if($object = $output->getObject()){
 			$class = new ReflectionClass($object);
@@ -801,7 +834,7 @@ class CacheManager {
 		return true;
 	}
 }
-
+*/
 
 //*****************************************************************//
 //*************** CacheManagerPageContainer class *****************//
@@ -821,7 +854,7 @@ class CacheManager {
  * @since Version 5.0
  * @internal
  */
-class CacheManagerPageContainer {
+//class CacheManagerPageContainer {
 
 
 	//*****************************************************************//
@@ -833,14 +866,14 @@ class CacheManagerPageContainer {
 	 * @var array output content
 	 * @internal
 	 */
-	private $content = array();
+//	private $content = array();
 
 	/**
 	 * Settings list
 	 * @var array output settings
 	 * @internal
 	 */
-	private $settings = array();
+//	private $settings = array();
 
 	/**
 	 * Cached filename.
@@ -848,7 +881,7 @@ class CacheManagerPageContainer {
 	 * @var string filename
 	 * @internal
 	 */
-	private $file = null;
+//	private $file = null;
 
 
 	//*****************************************************************//
@@ -863,6 +896,7 @@ class CacheManagerPageContainer {
 	 * @return void
 	 * @internal
 	 */
+/*
 	public function __construct($file, array &$content, array &$settings){
 		$this->content = $content;
 		$this->settings = $settings;
@@ -877,7 +911,7 @@ class CacheManagerPageContainer {
 	 *
 	 * XXX Find out what this is used for
 	 */
-	public function each(Output $list, $code){
+/*	public function each(Output $list, $code){
 		trigger_errors('Methods used', E_USER_NOTICE);
 		$return = '';
 		while($current = $list->each()){
@@ -892,12 +926,12 @@ class CacheManagerPageContainer {
 	 * @return string page content
 	 * @internal
 	 */
-	public function draw(){
+/*	public function draw(){
 		return eval('include(\''.$this->file.'\');');
 	}
 }
 
-
+*/
 //*********************************************************************//
 //******* PageFactoryDeveloperToolbarItemCacheStatus class ************//
 //*********************************************************************//
@@ -912,9 +946,10 @@ class CacheManagerPageContainer {
  * @since Version 5.0
  * @internal
  */
+/*
 class PageFactoryDeveloperToolbarItemCacheStatus extends PageFactoryDeveloperToolbarItem {
 
-
+*/
 	//*********************************************************************//
 	//**** PageFactoryDeveloperToolbarItemCacheStatus class properties ****//
 	//*********************************************************************//
@@ -922,7 +957,7 @@ class PageFactoryDeveloperToolbarItemCacheStatus extends PageFactoryDeveloperToo
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $cache = null;
+//	private $cache = null;
 
 
 	//*********************************************************************//
@@ -935,7 +970,7 @@ class PageFactoryDeveloperToolbarItemCacheStatus extends PageFactoryDeveloperToo
 	 * @return void
 	 * @internal
 	 */
-	public function __construct(CacheManager $cache){
+/*	public function __construct(CacheManager $cache){
 		$this->cache = $cache;
 	}
 
@@ -948,7 +983,7 @@ class PageFactoryDeveloperToolbarItemCacheStatus extends PageFactoryDeveloperToo
 	 * @return string html
 	 * @internal
 	 */
-	public function getToolbarItem(){
+/*	public function getToolbarItem(){
 		switch($this->cache->getType()){
 			case PAGE_FACTORY_CACHE_DYNAMIC:
 				$status[] = 'Dyanmic';
@@ -970,5 +1005,5 @@ class PageFactoryDeveloperToolbarItemCacheStatus extends PageFactoryDeveloperToo
 		return '<img src="corelib/resource/manager/images/icons/toolbar/cache.png" alt="parsetime" title="Cache status"/> '.implode(', ', $status);
 	}
 }
-
+*/
 ?>

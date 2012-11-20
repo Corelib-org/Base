@@ -37,7 +37,7 @@
 //*****************************************************************//
 //****************** Basic Configuration Check ********************//
 //*****************************************************************//
-if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
+// if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
 	/**
 	 * XSLT template path.
 	 *
@@ -45,8 +45,8 @@ if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
 	 *
 	 * @var string directory
 	 */
-	define('DOMXSL_TEMPLATE_XSL_PATH', CURRENT_WORKING_DIR.'share/xsl/');
-}
+	//define('DOMXSL_TEMPLATE_XSL_PATH', CURRENT_WORKING_DIR.'share/xsl/');
+// }
 
 
 //*****************************************************************//
@@ -58,8 +58,9 @@ if(!defined('DOMXSL_TEMPLATE_XSL_PATH')){
  * @category corelib
  * @package Base
  * @subpackage PageFactory
+ * @deprecated
  */
-class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
+// class PageFactoryDOMXSLTemplate extends \Corelib\PageFactory\Templates\XSLT {
 
 
 	//*****************************************************************//
@@ -69,37 +70,37 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @var array xsl templates.
 	 * @internal
 	 */
-	private $xsl_templates = array();
+	//private $xsl_templates = array();
 
 	/**
 	 * @var string xsl core filename
 	 * @internal
 	 */
-	private $xsl_core = null;
+	// private $xsl_core = null;
 
 	/**
 	 * @var string XML Version
 	 * @internal
 	 */
-	private $xml_version = '1.0';
+	// private $xml_version = '1.0';
 
 	/**
 	 * @var string XML encoding
 	 * @internal
 	 */
-	private $xml_encoding = 'utf-8';
+	// private $xml_encoding = 'utf-8';
 
 	/**
 	 * @var array list of php functions exported to xslt
 	 * @internal
 	 */
-	private $registered_php_functions = false;
+	// private $registered_php_functions = false;
 
 	/**
 	 * @var Converter Output converter
 	 * @internal
 	 */
-	private $output_converter = null;
+	// private $output_converter = null;
 
 
 	//*****************************************************************//
@@ -109,13 +110,13 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @var string Supported template engine name
 	 * @internal
 	 */
-	const TEMPLATE_ENGINE = 'PageFactoryDOMXSL';
+	//const TEMPLATE_ENGINE = 'PageFactoryDOMXSL';
 
 	/**
 	 * @var XSL Namespace URI
 	 * @internal
 	 */
-	const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
+	// const XSL_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
 
 
 	//*****************************************************************//
@@ -127,9 +128,10 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param string $xslcore xsl core filename
 	 * @return void
 	 */
-	public function __construct($xslcore = null){
-		parent::__construct();
 
+//	public function __construct($xslcore = null){
+//		parent::__construct();
+/*
 		if(is_null($xslcore)){
 			$xslcore = DOMXSL_TEMPLATE_XSL_PATH.'base/core.xsl';
 		} else if ($xslcore{0} != '/'){
@@ -146,7 +148,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 
 		$this->xsl_core = $xslcore;
-
+*/
 		//
 		// IE Hack.
 		//
@@ -154,21 +156,25 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		// instead just send a normal text/html header for clients using internet
 		// explorer.
 		//
+		/*
 		if(strstr($this->getUserAgent(), 'MSIE')){
 			$this->setContentType('text/html');
 		} else {
 			$this->setContentType('application/xhtml+xml');
 		}
-	}
+		*/
+	//}
 
 	/**
 	 * Get XSLT core.
 	 *
 	 * @return string filename
 	 */
+	/*
 	public function getCoreXSLT(){
 		return $this->xsl_core;
 	}
+	*/
 
 	/**
 	 * Set XSLT Core.
@@ -176,18 +182,22 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param string $xslcore xsl core filename
 	 * @return void
 	 */
+	/*
 	public function setCoreXSLT($xslcore){
 		$this->xsl_core = $xslcore;
 	}
+	*/
 
 	/**
 	 * Get registered PHP functions.
 	 *
 	 * @return array
 	 */
+	/*
 	public function getRegisteredPHPFunctions(){
 		return $this->registered_php_functions;
 	}
+	*/
 
 	/**
 	 * Add XSLT template.
@@ -195,6 +205,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param string $template_file XSLT Template
 	 * @return boolean true on success, else return false
 	 */
+	/*
 	public function addTemplate($template_file, $unshift=false){
 
 		if($template_file{0} ==	'/' || preg_match('/^[a-zA-Z]:/', $template_file)){
@@ -212,7 +223,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 
 		return true;
-	}
+	} */
 
 	/**
 	 * Build core templates.
@@ -221,6 +232,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+	/*
 	public function buildCoreTemplate(DOMDocument $xsl){
 		while(list(,$val) = each($this->xsl_templates)){
 			$XSLinclude = $xsl->documentElement->appendChild($xsl->createElementNS(self::XSL_NAMESPACE_URI, 'xsl:include'));
@@ -228,6 +240,7 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 		}
 		return true;
 	}
+	*/
 
 	/**
 	 * Register PHP functions.
@@ -238,10 +251,12 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param array $functions list of php function
 	 * @return boolean true on success, else return false
 	 */
+	/*
 	public function registerPHPFunctions(array $functions){
 		$this->registered_php_functions = $functions;
 		return true;
 	}
+	*/
 
 	/**
 	 * Set XML Version
@@ -249,10 +264,12 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param string $version
 	 * @return boolean true on success, else return false
 	 */
+	/*
 	public function setXMLVersion($version){
 		$this->xml_version = $version;
 		return true;
 	}
+	*/
 
 	/**
 	 * Set XML Character encoding.
@@ -260,10 +277,12 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param $encoding
 	 * @return boolean true on success, else return false
 	 */
+	/*
 	public function setXMLEncoding($encoding){
 		$this->xml_encoding = $encoding;
 		return true;
 	}
+	*/
 
 	/**
 	 * Set content output converter.
@@ -274,10 +293,12 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @param Converter $converter
 	 * @return boolean true on success, else return false
 	 */
+	/*
 	public function setOutputConverter(Converter $converter){
 		$this->output_converter = $converter;
 		return true;
 	}
+	*/
 
 	/**
 	 * Get content output converter.
@@ -285,9 +306,11 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @return Converter if set, else return null
 	 * @internal
 	 */
+	/*
 	public function getOutputConverter(){
 		return $this->output_converter;
 	}
+	*/
 
 	/**
 	 * Get supported template engine name.
@@ -295,9 +318,11 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @see PageFactoryTemplate::getSupportedTemplateEngineName()
 	 * @internal
 	 */
+	/*
 	public function getSupportedTemplateEngineName(){
 		return self::TEMPLATE_ENGINE;
 	}
+	*/
 
 	/**
 	 * Get XML Version.
@@ -305,9 +330,11 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @return string XML Version
 	 * @see PageFactoryDOMXSLTemplate::setXMLVersion()
 	 */
+	/*
 	public function getXMLVersion(){
 		return $this->xml_version;
 	}
+	*/
 
 	/**
 	 * Get XML character encoding.
@@ -315,8 +342,10 @@ class PageFactoryDOMXSLTemplate extends PageFactoryWebAbstractTemplate {
 	 * @return string XML encoding
 	 * @see PageFactoryDOMXSLTemplate::setXMLEncoding()
 	 */
+	/*
 	public function getXMLEncoding(){
 		return $this->xml_encoding;
 	}
-}
+	*/
+// }
 ?>

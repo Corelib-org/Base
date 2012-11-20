@@ -38,32 +38,32 @@
 //*****************************************************************//
 //****************** Basic Configuration Check ********************//
 //*****************************************************************//
-if(!defined('PAGE_FACTORY_DOMXSL_CACHE_XMLNS')){
+// if(!defined('PAGE_FACTORY_DOMXSL_CACHE_XMLNS')){
 	/**
 	 * Cache xml namespace.
 	 *
 	 * @var string url
 	 */
-	define('PAGE_FACTORY_DOMXSL_CACHE_XMLNS', 'http://www.corelib.org/xmlns/cache');
-}
+ 	// define('PAGE_FACTORY_DOMXSL_CACHE_XMLNS', 'http://www.corelib.org/xmlns/cache');
+// }
 
-if(!defined('PAGE_FACTORY_DOMXSL_XSL_XMLNS')){
+// if(!defined('PAGE_FACTORY_DOMXSL_XSL_XMLNS')){
 	/**
 	 * XSL xml Namespace.
 	 *
 	 * @var string url
 	 */
-	define('PAGE_FACTORY_DOMXSL_XSL_XMLNS', 'http://www.w3.org/1999/XSL/Transform');
-}
+	// define('PAGE_FACTORY_DOMXSL_XSL_XMLNS', 'http://www.w3.org/1999/XSL/Transform');
+// }
 
-if(!defined('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT')){
+//if(!defined('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT')){
 	/**
 	 * Format xml output.
 	 *
 	 * @var boolean true to format, else false for no formatting
 	 */
-	define('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT', true);
-}
+	// define('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT', true);
+//}
 
 
 //*****************************************************************//
@@ -75,6 +75,7 @@ if(!defined('PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT')){
  * @category corelib
  * @package Base
  * @subpackage PageFactory
+ * @deprecated
  */
 class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
@@ -86,49 +87,49 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @var DOMDocument xml document
 	 * @internal
 	 */
-	protected $xml = null;
+	// protected $xml = null;
 
 	/**
 	 * @var DOMDocument XSL document
 	 * @internal
 	 */
-	protected $xsl = null;
+	// protected $xsl = null;
 
 	/**
 	 * @var DOMElement content element.
 	 * @internal
 	 */
-	private $content = null;
+	// private $content = null;
 
 	/**
 	 * @var Array content objects
 	 * @internal
 	 */
-	private $content_array = array();
+	// private $content_array = array();
 
 	/**
 	 * @var DOMElement settings element
 	 * @internal
 	 */
-	private $settings = null;
+	// private $settings = null;
 
 	/**
 	 * @var array content objects
 	 * @internal
 	 */
-	private $settings_array = array();
+	// private $settings_array = array();
 
 	/**
 	 * @var PageFactoryDOMXSLTemplate
 	 * @internal
 	 */
-	protected $template = null;
+	// protected $template = null;
 
 	/**
 	 * @var string template cache file
 	 * @internal
 	 */
-	private $template_cache_file = false;
+	// private $template_cache_file = false;
 
 
 	//*****************************************************************//
@@ -140,7 +141,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @var string xsl file
 	 * @internal
 	 */
-	const CACHE_PAGE_XSL = 'Base/share/xsl/cache.xsl';
+	// const CACHE_PAGE_XSL = 'Base/share/xsl/cache.xsl';
 
 
 	//*****************************************************************//
@@ -151,6 +152,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 *
 	 * @see PageFactoryTemplateEngine::draw()
 	 */
+	/*
 	public function draw(){
 		if($this->page->draw($this)){
 			$this->xsl->load($this->template->getCoreXSLT());
@@ -194,32 +196,37 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 				}
 			}
 		}
-	}
+	} */
 
 	/**
 	 * Add page content to page.
 	 *
 	 * @see PageFactoryTemplateEngine::addPageContent()
 	 */
+	/*
 	public function addPageContent(Output $content){
 		$this->content->appendChild($content->getXML($this->xml));
 		return true;
 	}
+	*/
 
 	/**
 	 * Add page settings to page.
 	 *
 	 * @see PageFactoryTemplateEngine::addPageSettings()
 	 */
+	/*
 	public function addPageSettings(Output $settings){
 		$this->settings->appendChild($settings->getXML($this->xml));
 	}
+	*/
 
 	/**
 	 * Set current active template.
 	 *
 	 * @see PageFactoryTemplateEngine::setTemplate()
 	 */
+	/*
 	public function setTemplate(PageFactoryTemplate $template){
 		assert('$template instanceof PageFactoryDOMXSLTemplate');
 		$return = parent::setTemplate($template);
@@ -261,6 +268,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @return string content
 	 * @internal
 	 */
+	/*
 	private function _transformPage(DOMDocument $dom, $tranformToXML=true){
 		$dom->formatOutput = PAGE_FACTORY_DOMXSL_FORMAT_OUTPUT;
 		if($tranformToXML){
@@ -269,6 +277,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 			return $dom->saveHTML();
 		}
 	}
+	*/
 
 	/**
 	 * Transform page to cachable page.
@@ -278,6 +287,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @return string cached page.
 	 * @internal
 	 */
+	/*
 	private function _transformCachedPage(DOMDocument $dom, $tranformToXML=true){
 		$xsl = new DOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$xsl->preserveWhiteSpace = false;
@@ -292,7 +302,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		$code = preg_replace('/^(.*?)\n/s', '<?php echo \'\\1\'."\n"; ?>', $doc);
 		return $code;
 
-	}
+	} */
 
 	/**
 	 * Rewrite compatible content path.
@@ -301,6 +311,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @return string php eval string
 	 * @internal
 	 */
+	/*
 	public static function _rewriteCPath($path){
 		if(is_array($path)){
 			$path = $path[0];
@@ -331,6 +342,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 
 		return $return;
 	}
+	*/
 
 	/**
 	 * Prepare output XML Document.
@@ -338,6 +350,7 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 	 * @return boolean true on success, else return false
 	 * @internal
 	 */
+	/*
 	protected function _prepareXML(){
 		$this->xml = new PageFactoryDOMDocument($this->template->getXMLVersion(), $this->template->getXMLEncoding());
 		$this->xml->preserveWhiteSpace = false;
@@ -350,5 +363,6 @@ class PageFactoryDOMXSL extends PageFactoryTemplateEngine {
 		$this->content = $page->appendChild($this->xml->createElement('content'));
 		return true;
 	}
+	*/
 }
 ?>

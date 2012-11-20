@@ -46,6 +46,7 @@
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
+/*
 class PageFactoryResolverMeta implements PageFactoryPageResolver {
 	private $exec = null;
 	private $expr = null;
@@ -93,4 +94,5 @@ class PageFactoryResolverMeta implements PageFactoryPageResolver {
 		return $this->exec;
 	}
 }
+*/
 ?>

@@ -43,7 +43,7 @@
  * @since Version 5.0
  * @var integer
  */
-define('PAGE_FACTORY_CACHE_STATIC', 1);
+// define('PAGE_FACTORY_CACHE_STATIC', 1);
 
 /**
  * Page factory page dynamic caching mode.
@@ -51,7 +51,7 @@ define('PAGE_FACTORY_CACHE_STATIC', 1);
  * @since Version 5.0
  * @var integer
  */
-define('PAGE_FACTORY_CACHE_DYNAMIC', 2);
+// define('PAGE_FACTORY_CACHE_DYNAMIC', 2);
 
 /**
  * Page factory page caching disabled.
@@ -59,19 +59,19 @@ define('PAGE_FACTORY_CACHE_DYNAMIC', 2);
  * @since Version 5.0
  * @var integer
  */
-define('PAGE_FACTORY_CACHE_DISABLED', 3);
+// define('PAGE_FACTORY_CACHE_DISABLED', 3);
 
 
 //*****************************************************************//
 //****************** Basic Configuration Check ********************//
 //*****************************************************************//
-if(!defined('PAGE_FACTORY_ENGINE')){
-	if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
+//if(!defined('PAGE_FACTORY_ENGINE')){
+//	if(isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST'){
 		/**
 		 * @ignore
 		 */
-		define('PAGE_FACTORY_ENGINE', 'PageFactoryPost');
-	} else {
+//		define('PAGE_FACTORY_ENGINE', 'PageFactoryPost');
+//	} else {
 		/**
 		 * Define the default page factory engine.
 		 *
@@ -80,10 +80,10 @@ if(!defined('PAGE_FACTORY_ENGINE')){
 		 *
 		 * @var string Page factory engine class name
 		 */
-		define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
-	}
-}
-if(!defined('PAGE_FACTORY_CLASS_NAME')){
+//		define('PAGE_FACTORY_ENGINE', 'PageFactoryDOMXSL');
+//	}
+//}
+//if(!defined('PAGE_FACTORY_CLASS_NAME')){
 	/**
 	 * Define the default page class.
 	 *
@@ -92,9 +92,9 @@ if(!defined('PAGE_FACTORY_CLASS_NAME')){
 	 *
 	 * @var boolean string class name
 	 */
-	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
-}
-if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
+//	define('PAGE_FACTORY_CLASS_NAME', 'WebPage');
+//}
+//if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
 	/**
 	 * Enable or disable page caching.
 	 *
@@ -103,10 +103,10 @@ if(!defined('PAGE_FACTORY_CACHE_ENABLE')){
 	 * @var boolean true if enable, else false
 	 * @since Version 5.0
 	 */
-	define('PAGE_FACTORY_CACHE_ENABLE', false);
-}
+//	define('PAGE_FACTORY_CACHE_ENABLE', false);
+//}
 
-if(!defined('PAGE_FACTORY_CACHE_DEBUG')){
+// if(!defined('PAGE_FACTORY_CACHE_DEBUG')){
 	/**
 	 * Enable cache debugging
 	 *
@@ -118,9 +118,9 @@ if(!defined('PAGE_FACTORY_CACHE_DEBUG')){
 	 * @since Version 5.0
 	 * @var boolean true if enabled else false
 	 */
-	define('PAGE_FACTORY_CACHE_DEBUG', false);
-}
-if(!defined('PAGE_FACTORY_CACHE_DIR')){
+//	define('PAGE_FACTORY_CACHE_DEBUG', false);
+//}
+//if(!defined('PAGE_FACTORY_CACHE_DIR')){
 	/**
 	 * Cache dir.
 	 *
@@ -129,9 +129,9 @@ if(!defined('PAGE_FACTORY_CACHE_DIR')){
 	 * @var string directory
 	 * @since Version 5.0
 	 */
-	define('PAGE_FACTORY_CACHE_DIR', BASE_CACHE_DIRECTORY.'pages/');
-}
-if(!defined('PAGE_FACTORY_GET_FILE')){
+//	define('PAGE_FACTORY_CACHE_DIR', BASE_CACHE_DIRECTORY.'pages/');
+//}
+//if(!defined('PAGE_FACTORY_GET_FILE')){
 	/**
 	 * Get request file reference file.
 	 *
@@ -139,9 +139,9 @@ if(!defined('PAGE_FACTORY_GET_FILE')){
 	 *
 	 * @var string filename
 	 */
-	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
-}
-if(!defined('PAGE_FACTORY_POST_FILE')){
+//	define('PAGE_FACTORY_GET_FILE', 'etc/get.php');
+//}
+//if(!defined('PAGE_FACTORY_POST_FILE')){
 	/**
 	 * Post request file reference file.
 	 *
@@ -149,9 +149,9 @@ if(!defined('PAGE_FACTORY_POST_FILE')){
 	 *
 	 * @var string filename
 	 */
-	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
-}
-if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
+//	define('PAGE_FACTORY_POST_FILE', 'etc/post.php');
+//}
+//if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
 	/**
 	 * Server array entry to use when resolving pages.
 	 *
@@ -160,9 +160,9 @@ if(!defined('PAGE_FACTORY_SERVER_TOKEN')){
 	 *
 	 * @var string uri relative url
 	 */
-	define('PAGE_FACTORY_SERVER_TOKEN', (isset($_SERVER['SCRIPT_URL']) ? 'SCRIPT_URL' : 'REDIRECT_URL'));
-}
-if(!defined('PAGE_FACTORY_GET_TOKEN')){
+//	define('PAGE_FACTORY_SERVER_TOKEN', (isset($_SERVER['SCRIPT_URL']) ? 'SCRIPT_URL' : 'REDIRECT_URL'));
+//}
+//if(!defined('PAGE_FACTORY_GET_TOKEN')){
 	/**
 	 * Get array entry to use when resolving pages.
 	 *
@@ -172,8 +172,8 @@ if(!defined('PAGE_FACTORY_GET_TOKEN')){
 	 *
 	 * @var string uri relative url
 	 */
-	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
-}
+//	define('PAGE_FACTORY_GET_TOKEN', 'REQUESTPAGE');
+//}
 
 
 //*****************************************************************//
@@ -200,7 +200,7 @@ if(!defined('PAGE_FACTORY_GET_TOKEN')){
  * @todo Implement a redirect resolver based on regular expressions
  * @see PageFactory::addResolver()
  */
-interface PageFactoryPageResolver {
+// interface PageFactoryPageResolver {
 	/**
 	 * Resolve page expression.
 	 *
@@ -214,7 +214,7 @@ interface PageFactoryPageResolver {
 	 * @param string $url request url
 	 * @return boolean true on success, else return false
 	 */
-	public function resolve($expr, $exec, $url);
+	// public function resolve($expr, $exec, $url);
 
 	/**
 	 * Get expression.
@@ -226,7 +226,7 @@ interface PageFactoryPageResolver {
 	 * @return string {@link http://www.php.net/pcre perl regular expression}
 	 */
 
-	public function getExpression();
+	// public function getExpression();
 	/**
 	 * Get execution statement.
 	 *
@@ -236,8 +236,8 @@ interface PageFactoryPageResolver {
 	 *
 	 * @return string
 	 */
-	public function getExecute();
-}
+	// public function getExecute();
+// }
 
 
 //*****************************************************************//
@@ -257,7 +257,7 @@ interface PageFactoryPageResolver {
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-abstract class PageFactoryTemplate {
+// abstract class PageFactoryTemplate extends \Corelib\PageFactory\Template {
 
 	/**
 	 * Template init method
@@ -271,9 +271,11 @@ abstract class PageFactoryTemplate {
 	 * @todo add some references and add more documentation
 	 * @return boolean true on success, else return false
 	 */
+	/*
 	public function init(){
 		return true;
 	}
+	*/
 
 	/**
 	 * Get supported template engine.
@@ -284,8 +286,9 @@ abstract class PageFactoryTemplate {
 	 *
 	 * @return string Supported template engine class name
 	 */
+	/*
 	abstract public function getSupportedTemplateEngineName();
-
+	*/
 	/**
 	 * Cleanup template before sending output.
 	 *
@@ -295,8 +298,10 @@ abstract class PageFactoryTemplate {
 	 * @todo this method should be renamed to something more saying
 	 * @return void
 	 */
+	/*
 	abstract public function cleanup();
-}
+	*/
+// }
 
 
 //*****************************************************************//
@@ -308,10 +313,12 @@ abstract class PageFactoryTemplate {
  * @category corelib
  * @package Base
  * @subpackage PageFactory
+ * @deprecated
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-abstract class PageFactoryTemplateEngine {
+
+// abstract class PageFactoryTemplateEngine {
 
 
 	//*****************************************************************//
@@ -322,14 +329,14 @@ abstract class PageFactoryTemplateEngine {
 	 *
 	 * @var PageBase
 	 */
-	protected $page = null;
+	//protected $page = null;
 
 	/**
 	 * Page factory template.
 	 *
 	 * @var PageFactoryTemplate
 	 */
-	protected $template = null;
+	//protected $template = null;
 
 	/**
 	 * Cache manager reference.
@@ -337,15 +344,15 @@ abstract class PageFactoryTemplateEngine {
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $cache = null;
+	//private $cache = null;
 
 
 	//*****************************************************************//
 	//************ PageFactoryTemplateEngine class methods ************//
 	//*****************************************************************//
 
-	public function __construct(){
-	}
+	/* public function __construct(){
+	} */
 
 	/**
 	 * Build page based on PageBase object and callback method.
@@ -359,6 +366,7 @@ abstract class PageFactoryTemplateEngine {
 	 * @todo needs more documentation
 	 * @internal
 	 */
+	/*
 	public function build(PageBase $page, $callback=null){
 		assert('is_null($callback) || is_string($callback)');
 
@@ -381,6 +389,7 @@ abstract class PageFactoryTemplateEngine {
 	 *
 	 * @return integer cache type
 	 */
+	/*
 	final protected function _getCacheType(){
 		return $this->cache->getType();
 	}
@@ -390,6 +399,7 @@ abstract class PageFactoryTemplateEngine {
 	 *
 	 * @return boolean true of cached else return false
 	 */
+	/*
 	final protected function _isCached(){
 		return $this->cache->isCached();
 	}
@@ -403,6 +413,7 @@ abstract class PageFactoryTemplateEngine {
 	 * @return boolean true on success else return false
 	 * @todo needs more documentation
 	 */
+	/*
 	public function setTemplate(PageFactoryTemplate $template){
 		$this->template = $template;
 		return $this->template->init();
@@ -413,6 +424,7 @@ abstract class PageFactoryTemplateEngine {
 	 *
 	 * @return PageFactoryTemplate
 	 */
+	/*
 	public function getTemplate(){
 		return $this->template;
 	}
@@ -427,6 +439,7 @@ abstract class PageFactoryTemplateEngine {
 	 * @internal
 	 * @todo needs more documentation
 	 */
+	/*
 	final public function setCacheManager(CacheManager $cache){
 		$this->cache = $cache;
 	}
@@ -439,8 +452,9 @@ abstract class PageFactoryTemplateEngine {
 	 *
 	 * @return string redered pages.
 	 */
+	/*
 	abstract public function draw();
-
+	*/
 	/**
 	 * Add page content to page.
 	 *
@@ -452,8 +466,9 @@ abstract class PageFactoryTemplateEngine {
 	 * @param Output $content
 	 * @return boolean true on success, else return false.
 	 */
+	/*
 	abstract public function addPageContent(Output $content);
-
+	*/
 	/**
 	 * Add page settings to page.
 	 *
@@ -465,8 +480,10 @@ abstract class PageFactoryTemplateEngine {
 	 * @param Output $content
 	 * @return boolean true on success, else return false.
 	 */
+	/*
 	abstract public function addPageSettings(Output $settings);
-}
+	*/
+// }
 
 
 //*****************************************************************//
@@ -481,7 +498,7 @@ abstract class PageFactoryTemplateEngine {
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-class PageFactory implements Singleton {
+// class PageFactory {
 
 
 	//*****************************************************************//
@@ -493,7 +510,7 @@ class PageFactory implements Singleton {
 	 * @var PageFactory
 	 * @internal
 	 */
-	private static $instance = null;
+	// private static $instance = null;
 
 	/**
 	 * Current Page factory template engine.
@@ -501,7 +518,7 @@ class PageFactory implements Singleton {
 	 * @var PageFactoryTemplateEngine
 	 * @internal
 	 */
-	private $engine = null;
+	// private $engine = null;
 
 	/**
 	 * Page build callback name.
@@ -509,7 +526,7 @@ class PageFactory implements Singleton {
 	 * @var string method callback name
 	 * @internal
 	 */
-	private $callback = null;
+	// private $callback = null;
 
 	/**
 	 * Page resolvers
@@ -520,7 +537,7 @@ class PageFactory implements Singleton {
 	 * @see PageFactoryPageResolver
 	 * @internal
 	 */
-	private $resolvers = array();
+	// private $resolvers = array();
 
 	/**
 	 * Requested page url.
@@ -528,7 +545,7 @@ class PageFactory implements Singleton {
 	 * @var string requested page url
 	 * @internal
 	 */
-	private $url = null;
+	// private $url = null;
 
 	/**
 	 * Instance of cache manager
@@ -536,7 +553,7 @@ class PageFactory implements Singleton {
 	 * @var CacheManager
 	 * @internal
 	 */
-	private $cache = null;
+	// private $cache = null;
 
 	/**
 	 * Write output to cache.
@@ -544,7 +561,7 @@ class PageFactory implements Singleton {
 	 * @var boolean
 	 * @internal
 	 */
-	private $write_to_cache = false;
+	// private $write_to_cache = false;
 
 
 	//*****************************************************************//
@@ -560,7 +577,9 @@ class PageFactory implements Singleton {
 	 * @return void
 	 * @internal
 	 */
+	/*
 	private function __construct(){
+
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
 			// PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemExectutionTimeCalculator());
 			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarProfiler());
@@ -601,7 +620,7 @@ class PageFactory implements Singleton {
 			PageFactoryDeveloperToolbar::getInstance()->addItem(new PageFactoryDeveloperToolbarItemCacheStatus($this->cache));
 		}
 	}
-
+*/
 	/**
 	 * Get PageFactory instance.
 	 *
@@ -613,13 +632,14 @@ class PageFactory implements Singleton {
 	 * @return PageFactory
 	 * @internal
 	 */
+	/*
 	public static function getInstance(){
 		if(is_null(self::$instance)){
 			self::$instance = new PageFactory();
 		}
 		return self::$instance;
 	}
-
+	*/
 	/**
 	 * Bootstrap page.
 	 *
@@ -645,9 +665,22 @@ class PageFactory implements Singleton {
 	 * @uses BaseException::IsErrorThrown()
 	 * @return mixed string or boolean
 	 */
+	/*
 	public static function bootstrap($return=false){
+
 		$eventHandler = EventHandler::getInstance();
 		$eventHandler->trigger(new EventRequestStart());
+
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			\Corelib\PageFactory\Bootstrap::run(new \Corelib\Routing\PHP('../zhosting/etc/post.php'));
+		} else {
+			\Corelib\PageFactory\Bootstrap::run(new \Corelib\Routing\PHP('../zhosting/etc/get.php'));
+		}
+
+		$eventHandler->trigger(new EventRequestEnd());
+
+		return true;
+		/*
 
 		$page = PageFactory::getInstance();
  		$page->resolvePageController();
@@ -675,7 +708,8 @@ class PageFactory implements Singleton {
 			}
 		}
 		return $data;
-	}
+		*/
+	// }
 
 	/**
 	 * Add page resolver.
@@ -684,11 +718,13 @@ class PageFactory implements Singleton {
 	 * @param PageFactoryPageResolver $resolver
 	 * @return PageFactoryPageResolver on success else return boolean false
 	 */
+	/*
 	public function addResolver($ident, PageFactoryPageResolver $resolver){
 		assert('is_string($ident)');
 		$this->resolvers[$ident] = $resolver;
 		return $resolver;
 	}
+	*/
 
 	/**
 	 * Resolve page object.
@@ -700,9 +736,11 @@ class PageFactory implements Singleton {
 	 * @return true if page object could be found
 	 * @internal
 	 */
+	/*
 	public function resolvePageObject(){
 		return $this->resolvePageController();
 	}
+	*/
 
 	/**
 	 * Resolve page controller.
@@ -722,6 +760,7 @@ class PageFactory implements Singleton {
 	 * @todo uses documentation missing
 	 * @internal
 	 */
+	/*
 	public function resolvePageController(){
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			include_once(PAGE_FACTORY_POST_FILE);
@@ -805,7 +844,7 @@ class PageFactory implements Singleton {
 			}
 		}
 		return true;
-	}
+	}*/
 
 	/**
 	 * Resolve a url.
@@ -813,6 +852,7 @@ class PageFactory implements Singleton {
 	 * @param array $pages
 	 * @return mixed array containing page data, else return false.
 	 */
+	/*
 	private function _resolvePageController(array &$pages){
 		if(!isset($pages[$this->url])){
 			foreach($pages as $val){
@@ -839,7 +879,7 @@ class PageFactory implements Singleton {
 		} else {
 			return array('page' => $pages[$this->url], 'exec'=>'build()');
 		}
-	}
+	}*/
 
 	/**
 	 * Get current caching type.
@@ -853,13 +893,14 @@ class PageFactory implements Singleton {
 	 * @return integer Cache type
 	 * @internal
 	 */
+	/*
 	public function getCacheType(){
 		if(PAGE_FACTORY_CACHE_ENABLE && !PAGE_FACTORY_CACHE_DEBUG && $this->cache->isCached()){
 			return $this->cache->getType();
 		} else {
 			return PAGE_FACTORY_CACHE_DYNAMIC;
 		}
-	}
+	}*/
 
 
 	/**
@@ -870,6 +911,7 @@ class PageFactory implements Singleton {
 	 * @see CacheManager
 	 * @internal
 	 */
+	/*
 	private function _setCacheSettings(array $page){
 		if(isset($page['cache'])){
 			$this->cache->setPage($page['page'], $this->callback, $page['engine']);
@@ -882,7 +924,7 @@ class PageFactory implements Singleton {
 		} else {
 			$this->cache->setType(PAGE_FACTORY_CACHE_DISABLED);
 		}
-	}
+	}*/
 
 	/**
 	 * Enable alternate template engine.
@@ -891,12 +933,13 @@ class PageFactory implements Singleton {
 	 * @return void
 	 * @internal
 	 */
+	/*
 	private function _enableEngine($classname){
 		$this->engine = new $classname();
 		assert('$this->engine instanceof PageFactoryTemplateEngine');
 		Logger::info('Activated template engine: '. get_class($this->engine), 1);
 		$this->engine->setCacheManager($this->cache);
-	}
+	}*/
 
 	/**
 	 * Template template engine to build page.
@@ -905,11 +948,13 @@ class PageFactory implements Singleton {
 	 * @return boolean true on success else return false
 	 * @internal
 	 */
+	/*
 	public function build(PageBase $page){
 		$page->setCacheManager($this->cache);
 		$page->__init();
 		$this->engine->build($page, $this->callback);
 	}
+	*/
 
 	/**
 	 * Draw page.
@@ -922,6 +967,7 @@ class PageFactory implements Singleton {
 	 * @return string
 	 * @internal
 	 */
+	/*
 	public function draw(){
 		if($this->getCacheType() == PAGE_FACTORY_CACHE_STATIC && $this->cache->isCached()){
 			return $this->cache->read();
@@ -946,7 +992,8 @@ class PageFactory implements Singleton {
 		}
 
 	}
-}
+	*/
+// }
 
 
 //************************************************************************************//
@@ -963,7 +1010,7 @@ class PageFactory implements Singleton {
  * @since Version 5.0
  * @internal
  */
-class PageFactoryDeveloperToolbarItemExectutionTimeCalculator extends PageFactoryDeveloperToolbarItem {
+// class PageFactoryDeveloperToolbarItemExectutionTimeCalculator extends PageFactoryDeveloperToolbarItem {
 
 
 	//************************************************************************************//
@@ -972,7 +1019,7 @@ class PageFactoryDeveloperToolbarItemExectutionTimeCalculator extends PageFactor
 	/**
 	 * @var float start microtime
 	 */
-	private $start = null;
+//	private $start = null;
 
 
 	//************************************************************************************//
@@ -987,7 +1034,8 @@ class PageFactoryDeveloperToolbarItemExectutionTimeCalculator extends PageFactor
 	 *
 	 * @uses PageFactoryDeveloperToolbarItemExectutionTimeCalculator::$start
 	 * @return void
-	 */
+	 *
+
 	public function __construct(){
 		$this->start = microtime(true);
 	}
@@ -999,8 +1047,10 @@ class PageFactoryDeveloperToolbarItemExectutionTimeCalculator extends PageFactor
 	 *
 	 * @see PageFactoryDeveloperToolbarItem::getToolbarItem()
 	 */
+/*
 	public function getToolbarItem(){
 		return '<img src="corelib/resource/manager/images/icons/toolbar/parsetime.png" alt="parsetime" title="Page execution time"/> '.(round((microtime(true) - $this->start) , 4) * 1000).' ms.';
 	}
 }
+*/
 ?>

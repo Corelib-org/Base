@@ -63,7 +63,7 @@ Base::getInstance()->loadClass('WebInteralLoopbackStream');
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
+abstract class PageFactoryWebAbstractTemplate extends \Corelib\PageFactory\Templates\HTTP {
 
 
 	//*****************************************************************//
@@ -670,9 +670,9 @@ abstract class PageFactoryWebAbstractTemplate extends PageFactoryTemplate {
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
-
-
+/*
+class PageFactoryPost extends \Corelib\PageFactory\Templates\POST {
+*/
 	//*****************************************************************//
 	//*********** PageFactoryPostTemplate class constants *************//
 	//*****************************************************************//
@@ -682,7 +682,7 @@ class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
 	 * @var string template engine
 	 * @internal
 	 */
-	const TEMPLATE_ENGINE = 'PageFactoryPost';
+//	const TEMPLATE_ENGINE = 'PageFactoryPost';
 
 
 	//*****************************************************************//
@@ -694,57 +694,9 @@ class PageFactoryPostTemplate extends PageFactoryWebAbstractTemplate {
 	 * @see PageFactoryTemplate::getSupportedTemplateEngineName()
 	 * @internal
 	 */
-	public function getSupportedTemplateEngineName(){
+/*	public function getSupportedTemplateEngineName(){
 		return self::TEMPLATE_ENGINE;
 	}
-}
-
-
-//*****************************************************************//
-//********************** PageFactoryPost class ********************//
-//*****************************************************************//
-/**
- * Page factory post engine class.
- *
- * This template is supposed to be used to handle post requests.
- * and therefore it is a no output template engine.
- *
- * @category corelib
- * @package Base
- * @subpackage PageFactory
- *
- * @author Steffen Sørensen <ss@corelib.org>
- */
-class PageFactoryPost extends PageFactoryTemplateEngine {
-	/**
-	 * Draw page.
-	 *
-	 * @see PageFactoryTemplateEngine::draw()
-	 * @return string
-	 */
-	public function draw(){
-		$this->page->draw($this);
-		return '';
-	 }
-
-	 /**
-	  * Add page content.
-	  *
-	  * Since this template engine is a no-output template engine
-	  * this method is a dummy method.
-	  *
-	  * @see PageFactoryTemplateEngine::addPageContent()
-	  */
-	public function addPageContent(Output $content){ return true; }
-
-	 /**
-	  * Add page setttings.
-	  *
-	  * Since this template engine is a no-output template engine
-	  * this method is a dummy method.
-	  *
-	  * @see PageFactoryTemplateEngine::addPageSettings()
-	  */
-	public function addPageSettings(Output $settings){ return true; }
-}
+*/
+// }
 ?>

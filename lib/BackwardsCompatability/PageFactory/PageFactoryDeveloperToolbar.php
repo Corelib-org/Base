@@ -51,7 +51,7 @@
  * @package Base
  * @subpackage PageFactory
  */
-abstract class PageFactoryDeveloperToolbarItem {
+// abstract class PageFactoryDeveloperToolbarItem {
 
 
 	//*****************************************************************//
@@ -68,7 +68,7 @@ abstract class PageFactoryDeveloperToolbarItem {
 	 *
 	 * @return string html
 	 */
-	abstract public function getToolbarItem();
+//	abstract public function getToolbarItem();
 
 
 	//*****************************************************************//
@@ -83,10 +83,10 @@ abstract class PageFactoryDeveloperToolbarItem {
 	 * @see PageFactoryDeveloperToolbarItem::getToolbarItem()
 	 * @return mixed boolean false if no content, else return string
 	 */
-	public function getContent(){
-		return false;
-	}
-}
+//	public function getContent(){
+//		return false;
+///	}
+//  }
 
 
 //*****************************************************************//
@@ -99,7 +99,7 @@ abstract class PageFactoryDeveloperToolbarItem {
  * @package Base
  * @subpackage PageFactory
  */
-final class PageFactoryDeveloperToolbar implements Singleton {
+// final class PageFactoryDeveloperToolbar implements Singleton {
 
 
 	//*****************************************************************//
@@ -111,18 +111,19 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	 * @var PageFactoryDeveloperToolbar
 	 * @internal
 	 */
-	private static $instance = null;
+//	private static $instance = null;
 
 	/**
 	 * Toolbar items.
 	 *
 	 * @var array toolbar items
 	 */
-	private $items = array();
+//	private $items = array();
 
 	/**
 	 * @ignore
 	 */
+/*
 	private function __construct(){
 		if(php_sapi_name() == 'cli' && !defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR')){
 			define('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR', false);
@@ -139,6 +140,7 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	 *  @uses PageFactoryDeveloperToolbar::$instance
 	 *	@return PageFactoryDeveloperToolbar
 	 */
+/*
 	public static function getInstance(){
 		if(is_null(self::$instance)){
 			self::$instance = new PageFactoryDeveloperToolbar();
@@ -153,6 +155,7 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	 * @param PageFactoryDeveloperToolbarItem $item
 	 * @return PageFactoryDeveloperToolbarItem
 	 */
+/*
 	public function addItem(PageFactoryDeveloperToolbarItem $item){
 		$this->items[] = $item;
 		return $item;
@@ -172,6 +175,7 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	 * @return string toolbar.
 	 * @internal
 	 */
+/*
 	public function draw(){
 		$headers = headers_list();
 		$show_bar = false;
@@ -215,6 +219,7 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 	 *
 	 * @uses PageFactoryDeveloperToolbar::draw()
 	 */
+/*
 	public function __toString(){
 		trigger_error('PageFactoryDeveloperToolbar::__toString() is deprecated', E_USER_DEPRECATED);
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL && (!defined('PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR') || PAGE_FACTORY_SHOW_DEVELOPER_TOOLBAR == true)){
@@ -224,4 +229,5 @@ final class PageFactoryDeveloperToolbar implements Singleton {
 		}
 	}
 }
+*/
 ?>

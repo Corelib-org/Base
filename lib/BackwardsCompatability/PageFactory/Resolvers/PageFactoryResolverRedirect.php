@@ -57,7 +57,7 @@
  *
  * @author Steffen Sørensen <ss@corelib.org>
  */
-class PageFactoryResolverRedirect implements PageFactoryPageResolver {
+// class PageFactoryResolverRedirect implements PageFactoryPageResolver {
 
 
 	//*****************************************************************//
@@ -77,31 +77,31 @@ class PageFactoryResolverRedirect implements PageFactoryPageResolver {
 	 * @internal
 	 * @todo make a better implimentation in order for better support in PageFactory
 	 */
-	public function resolve($expr, $exec, $url){
+/*	public function resolve($expr, $exec, $url){
 		if(preg_match($expr, $url)){
 			header('Location: '.preg_replace($expr, $exec, $url));
 			exit;
 		}
 		return true;
 	}
-
+*/
 	/**
 	 * Get expression.
 	 *
 	 * @see PageFactoryPageResolver::getExpression()
 	 * @return boolean false
 	 */
-	public function getExpression(){
+/*	public function getExpression(){
 		return false;
 	}
-
+*/
 	/**
 	 * Get execution statement.
 	 *
 	 * @see PageFactoryPageResolver::getExecute()
 	 */
-	public function getExecute(){
+/*	public function getExecute(){
 		return false;
 	}
-}
+}*/
 ?>

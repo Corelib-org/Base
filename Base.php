@@ -59,15 +59,7 @@ define('BASE_RUNLEVEL_PROD', 1);
 /**
  *	Define current version of corelib Base.
  */
-define('CORELIB_BASE_VERSION', '5.0.0');
-/**
- * Define CoreLib Copyright owner
- */
-define('CORELIB_COPYRIGHT', 'Steffen Sørensen - http://www.corelib.org/');
-/**
- * Define CoreLib Copyright year
- */
-define('CORELIB_COPYRIGHT_YEAR', '2010');
+define('CORELIB_BASE_VERSION', '6.0.0');
 
 
 //*****************************************************************//
@@ -271,14 +263,14 @@ class Base implements Singleton {
 		require_once(CORELIB.'/Base/lib/Logger/Logger.php');
 		require_once(CORELIB.'/Base/lib/Logger/Engine.php');
 		if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUPPRESS_CLI_HEADER !== true)){
-			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT."\n\0");
+			fputs(STDOUT, 'Corelib v'.CORELIB_BASE_VERSION.' - http://www.corelib.org'."\n\0");
 
 			require_once(CORELIB.'/Base/lib/Logger/Engines/File.php');
 			require_once(CORELIB.'/Base/lib/Logger/Engines/Stdout.php');
 
 			Logger::setEngine(new LoggerEngineStdout());
 		} else {
-			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION." Copyright ".CORELIB_COPYRIGHT_YEAR." ".CORELIB_COPYRIGHT);
+			header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION.' - http://www.corelib.org');
 		}
 
 		if(is_callable('date_default_timezone_set')){
@@ -548,7 +540,7 @@ class Base implements Singleton {
  * @internal
  */
 function __autoload($class){
-	if($filename = Base::getInstance()->findClass($class)){
+	if($filename = \Base::getInstance()->findClass($class)){
 		/**
 		 * @ignore
 		 */

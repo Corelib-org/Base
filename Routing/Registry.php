@@ -47,13 +47,32 @@ class Registry {
 				$this->routes[$prefix]['patterns'][] = $raw_route;
 			}
 		} else {
-			$this->routes[] = $route;
+			$this->routes['#patterns'][] = $raw_route;
+		}
+	}
+
+	public function addRegistry(Registry $registry){
+		while(list($key,$data) = each($registry->routes)){
+			if($data instanceof stdClass){
+				$this->addRoute($data);
+			} else if(isset($data['route'])){
+				$this->addRoute(new Route($data['route']));
+			} else if(is_array($data)){
+				while(list(,$pattern) = each($data)){
+					$this->addRoute(new Route($pattern));
+				}
+			}
+			if(isset($data['patterns']) && is_array($data['patterns'])){
+				while(list(,$pattern) = each($data['patterns'])){
+					$this->addRoute(new Route($pattern));
+				}
+			}
 		}
 	}
 
 	public function lookup($uri){
 		// Look for a direct match first
-		if(isset($this->routes[$uri])){
+		if(isset($this->routes[$uri]['route'])){
 			return new Route($this->routes[$uri]['route']);
 		}
 		if(substr($uri, -1)){
@@ -68,8 +87,15 @@ class Registry {
 				if($route = $this->_lookup($uri, $this->routes[$part]['patterns'])){
 					return $route;
 				}
-			} else {
-				array_pop($uri_parts);
+			}
+			array_pop($uri_parts);
+		}
+
+
+
+		if(isset($this->routes['#patterns']) && is_array($this->routes['#patterns'])){
+			if($route = $this->_lookup($uri, $this->routes['#patterns'])){
+				return $route;
 			}
 		}
 		return false;

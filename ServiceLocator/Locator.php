@@ -97,21 +97,32 @@ class Locator {
 			$class = get_class($service);
 		}
 		assert('is_string($class)');
-		self::$services[$class] = $service;
+		return self::$services[$class] = $service;
 	}
 
 	/**
 	 * Get service by it's class name.
 	 *
 	 * @param string $class
+	 * @param boolean $auto If class have not been loaded, autoload it upon get. the class is instanciated with no arguments
 	 * @return Service
 	 * @throws Exception
 	 * @api
 	 */
-	public static function get($class){
+	public static function get($class, $auto=false){
 		assert('is_string($class)');
+
 		if(!isset(self::$services[$class])){
-			throw new Exception('Requested service \''.$class.'\', has not been loaded');
+			if(!$auto){
+				throw new Exception('Requested service \''.$class.'\', has not been loaded');
+			} else {
+				$object = new $class();
+				if($object instanceof Autoloadable){
+					return self::load($object);
+				} else {
+					throw new Exception('Autload is not supports for class \''.$class.'\', it must implement the Autoload interface.');
+				}
+			}
 		} else {
 			return self::$services[$class];
 		}
@@ -125,7 +136,7 @@ class Locator {
 	 * @throws Exception if service doesn't exists
 	 * @api
 	 */
-	public function unload($class){
+	public static function unload($class){
 		if(self::get($class)){
 			unset(self::$services[$class]);
 			return true;
@@ -139,7 +150,7 @@ class Locator {
 	 * @return bool
 	 * @api
 	 */
-	public function isLoaded($class){
+	public static function isLoaded($class){
 		return isset(self::$services[$class]);
 	}
 

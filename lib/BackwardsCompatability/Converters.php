@@ -48,7 +48,7 @@
  * @package Base
  * @subpackage Converters
  */
-interface Converter {
+// interface Converter {
 
 
 	//*****************************************************************//
@@ -64,8 +64,8 @@ interface Converter {
 	 * @param mixed $data
 	 * @return mixed converted data
 	 */
-	public function convert($data);
-}
+//	public function convert($data);
+// }
 
 
 //*****************************************************************//
@@ -82,8 +82,9 @@ interface Converter {
  * @package Base
  * @subpackage Converters
  */
+/*
 class ConverterChain implements Converter {
-
+*/
 
 	//*****************************************************************//
 	//************** ConverterChain class properties ******************//
@@ -92,7 +93,7 @@ class ConverterChain implements Converter {
 	 * @var array list of converters
 	 * @internal
 	 */
-	private $converters = array();
+//	private $converters = array();
 
 
 	//*****************************************************************//
@@ -104,10 +105,10 @@ class ConverterChain implements Converter {
 	 * @param Converter $converter
 	 * @return boolean true on success, else return false
 	 */
-	public function addConveter(Converter $converter){
-		$this->converters[] = $converter;
-		return true;
-	}
+//	public function addConveter(Converter $converter){
+//		$this->converters[] = $converter;
+//		return true;
+//	}
 
 	/**
 	 * Convert data.
@@ -115,11 +116,11 @@ class ConverterChain implements Converter {
 	 * @see Converter::convert()
 	 * @internal
 	 */
-	public function convert($data){
-		foreach ($this->converters as $converter){
-			$data = $converter->convert($data);
-		}
-		return $data;
-	}
-}
+//	public function convert($data){
+//		foreach ($this->converters as $converter){
+//			$data = $converter->convert($data);
+//		}
+//		return $data;
+//	}
+// }
 ?>

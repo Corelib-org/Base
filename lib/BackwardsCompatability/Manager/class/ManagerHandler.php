@@ -75,7 +75,7 @@ class ManagerConfig extends CorelibManagerExtension {
 	 */
 	public function __construct(){
 		$event = EventHandler::getInstance();
-		$event->register(new ManagerConfigAddSettings($this), 'EventApplyDefaultSettings');
+		$event->register(new ManagerConfigAddSettings($this), 'Corelib\Base\PageFactory\Events\ApplySettings');
 	}
 
 	/**

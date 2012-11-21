@@ -51,12 +51,12 @@ class WebPage extends PageBase {
 	protected $template = null;
 
 	public function __init(){
-		parent::__init();
 		$this->template = new PageFactoryFileSystemTemplate();
 		$this->addTemplateDefinition($this->template);
 	}
 
 	public function getResource($handler, $resource){
+
 		$manager = Manager::getInstance();
 		$resource = $manager->getResource($handler, $resource);
 		$extension = substr($resource, -3);

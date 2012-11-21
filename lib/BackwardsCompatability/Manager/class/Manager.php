@@ -1158,11 +1158,13 @@ abstract class ManagerPage extends PageBase {
 		}
 
 		define('DOMXSL_TEMPLATE_XSL_PATH', CORELIB);
-		$this->xsl = new PageFactoryDOMXSLTemplate('Base/share/xsl/base/core.xsl');
-		$this->addTemplateDefinition($this->xsl);
-
-		$this->post = new PageFactoryPostTemplate();
-		$this->addTemplateDefinition($this->post);
+		if($_SERVER['REQUEST_METHOD'] == 'GET'){
+			$this->xsl = new PageFactoryDOMXSLTemplate('Base/share/xsl/base/core.xsl');
+			$this->addTemplateDefinition($this->xsl);
+		} else {
+			$this->post = new PageFactoryPostTemplate();
+			$this->addTemplateDefinition($this->post);
+		}
 	}
 
 	/**

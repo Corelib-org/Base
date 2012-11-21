@@ -1,5 +1,5 @@
 <?php
-namespace Corelib\Routing;
+namespace Corelib\Base\Routing;
 
 class Registry {
 

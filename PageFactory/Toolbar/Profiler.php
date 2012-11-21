@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory\Toolbar;
+use \Corelib\Base\Log\Logger;
 
 class Profiler extends Item {
 
@@ -33,7 +34,7 @@ class Profiler extends Item {
 	 */
 	public function __construct(){
 		$this->start = microtime(true);
-		\Logger::setEngine(new ProfilerLogger($this));
+		Logger::setEngine(new ProfilerLogger($this));
 	}
 
 
@@ -85,49 +86,49 @@ class Profiler extends Item {
 
 
 	private function _getPriority($level){
-		if($level & \Logger::CRITICAL){
+		if($level & Logger::CRITICAL){
 			return 'critical';
-		} else if($level & \Logger::ERROR){
+		} else if($level & Logger::ERROR){
 			return 'error';
-		} else if($level & \Logger::WARNING){
+		} else if($level & Logger::WARNING){
 			return 'warning';
-		} else if($level & \Logger::NOTICE){
+		} else if($level & Logger::NOTICE){
 			return 'notice';
-		} else if($level & \Logger::INFO){
+		} else if($level & Logger::INFO){
 			return 'info';
-		} else if($level & \Logger::DEBUG){
+		} else if($level & Logger::DEBUG){
 			return 'debug';
 		}
 	}
 
 	private function _getPriorityColor($level){
-		if($level & \Logger::CRITICAL){
+		if($level & Logger::CRITICAL){
 			return '#CC1111';
-		} else if($level & \Logger::ERROR){
+		} else if($level & Logger::ERROR){
 			return '#FFBBBB';
-		} else if($level & \Logger::WARNING){
+		} else if($level & Logger::WARNING){
 			return '#FFAA00';
-		} else if($level & \Logger::NOTICE){
+		} else if($level & Logger::NOTICE){
 			return '#AAAAFF';
-		} else if($level & \Logger::INFO){
+		} else if($level & Logger::INFO){
 			return 'inherit';
-		} else if($level & \Logger::DEBUG){
+		} else if($level & Logger::DEBUG){
 			return '#AAAAFF';
 		}
 	}
 
 	private function _getPriorityTextColor($level){
-		if($level & \Logger::CRITICAL){
+		if($level & Logger::CRITICAL){
 			return '#CC1111';
-		} else if($level & \Logger::ERROR){
+		} else if($level & Logger::ERROR){
 			return '#FFBBBB';
-		} else if($level & \Logger::WARNING){
+		} else if($level & Logger::WARNING){
 			return '#FFAA00';
-		} else if($level & \Logger::NOTICE){
+		} else if($level & Logger::NOTICE){
 			return '#AAAAFF';
-		} else if($level & \Logger::INFO){
+		} else if($level & Logger::INFO){
 			return 'inherit';
-		} else if($level & \Logger::DEBUG){
+		} else if($level & Logger::DEBUG){
 			return '#AAAAFF';
 		}
 	}

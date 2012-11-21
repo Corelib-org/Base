@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory\Templates;
+use Corelib\Base\PageFactory\Output;
 
 class XSLT extends HTTP {
 
@@ -154,22 +155,12 @@ class XSLT extends HTTP {
 	}
 
 
-	public function addContent($content){
-		if($content instanceof \Corelib\Base\PageFactory\Output || $content instanceof \Output){
-			$this->content->appendChild($content->getXML($this->xml));
-		} else {
-			throw new \Exception('Content is not of instance \Corelib\Base\PageFactory\Output or \Output');
-		}
-
+	public function addContent(Output $content){
+		$this->content->appendChild($content->getXML($this->xml));
 	}
 
-	public function addSettings($settings){
-		if($settings instanceof \Corelib\Base\PageFactory\Output || $settings instanceof \Output){
-			$this->settings->appendChild($settings->getXML($this->xml));
-		} else {
-			throw new \Exception('Setting is not of instance \Corelib\Base\PageFactory\Output or \Output');
-		}
-
+	public function addSettings(Output $settings){
+		$this->settings->appendChild($settings->getXML($this->xml));
 	}
 
 	/**

@@ -1,6 +1,8 @@
 <?php
 namespace Corelib\Base\PageFactory\Templates;
 
+use Corelib\Base\PageFactory\Output;
+
 /**
  * Page factory post engine class.
  *
@@ -23,10 +25,10 @@ class POST extends HTTP {
 
 	}
 
-	public function addContent($content){
+	public function addContent(Output $content){
 		return $content;
 	}
-	public function addSettings($settings){
+	public function addSettings(Output $settings){
 		return $settings;
 	}
 

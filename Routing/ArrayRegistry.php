@@ -1,5 +1,5 @@
 <?php
-namespace Corelib\Routing;
+namespace Corelib\Base\Routing;
 
 class ArrayRegistry extends Registry {
 	private $pages = array();
@@ -28,7 +28,7 @@ class ArrayRegistry extends Registry {
 			if(isset($val['exec'])){
 				if(isset($val['type'])){
 					if($val['type'] == 'regex'){
-						$resolver = new \Corelib\Routing\Resolver();
+						$resolver = new Resolver();
 					}
 
 					if(!isset($val['class'])){

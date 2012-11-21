@@ -1,7 +1,8 @@
 <?php
 namespace Corelib\Base\PageFactory\Toolbar;
+use Corelib\Base\Log\Engine;
 
-class ProfilerLogger extends \LoggerEngine {
+class ProfilerLogger extends Engine {
 
 	private $profiler;
 

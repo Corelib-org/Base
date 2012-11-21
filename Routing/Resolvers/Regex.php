@@ -1,7 +1,7 @@
 <?php
-namespace Corelib\Routing\Resolvers;
+namespace Corelib\Base\Routing\Resolvers;
 
-use Corelib\Routing\Resolver;
+use Corelib\Base\Routing\Resolver;
 
 class Regex extends Resolver {
 	public function makeExpression($expression){

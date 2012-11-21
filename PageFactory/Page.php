@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory;
+use Corelib\Base\PageFactory\Output;
 
 class Page {
 
@@ -52,14 +53,8 @@ class Page {
 	 * @return Output
 	 * @api
 	 */
-	public function addContent($content){
-		if($content instanceof Output || $content instanceof \Output){
-			return $this->content[] = $content;
-		} else {
-			throw new \Exception('Content is not of instance '.__NAMESPACE__.'\Output or \Output');
-		}
-		// assert('$content instanceof Output || $content instanceof \Output');
-
+	public function addContent(Output $content){
+		return $this->content[] = $content;
 	}
 
 	/**
@@ -71,12 +66,8 @@ class Page {
 	 * @return Output
 	 * @api
 	 */
-	public function addSettings($settings){
-		if($settings instanceof Output || $settings instanceof \Output){
-			return $this->settings[] = $settings;
-		} else {
-			throw new \Exception('Content is not of instance '.__NAMESPACE__.'\Output or \Output');
-		}
+	public function addSettings(Output $settings){
+		return $this->settings[] = $settings;
 	}
 
 	public function render(){

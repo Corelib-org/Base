@@ -40,3 +40,4 @@ abstract class CompositeOutput extends \Composite implements Output {
 	}
 
 }
+?>

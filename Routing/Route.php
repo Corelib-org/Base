@@ -28,7 +28,7 @@
  * @version ($Id$)
  * @see Corelib\Base\Routing\Registry
  */
-namespace Corelib\Routing;
+namespace Corelib\Base\Routing;
 
 class Route {
 	private $prefix = false;

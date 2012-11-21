@@ -1,6 +1,11 @@
 <?php
 namespace Corelib\Base\PageFactory;
 
+use Corelib\Base\Routing\Registry, Corelib\Base\Routing\ArrayRegistry;
+use Corelib\Base\Routing\Route;
+use Corelib\Base\ServiceLocator\Locator;
+use Corelib\Base\PageFactory\Toolbar\Profiler;
+
 class Bootstrap {
 
 	/**
@@ -12,15 +17,15 @@ class Bootstrap {
 	 */
 	private $url = null;
 
-	public function __construct(\Corelib\Routing\Registry $registry){
+	public function __construct(Registry $registry){
 		$this->registry = $registry;
 		$this->_resolveURL();
 	}
 
-	public static function run(\Corelib\Routing\Registry $registry){
+	public static function run(Registry $registry){
 		if(!defined('BOOTSTRAP_DEVELOPER_TOOLBAR') || BOOTSTRAP_DEVELOPER_TOOLBAR == true){
-			$toolbar = \Corelib\Base\ServiceLocator\Locator::get('Corelib\Base\PageFactory\Toolbar\Toolbar', true);
-			$toolbar->addItem(new \Corelib\Base\PageFactory\Toolbar\Profiler());
+			$toolbar = Locator::get('Corelib\Base\PageFactory\Toolbar\Toolbar', true);
+			$toolbar->addItem(new Profiler());
 			if(!defined('BOOTSTRAP_DEVELOPER_TOOLBAR') || BOOTSTRAP_DEVELOPER_TOOLBAR == true){
 				\EventHandler::getInstance()->register(new Toolbar\Render($toolbar), 'Corelib\Base\PageFactory\Events\PageRender');
 			}
@@ -36,8 +41,8 @@ class Bootstrap {
 	}
 
 	public function render(){
-		if(\Corelib\Base\ServiceLocator\Locator::isLoaded('\Corelib\Base\Cache\Store')){
-			$cache = \Corelib\Base\ServiceLocator\Locator::get('\Corelib\Base\Cache\Store');
+		if(Locator::isLoaded('\Corelib\Base\Cache\Store')){
+			$cache = Locator::get('\Corelib\Base\Cache\Store');
 			$cache_key = __CLASS__.':'.$_SERVER['SERVER_NAME'].':'.$_SERVER['REQUEST_URI'];
 			if($cache->has($cache_key)){
 				$page = $cache->get($cache_key);
@@ -50,7 +55,7 @@ class Bootstrap {
 			$manager = \Manager::getInstance();
 			$manager->init();
 			$manager->setupPageRegistry($pages);
-			$this->registry->addRegistry(new \Corelib\Routing\ArrayRegistry($pages));
+			$this->registry->addRegistry(new ArrayRegistry($pages));
 		}
 
 
@@ -98,7 +103,7 @@ class Bootstrap {
 		}
 	}
 
-	public function getPage(\Corelib\Routing\Route $route){
+	public function getPage(Route $route){
 		if($include = $route->getInclude()){
 			include_once($include);
 		}

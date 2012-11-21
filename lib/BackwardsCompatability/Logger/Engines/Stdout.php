@@ -1,4 +1,5 @@
 <?php
+/*
 class LoggerEngineStdout extends LoggerEngineFile {
 	private $stdout = null;
 	private $stderr = null;
@@ -22,4 +23,5 @@ class LoggerEngineStdout extends LoggerEngineFile {
 		fclose($this->stderr);
 	}
 }
+*/
 ?>

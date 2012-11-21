@@ -1,4 +1,5 @@
 <?php
+/*
 class LoggerEngineHTTPFile extends LoggerEngineFile {
 	private $fp = null;
 
@@ -13,4 +14,5 @@ class LoggerEngineHTTPFile extends LoggerEngineFile {
 		return parent::_createLogLine($timestamp, $level, $prefix.$message, $file, $line, $function);
 	}
 }
+*/
 ?>

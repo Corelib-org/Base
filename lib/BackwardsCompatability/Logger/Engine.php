@@ -1,4 +1,5 @@
 <?php
+/*
 abstract class LoggerEngine {
 	abstract public function write($timestamp, $level, $message, $file=null, $line=null, $function=null);
 
@@ -16,4 +17,5 @@ abstract class LoggerEngine {
 		return $prefix.$message;
 	}
 }
+*/
 ?>

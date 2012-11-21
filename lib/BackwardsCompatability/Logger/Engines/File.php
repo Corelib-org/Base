@@ -1,4 +1,5 @@
 <?php
+/*
 class LoggerEngineFile extends LoggerEngine {
 	private $fp = null;
 
@@ -36,4 +37,5 @@ class LoggerEngineFile extends LoggerEngine {
 		}
 	}
 }
+*/
 ?>

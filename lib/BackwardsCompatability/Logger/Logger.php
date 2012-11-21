@@ -13,7 +13,7 @@ Logger::critical('Test Critical');
 Logger::info('Test info');
 Logger::debug('Test debug');
  */
-
+/*
 class Logger {
 	// Default Loglevel Logger::CRITICAL | Logger::ERROR | Logger::WARNING | Logger::Notice
 	private static $level = 15;
@@ -40,7 +40,7 @@ class Logger {
 	static private function _write($message, $level, $backtrace_stack=0){
 		if(self::$level & $level && !is_null(self::$engine)){
 
-			$backtrace = debug_backtrace();
+			$backtrace = debug_backtrace(false);
 			array_shift($backtrace);
 
 			$timestamp = microtime(true);
@@ -85,5 +85,5 @@ class Logger {
 		self::_write($message, self::DEBUG, $backtrace_stack);
 	}
 }
-
+*/
 ?>

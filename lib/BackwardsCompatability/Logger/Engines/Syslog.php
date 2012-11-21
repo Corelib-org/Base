@@ -1,4 +1,5 @@
 <?php
+/*
 class Syslog extends LoggerEngine {
 	private $syslog = null;
 
@@ -30,4 +31,5 @@ class Syslog extends LoggerEngine {
 		}
 	}
 }
+*/
 ?>

@@ -9,25 +9,31 @@ website:	Corelib - Base
 
 #developer-toolbar {
 	width: 100%;
+	left: 0px;
+	right: 0px;
 	top: 0px;
 	position: fixed;
-	background-color: #ffffe0;
+	background-color: #23262b;
 	opacity: .0;
-	border-bottom: 1px solid #666680;
+	border-bottom: 1px solid #59626b;
 	text-align: left;
 	font-size: 8pt;
 	font-family: Arial,Helvetica,Verdana,Sans serif;
-	color: #000000;
+	color: #ffffff;
 	padding-top: 2px;
 
 	transition: opacity 0.5s;
 	-moz-transition: opacity 0.5s; /* Firefox 4 */
 	-webkit-transition: opacity 0.5s; /* Safari and Chrome */
 	-o-transition: opacity 0.5s; /* Opera */
+
+	-moz-box-shadow: 10px 10px 5px #888;
+	-webkit-box-shadow: 10px 10px 5px #888;
+	box-shadow: 0px 15px 20px #000000;
 }
 
 #developer-toolbar:hover {
-	opacity: 1;
+	opacity: .9;
 
 	transition: opacity 0.5s;
 	-moz-transition: opacity 0.5s; /* Firefox 4 */
@@ -37,14 +43,11 @@ website:	Corelib - Base
 
 #developer-toolbar a:hover, #developer-toolbar a {
 	font-size: 8pt;
-	text-decoration: underline;
 	cursor: pointer;
 }
 
 #developer-toolbar a:hover {
-
-	color: #000000;
-
+	color: #ffffff;
 }
 
 #developer-toolbar .toolbar {
@@ -55,6 +58,7 @@ website:	Corelib - Base
 
 #developer-toolbar .data {
 	text-align: left;
+	color: #000000;
 }
 
 #developer-toolbar .data > div {
@@ -84,6 +88,20 @@ website:	Corelib - Base
 	margin: 0px;
 }
 
+#developer-toolbar .data td,
+#developer-toolbar .data th {
+	color: #FFFFFF;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#developer-toolbar .data td {
+	border-top: 1px solid #97a1aa;
+}
+
+#developer-toolbar .data th {
+	font-weight: bold;
+}
 
 #developer-toolbar .toolbar img {
 	vertical-align: text-bottom;

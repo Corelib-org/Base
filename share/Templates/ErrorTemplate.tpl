@@ -104,7 +104,7 @@
 				</tr>
 				<tr>
 			 		<td style="font-family: Verdana, Arial; font-size: 10px; padding: 10px; padding-top: 0px; color: #666666; text-align: right;">
-			 			Copyright !CORELIB_COPYRIGHT_YEAR! !CORELIB_COPYRIGHT! / Corelib v!CORELIB_VERSION!
+			 			Corelib v!CORELIB_VERSION!
 					</td>
 				</tr>
 			</table>

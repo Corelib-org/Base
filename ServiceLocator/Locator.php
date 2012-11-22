@@ -109,19 +109,14 @@ class Locator {
 	 * @throws Exception
 	 * @api
 	 */
-	public static function get($class, $auto=false){
+	public static function get($class){
 		assert('is_string($class)');
-
 		if(!isset(self::$services[$class])){
-			if(!$auto){
-				throw new Exception('Requested service \''.$class.'\', has not been loaded');
+			$object = new $class();
+			if($object instanceof Autoloadable){
+				return self::load($object);
 			} else {
-				$object = new $class();
-				if($object instanceof Autoloadable){
-					return self::load($object);
-				} else {
-					throw new Exception('Autload is not supports for class \''.$class.'\', it must implement the Autoload interface.');
-				}
+				throw new Exception('Autoload is not supports for class \''.$class.'\', it must implement the Autoload interface. otherwise it must be manually loaded using the load method');
 			}
 		} else {
 			return self::$services[$class];

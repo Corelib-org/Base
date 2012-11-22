@@ -29,12 +29,13 @@
  * @see Corelib\Base\ServiceLocator\Locator
  */
 namespace Corelib\Base\ServiceLocator;
+use Corelib\Base\Exception as BaseException;
 
 /**
  * Service Locator exception.
  * @package Corelib\Base
  */
-class Exception extends \Exception {
+class Exception extends BaseException {
 
 }
 ?>

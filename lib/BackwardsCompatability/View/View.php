@@ -33,6 +33,8 @@
  * @version 1.0.0 ($Id$)
  * @since Version 5.0
  */
+use \Corelib\Base\Converters\Converter, Corelib\Base\PageFactory\Output;
+use Corelib\Base\Event\Action as EventAction, Corelib\Base\Event\Event as Event;
 
 //*****************************************************************//
 //*********************** DAO_View Interface **********************//

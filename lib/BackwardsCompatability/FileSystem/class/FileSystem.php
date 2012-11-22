@@ -33,6 +33,7 @@
  * @link http://www.corelib.org/
  * @since Version 5.0
  */
+use Corelib\Base\PageFactory\Output;
 
 //*****************************************************************//
 //****************** Basic Configuration Check ********************//
@@ -252,10 +253,10 @@ class PageFactoryFileSystemTemplate extends \Corelib\Base\PageFactory\Templates\
 
 	}
 
-	public function addContent($content){
+	public function addContent(Output $content){
 		return $content;
 	}
-	public function addSettings($settings){
+	public function addSettings(Output $settings){
 		return $settings;
 	}
 }

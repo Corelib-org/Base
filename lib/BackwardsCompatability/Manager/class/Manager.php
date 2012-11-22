@@ -35,7 +35,7 @@
  * @version 1.0.0 ($Id: Interfaces.php 5218 2010-03-16 13:07:41Z wayland $)
  * @internal
  */
-
+use Corelib\Base\Event\Event, Corelib\Base\Event\Action as EventAction;
 
 //*****************************************************************//
 //****************** Basic Configuration Check ********************//

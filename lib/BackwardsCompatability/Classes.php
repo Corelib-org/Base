@@ -97,6 +97,7 @@ class MySQLiQueryStatement extends \Corelib\Base\Database\MySQLi\Statement { }
  * @subpackage PageFactory
  *
  * @author Steffen Sørensen <ss@corelib.org>
+ * @deprecated
  */
 class PageFactoryPostTemplate extends \Corelib\Base\PageFactory\Templates\POST { }
 
@@ -119,6 +120,7 @@ class PageFactoryDOMXSLTemplate extends \Corelib\Base\PageFactory\Templates\XSLT
  * @subpackage PageFactory
  *
  * @author Steffen Sørensen <ss@corelib.org>
+ * @deprecated
  */
 abstract class PageBase extends \Corelib\Base\PageFactory\Page { }
 
@@ -131,20 +133,15 @@ abstract class PageBase extends \Corelib\Base\PageFactory\Page { }
  * @subpackage PageFactory
  *
  * @author Steffen Sørensen <ss@corelib.org>
+ * @deprecated
  */
 class PageFactory {
 	public static function bootstrap($return=false){
-
-
-
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Routing\PHP('../zhosting/etc/post.php'));
+			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Base\Routing\PHP('../zhosting/etc/post.php'));
 		} else {
-			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Routing\PHP('../zhosting/etc/get.php'));
+			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Base\Routing\PHP('../zhosting/etc/get.php'));
 		}
-
-
-
 		return true;
 	}
 }
@@ -163,35 +160,23 @@ class PageFactory {
  *
  * @author Steffen Sørensen <ss@corelib.org>
  * @since Version 5.0
+ * @deprecated
  */
 interface CacheUpdateEvent { }
 
-
 /**
- * Output interface
- *
- * This is the blue print for output classes.
- *
- * @category corelib
- * @package Base
+ * @deprecated
  */
-interface Output {
-
-
-	//*****************************************************************//
-	//******************* Output interface methods ********************//
-	//*****************************************************************//
-	/**
-	 * Get output XML.
-	 *
-	 * @param DOMDocument $xml
-	 * @return DOMElement
-	 */
-	public function getXML(DOMDocument $xml);
-}
-
 class XMLOutput extends \Corelib\Base\PageFactory\XMLOutput { }
 
+/**
+ * @deprecated
+ */
+class XMLTools extends \Corelib\Base\Tools\XML { }
+
+/**
+ * @deprecated
+ */
 abstract class CompositeOutput extends \Corelib\Base\PageFactory\CompositeOutput { }
 
 
@@ -207,3 +192,71 @@ abstract class CompositeOutput extends \Corelib\Base\PageFactory\CompositeOutput
  * @deprecated
  */
 interface CacheableOutput { }
+
+/**
+ * @deprecated
+ */
+class DateConverter extends \Corelib\Base\Converters\Date\Strftime { }
+
+/**
+ * @deprecated
+ */
+class InputHandler {
+	private function __construct() { }
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get('Corelib\Base\Input\Handler');
+	}
+}
+
+class EventHandler {
+	private function __construct() { }
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get('Corelib\Base\Event\Handler');
+	}
+}
+
+/**
+ * @deprecated
+ */
+class i18n {
+	private function __construct() { }
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get('Corelib\Base\i18n\Localize');
+	}
+}
+
+/**
+ * @deprecated
+ */
+class InputValidatorRegex extends \Corelib\Base\Input\Validators\Regex { }
+
+/**
+ * @deprecated
+ */
+abstract class EventAction extends \Corelib\Base\Event\Action { }
+
+/**
+ * Singleton interface
+ *
+ * Use this interface for defining the base of all Singleton
+ * classes, however since PHP does not allow us to to include
+ * the specifics of the constructer and __clone, you have to
+ * remember to set the constructor and __clone private to get
+ * the desired effect of a singleton class.
+ *
+ * @see http://en.wikipedia.org/wiki/Singleton_pattern
+ * @category corelib
+ * @package Base
+ * @deprecated
+ */
+interface Singleton {
+
+
+	//*****************************************************************//
+	//***************** Singleton interface methods *******************//
+	//*****************************************************************//
+	/**
+	 * @return Object Unique version of the object instance
+	 */
+	public static function getInstance();
+}

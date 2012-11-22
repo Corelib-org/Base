@@ -1,7 +1,8 @@
 <?php
+
 /* vim: set tabstop=4 shiftwidth=4 softtabstop=4: */
 /**
- * Corelib Internationalization Locale en_GB.UTF-8.
+ * Corelib Internationalization Locale da_DK.UTF-8.
  *
  * <i>No Description</i>
  *
@@ -33,21 +34,21 @@
  * @link http://www.corelib.org/
  * @version 2.0.0 ($Id$)
  */
+namespace Corelib\Base\i18n\Locales;
+use Corelib\Base\i18n\Locale;
 
-//*****************************************************************//
-//***************** i18nLocale_en_GB_UTF8 class *******************//
-//*****************************************************************//
+
 /**
- * i18nLocale_en_GB_UTF8 class.
+ * i18nLocale_da_DK_UTF8 class.
  *
  * @category corelib
  * @package Base
  * @subpackage i18n
  * @since 5.0
  */
-class i18nLocale_en_GB_UTF8 extends i18nLocale {
+class da_DK_UTF8 extends Locale {
 	public function __construct(){
-		parent::__construct('en', 'en_GB.UTF-8');
+		parent::__construct('da', 'da_DK.UTF-8');
 	}
 }
 ?>

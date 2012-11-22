@@ -1,7 +1,9 @@
 <?php
 namespace Corelib\Base\Log\Engines;
 
-class Syslog extends \Corelib\Base\Log\Engine {
+use Corelib\Base\Log\Engine;
+
+class Syslog extends Engine {
 	private $syslog = null;
 
 	public function __construct($ident='corelib', $options=11, $facility=LOG_USER){

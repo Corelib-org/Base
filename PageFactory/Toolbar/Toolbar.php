@@ -1,6 +1,9 @@
 <?php
 namespace Corelib\Base\PageFactory\Toolbar;
 
+use Corelib\Base\Tools\UUID,
+	Corelib\Base\ServiceLocator\Service,
+	Corelib\Base\ServiceLocator\Autoloadable;
 
 /**
  * Page Factory Developer toolbar.
@@ -9,7 +12,7 @@ namespace Corelib\Base\PageFactory\Toolbar;
  * @package Base
  * @subpackage PageFactory
  */
-final class Toolbar implements \Corelib\Base\ServiceLocator\Service,\Corelib\Base\ServiceLocator\Autoloadable {
+final class Toolbar implements Service,Autoloadable {
 
 
 	//*****************************************************************//
@@ -77,7 +80,7 @@ final class Toolbar implements \Corelib\Base\ServiceLocator\Service,\Corelib\Bas
 			$data = '';
 			$toolbar = '';
 			foreach($this->items as $item){
-				$id = 'developer-toolbar-'.\RFC4122::generate();
+				$id = 'developer-toolbar-'.UUID::generate();
 				$tool = $item->getToolbarItem();
 				if($content = $item->getContent()){
 					// $toolbar .= '<a onclick="if(document.getElementById(\''.$id.'\').style.display == \'none\'){ document.getElementById(\''.$id.'\').style.display = \'block\' } else { document.getElementById(\''.$id.'\').style.display = \'none\' }">'.$tool.'</a	> &nbsp; ';
@@ -91,7 +94,7 @@ final class Toolbar implements \Corelib\Base\ServiceLocator\Service,\Corelib\Bas
 			$output  = '<link rel="stylesheet" type="text/css" href="corelib/resource/manager/css/toolbar.css" />';
 			$output .= '<script type="text/javascript">var developer_toolbar_open = 0; function developerToolbarToggle(id){ if(document.getElementById(id).style.display == \'none\'){ document.getElementById(id).style.display = \'block\'; developer_toolbar_open++ } else { document.getElementById(id).style.display = \'none\'; developer_toolbar_open-- } if(developer_toolbar_open > 0){ document.getElementById(\'developer-toolbar\').style.position =\'absolute\'; document.getElementById(\'developer-toolbar\').style.opacity =\'1\'; } else { document.getElementById(\'developer-toolbar\').style.position =\'fixed\'; document.getElementById(\'developer-toolbar\').style.opacity = \'\'; } }</script>';
 			$output .= '<div id="developer-toolbar">';
-			$output .= '<div style="float: right;"><a href="javascript:void(0)" onclick="document.getElementById(\'developer-toolbar\').style.display=\'none\';"><img src="corelib/resource/manager/images/icons/toolbar/close.png" alt="Close toolbar" title="Close toolbar" style="border: 0px;"/></a>&#160;</div>';
+			// $output .= '<div style="float: right;"><a href="javascript:void(0)" onclick="document.getElementById(\'developer-toolbar\').style.display=\'none\';"><img src="corelib/resource/manager/images/icons/toolbar/close.png" alt="Close toolbar" title="Close toolbar" style="border: 0px;"/></a>&#160;</div>';
 			$output .= '<div class="toolbar">'.$toolbar.'</div><div class="data">'.$data.'</div></div>';
 			return $output;
 		}

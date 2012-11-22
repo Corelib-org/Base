@@ -29,10 +29,12 @@
  * @see Corelib\Base\Database\Connection
  */
 namespace Corelib\Base\Database;
+use Corelib\Base\Exception as BaseException;
 
 /**
  * Database Engine exception.
  */
-class Exception extends \BaseException {
+class Exception extends BaseException {
 
 }
+?>

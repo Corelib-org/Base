@@ -1,8 +1,8 @@
 <?php
 namespace Corelib\Base\PageFactory\Events;
+use Corelib\Base\Event\Event;
 
-
-class PageRender implements \Event {
+class PageRender implements Event {
 
 	private $page = null;
 

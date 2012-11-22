@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory\Events;
+use Corelib\Base\Event\Event;
 
 /**
  * Request start event.
@@ -10,4 +11,4 @@ namespace Corelib\Base\PageFactory\Events;
  * @package Base
  * @subpackage EventHandler
  */
-class RequestStart implements \Event { }
+class RequestStart implements Event { }

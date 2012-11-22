@@ -1,7 +1,9 @@
 <?php
 namespace Corelib\Base\ObjectRelationalMapping;
 
-abstract class Object extends ObjectBase implements \Output {
+use Corelib\Base\PageFactory\Output, Corelib\Base\ServiceLocator\Locator, Corelib\Base\Converters\Converter;
+
+abstract class Object extends ObjectBase implements Output {
 
 	protected $datahandler = null;
 	protected $dao = null;
@@ -33,7 +35,7 @@ abstract class Object extends ObjectBase implements \Output {
 			}
 		}
 
-		$this->dao = \Corelib\Base\ServiceLocator\Locator::get('Corelib\Base\Database\Connection')->getDAO(
+		$this->dao = Locator::get('Corelib\Base\Database\Connection')->getDAO(
 			$this->_metadata->getShortName(),
 			$this->_metadata->getNamespaceName()
 		);
@@ -191,7 +193,7 @@ abstract class Object extends ObjectBase implements \Output {
 
 		if(substr($method, 0,3) == 'set'){
 			if($property = $this->_getPropertyFromMethod($method, 'set', 'Converter')){
-				if($args[0] instanceof \Converter){
+				if($args[0] instanceof Converter){
 					return $this->_setConverter($property, $args[0]);
 				} else {
 					throw new Exception('Call to '.get_class($this).'::'.$method.'() expected first argument to be instance of class \Converter');

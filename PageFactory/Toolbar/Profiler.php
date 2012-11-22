@@ -1,6 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory\Toolbar;
-use \Corelib\Base\Log\Logger;
+use Corelib\Base\Log\Logger;
 
 class Profiler extends Item {
 

@@ -1,5 +1,7 @@
 <?php
 namespace Corelib\Base\PageFactory\Events;
+use Corelib\Base\Event\Event;
+
 /**
  * Request end event.
  *
@@ -9,4 +11,4 @@ namespace Corelib\Base\PageFactory\Events;
  * @package Base
  * @subpackage EventHandler
  */
-class RequestEnd implements \Event { }
+class RequestEnd implements Event { }

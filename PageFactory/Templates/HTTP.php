@@ -1,6 +1,13 @@
 <?php
 namespace Corelib\Base\PageFactory\Templates;
 
+use Corelib\Base\PageFactory\Template,
+	Corelib\Base\ErrorHandler,
+	Corelib\Base\ServiceLocator\Locator,
+	Corelib\Base\Exception,
+	DOMDocument,
+	DOMXPath;
+
 if(!defined('BASE_URL')){
 	/**
 	 * Define Redirect Base URL.
@@ -11,7 +18,7 @@ if(!defined('BASE_URL')){
 }
 
 
-abstract class HTTP extends \Corelib\Base\PageFactory\Template {
+abstract class HTTP extends Template {
 
 	/**
 	 * Last modified timestamp header
@@ -439,11 +446,11 @@ abstract class HTTP extends \Corelib\Base\PageFactory\Template {
 			define('HTTP_STATUS_MESSAGE_FILE', 'share/messages.xml');
 		}
 
-		$session = \Session::getInstance();
+		$session = Locator::get('Corelib\Base\Session\Handler');
 		if($session->check(self::MSGID)){
-			$DOMMessages = new \DOMDocument('1.0','UTF-8');
+			$DOMMessages = new DOMDocument('1.0','UTF-8');
 			$DOMMessages->load(HTTP_STATUS_MESSAGE_FILE);
-			$XPath = new \DOMXPath($DOMMessages);
+			$XPath = new DOMXPath($DOMMessages);
 			$DOMMessage = $XPath->query('/messages/message[@id = '.$session->get(self::MSGID).']');
 			try {
 				if($DOMMessage->length > 1){
@@ -454,7 +461,7 @@ abstract class HTTP extends \Corelib\Base\PageFactory\Template {
 					$session->remove(self::MSGID);
 					return $DOMMessage->item(0);
 				}
-			} catch (BaseException $e){
+			} catch (Exception $e){
 				echo $e;
 				exit;
 			}
@@ -463,7 +470,7 @@ abstract class HTTP extends \Corelib\Base\PageFactory\Template {
 	}
 
 	public function prepare(){
-		$session = \Session::getInstance();
+		$session = Locator::get('Corelib\Base\Session\Handler');
 		if(!is_null($this->message_id)){
 			$session->set(self::MSGID, $this->message_id);
 		}
@@ -481,8 +488,10 @@ abstract class HTTP extends \Corelib\Base\PageFactory\Template {
 		}
 
 		if(is_null($this->location)){
-			if(!\ErrorHandler::getInstance()->hasErrors()){
-				header('HTTP/1.1 '.$this->status_code);
+			if(Locator::isLoaded('Corelib\Base\ErrorHandler')){
+				if(Locator::get('Corelib\Base\ErrorHandler')->hasErrors()){
+					header('HTTP/1.1 '.$this->status_code);
+				}
 			}
 
 			header('Content-Location: '. $this->request_uri);

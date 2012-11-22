@@ -1,8 +1,9 @@
 <?php
 namespace Corelib\Base\ObjectRelationalMapping\Metadata;
-use \Corelib\Base\ObjectRelationalMapping\Exception;
+use Corelib\Base\ObjectRelationalMapping\Exception;
+use Corelib\Base\PageFactory\Output;
 
-class Parser extends \ReflectionClass implements \Output {
+class Parser extends \ReflectionClass implements Output {
 
 	private $properties = array();
 	private $search = array();

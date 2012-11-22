@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\ObjectRelationalMapping;
+use Corelib\Base\Converters\Converter
 
 abstract class ObjectBase {
 
@@ -26,7 +27,7 @@ abstract class ObjectBase {
 		return $values;
 	}
 
-	protected function _setConverter($property, \Converter $converter){
+	protected function _setConverter($property, Converter $converter){
 		$this->converters[$property] = $converter;
 		return true;
 	}

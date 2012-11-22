@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory\Events;
+use Corelib\Base\Event\Event, Corelib\Base\PageFactory\Page;
 
 /**
  * Apple default settings.
@@ -13,7 +14,7 @@ namespace Corelib\Base\PageFactory\Events;
  * @subpackage PageFactory
  * @author Steffen Sørensen <ss@corelib.org>
  */
-class ApplySettings implements \Event {
+class ApplySettings implements Event {
 
 	//*****************************************************************//
 	//******* EventApplyDefaultSettings event class properties ********//
@@ -30,7 +31,7 @@ class ApplySettings implements \Event {
 	 * @param PageBase $page
 	 * @return void
 	 */
-	public function __construct(\Corelib\Base\PageFactory\Page $page){
+	public function __construct(Page $page){
 		$this->page = $page;
 	}
 

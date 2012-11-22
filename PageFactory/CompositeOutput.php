@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory;
+use Corelib\Base\Core\Composite, DOMElement;
 
 /**
  * Composite output abstract class.
@@ -9,7 +10,7 @@ namespace Corelib\Base\PageFactory;
  * @package Base
  * @since Version 5.0
  */
-abstract class CompositeOutput extends \Composite implements Output {
+abstract class CompositeOutput extends Composite implements Output {
 
 	/**
 	 * Add XML from components as child nodes.
@@ -18,7 +19,7 @@ abstract class CompositeOutput extends \Composite implements Output {
 	 * @param array $components
 	 * @return boolean true on success, else return false
 	 */
-	public function getComponentsXML(\DOMElement $DOMnode, array $components=null){
+	public function getComponentsXML(DOMElement $DOMnode, array $components=null){
 		if(is_null($components)){
 			$components = $this->components;
 		}
@@ -34,7 +35,7 @@ abstract class CompositeOutput extends \Composite implements Output {
 	 *
 	 * @see Composite::addComponent()
 	 */
-	public function addComponent(\Composite $component, $reference=null){
+	public function addComponent(Composite $component, $reference=null){
 		assert('$component instanceof CompositeOutput');
 		return parent::addComponent($component, $reference);
 	}

@@ -29,12 +29,12 @@
  * @see Corelib\Base\Database\Connection
  */
 namespace Corelib\Base\Database\MySQLi;
-
+use Corelib\Base\Database\Query as ConnectionQuery;
 
 /**
  * MySQLi Query.
  */
-class Query extends \Corelib\Base\Database\Query {
+class Query extends ConnectionQuery {
 
 	//*****************************************************************//
 	//**************** MySQLiQuery class properties *******************//

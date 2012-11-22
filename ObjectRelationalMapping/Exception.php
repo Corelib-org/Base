@@ -1,7 +1,7 @@
 <?php
 namespace Corelib\Base\ObjectRelationalMapping;
-
-class Exception extends \Exception {
+use Corelib\Base\Exception as BaseException;
+class Exception extends BaseException {
 
 }
 ?>

@@ -29,6 +29,8 @@
  * @see Corelib\Base\Database\Connection
  */
 namespace Corelib\Base\Database\MySQLi;
+use Corelib\Base\Database\Engine as ConnectionEngine;
+use Corelib\Base\Database\Exception, mysqli;
 
 //*****************************************************************//
 //************** MySQLi Database Engine constants *****************//
@@ -60,7 +62,7 @@ if(!defined('DATABASE_ORDER_ASC')){
  *
  * @api
  */
-class Engine implements \Corelib\Base\Database\Engine {
+class Engine implements ConnectionEngine {
 
 
 	//*****************************************************************//
@@ -157,7 +159,7 @@ class Engine implements \Corelib\Base\Database\Engine {
 	 */
 	public function query(\Corelib\Base\Database\Query $query){
 		if(!$query instanceof Query){
-			throw new \BaseException('Invalid Query Object, object must be instance of Corelib\Base\Database\MySQLi\Query');
+			throw new Exception('Invalid Query Object, object must be instance of Corelib\Base\Database\MySQLi\Query');
 		}
 		if(is_null($this->connection)){
 			$this->_connect();
@@ -287,7 +289,7 @@ class Engine implements \Corelib\Base\Database\Engine {
 	 * @internal
 	 */
 	private function _connect(){
-		$this->connection = @new \mysqli($this->hostname, $this->username, $this->password, $this->database);
+		$this->connection = @new mysqli($this->hostname, $this->username, $this->password, $this->database);
 		if($this->connection->connect_errno === 0){
 			$this->connection->query('SET NAMES '.$this->charset);
 			$this->connection->query('SET CHARACTER SET '.$this->charset);

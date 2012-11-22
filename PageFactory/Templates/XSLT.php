@@ -1,6 +1,8 @@
 <?php
 namespace Corelib\Base\PageFactory\Templates;
-use Corelib\Base\PageFactory\Output;
+use Corelib\Base\PageFactory\Output,
+	XSLTProcessor,
+	Corelib\Base\PageFactory\DOMDocument;
 
 class XSLT extends HTTP {
 
@@ -164,6 +166,28 @@ class XSLT extends HTTP {
 	}
 
 	/**
+	 * Add javascript.
+	 *
+	 * @param string $javascript uri to javascript file.
+	 * @return boolean true on success, else return false
+	 */
+	public function addJavaScript($javascript){
+		assert('is_string($javascript)');
+		return ($this->javascripts[] = $javascript);
+	}
+
+	/**
+	 * Add stylesheet.
+	 *
+	 * @param string $stylesheet uri to stylesheet file
+	 * @return boolean true on success, else return false
+	 */
+	public function addStyleSheet($stylesheet){
+		assert('is_string($stylesheet)');
+		$this->stylesheets[] = $stylesheet;
+	}
+
+	/**
 	 * Register PHP functions.
 	 *
 	 * Register a number of php functions which
@@ -181,7 +205,7 @@ class XSLT extends HTTP {
 
 	public function prepare(){
 		if(parent::prepare()){
-			$this->xml = new \PageFactoryDOMDocument($this->xml_version, $this->xml_encoding);
+			$this->xml = new DOMDocument($this->xml_version, $this->xml_encoding);
 			$this->xml->preserveWhiteSpace = false;
 
 			$page = $this->xml->appendChild(new \DOMElement('page'));
@@ -217,7 +241,7 @@ class XSLT extends HTTP {
 	}
 
 	public function render(){
-		$xsl = new \DOMDocument($this->xml_version, $this->xml_encoding);
+		$xsl = new DOMDocument($this->xml_version, $this->xml_encoding);
 		$xsl->preserveWhiteSpace = false;
 		$xsl->load($this->xsl_core);
 
@@ -226,7 +250,7 @@ class XSLT extends HTTP {
 			$XSLinclude->setAttribute('href', $val);
 		}
 
-		$proc = new \XsltProcessor();
+		$proc = new XsltProcessor();
 		$proc->importStylesheet($xsl);
 		// $proc->setProfiling('var/db/profile.txt');
  		$proc->registerPHPFunctions($this->registered_php_functions);

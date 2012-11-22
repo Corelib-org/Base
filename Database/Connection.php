@@ -29,6 +29,7 @@
  * @see Corelib\Base\Database\Connection
  */
 namespace Corelib\Base\Database;
+use Corelib\Base\Log\Logger, Corelib\Base\ServiceLocator\Service;
 
 /**
  * Database Connection proxy class.
@@ -41,7 +42,7 @@ namespace Corelib\Base\Database;
  * @see Database
  * @api
  */
-class Connection implements \Corelib\Base\ServiceLocator\Service {
+class Connection implements Service {
 
 	/**
 	 * Master database engine instance.
@@ -170,7 +171,7 @@ class Connection implements \Corelib\Base\ServiceLocator\Service {
 	 */
 	private function _runQuery(Engine $instance, Query $query, $shard=null){
 		if(BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){
-			\Logger::info(get_class($instance).': '.$query->getQuery(), 1);
+			Logger::info(get_class($instance).': '.$query->getQuery(), 1);
 			$instance->query($query);
 			/*if(DATABASE_SHOW_QUERY_LOG){
 				$start = microtime(true);

@@ -5,6 +5,9 @@ use Corelib\Base\Routing\Registry, Corelib\Base\Routing\ArrayRegistry;
 use Corelib\Base\Routing\Route;
 use Corelib\Base\ServiceLocator\Locator;
 use Corelib\Base\PageFactory\Toolbar\Profiler;
+use Corelib\Base\ErrorHandler;
+use Corelib\Base\Log\Logger;
+
 
 class Bootstrap {
 
@@ -23,25 +26,25 @@ class Bootstrap {
 	}
 
 	public static function run(Registry $registry){
+		$event_handler = Locator::get('Corelib\Base\Event\Handler');
 		if(!defined('BOOTSTRAP_DEVELOPER_TOOLBAR') || BOOTSTRAP_DEVELOPER_TOOLBAR == true){
 			$toolbar = Locator::get('Corelib\Base\PageFactory\Toolbar\Toolbar', true);
 			$toolbar->addItem(new Profiler());
 			if(!defined('BOOTSTRAP_DEVELOPER_TOOLBAR') || BOOTSTRAP_DEVELOPER_TOOLBAR == true){
-				\EventHandler::getInstance()->register(new Toolbar\Render($toolbar), 'Corelib\Base\PageFactory\Events\PageRender');
+				$event_handler->register(new Toolbar\Render($toolbar), 'Corelib\Base\PageFactory\Events\PageRender');
 			}
 		}
 
-		$eventHandler = \EventHandler::getInstance();
-		$eventHandler->trigger(new Events\RequestStart());
+		$event_handler->trigger(new Events\RequestStart());
 
 		$bootstrap = new self($registry);
 		echo $bootstrap->render();
 
-		$eventHandler->trigger(new Events\RequestEnd());
+		$event_handler->trigger(new Events\RequestEnd());
 	}
 
 	public function render(){
-		if(Locator::isLoaded('\Corelib\Base\Cache\Store')){
+		if(Locator::isLoaded('Corelib\Base\Cache\Store')){
 			$cache = Locator::get('\Corelib\Base\Cache\Store');
 			$cache_key = __CLASS__.':'.$_SERVER['SERVER_NAME'].':'.$_SERVER['REQUEST_URI'];
 			if($cache->has($cache_key)){
@@ -67,12 +70,19 @@ class Bootstrap {
 
 			$result = call_user_func_array(array($object, $method), $route->getCallbackArgs());
 
+
+
 			if($object->prepare() && $result !== false){
+				Logger::info('Template prepared');
 				$page = $object->render();
+				Logger::info('Template rendered');
 			}
 		}
-		if(\Errorhandler::getInstance()->hasErrors()){
-			$page = \Errorhandler::getInstance()->draw();
+		if(Locator::isLoaded('Corelib\Base\ErrorHandler')){
+			$error_handler = Locator::get('Corelib\Base\ErrorHandler');
+		}
+		if(isset($error_handler) && $error_handler->hasErrors()){
+			$page = $error_handler->draw();
 		} else {
 			// Check if $page still is unassigned, if not we assume that no output will be given
 			if(isset($page)){
@@ -86,7 +96,7 @@ class Bootstrap {
 		if(!empty($page)){
 			// If page has content trigger a PageRender Event allowing post processing of the page
 			// $page is passed by reference, and should not be returned.
-			\EventHandler::getInstance()->trigger(new Events\PageRender($page));
+			Locator::get('Corelib\Base\Event\Handler')->trigger(new Events\PageRender($page));
 		}
 		return $page;
 

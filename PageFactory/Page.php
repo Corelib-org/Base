@@ -1,6 +1,6 @@
 <?php
 namespace Corelib\Base\PageFactory;
-use Corelib\Base\PageFactory\Output;
+use Corelib\Base\PageFactory\Output, Corelib\Base\ServiceLocator\Locator;
 
 class Page {
 
@@ -16,7 +16,7 @@ class Page {
 
 		if($this->template->prepare()){
 
-			\EventHandler::getInstance()->trigger(new Events\ApplySettings($this));
+			Locator::get('Corelib\Base\Event\Handler')->trigger(new Events\ApplySettings($this));
 
 			while(list(,$val) = each($this->content)){
 				$this->template->addContent($val);

@@ -13,7 +13,7 @@ namespace Corelib\Base\Converters;
  * @package Base
  * @subpackage Converters
  */
-class ConverterChain implements Converter {
+class Chain implements Converter {
 
 
 	//*****************************************************************//

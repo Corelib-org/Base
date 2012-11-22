@@ -1,8 +1,8 @@
 <?php
 
-namespace Corelib\Base\Converters\Date;
+namespace Corelib\Base\Converters\String;
 
-use \Corelib\Base\Converters\Converter;
+use Corelib\Base\Converters\Converter;
 
 /**
  * Convert Newlines to XHTML line breaks.

@@ -2,7 +2,7 @@
 
 namespace Corelib\Base\Converters\Date;
 
-use \Corelib\Base\Converters\Converter;
+use Corelib\Base\Converters\Converter;
 
 
 /**

@@ -1,7 +1,7 @@
 <?php
 namespace Corelib\Base\Converters\Unit;
 
-use \Corelib\Base\Converters\Converter;
+use Corelib\Base\Converters\Converter;
 
 /**
  * Convert file size to human readable format.

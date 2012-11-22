@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\Routing;
+use Corelib\Base\Log\Logger, stdClass;
 
 class Registry {
 
@@ -7,12 +8,10 @@ class Registry {
 	private $resolvers = array();
 	private $error_prefix = '/errors/';
 
-	public function __construct(){
-
-	}
+	public function __construct(){ }
 
 	public function addRoute(Route $route){
-		$raw_route = new \stdClass;
+		$raw_route = new stdClass;
 
 		if($url = $route->getUrl()){
 			$raw_route->url = $url;
@@ -72,6 +71,7 @@ class Registry {
 
 	public function lookup($uri){
 		// Look for a direct match first
+		Logger::info('Looking up uri: '.$uri);
 		if(isset($this->routes[$uri]['route'])){
 			return new Route($this->routes[$uri]['route']);
 		}

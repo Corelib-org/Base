@@ -16,7 +16,4 @@ class Regex extends Resolver {
 		return $method;
 	}
 }
-
-
-
 ?>

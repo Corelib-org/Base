@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\Routing;
+use Corelib\Base\Log\Logger, stdClass;
 
 class ArrayRegistry extends Registry {
 	private $pages = array();
@@ -8,7 +9,7 @@ class ArrayRegistry extends Registry {
 		parent::__construct();
 
 		foreach($pages as $key => $val){
-			$obj = new \stdClass();
+			$obj = new stdClass();
 
 			if(is_string($val)){
 				$page = $val;

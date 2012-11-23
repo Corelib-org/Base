@@ -2,7 +2,9 @@
 namespace Corelib\Base\Cache;
 
 
-abstract class Engine {
-
+interface Engine {
+	public function has($key);
+	public function store($key, $value, $lifetime=null);
+	public function getLocation($key);
 }
 ?>

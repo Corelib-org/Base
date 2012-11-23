@@ -9,9 +9,9 @@ class Store implements Service {
 		$this->engine = $engine;
 	}
 
-	public function store($key, $value, $lifetime=null){
+	public function store($key, $value, $lifetime=36000){
 		if(!is_null($this->engine)){
-			return $this->engine->store($key, $value, $lifetime);
+			return $this->engine->store($this->_hash($key), $value, $lifetime);
 		}
 		return true;
 	}
@@ -25,7 +25,7 @@ class Store implements Service {
 
 	public function has($key){
 		if(!is_null($this->engine)){
-			return $this->engine->has($key);
+			return $this->engine->has($this->_hash($key));
 		}
 		return false;
 	}
@@ -35,6 +35,17 @@ class Store implements Service {
 			return $this->engine->purge($key);
 		}
 		return true;
+	}
+
+	public function getLocation($key){
+		if(!is_null($this->engine)){
+			return $this->engine->getLocation($this->_hash($key));
+		}
+		return true;
+	}
+
+	private function _hash($key){
+		return md5($key);
 	}
 }
 ?>

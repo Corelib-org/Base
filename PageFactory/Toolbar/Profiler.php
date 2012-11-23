@@ -35,6 +35,7 @@ class Profiler extends Item {
 	public function __construct(){
 		$this->start = microtime(true);
 		Logger::setEngine(new ProfilerLogger($this));
+		Logger::info('Profiler initiated');
 	}
 
 

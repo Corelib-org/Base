@@ -7,6 +7,7 @@ use Corelib\Base\ServiceLocator\Locator;
 use Corelib\Base\PageFactory\Toolbar\Profiler;
 use Corelib\Base\ErrorHandler;
 use Corelib\Base\Log\Logger;
+use Corelib\Base\Core\Exception;
 
 
 class Bootstrap {
@@ -45,7 +46,7 @@ class Bootstrap {
 
 	public function render(){
 		if(Locator::isLoaded('Corelib\Base\Cache\Store')){
-			$cache = Locator::get('\Corelib\Base\Cache\Store');
+			$cache = Locator::get('Corelib\Base\Cache\Store');
 			$cache_key = __CLASS__.':'.$_SERVER['SERVER_NAME'].':'.$_SERVER['REQUEST_URI'];
 			if($cache->has($cache_key)){
 				$page = $cache->get($cache_key);
@@ -58,7 +59,7 @@ class Bootstrap {
 			$manager = \Manager::getInstance();
 			$manager->init();
 			$manager->setupPageRegistry($pages);
-			$this->registry->addRegistry(new ArrayRegistry($pages));
+			$this->registry->addRegistry(new ArrayRegistry(CURRENT_WORKING_DIR.'Manager::setupPageRegistry', $pages));
 		}
 
 
@@ -69,8 +70,6 @@ class Bootstrap {
 			$method = $route->getCallbackMethod();
 
 			$result = call_user_func_array(array($object, $method), $route->getCallbackArgs());
-
-
 
 			if($object->prepare() && $result !== false){
 				Logger::info('Template prepared');
@@ -109,7 +108,7 @@ class Bootstrap {
 		} else if($route = $this->registry->lookup('/errors/404/')){
 			return $route;
 		} else {
-			throw new \BaseException('404 Error unspecified!', E_USER_ERROR);
+			throw new Exception('404 Error unspecified!', E_USER_ERROR);
 		}
 	}
 

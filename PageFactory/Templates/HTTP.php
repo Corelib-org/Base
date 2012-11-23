@@ -4,7 +4,7 @@ namespace Corelib\Base\PageFactory\Templates;
 use Corelib\Base\PageFactory\Template,
 	Corelib\Base\ErrorHandler,
 	Corelib\Base\ServiceLocator\Locator,
-	Corelib\Base\Exception,
+	Corelib\Base\Core\Exception,
 	DOMDocument,
 	DOMXPath;
 

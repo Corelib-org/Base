@@ -1,6 +1,6 @@
 <?php
 namespace Corelib\Base\ObjectRelationalMapping;
-use Corelib\Base\Converters\Converter
+use Corelib\Base\Converters\Converter;
 
 abstract class ObjectBase {
 

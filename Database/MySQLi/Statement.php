@@ -145,7 +145,7 @@ class Statement extends Query {
 		} else if(is_float($val)){
 			$this->bind['types'][$key] = 'd';
 		} else if(is_bool($val)){
-			$this->bind['param'][$key] = MySQLiTools::parseBooleanValue($val, false);
+			$this->bind['param'][$key] = \MySQLiTools::parseBooleanValue($val, false);
 			$this->bind['types'][$key] = 's';
 		} else {
 			$this->bind['types'][$key] = 's';

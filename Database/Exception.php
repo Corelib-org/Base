@@ -29,7 +29,7 @@
  * @see Corelib\Base\Database\Connection
  */
 namespace Corelib\Base\Database;
-use Corelib\Base\Exception as BaseException;
+use Corelib\Base\Core\Exception as BaseException;
 
 /**
  * Database Engine exception.

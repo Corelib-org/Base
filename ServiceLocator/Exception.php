@@ -29,7 +29,7 @@
  * @see Corelib\Base\ServiceLocator\Locator
  */
 namespace Corelib\Base\ServiceLocator;
-use Corelib\Base\Exception as BaseException;
+use Corelib\Base\Core\Exception as BaseException;
 
 /**
  * Service Locator exception.

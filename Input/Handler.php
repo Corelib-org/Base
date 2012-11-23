@@ -133,7 +133,7 @@ class Handler implements Service,Output,Autoloadable {
 	 * @see InputHandler::unsetPost()
 	 * @see InputHandler::validateGet()
 	 */
-	public function validatePost($item, InputValidator $mode){
+	public function validatePost($item, Validator $mode){
 		if(isset($this->post[$item])){
 			if($valid = $this->_validate($this->post[$item], $mode)){
 				$this->post_valid[$item] = &$this->post[$item];
@@ -661,7 +661,7 @@ class Handler implements Service,Output,Autoloadable {
 	 * @return boolean true if valid, else return false
 	 * @internal
 	 */
-	private function _validate($content, InputValidator $mode){
+	private function _validate($content, Validator $mode){
 		return $mode->validate($content);
 	}
 }

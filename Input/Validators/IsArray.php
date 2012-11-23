@@ -36,7 +36,7 @@ class IsArray implements Validator {
 	 * @param InputValidator $validator optional validator
 	 * @return void
 	 */
-	public function __construct(InputValidator $validator=null){
+	public function __construct(Validator $validator=null){
 		$this->validator = $validator;
 	}
 
@@ -47,7 +47,7 @@ class IsArray implements Validator {
 	 * @return boolean true i content is valid, else return false
 	 */
 	public function validate($content){
-		if(!$this->validator instanceof InputValidator && is_array($content)){
+		if(!$this->validator instanceof Validator && is_array($content)){
 			return true;
 		} else {
 			foreach ($content as $k => $v) {

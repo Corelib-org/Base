@@ -40,38 +40,28 @@ class Route {
 	private $callback_args = array();
 	private $callback_condition = false;
 	private $callback_condition_args = array();
+	private $cache = false;
 
-	public function __construct(\stdClass $options, array $macros=array()){
-		 $this->prefix = (isset($options->prefix) ? $options->prefix : false);
-		 $this->url = (isset($options->url) ? $options->url : false);
-		 $this->include = (isset($options->include) ? $options->include : false);
-		 $this->expression = (isset($options->expression) ? $options->expression : false);
-		 $this->callback_class = (isset($options->callback_class) ? $options->callback_class : 'WebPage');
-		 $this->callback_method = (isset($options->callback_method) ? $options->callback_method : 'build');
-		 $this->callback_args = (isset($options->callback_args) ? $options->callback_args : array());
-		 $this->callback_condition = (isset($options->callback_condition) ? $options->callback_condition : false);
-		 $this->callback_condition_args = (isset($options->callback_condition_args) ? $options->callback_condition_args : array());
-
-		if(sizeof($macros) > 0){
-			foreach($macros as $key => $val){
-				$this->include = str_replace('${'.$key.'}', $val, $this->include);
-				$this->callback_class = str_replace('${'.$key.'}', $val, $this->callback_class);
-				$this->callback_method = str_replace('${'.$key.'}', $val, $this->callback_method);
-				$this->callback_condition = str_replace('${'.$key.'}', $val, $this->callback_condition);
-				foreach($this->callback_condition_args as &$arg){
-					$arg = str_replace('${'.$key.'}', $val, $arg);
-				}
-				foreach($this->callback_args as &$arg){
-					$arg = str_replace('${'.$key.'}', $val, $arg);
-				}
-			}
+	public function __construct($options){
+		if(!is_array($options)){
+			throw new \Corelib\Base\Core\Exception;
 		}
+
+		$this->prefix = (isset($options['prefix']) ? $options['prefix'] : false);
+		$this->url = (isset($options['url']) ? $options['url'] : false);
+		$this->include = (isset($options['include']) ? $options['include'] : false);
+		$this->expression = (isset($options['expression']) ? $options['expression'] : false);
+		$this->callback_class = (isset($options['callback_class']) ? $options['callback_class'] : 'WebPage');
+		$this->callback_method = (isset($options['callback_method']) ? $options['callback_method'] : 'build');
+		$this->callback_args = (isset($options['callback_args']) ? $options['callback_args'] : array());
+		$this->callback_condition = (isset($options['callback_condition']) ? $options['callback_condition'] : false);
+		$this->callback_condition_args = (isset($options['callback_condition_args']) ? $options['callback_condition_args'] : array());
+		$this->cache = (isset($options['cache']) ? $options['cache'] : false);
 	}
 
 	public function getPrefix(){
 		return $this->prefix;
 	}
-
 	public function getUrl(){
 		return $this->url;
 	}
@@ -95,5 +85,29 @@ class Route {
 	}
 	public function getCallbackConditionArgs(){
 		return $this->callback_condition_args;
+	}
+	public function getCache(){
+		return $this->cache;
+	}
+
+	public function parseMacros(array $macros){
+		if(sizeof($macros) > 0){
+			foreach($macros as $key => $val){
+				$this->include = str_replace('${'.$key.'}', $val, $this->include);
+				$this->callback_class = str_replace('${'.$key.'}', $val, $this->callback_class);
+				$this->callback_method = str_replace('${'.$key.'}', $val, $this->callback_method);
+				$this->callback_condition = str_replace('${'.$key.'}', $val, $this->callback_condition);
+				foreach($this->callback_condition_args as &$arg){
+					$arg = str_replace('${'.$key.'}', $val, $arg);
+				}
+				foreach($this->callback_args as &$arg){
+					$arg = str_replace('${'.$key.'}', $val, $arg);
+				}
+			}
+		}
+	}
+
+	public static function __set_state($options){
+		return new Route($options);
 	}
 }

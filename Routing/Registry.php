@@ -1,6 +1,6 @@
 <?php
 namespace Corelib\Base\Routing;
-use Corelib\Base\Log\Logger, stdClass;
+use Corelib\Base\Log\Logger, stdClass, Corelib\Base\ServiceLocator\Locator;
 
 class Registry {
 
@@ -8,57 +8,56 @@ class Registry {
 	private $resolvers = array();
 	private $error_prefix = '/errors/';
 
-	public function __construct(){ }
+	private $cache_key = null;
+	private $cache_update = false;
+	private $cached = false;
+	/**
+	 * @var \Corelib\Base\Cache\Store
+	 */
+	private $cache_store = null;
+
+	public function __construct($cache_key){
+		$this->cache_key = get_class($this).':'.$cache_key;
+
+		if(Locator::isLoaded('Corelib\Base\Cache\Store')){
+			$this->cache_store = Locator::get('Corelib\Base\Cache\Store');
+			if(!$this->cache_store->has($this->cache_key)){
+				$this->cache_update = true;
+			} else {
+				$location = $this->cache_store->getLocation($this->cache_key);
+				include($location);
+				$this->cached = true;
+			}
+		}
+	}
+
+	public function isCached(){
+		return $this->cached;
+	}
 
 	public function addRoute(Route $route){
-		$raw_route = new stdClass;
-
-		if($url = $route->getUrl()){
-			$raw_route->url = $url;
-		}
-		if($expression = $route->getExpression()){
-			$raw_route->expression = $expression;
-		}
-		if($callback_class = $route->getCallbackClass()){
-			$raw_route->callback_class = $callback_class;
-		}
-		if($callback_method = $route->getCallbackMethod()){
-			$raw_route->callback_method = $callback_method;
-		}
-		if($callback_args = $route->getCallbackArgs()){
-			$raw_route->callback_args = $callback_args;
-		}
-		if($callback_condition = $route->getCallbackCondition()){
-			$raw_route->callback_condition = $callback_condition;
-		}
-		if($callback_condition_args = $route->getCallbackConditionArgs()){
-			$raw_route->callback_condition_args = $callback_condition_args;
-		}
-		if($include = $route->getInclude()){
-			$raw_route->include = $include;
-		}
-
 		if($prefix = $route->getPrefix()){
-			$raw_route->prefix = $prefix;
-			if(isset($raw_route->url)){
-				$this->routes[$prefix]['route'] = $raw_route;
+			if($route->getURL()){
+				$this->routes[$prefix]['route'] = $route;
 			} else {
-				$this->routes[$prefix]['patterns'][] = $raw_route;
+				$this->routes[$prefix]['patterns'][] = $route;
 			}
 		} else {
-			$this->routes['#patterns'][] = $raw_route;
+			$this->routes['#patterns'][] = $route;
 		}
 	}
 
 	public function addRegistry(Registry $registry){
 		while(list($key,$data) = each($registry->routes)){
-			if($data instanceof stdClass){
+
+
+			if($data instanceof Route){
 				$this->addRoute($data);
 			} else if(isset($data['route'])){
-				$this->addRoute(new Route($data['route']));
+				$this->addRoute($data['route']);
 			} else if(is_array($data)){
 				while(list(,$pattern) = each($data)){
-					$this->addRoute(new Route($pattern));
+					$this->addRoute($pattern);
 				}
 			}
 			if(isset($data['patterns']) && is_array($data['patterns'])){
@@ -73,7 +72,7 @@ class Registry {
 		// Look for a direct match first
 		Logger::info('Looking up uri: '.$uri);
 		if(isset($this->routes[$uri]['route'])){
-			return new Route($this->routes[$uri]['route']);
+			return $this->routes[$uri]['route'];
 		}
 		if(substr($uri, -1)){
 			$uri_parts = substr($uri, 0, -1);
@@ -91,8 +90,6 @@ class Registry {
 			array_pop($uri_parts);
 		}
 
-
-
 		if(isset($this->routes['#patterns']) && is_array($this->routes['#patterns'])){
 			if($route = $this->_lookup($uri, $this->routes['#patterns'])){
 				return $route;
@@ -103,12 +100,22 @@ class Registry {
 
 	private function _lookup($uri, array &$lookup){
 		foreach($lookup as $key => $val){
-			if(preg_match($val->expression, $uri, $matches)){
-				$val->url = $uri;
-				return new Route($val, $matches);
+			if(preg_match($val->getExpression(), $uri, $matches)){
+				$val->parseMacros($matches);
+				return $val;
 			}
 		}
 		return false;
+	}
+
+	public function __destruct(){
+		if($this->cache_update){
+			if(Locator::isLoaded('Corelib\Base\Cache\Store')){
+				$cache = Locator::get('Corelib\Base\Cache\Store');
+				$cache_key = $this->cache_key;
+				$cache->store($cache_key, '<?php $this->routes = '.var_export($this->routes, true).'; ?>');
+			}
+		}
 	}
 }
 ?>

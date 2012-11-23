@@ -5,11 +5,16 @@ use Corelib\Base\Log\Logger, stdClass;
 class ArrayRegistry extends Registry {
 	private $pages = array();
 
-	public function __construct(array &$pages){
-		parent::__construct();
+	public function __construct($cache_key, array &$pages=array()){
+		parent::__construct($cache_key);
+		if(!$this->isCached()){
+			$this->load($pages);
+		}
+	}
 
+	protected function load(array &$pages=array()){
 		foreach($pages as $key => $val){
-			$obj = new stdClass();
+			$obj = Array();
 
 			if(is_string($val)){
 				$page = $val;
@@ -18,11 +23,11 @@ class ArrayRegistry extends Registry {
 			}
 
 			if(is_string($key)){
-				$obj->url = $key;
-				$obj->prefix = $key;
+				$obj['url'] = $key;
+				$obj['prefix'] = $key;
 			} else {
 				if(isset($val['prefix'])){
-					$obj->prefix = $val['prefix'];
+					$obj['prefix'] = $val['prefix'];
 				}
 			}
 
@@ -49,25 +54,24 @@ class ArrayRegistry extends Registry {
 						$val['args'] = preg_replace('/(\\\([0-9]+))/', '${\\2}', $val['args']);
 						$val['args'] = preg_split('/,\s*/', $val['args']);
 					}
-					$obj->expression = $resolver->makeExpression($val['expr']);
-					$obj->callback_class = $resolver->makeClassName($val['class']);
-					$obj->callback_method = $resolver->makeMethodName($val['method']);
-					$obj->callback_args = $val['args'];
+					$obj['expression'] = $resolver->makeExpression($val['expr']);
+					$obj['callback_class'] = $resolver->makeClassName($val['class']);
+					$obj['callback_method'] = $resolver->makeMethodName($val['method']);
+					$obj['callback_args'] = $val['args'];
 				} else {
-					$obj->callback_class = 'WebPage';
-					$obj->callback_method = $val['exec'];
+					$obj['callback_class'] = 'WebPage';
+					$obj['callback_method'] = $val['exec'];
 				}
 			}
 			if(isset($val['page'])){
-				$obj->include = $val['page'];
+				$obj['include'] = $val['page'];
 			}
 			if(isset($val['precondition'])){
-				$obj->callback_condition = 'eval';
-				$obj->callback_condition_args = array($val['precondition']);
+				$obj['callback_condition'] = 'eval';
+				$obj['callback_condition_args'] = array($val['precondition']);
 			}
 
 			$this->addRoute(new Route($obj));
-
 		}
 	}
 }

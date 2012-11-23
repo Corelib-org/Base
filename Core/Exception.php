@@ -1,6 +1,8 @@
 <?php
 namespace Corelib\Base\Core;
 
+use Serializable, Exception as NativeException;
+
 /**
  * Base exception class.
  *
@@ -8,7 +10,7 @@ namespace Corelib\Base\Core;
  * @package Base
  * @subpackage ErrorHandler
  */
-class Exception extends \Exception implements \Serializable {
+class Exception extends NativeException implements Serializable {
 
 	//*****************************************************************//
 	//***************** BaseException class methods *******************//

@@ -260,3 +260,38 @@ interface Singleton {
 	 */
 	public static function getInstance();
 }
+
+/**
+ * @deprecated
+ */
+class InputValidatorModelExists extends \Corelib\Base\Input\Validators\ModelExists { }
+
+/**
+ * @deprecated
+ */
+class InputValidatorNotEmpty extends \Corelib\Base\Input\Validators\NotEmpty { }
+
+/**
+ * @deprecated
+ */
+class InputValidatorInteger extends \Corelib\Base\Input\Validators\IsInteger { }
+
+/**
+ * @deprecated
+ */
+class InputValidatorEquals extends \Corelib\Base\Input\Validators\Equals { }
+
+/**
+ * @deprecatd
+ */
+class InputValidatorIsSet extends \Corelib\Base\Input\Validators\IsDefined { }
+
+/**
+ * @deprecated
+ */
+class InputValidatorEmpty extends \Corelib\Base\Input\Validators\IsEmpty { }
+
+/**
+ * @deprecated
+ */
+class InputValidatorIsFloat extends \Corelib\Base\Input\Validators\IsFloat { }

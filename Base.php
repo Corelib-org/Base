@@ -22,7 +22,7 @@ if(!defined('CORELIB')){
 	 *
 	 * 	This constanst holds the path to the corelib
 	 */
-	define('CORELIB', realpath(dirname(__FILE__).'/../'));
+	define('CORELIB', realpath(dirname(__FILE__).'/../').'/');
 }
 
 if(!defined('BASE_RUNLEVEL')){

@@ -131,7 +131,7 @@ class Bootstrap {
 		if(isset($_SERVER['SCRIPT_URL'])){
 			$this->url = $_SERVER['SCRIPT_URL'];
  		} else {
-			throw new \BaseException('$_SERVER[\'SCRIPT_URL\'] is not set, this is probably a bug in corelib, please report it along with a dump of you $_SERVER variable and the request url.', E_USER_ERROR);
+			throw new Exception('$_SERVER[\'SCRIPT_URL\'] is not set, this is probably a bug in corelib, please report it along with a dump of you $_SERVER variable and the request url.', E_USER_ERROR);
 		}
 
 		/*

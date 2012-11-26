@@ -98,6 +98,13 @@ abstract class Engine {
 	abstract public function getID();
 
 	/**
+	 * Regenerate session ID.
+	 *
+	 * @return string
+	 */
+	abstract public function regenerateID();
+
+	/**
 	 * Initiate session.
 	 *
 	 * @param string $domain

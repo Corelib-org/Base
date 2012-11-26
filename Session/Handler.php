@@ -245,6 +245,14 @@ class Handler implements Service,Autoloadable,Output {
 		}
 	}
 
+	/**
+	 * Regenerate session ID.
+	 *
+	 * @return boolean true on success, else return false.
+	 */
+	public function regenerateID(){
+		return $this->engine->regenerateID();
+	}
 
 	/**
 	 * Set output converter for session variable.

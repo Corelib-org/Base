@@ -66,6 +66,18 @@ class Bootstrap {
 		// If $page is not assigned, we asssume that the page was not cached and we will recreate it.
 		if(!isset($page)){
 			$route = $this->getRoute($this->url);
+			if($precondition = $route->getCallbackCondition()){
+				if($precondition == 'eval'){
+					$args = $route->getCallbackConditionArgs();
+					$result = eval('return '.$args[0].';');
+				} else {
+					throw new Exception('Precondition engine is not implemented yet');
+				}
+				if(!$result){
+					$route = $this->getRoute('/403/');
+				}
+			}
+
 			$object = $this->getPage($route);
 			$method = $route->getCallbackMethod();
 

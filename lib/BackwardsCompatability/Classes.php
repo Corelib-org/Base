@@ -295,3 +295,13 @@ class InputValidatorEmpty extends \Corelib\Base\Input\Validators\IsEmpty { }
  * @deprecated
  */
 class InputValidatorIsFloat extends \Corelib\Base\Input\Validators\IsFloat { }
+
+/**
+ * @deprecated
+ */
+class Session {
+	private function __construct() { }
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get('Corelib\Base\Session\Handler');
+	}
+}

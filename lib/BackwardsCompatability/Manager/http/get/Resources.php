@@ -86,6 +86,7 @@ class WebPage extends PageBase {
 					break;
 			}
 			$this->_sendFile($resource);
+			exit;
 		} else {
 			exit('404');
 		}

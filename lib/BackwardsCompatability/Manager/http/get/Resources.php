@@ -85,6 +85,7 @@ class WebPage extends PageBase {
 
 					break;
 			}
+			$this->template->prepare();
 			$this->_sendFile($resource);
 			exit;
 		} else {

@@ -1,6 +1,8 @@
 <?php
 namespace Corelib\Base\Core;
 
+use Corelib\Base\Tools\UUID;
+
 /**
  * Composite abstract class.
  *
@@ -72,7 +74,7 @@ abstract class Composite {
 	public function addComponent(Composite $component, $reference=null){
 		if($composite = $this->getComposite()){
 			if(is_null($reference)){
-				$reference = RFC4122::generate();
+				$reference = UUID::generate();
 			}
 			$component->_setParent($composite);
 			$this->components[$reference] = $component;

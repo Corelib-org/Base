@@ -36,7 +36,7 @@ abstract class CompositeOutput extends Composite implements Output {
 	 * @see Composite::addComponent()
 	 */
 	public function addComponent(Composite $component, $reference=null){
-		assert('$component instanceof CompositeOutput');
+		assert('$component instanceof \Corelib\Base\PageFactory\CompositeOutput');
 		return parent::addComponent($component, $reference);
 	}
 

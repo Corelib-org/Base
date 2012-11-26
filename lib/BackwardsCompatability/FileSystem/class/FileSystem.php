@@ -246,6 +246,7 @@ class PageFactoryFileSystemTemplate extends \Corelib\Base\PageFactory\Templates\
 			}
 		}
 		parent::prepare();
+		return false;
 	}
 
 	public function render(){

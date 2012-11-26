@@ -94,6 +94,7 @@ class WebPage extends PageBase {
 			$template->cleanup();
 			echo '<html><head><title>404 File not found</title></head><body><h1>File Not Found</h1><p>The requested URL '.$_SERVER['REQUEST_URI'].' was not found on this server.</p><hr><i><a href="http://www.corelib.org/">Corelib</a></i></body></html>';
 		}
+		exit;
 	}
 }
 

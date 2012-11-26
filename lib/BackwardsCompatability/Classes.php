@@ -138,9 +138,9 @@ abstract class PageBase extends \Corelib\Base\PageFactory\Page { }
 class PageFactory {
 	public static function bootstrap($return=false){
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Base\Routing\PHP('../zhosting/etc/post.php'));
+			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Base\Routing\PHP('etc/post.php'));
 		} else {
-			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Base\Routing\PHP('../zhosting/etc/get.php'));
+			\Corelib\Base\PageFactory\Bootstrap::run(new \Corelib\Base\Routing\PHP('etc/get.php'));
 		}
 		return true;
 	}

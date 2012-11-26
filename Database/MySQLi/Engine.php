@@ -295,7 +295,7 @@ class Engine implements ConnectionEngine {
 			$this->connection->query('SET CHARACTER SET '.$this->charset);
 			return true;
 		} else {
-			throw new BaseException($this->connection->connect_error, E_USER_ERROR);
+			throw new Exception($this->connection->connect_error, E_USER_ERROR);
 		}
 	}
 }

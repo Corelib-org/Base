@@ -93,6 +93,14 @@ abstract class HTTP extends Template {
 	private $message_id = null;
 
 	/**
+	 * Message content.
+	 *
+	 * @var string message content.
+	 * @internal
+	 */
+	private $message_content = null;
+
+	/**
 	 * Script URL.
 	 *
 	 * @var string script url
@@ -188,6 +196,14 @@ abstract class HTTP extends Template {
 	 * @internal
 	 */
 	const MSGID = 'MSGID';
+
+	/**
+	 * Session name for message ID.
+	 *
+	 * @var string
+	 * @internal
+	 */
+	const MSGID_CONTENT = 'MSGID_CONTENT';
 
 	/**
 	 * Session name for referer.
@@ -341,8 +357,9 @@ abstract class HTTP extends Template {
 	 * @param integer $id message id
 	 * @return boolean true on success, else return false
 	 */
-	public function setMessageID($id){
+	public function setMessageID($id, $content=null){
 		assert('is_integer($id)');
+		$this->message_content = $content;
 		return ($this->message_id = $id);
 	}
 
@@ -459,6 +476,10 @@ abstract class HTTP extends Template {
 					// throw new BaseException('Non-excisting message('.$session->get(self::MSGID).'), in message file '.HTTP_STATUS_MESSAGE_FILE);
 				} else {
 					$session->remove(self::MSGID);
+					if($session->check(self::MSGID_CONTENT)){
+						$DOMMessage->item(0)->appendChild($DOMMessage->item(0)->ownerDocument->createElement('metadata', $session->get(self::MSGID_CONTENT)));
+						$session->remove(self::MSGID_CONTENT);
+					}
 					return $DOMMessage->item(0);
 				}
 			} catch (Exception $e){
@@ -474,6 +495,9 @@ abstract class HTTP extends Template {
 		if(!is_null($this->message_id)){
 			$session->set(self::MSGID, $this->message_id);
 		}
+		if(!is_null($this->message_content)){
+			$session->set(self::MSGID_CONTENT, $this->message_content);
+		}
 		if($this->set_referer){
 			$session->set(self::REFERER_VAR, $this->request_uri);
 		}
@@ -486,14 +510,12 @@ abstract class HTTP extends Template {
 			header('Cache-Control: private, max-age='.($this->expires - time()).', must-revalidate');
 			header('Pragma:');
 		}
-
-		if(is_null($this->location)){
-			if(Locator::isLoaded('Corelib\Base\ErrorHandler')){
-				if(Locator::get('Corelib\Base\ErrorHandler')->hasErrors()){
-					header('HTTP/1.1 '.$this->status_code);
-				}
+		if(Locator::isLoaded('Corelib\Base\Core\ErrorHandler')){
+			if(Locator::get('Corelib\Base\Core\ErrorHandler')->hasErrors()){
+				return false;
 			}
-
+		}
+		if(is_null($this->location)){
 			header('Content-Location: '. $this->request_uri);
 
 			$type = $this->content_type;

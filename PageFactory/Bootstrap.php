@@ -89,8 +89,8 @@ class Bootstrap {
 				Logger::info('Template rendered');
 			}
 		}
-		if(Locator::isLoaded('Corelib\Base\ErrorHandler')){
-			$error_handler = Locator::get('Corelib\Base\ErrorHandler');
+		if(Locator::isLoaded('Corelib\Base\Core\ErrorHandler')){
+			$error_handler = Locator::get('Corelib\Base\Core\ErrorHandler');
 		}
 		if(isset($error_handler) && $error_handler->hasErrors()){
 			$page = $error_handler->draw();
@@ -104,7 +104,7 @@ class Bootstrap {
 				$page = '';
 			}
 		}
-		if(!empty($page)){
+		if(!empty($page) && !$error_handler->hasErrors()){
 			// If page has content trigger a PageRender Event allowing post processing of the page
 			// $page is passed by reference, and should not be returned.
 			Locator::get('Corelib\Base\Event\Handler')->trigger(new Events\PageRender($page));

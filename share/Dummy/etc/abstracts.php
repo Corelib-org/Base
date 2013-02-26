@@ -30,12 +30,20 @@
  * @link http://www.corelib.org/
  * @version 4.0.0 ($Id$)
  */
+use Corelib\Base\ServiceLocator\Locator;
 
 
+$loader = Locator::get('Corelib\Base\Core\Loader');
+$loader->addClassPath('lib/');
 
-Base::getInstance()->addClassPath('lib/');
+
+// Base::getInstance()->addClassPath('lib/');
 
 define('SOFTWARE_VERSION', 'Corelib Dummy Site v1.0.0');
+
+if(!defined('DAILY_DIGEST')){
+	define('DAILY_DIGEST', 'ss@gormlarsenzornig.com');
+}
 
 
 //*****************************************************************//
@@ -55,15 +63,20 @@ if(defined('ABSTRACTS_ENABLE_AUTHORIZATION') && ABSTRACTS_ENABLE_AUTHORIZATION){
 	define('ABSTRACTS_ENABLE_AUTHORIZATION', false);
 }
 
+
 // Check to see if ABSTRACTS_ENABLE_DATABASE is set true
 // If set to true the Database classes is automatically loaded
 if(defined('ABSTRACTS_ENABLE_DATABASE') && ABSTRACTS_ENABLE_DATABASE){
-	$masterdb = new MySQLiEngine(DATABASE_MASTER_HOSTNAME,
-	                             DATABASE_MASTER_USERNAME,
-	                             DATABASE_MASTER_PASSWORD,
-	                             DATABASE_MASTER_DATABASE);
-	$dbms = Database::getInstance();
-	$dbms->masterConnect($masterdb);
+
+
+	$masterdb = new Corelib\Base\Database\MySQLi\Engine(DATABASE_MASTER_HOSTNAME,
+	                                                    DATABASE_MASTER_USERNAME,
+	                                                    DATABASE_MASTER_PASSWORD,
+	                                                    DATABASE_MASTER_DATABASE);
+	$conn = new Corelib\Base\Database\Connection($masterdb);
+	Corelib\Base\ServiceLocator\Locator::load($conn);
+
+
 } else if(!defined('ABSTRACTS_ENABLE_DATABASE')){
 	/**
 	 * Enable autoloading of Database features.
@@ -87,93 +100,8 @@ if(defined('ABSTRACTS_ENABLE_ORM_CACHE') && ABSTRACTS_ENABLE_ORM_CACHE){
 	define('ABSTRACTS_ENABLE_ORM_CACHE', false);
 }
 
-//*****************************************************************//
-//**************** Control layer abstract classes *****************//
-//*****************************************************************//
-/**
- * Basic page/request controller.
- *
- * This abstract class should hold generic methods used
- * around the controller layer.
- *
- * @package Dummy
- */
-abstract class DummyPage extends PageBase { }
+$cache = new \Corelib\Base\Cache\Store(new \Corelib\Base\Cache\Engines\Filesystem());
+Locator::load($cache);
 
-/**
- * Base GET page/request controller.
- *
- * Here you can define generic methods used
- * around the controller layer when handling a
- * HTTP GET request
- *
- * @package Dummy
- * @since Version 5.0
- */
-abstract class DummyPageGet extends DummyPage {
-	/**
-	 * PageFactory DOM XSL Template instance.
-	 *
-	 * @var PageFactoryDOMXSLTemplate
-	 */
-	protected $xsl = null;
-
-	/**
-	 * Prepare page.
-	 *
-	 * @uses PageFactoryDOMXSLTemplate
-	 * @uses DummyPageGet::$xsl
-	 * @return void
-	 */
-	function __init() {
-		$this->xsl = new PageFactoryDOMXSLTemplate();
-		$this->addTemplateDefinition($this->xsl);
-	}
-
-	/**
-	 * Get current page from url.
-	 *
-	 * @param string $inputvar http get variable name
-	 * @return integer page
-	 */
-	public function getPagingPage($inputvar = 'p'){
-		$input = InputHandler::getInstance();
-		if($input->validateGet('p',new InputValidatorRegex('/^[0-9]+$/'))) {
-			return (int) $input->getGet('p');
-		} else {
-			return 1;
-		}
-	}
-}
-
-/**
- * Base POST page/request controller.
- *
- * Here you can define generic methods used
- * around the controller layer when handling a
- * HTTP POST request
- *
- * @package Dummy
- * @since Version 5.0
- */
-abstract class DummyPagePost extends DummyPage {
-	/**
-	 * PageFactory Post Template instance.
-	 *
-	 * @var PageFactoryPostTemplate
-	 */
-	protected $post = null;
-
-	/**
-	 * Prepare page.
-	 *
-	 * @uses PageFactoryPostTemplate
-	 * @uses DummyPagePost::$post
-	 * @return void
-	 */
-	function __init() {
-		$this->post = new PageFactoryPostTemplate();
-		$this->addTemplateDefinition($this->post);
-	}
-}
+\Corelib\Base\Log\Logger::setLevel(\Corelib\Base\Log\Logger::ALL);
 ?>

@@ -40,7 +40,7 @@
  * @subpackage Controllers-Get
  * @ignore
  */
-class WebPage extends DummyPageGet {
+class WebPage extends PageGet {
 
 	/**
 	 * Build index page.

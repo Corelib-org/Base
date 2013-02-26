@@ -40,7 +40,7 @@
  * @subpackage Controllers-Post
  * @ignore
  */
-class WebPage extends DummyPagePost {
+class WebPage extends PagePost {
 
 	/**
 	 * Build index page.

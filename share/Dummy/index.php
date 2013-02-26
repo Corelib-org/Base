@@ -40,6 +40,16 @@
 require_once('etc/config.php');
 
 /**
+ * Load corelib base class.
+ *
+ * This include is required at this point, because including this files
+ * declares some basic constants, and loads the class autoloader.
+ *
+ * @ignore
+ */
+require_once(CORELIB.'/Base/Base.php');	// DO NOT CHANGE OR REMOVE THIS LINE!
+
+/**
  * Load abstracts.php
  *
  * @internal

@@ -46,9 +46,15 @@ abstract class ObjectList extends ObjectBase implements Output {
 		$this->metadata = new Metadata\Parser($class);
 		$this->order = new \DatabaseListHelperOrder();
 		$this->filter = new \DatabaseListHelperFilter();
-
+/*
 		$this->dao = Locator::get('Corelib\Base\Database\Connection')->getDAO(
-			get_class($this)
+			$this->_metadata->getShortName(),
+			$this->_metadata->getNamespaceName()
+		);
+*/
+		$this->dao = Locator::get('Corelib\Base\Database\Connection')->getDAO(
+			get_class($this),
+			$this->metadata->getNamespaceName()
 		);
 	}
 
@@ -145,6 +151,17 @@ abstract class ObjectList extends ObjectBase implements Output {
 			} else {
 				throw new Exception('Call to '.get_class($this).'::'.$method.'() expected first argument to be instance of class \Converter');
 			}
+		} else if($property = $this->_getPropertyFromMethod($method, 'set', 'Filter')){
+			$property = $this->metadata->getMetadataProperty($property);
+			if($datafield = $property->getValue('datafield')){
+				$this->filter->set($datafield, $args[0]);
+			} else {
+				$this->filter->set($property->getName(), $args[0]);
+			}
+		} else {
+			var_dump($property);
+			exit;
+			throw new Exception('Call to undefined method: '.get_class($this).'::'.$method.'().');
 		}
 	}
 

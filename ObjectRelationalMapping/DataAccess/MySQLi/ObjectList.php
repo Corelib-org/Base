@@ -27,8 +27,7 @@ abstract class ObjectList extends \Corelib\Base\ObjectRelationalMapping\DataAcce
 		$filters = $this->_prepareFilterStatements($filter);
 		$join = $filters['join'];
 		$where = $filters['where'];
-		$columns = \MySQLi_Signup::getSelectColumns();
-
+		// $columns = self::getSelectColumns();
 		if(!$limit = \MySQLiTools::prepareLimitStatement($offset, $limit)){
 			$limit = '';
 		}
@@ -76,6 +75,10 @@ abstract class ObjectList extends \Corelib\Base\ObjectRelationalMapping\DataAcce
 
 		if($filter->count() > 0){
 			/* Filter statement */
+			if($customer = $filter->get('fk_customers')){
+				$filters['where'] .= ' AND fk_customers='.(int) $customer.' ';
+			}
+
 			/* Filter statement end */
 		}
 		return $filters;

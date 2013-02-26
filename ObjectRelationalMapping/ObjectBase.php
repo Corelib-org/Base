@@ -53,6 +53,9 @@ abstract class ObjectBase {
 				if(substr($method, $suffix_length) == 'Converter'){
 					return $this->_convertMethodToProperty(substr($method, 0, $suffix_length));
 				}
+				if(substr($method, $suffix_length) == 'Filter'){
+					return $this->_convertMethodToProperty(substr($method, 0, $suffix_length));
+				}
 			} else {
 				return $this->_convertMethodToProperty($method);
 			}

@@ -9,9 +9,11 @@ abstract class Object extends ObjectBase implements Output {
 	protected $dao = null;
 	protected $cache = null;
 
+
 	private $_properties = array();
 	private $_property_raw_mode = false;
 	private $_property_force = false;
+	private $_created = false;
 	/**
 	 * @var Metadata\Parser
 	 */
@@ -70,13 +72,14 @@ abstract class Object extends ObjectBase implements Output {
 */
 
 		$primary = $this->_metadata->searchMetadataProperties(self::DATA_ACCESS_METADATA_PRIMARY, true);
-		if(is_null($this->id)){
+		if(is_null($this->id) || !$this->_created){
+		//	print_r($this->datahandler);
 			if($updated = $this->dao->create($this->_metadata, $primary, $this->datahandler)){
 				$this->_setFromArray($updated);
 				return true;
 			}
 		} else {
-			if($updated = $this->dao->update($primary, $this->_getPropertyValues($primary), $this->datahandler)){
+			if($updated = $this->dao->update($this->_metadata, $this->_getPropertyValues($primary), $this->datahandler)){
 				$this->_setFromArray($updated);
 				return true;
 			}
@@ -86,6 +89,7 @@ abstract class Object extends ObjectBase implements Output {
 
 	public function delete(){
 		$primary = $this->_metadata->search(self::DATA_ACCESS_METADATA_PRIMARY, true);
+		$this->_created = false;
 		return $this->dao->delete($primary, $this->_getPropertyValues($primary));
 	}
 
@@ -122,6 +126,7 @@ abstract class Object extends ObjectBase implements Output {
 			if(!$meta_property = $this->_metadata->getMetadataProperty($property)){
 				throw new Exception('Unable to find Property field, no property field declared for "'.$property.'" ('.$this->_convertPropertyToField($property).')');
 			}
+			// print_r($meta_property);
 			if($this->_metadata->hasProperty($property)){
 				$propertyReflection = $this->_metadata->getProperty($property);
 				if($propertyReflection->isPrivate()){
@@ -133,7 +138,11 @@ abstract class Object extends ObjectBase implements Output {
 				$this->_properties[$property] = $value;
 			}
 			if(!$this->_property_raw_mode){
-				return $this->datahandler->set($property, $value);
+				if(!$datafield = $meta_property->getValue('datafield')){
+					return $this->datahandler->set($property, $value);
+				} else {
+					return $this->datahandler->set($datafield, $value);
+				}
 			} else {
 				return true;
 			}
@@ -319,12 +328,16 @@ abstract class Object extends ObjectBase implements Output {
 				if($datatype = $this->_metadata->getMetadataProperty($key)->getValue('type')){
 					$i++;
 					switch($datatype){
-						case 'int' || 'integer' || 'timestamp':
+						case 'int':
+						case 'integer':
+						case 'timestamp':
 							$val = (int) $val;
 							break;
-						case 'bool' || 'boolean':
+						case 'bool':
+						case 'boolean':
 							$val = (boolean) $val;
 							break;
+
 					}
 					$this->_setProperty($key, $val, true, true);
 				}

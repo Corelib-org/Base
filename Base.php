@@ -1,20 +1,6 @@
 <?php
 use Corelib\Base\Core\ErrorHandler, Corelib\Base\ServiceLocator\Locator;
 
-/**
- *	Define Base Development Runlevel Constant.
- */
-define('BASE_RUNLEVEL_DEVEL', 2);
-
-/**
- *	Define Base Production Runlevel Constant.
- */
-define('BASE_RUNLEVEL_PROD', 1);
-
-/**
- *	Define current version of corelib Base.
- */
-define('CORELIB_BASE_VERSION', '6.0.0');
 
 if(!defined('CORELIB')){
 	/**
@@ -96,9 +82,6 @@ if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUP
 }
 
 
-
-
-
 if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === false){
 	require_once(CORELIB.'/Base/ServiceLocator/Locator.php');
 	require_once(CORELIB.'/Base/ServiceLocator/Service.php');
@@ -106,7 +89,6 @@ if(!defined('BASE_DISABLE_ERROR_HANDLER') || BASE_DISABLE_ERROR_HANDLER === fals
 
 
 	$error_handler = Locator::load(new ErrorHandler());
-
 
 	if(BASE_RUNLEVEL > BASE_RUNLEVEL_PROD){
 		assert_options(ASSERT_ACTIVE, true);

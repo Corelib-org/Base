@@ -2,6 +2,7 @@
 namespace Corelib\Base\Core;
 
 use Corelib\Base\ServiceLocator\Service;
+use Corelib\Base\Log\Logger;
 
 /**
  * Error Handler class.

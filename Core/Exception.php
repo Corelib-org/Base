@@ -20,7 +20,9 @@ class Exception extends NativeException implements Serializable {
 	 *
 	 * override original constructor in order to add support for
 	 * both PHP < 5.3 where exception linking where unsupported and
-	 * >= PHP 5.3 where exception linking is supported
+	 * >= PHP 5.3 where exception linking is supported.
+	 * Throwing this exception without any arguments, the exception will
+	 * automatically fetch what ever is stored in error_get_last()
 	 *
 	 * @param string $message
 	 * @param integer $code
@@ -28,6 +30,12 @@ class Exception extends NativeException implements Serializable {
 	 * @return void
 	 */
 	public function __construct($message = null, $code = 0, Exception $previous = null){
+		if(is_null($message)){
+			$message = error_get_last();
+			$code = $message['type'];
+			$message = strip_tags($message['message']);
+		}
+
 		if(version_compare(PHP_VERSION, '5.3') == -1){
 			parent::__construct($message, $code);
 		} else {

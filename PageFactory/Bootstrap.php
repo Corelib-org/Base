@@ -140,6 +140,8 @@ class Bootstrap {
 
 	private function _resolveURL(){
 
+
+
 		if(isset($_SERVER['SCRIPT_URL'])){
 			$this->url = $_SERVER['SCRIPT_URL'];
 		} else if(isset($_SERVER['REQUEST_URI'])){
@@ -147,6 +149,8 @@ class Bootstrap {
  		} else {
 			throw new Exception('$_SERVER[\'SCRIPT_URL\'] is not set, this is probably a bug in corelib, please report it along with a dump of you $_SERVER variable and the request url.', E_USER_ERROR);
 		}
+		$pathinfo = pathinfo(BASE_URL);
+		$this->url = str_ireplace('/'.$pathinfo['basename'], '', $this->url);
 
 		/*
 		if(!isset($_SERVER[PAGE_FACTORY_SERVER_TOKEN])){

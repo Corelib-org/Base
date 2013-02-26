@@ -70,7 +70,7 @@ if(!defined('COMMAND_DIFF')){
  * @author Steffen Sørensen <ss@corelib.org>
  * @since Version 5.0
  */
-abstract class CodeGeneratorFile implements Output {
+abstract class CodeGeneratorFile implements \Corelib\Base\PageFactory\Output {
 
 
 	//*****************************************************************//

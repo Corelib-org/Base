@@ -49,7 +49,7 @@
  * @category corelib
  * @since Version 5.0
  */
-abstract class CodeGeneratorPlugin implements Output {
+abstract class CodeGeneratorPlugin implements \Corelib\Base\PageFactory\Output {
 
 
 	//*****************************************************************//

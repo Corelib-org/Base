@@ -89,7 +89,7 @@ interface DAO_CodeGenerator {
  * @since Version 5.0
  * @author Steffen Sørensen <ss@corelib.org>
  */
-class CodeGenerator implements Output {
+class CodeGenerator implements \Corelib\Base\PageFactory\Output {
 
 
 	//*****************************************************************//

@@ -33,6 +33,7 @@
  * @link http://www.corelib.org/
  * @since Version 5.0
  */
+use Corelib\Base\Core\Composite as Composite;
 
 //*****************************************************************//
 //*************** CodeGenrator PHP Code block class ***************//

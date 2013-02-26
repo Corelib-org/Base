@@ -294,7 +294,12 @@ class InputValidatorEmpty extends \Corelib\Base\Input\Validators\IsEmpty { }
 /**
  * @deprecated
  */
-class InputValidatorIsFloat extends \Corelib\Base\Input\Validators\IsFloat { }
+class InputValidatorArray extends \Corelib\Base\Input\Validators\IsArray { }
+
+/**
+ * @deprecated
+ */
+class InputValidatorEnum extends \Corelib\Base\Input\Validators\Enum { }
 
 /**
  * @deprecated

@@ -34,7 +34,7 @@
  * @since Version 5.0
  */
 
-
+use Corelib\Base\Core\Composite as Composite;
 //*****************************************************************//
 //********* CodeGenrator Code block composite class ***************//
 //*****************************************************************//
@@ -47,7 +47,7 @@
  * @category corelib
  * @since Version 5.0
  */
-abstract class CodeGeneratorCodeBlockComposite extends Composite {
+abstract class CodeGeneratorCodeBlockComposite extends \Corelib\Base\Core\Composite {
 
 
 	//*****************************************************************//

@@ -1145,9 +1145,8 @@ abstract class ManagerPage extends PageBase {
 			define('CORELIB_MANAGER_PASSWORD', sha1(RFC4122::generate()));
 			$password_error = true;
 		}
-
 		if(@$_SERVER['PHP_AUTH_USER'] !== CORELIB_MANAGER_USERNAME || @$_SERVER['PHP_AUTH_PW'] !== CORELIB_MANAGER_PASSWORD){
-			header('WWW-Authenticate: Basic realm="Corelib v'.CORELIB_BASE_VERSION.'"');
+			header('WWW-Authenticate: Basic realm="Corelib"');
 			header('HTTP/1.0 401 Unauthorized');
 			echo '<h1>Access Denied</h1>';
 			if(isset($password_error) && BASE_RUNLEVEL >= BASE_RUNLEVEL_DEVEL){

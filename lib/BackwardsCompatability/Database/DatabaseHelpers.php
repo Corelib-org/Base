@@ -72,7 +72,7 @@ abstract class DatabaseHelper {
 	 */
 	public function set($column, $setting, $callback=null){
 		if(is_object($setting) && !is_callable(array($setting, $callback))){
-			throw new BaseException('Value callback method is not callable: '.$callback, E_USER_ERROR);
+			throw new \Corelib\Base\Core\Exception('Value callback method is not callable: '.$callback, E_USER_ERROR);
 		}
 		$this->settings[$column] = array($setting, $callback);
 		return true;

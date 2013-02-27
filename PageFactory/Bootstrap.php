@@ -149,9 +149,9 @@ class Bootstrap {
  		} else {
 			throw new Exception('$_SERVER[\'SCRIPT_URL\'] is not set, this is probably a bug in corelib, please report it along with a dump of you $_SERVER variable and the request url.', E_USER_ERROR);
 		}
-		$pathinfo = pathinfo(BASE_URL);
-		$this->url = str_ireplace('/'.$pathinfo['basename'], '', $this->url);
-
+		$pathinfo = parse_url(BASE_URL, PHP_URL_PATH);
+		$this->url = str_ireplace('/'.$pathinfo, '', $this->url);
+		
 		/*
 		if(!isset($_SERVER[PAGE_FACTORY_SERVER_TOKEN])){
 			if(isset($_GET[PAGE_FACTORY_GET_TOKEN])){

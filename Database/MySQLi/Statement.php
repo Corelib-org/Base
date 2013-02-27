@@ -73,6 +73,8 @@ class Statement extends Query {
 	 */
 	private static $statements = array();
 
+	private $native = false;
+
 	//*****************************************************************//
 	//************** MySQLiQueryStatement class methods ***************//
 	//*****************************************************************//
@@ -200,7 +202,15 @@ class Statement extends Query {
 			}
 		}
 		$this->statement->execute();
-		$this->result = $this->statement->get_result();
+		if(!is_callable(array($this->statement, 'get_result'))){
+			$this->result = $this->statement->result_metadata();
+			$this->native = false;
+		} else {
+			$this->result = $this->statement->get_result();
+			$this->native = true;
+		}
+
+
 		$this->error = $this->statement->error;
 		$this->errno = $this->statement->errno;
 		$this->insertid = $this->statement->insert_id;
@@ -241,6 +251,22 @@ class Statement extends Query {
 		}
 
 		return $this->error.' (#'.$this->errno.')'."\n<br/><br/>".$this->query.' Values: '.implode(', ', $values);
+	}
+
+	public function fetchAssoc(){
+		if(!$this->native){
+			static $columns = array();
+			if(sizeof($columns) == 0){
+				while($field = $this->result->fetch_field()){
+					$data[] = &$columns[$field->name];
+				}
+			}
+			call_user_func_array(array($this->statement, 'bind_result'), $data);
+			$this->statement->fetch();
+			return $columns;
+		} else {
+			return $this->result->fetch_assoc();
+		}
 	}
 
 	/**

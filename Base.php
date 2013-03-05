@@ -52,6 +52,7 @@ if(!defined('CURRENT_WORKING_DIR')){
 	define('CURRENT_WORKING_DIR', getcwd().'/');
 }
 
+
 if(is_callable('mb_internal_encoding')){
 	mb_internal_encoding('utf-8');
 }

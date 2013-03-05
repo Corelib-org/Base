@@ -39,7 +39,9 @@ final class Toolbar implements Service,Autoloadable {
 		}
 	}
 
-
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
 
 	/**
 	 * Add toolbar item to toolbar.

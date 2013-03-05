@@ -35,5 +35,8 @@ namespace Corelib\Base\ServiceLocator;
  */
 interface Service {
 
+	public static function getInstance(); /* {
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	} */
 }
 ?>

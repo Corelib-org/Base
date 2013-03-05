@@ -44,6 +44,10 @@ class ErrorHandler implements Service {
 	//*****************************************************************//
 	//**************** ErrorHandler class methods *******************//
 	//*****************************************************************//
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
+
 	/**
 	 * Error handler constructor.
 	 *

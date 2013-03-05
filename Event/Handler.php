@@ -64,6 +64,9 @@ class Handler implements Service,Autoloadable {
 		// }
 	}
 
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
 
 	/**
 	 * Register new event action.

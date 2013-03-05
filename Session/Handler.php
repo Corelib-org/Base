@@ -84,6 +84,9 @@ class Handler implements Service,Autoloadable,Output {
 		}
 	}
 
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
 
 	/**
 	 * Initiate session.

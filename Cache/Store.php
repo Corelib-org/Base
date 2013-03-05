@@ -9,6 +9,10 @@ class Store implements Service {
 		$this->engine = $engine;
 	}
 
+	public static function getInstance() {
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
+
 	public function store($key, $value, $lifetime=36000){
 		if(!is_null($this->engine)){
 			return $this->engine->store($this->_hash($key), $value, $lifetime);

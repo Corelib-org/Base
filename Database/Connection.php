@@ -68,6 +68,10 @@ class Connection implements Service {
 	 */
 	private $shards = array();
 
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
+
 	/**
 	 * Create new database connection instance.
 	 *

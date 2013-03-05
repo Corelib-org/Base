@@ -117,6 +117,12 @@ class Handler implements Service,Output,Autoloadable {
 		}
 	}
 
+	/**
+	 * @return Handler
+	 */
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
 
 	/**
 	 * Validate post variable.

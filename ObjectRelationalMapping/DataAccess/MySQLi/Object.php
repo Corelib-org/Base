@@ -11,11 +11,11 @@ abstract class Object extends \Corelib\Base\ObjectRelationalMapping\DataAccess\O
 	public function __construct(\Corelib\Base\Database\Connection $database){
 		parent::__construct($database);
 		if(!defined('static::TABLE')){
-			throw new Exception('Unable to instanciate class with const TABLE definde');
+			throw new Exception('Unable to instanciate class without const TABLE defined');
 		}
 	}
 
-	public function create(Parser $metadata, array $properties, \DatabaseDataHandler $data){
+	public function create(Parser $metadata, array $keys, \DatabaseDataHandler $data){
 		/* Special create fields */
 		if($metadata->hasProperty('create_timestamp')){
 			if($metadata->getProperty('create_timestamp')->getValue('type') == 'timestamp'){
@@ -31,7 +31,8 @@ abstract class Object extends \Corelib\Base\ObjectRelationalMapping\DataAccess\O
 		$query = $this->masterQuery(new Statement($query, $values));
 
 		if($query->getAffectedRows() > 0){
-			$updated = call_user_func_array(array($data, 'getUpdatedColumns'), array_keys($properties));
+			$updated = call_user_func_array(array($data, 'getUpdatedColumns'), array_keys($keys));
+			$kvalues = array();
 			foreach($updated as $column){
 				$kvalues[$column] = $data->get($column);
 			}
@@ -43,23 +44,21 @@ abstract class Object extends \Corelib\Base\ObjectRelationalMapping\DataAccess\O
 				$auto_increment = array_shift($auto_increment);
 				$kvalues[$auto_increment->getName()] = $id;
 			}
-
-			return $this->getFromProperties($metadata, $properties, $kvalues);
+			return $this->getFromProperties($metadata, $keys, $kvalues);
 		} else {
 			return false;
 		}
 	}
 
-	public function update(Parser $metadata, array $properties, array $kvalues, \DatabaseDataHandler $data){
+	public function update(Parser $metadata, array $keys, array $kvalues, \DatabaseDataHandler $data){
 
 		/* Special update fields */
 		/* Special update fields end */
 
-
 		$columns = $data->getUpdatedColumns();
 		$values = $data->getUpdatedColumnValues();
 
-		$query = \MySQLiTools::makeUpdateStatement(static::TABLE, $columns, $this->_createWhereFromProperties($properties).' LIMIT 1');
+		$query = \MySQLiTools::makeUpdateStatement(static::TABLE, $columns, $this->_createWhereFromProperties($keys).' LIMIT 1');
 		$query = $this->masterQuery(new Statement($query, $values, $kvalues));
 
 		/* After edit actions */
@@ -69,8 +68,8 @@ abstract class Object extends \Corelib\Base\ObjectRelationalMapping\DataAccess\O
 		foreach($updated as $column){
 			$kvalues[$column] = $data->get($column);
 		}
-		if($query->getAffectedRows() > 0){
-			return $this->getFromProperties($properties, $kvalues);
+		if($query->getAffectedRows() > 0 && isset($kvalues)){
+			return $this->getFromProperties($metadata, $keys, $kvalues);
 		} else {
 			return false;
 		}

@@ -124,6 +124,15 @@ abstract class DatabaseListHelper extends DatabaseHelper {
 	public function count(){
 		return sizeof($this->settings);
 	}
+
+	/**
+	 * Get all filters.
+	 *
+	 * @return array
+	 */
+	public function getAll(){
+		return $this->settings;
+	}
 }
 
 

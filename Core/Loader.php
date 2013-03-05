@@ -395,6 +395,22 @@ class Loader implements Service,Autoloadable {
 					return $file;
 				}
 			} else if($entry{0} != '.' && is_readable($dir.'/'.$entry)){
+				if(substr($entry, -3) == 'php'){
+					$content = file($dir.'/'.$entry);
+					$current_namespace = '';
+					while(list(,$line) = each($content)){
+						if(preg_match('/namespace\s+(.*?)(\{|;)/i', $line, $match)){
+							$current_namespace = trim($match[1]);
+						}
+
+						if(preg_match('/(class\s+?'.$class.'\s+?.*?\s*?{)|(interface\s+?'.$class.'\s+?.*?\s*?{)/s', $line, $match)){
+							if($current_namespace == $namespace){
+								return $dir.'/'.$entry;
+							}
+						}
+					}
+				}
+/*
 				$content = file_get_contents($dir.'/'.$entry);
 				if(is_null($namespace)){
 					if(!preg_match('/^\s*namespace\s+/im', $content, $match)){
@@ -409,6 +425,7 @@ class Loader implements Service,Autoloadable {
 						}
 					}
 				}
+*/
 			}
 		}
 		return false;

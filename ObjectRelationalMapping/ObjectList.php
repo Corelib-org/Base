@@ -42,7 +42,16 @@ abstract class ObjectList extends ObjectBase implements Output {
 	private $metadata = null;
 
 
-	public function __construct($class){
+	public function __construct($class=null){
+		if(is_null($class)){
+			$class = get_class($this);
+			if(substr($class, -4) == 'List'){
+				$class = substr($class, 0, -4);
+			} else {
+				throw new Exception('List objec is not suffixed with \'List\', please impliment the constructor');
+			}
+		}
+
 		$this->metadata = new Metadata\Parser($class);
 		$this->order = new \DatabaseListHelperOrder();
 		$this->filter = new \DatabaseListHelperFilter();

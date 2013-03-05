@@ -55,4 +55,37 @@
 		</div>
 	</xsl:template>
 
+	<!-- <xsl:apply-templates select="delivery-list" mode="xhtml-list"/> -->
+	<xsl:template match="*" mode="xhtml-list">
+		<table class="list">
+			<xsl:apply-templates select="metadata" mode="xhtml-list"/>
+			<tbody>
+				<xsl:apply-templates select="*[name() != 'metadata']" mode="xhtml-list-data"/>
+			</tbody>
+		</table>
+	</xsl:template>
+	<xsl:template match="metadata" mode="xhtml-list">
+		<thead>
+			<tr>
+				<xsl:apply-templates select="*" mode="xhtml-list"/>
+			</tr>
+		</thead>
+	</xsl:template>
+	<xsl:template match="metadata/child::*" mode="xhtml-list">
+		<th><xsl:value-of select="local-name(.)"/></th>
+	</xsl:template>
+	<xsl:template match="*" mode="xhtml-list-data">
+		<tr>
+			<xsl:apply-templates select="attribute::*" mode="xhtml-list-data"/>
+		</tr>
+	</xsl:template>
+	<xsl:template match="attribute::*" mode="xhtml-list-data">
+		<xsl:variable name="name"><xsl:value-of select="name()"/></xsl:variable>
+		<xsl:variable name="type"><xsl:value-of select="../../metadata/child::*[name() = $name]/@type"/></xsl:variable>
+		<td class="{$type}">
+			<xsl:value-of select="."/>
+		</td>
+	</xsl:template>
+
+
 </xsl:stylesheet>

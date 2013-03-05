@@ -120,7 +120,7 @@ class Bootstrap {
 		} else if($route = $this->registry->lookup('/errors/404/')){
 			return $route;
 		} else {
-			throw new Exception('404 Error unspecified!', E_USER_ERROR);
+			throw new Exception('404 Error unspecified! ( '.$url.' )', E_USER_ERROR);
 		}
 	}
 

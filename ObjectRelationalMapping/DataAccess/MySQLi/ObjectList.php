@@ -24,7 +24,7 @@ abstract class ObjectList extends \Corelib\Base\ObjectRelationalMapping\DataAcce
 			$order = 'ORDER BY '.$order;
 		}
 
-		$filters = $this->_prepareFilterStatements($filter);
+		$filters = $this->_prepareFilterStatements($filter, $metadata);
 		$join = $filters['join'];
 		$where = $filters['where'];
 		// $columns = self::getSelectColumns();
@@ -69,17 +69,11 @@ abstract class ObjectList extends \Corelib\Base\ObjectRelationalMapping\DataAcce
 	 * @return string filter statement
 	 * @internal
 	 */
-	private function _prepareFilterStatements(\DatabaseListHelperFilter $filter){
+	protected function _prepareFilterStatements(\DatabaseListHelperFilter $filter, Parser $metadata){
 		$filters['where'] = 'WHERE 1 ';
 		$filters['join'] = '';
-
 		if($filter->count() > 0){
-			/* Filter statement */
-			if($customer = $filter->get('fk_customers')){
-				$filters['where'] .= ' AND fk_customers='.(int) $customer.' ';
-			}
-
-			/* Filter statement end */
+			$filters['where'] .= $this->_createWhereFromProperties($filter, $metadata);
 		}
 		return $filters;
 	}
@@ -99,16 +93,18 @@ abstract class ObjectList extends \Corelib\Base\ObjectRelationalMapping\DataAcce
 		}
 		return implode(', ',$columns);
 	}
-/*
-	private function _createWhereFromProperties(array $properties){
-		$where = 'WHERE 1 ';
-		foreach ($properties as $key => $property) {
+
+	private function _createWhereFromProperties(\DatabaseListHelperFilter $filter, Parser $metadata){
+		$where = '';
+		foreach ($filter->getAll() as $key => $value) {
+			$property = $metadata->getMetadataProperty($key);
+
 			if(!$datafield = $property->getValue('datafield')){
 				$datafield = $key;
 			}
-			$where .= ' AND `'.$datafield.'`=? ';
+			$where .= ' AND `'.$datafield.'`=\''.$this->database->escapeString($value[0]).'\'';
 		}
 		return $where;
 	}
-*/
+
 }

@@ -20,6 +20,7 @@ abstract class Object extends ObjectBase implements Output {
 	private $_metadata = null;
 
 	const DATA_ACCESS_METADATA_PRIMARY = 'primary';
+	const DATA_ACCESS_METADATA_DATAFIELD = 'datafield';
 
 	/**
 	 * @param array $array
@@ -72,14 +73,15 @@ abstract class Object extends ObjectBase implements Output {
 */
 
 		$primary = $this->_metadata->searchMetadataProperties(self::DATA_ACCESS_METADATA_PRIMARY, true);
-		if(is_null($this->id) || !$this->_created){
+		if(!$this->_created){
 		//	print_r($this->datahandler);
 			if($updated = $this->dao->create($this->_metadata, $primary, $this->datahandler)){
+				$this->_created = true;
 				$this->_setFromArray($updated);
 				return true;
 			}
 		} else {
-			if($updated = $this->dao->update($this->_metadata, $this->_getPropertyValues($primary), $this->datahandler)){
+			if($updated = $this->dao->update($this->_metadata, $primary, $this->_getPropertyValues($primary), $this->datahandler)){
 				$this->_setFromArray($updated);
 				return true;
 			}
@@ -111,7 +113,9 @@ abstract class Object extends ObjectBase implements Output {
 		return $e;
 	}
 
+	/*
 	public function __set($property, $value){
+
 		$method = 'set'.$this->_convertPropertyToMethod($property);
 
 		if(!$this->_property_raw_mode && !$this->_property_force && method_exists($this, $method)){
@@ -149,7 +153,8 @@ abstract class Object extends ObjectBase implements Output {
 		}
 		return true;
 	}
-
+	*/
+/*
 	public function __get($property){
 		$method = 'get'.$this->_convertPropertyToMethod($property);
 		if(!$this->_property_force && method_exists($this, $method)){
@@ -180,9 +185,12 @@ abstract class Object extends ObjectBase implements Output {
 			}
 		}
 	}
+*/
 
 	public function __isset($property){
+		throw new Exception('isset is not allowed');
 		return ($this->_getPropertyField($property) ? true : false);
+
 	}
 
 	public function __unset($property){
@@ -190,16 +198,6 @@ abstract class Object extends ObjectBase implements Output {
 	}
 
 	public function __call($method, $args){
-		$_parent_call = false;
-
-		// Check if call is made through parent::
-		if($this->_metadata->hasMethod($method)){
-			$methodReflection = $this->_metadata->getMethod($method);
-			if($methodReflection != __CLASS__){
-				$_parent_call = true;
-			}
-		}
-
 		if(substr($method, 0,3) == 'set'){
 			if($property = $this->_getPropertyFromMethod($method, 'set', 'Converter')){
 				if($args[0] instanceof Converter){
@@ -208,6 +206,7 @@ abstract class Object extends ObjectBase implements Output {
 					throw new Exception('Call to '.get_class($this).'::'.$method.'() expected first argument to be instance of class \Converter');
 				}
 			} else {
+
 				$property = $this->_convertMethodToProperty(substr($method, 3));
 				if(!$meta_property = $this->_metadata->getMetadataProperty($property)){
 					throw new Exception('Unable to find Property field, no property field declared for "'.$property.'" ('.$this->_convertPropertyToField($property).')');
@@ -216,11 +215,7 @@ abstract class Object extends ObjectBase implements Output {
 					throw new Exception('Unable to write property, property is marked readonly');
 				}
 
-				if($_parent_call){
-					return $this->_setProperty($property, $args[0], false, true);
-				} else {
-					return $this->_setProperty($property, $args[0]);
-				}
+				return $this->_setProperty($property, $args[0]);
 			}
 		} else if(substr($method, 0,3) == 'get'){
 			$property = $this->_convertMethodToProperty(substr($method, 3));
@@ -282,13 +277,26 @@ abstract class Object extends ObjectBase implements Output {
 		assert('is_string($property)');
 
 		if(is_null($value)){
-			return $this->__get($property);
+			return $this->_getProperty($property);
 		} else {
-			return $this->__set($property, $value);
+			return $this->_setProperty($property, $value);
 		}
 	}
 
-	protected function _setProperty($property, $value, $raw=false, $force=false){
+	protected function _setProperty($property, $value, $raw=false){
+		$metadata = $this->_metadata->getMetadataProperty($property);
+		$property_reference = &$this->_getPropertyReference($property);
+		$property_reference = $value;
+
+		if(!$raw){
+			if(!$datafield = $metadata->getValue(self::DATA_ACCESS_METADATA_DATAFIELD)){
+				return $this->datahandler->set($property, $value);
+			} else {
+				return $this->datahandler->set($datafield, $value);
+			}
+		}
+
+		/*
 		$_property_raw_mode = $this->_property_raw_mode;
 		$_property_force = $this->_property_force;
 
@@ -305,9 +313,14 @@ abstract class Object extends ObjectBase implements Output {
 			$this->_property_force = $_property_force;
 			throw $e;
 		}
+		*/
 	}
 
-	protected function _getProperty($property, $force=false){
+	protected function _getProperty($property){
+		return $this->_getPropertyReference($property);
+
+
+		/*
 		$_property_force = $this->_property_force;
 
 		try {
@@ -318,6 +331,33 @@ abstract class Object extends ObjectBase implements Output {
 			// Disable raw mode even if a exception was thrown
 			$this->_property_force = $_property_force;
 			throw $e;
+		}
+		*/
+	}
+
+	/**
+	 * Find reference to property value.
+	 *
+	 * Return a pointer to where ever the property data is located.
+	 *
+	 * @param $property
+	 *
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function &_getPropertyReference($property){
+		$metadata = $this->_metadata->getMetadataProperty($property);
+		if($this->_metadata->hasProperty($property)){
+			$propertyReflection = $this->_metadata->getProperty($property);
+			if($propertyReflection->isPrivate()){
+				throw new Exception('Unable to access private property: "'.$property.'"');
+			}
+			return $this->$property;
+		} else {
+			if(!isset($this->_properties[$property])){
+				$this->_properties[$property] = null;
+			}
+			return $this->_properties[$property];
 		}
 	}
 
@@ -339,7 +379,7 @@ abstract class Object extends ObjectBase implements Output {
 							break;
 
 					}
-					$this->_setProperty($key, $val, true, true);
+					$this->_setProperty($key, $val, true);
 				}
 			}
 		} catch (\Exception $e){

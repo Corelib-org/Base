@@ -76,17 +76,17 @@ class Localize implements Service,Autoloadable,Output {
 	//*****************************************************************//
 	//*********************** i18n class methods **********************//
 	//*****************************************************************//
+
+	public static function getInstance(){
+		return \Corelib\Base\ServiceLocator\Locator::get(__CLASS__);
+	}
+
 	/**
 	 * i18n constructor.
 	 *
 	 * @return void
 	 * @internal
 	 */
-
-
-
-
-
 	public function __construct($cookie_name='i18n', $cookie_path='/', $cookie_timeout=31536000, $timezone=null, $base='share/lang/'){
 		$this->cookie_name = $cookie_name;
 		$this->cookie_path = $cookie_path;

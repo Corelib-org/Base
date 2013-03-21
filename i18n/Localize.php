@@ -3,7 +3,7 @@ namespace Corelib\Base\i18n;
 
 use Corelib\Base\ServiceLocator\Service, Corelib\Base\ServiceLocator\Locator, Corelib\Base\Event\Handler;
 use Corelib\Base\ServiceLocator\Autoloadable, Corelib\Base\Event\Event, Corelib\Base\Event\Action;
-use Corelib\Base\Converters\Date\Strftime, Corelib\Base\PageFactory\Output;
+use Corelib\Base\Converters\Date\Strftime, Corelib\Base\PageFactory\Output, Corelib\Base\Core\Exception;
 use DOMDocument;
 
 //*****************************************************************//

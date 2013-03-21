@@ -263,17 +263,18 @@ class Localize implements Service,Autoloadable,Output {
 						}
 					}
 				}
+
 				if(is_null($this->locale)){
-					if($this->fallback instanceof i18nLocale){
+					if($this->fallback instanceof Locale){
 						$this->setLocale($this->fallback->getLanguage());
 					} else {
-						throw new BaseException('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);
+						throw new Exception('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);
 					}
 				}
 			} else if($this->fallback instanceof i18nLocale){
 				$this->setLocale($this->fallback->getLanguage());
 			} else {
-				throw new BaseException('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);
+				throw new Exception('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);
 			}
 		} else {
 			$this->setLocale($_COOKIE[$this->cookie_name]);

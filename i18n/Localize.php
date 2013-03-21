@@ -271,7 +271,7 @@ class Localize implements Service,Autoloadable,Output {
 						throw new Exception('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);
 					}
 				}
-			} else if($this->fallback instanceof i18nLocale){
+			} else if($this->fallback instanceof Locale){
 				$this->setLocale($this->fallback->getLanguage());
 			} else {
 				throw new Exception('No fallback locale found, please add at least one locale before using i18n classes.', E_USER_ERROR);

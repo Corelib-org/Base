@@ -1,5 +1,6 @@
 <?php
 namespace Corelib\Base\Log\Engines;
+use Corelib\Base\Log\Logger;
 
 class Stdout extends File {
 	private $stdout = null;

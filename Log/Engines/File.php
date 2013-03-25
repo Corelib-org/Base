@@ -1,7 +1,7 @@
 <?php
 namespace Corelib\Base\Log\Engines;
-
 use Corelib\Base\Log\Engine;
+use Corelib\Base\Log\Logger;
 
 class File extends Engine {
 	private $fp = null;

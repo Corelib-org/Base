@@ -1,5 +1,5 @@
 <?php
-use Corelib\Base\Core\ErrorHandler, Corelib\Base\ServiceLocator\Locator;
+use Corelib\Base\Core\ErrorHandler, Corelib\Base\ServiceLocator\Locator, Corelib\Base\Log\Logger;
 
 
 if(!defined('CORELIB')){
@@ -77,7 +77,7 @@ if(php_sapi_name() == 'cli' && (!defined('BASE_SUPPRESS_CLI_HEADER') || BASE_SUP
 	require_once(CORELIB.'/Base/Log/Engines/File.php');
 	require_once(CORELIB.'/Base/Log/Engines/Stdout.php');
 
-	Logger::setEngine(new LoggerEngineStdout());
+	Logger::setEngine(new \Corelib\Base\Log\Engines\Stdout());
 } else {
 	header('X-Powered-By: Corelib v'.CORELIB_BASE_VERSION.' - http://www.corelib.org');
 }

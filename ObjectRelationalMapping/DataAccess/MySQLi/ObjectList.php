@@ -97,11 +97,7 @@ abstract class ObjectList extends \Corelib\Base\ObjectRelationalMapping\DataAcce
 	private function _createWhereFromProperties(\DatabaseListHelperFilter $filter, Parser $metadata){
 		$where = '';
 		foreach ($filter->getAll() as $key => $value) {
-			$property = $metadata->getMetadataProperty($key);
-
-			if(!$datafield = $property->getValue('datafield')){
-				$datafield = $key;
-			}
+			$datafield = $key;
 			$where .= ' AND `'.$datafield.'`=\''.$this->database->escapeString($value[0]).'\'';
 		}
 		return $where;

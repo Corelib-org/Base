@@ -89,7 +89,6 @@ class Registry {
 			}
 			array_pop($uri_parts);
 		}
-
 		if(isset($this->routes['#patterns']) && is_array($this->routes['#patterns'])){
 			if($route = $this->_lookup($uri, $this->routes['#patterns'])){
 				return $route;

@@ -107,8 +107,11 @@ class Route {
 					$arg = str_replace('${'.$key.'}', $val, $arg);
 				}
 				foreach($this->callback_args_exec as &$arg){
-					$arg = str_replace('${'.$key.'}', $val, $arg);
+					$arg = str_replace('${'.($key).'}', $val, $arg);
 				}
+			}
+			foreach($this->callback_args_exec as &$arg){
+				eval('$arg = '.str_replace('${'.$key.'}', $val, $arg).';');
 			}
 		}
 	}

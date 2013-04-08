@@ -74,13 +74,12 @@ class Bootstrap {
 					throw new Exception('Precondition engine is not implemented yet');
 				}
 				if(!$result){
+
 					$route = $this->getRoute('/403/');
 				}
 			}
-
 			$object = $this->getPage($route);
 			$method = $route->getCallbackMethod();
-
 			$result = call_user_func_array(array($object, $method), $route->getCallbackArgs());
 
 			if($object->prepare() && $result !== false){

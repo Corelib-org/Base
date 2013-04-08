@@ -34,10 +34,12 @@ class Route {
 	private $prefix = false;
 	private $url = false;
 	private $include = false;
+	private $include_exec = false;
 	private $expression = false;
 	private $callback_class = false;
 	private $callback_method = false;
 	private $callback_args = array();
+	private $callback_args_exec = array();
 	private $callback_condition = false;
 	private $callback_condition_args = array();
 	private $cache = false;
@@ -49,11 +51,12 @@ class Route {
 
 		$this->prefix = (isset($options['prefix']) ? $options['prefix'] : false);
 		$this->url = (isset($options['url']) ? $options['url'] : false);
-		$this->include = (isset($options['include']) ? $options['include'] : false);
+		$this->include = $this->include_exec = (isset($options['include']) ? $options['include'] : false);
 		$this->expression = (isset($options['expression']) ? $options['expression'] : false);
 		$this->callback_class = (isset($options['callback_class']) ? $options['callback_class'] : 'WebPage');
 		$this->callback_method = (isset($options['callback_method']) ? $options['callback_method'] : 'build');
-		$this->callback_args = (isset($options['callback_args']) ? $options['callback_args'] : array());
+		$this->callback_args = $this->callback_args_exec = (isset($options['callback_args']) ? $options['callback_args'] : array());
+		// $this->callback_args_base = (isset($options['callback_args_base']) ? $options['callback_args_base'] : array());
 		$this->callback_condition = (isset($options['callback_condition']) ? $options['callback_condition'] : false);
 		$this->callback_condition_args = (isset($options['callback_condition_args']) ? $options['callback_condition_args'] : array());
 		$this->cache = (isset($options['cache']) ? $options['cache'] : false);
@@ -78,7 +81,7 @@ class Route {
 		return $this->callback_method;
 	}
 	public function getCallbackArgs(){
-		return $this->callback_args;
+		return $this->callback_args_exec;
 	}
 	public function getCallbackCondition(){
 		return $this->callback_condition;
@@ -91,16 +94,19 @@ class Route {
 	}
 
 	public function parseMacros(array $macros){
+		// $this->include_exec = $this->include;
+		// $this->callback_args = $this->callback_args_base;
+
 		if(sizeof($macros) > 0){
 			foreach($macros as $key => $val){
-				$this->include = str_replace('${'.$key.'}', $val, $this->include);
+				$this->include_exec = str_replace('${'.$key.'}', $val, $this->include);
 				$this->callback_class = str_replace('${'.$key.'}', $val, $this->callback_class);
 				$this->callback_method = str_replace('${'.$key.'}', $val, $this->callback_method);
 				$this->callback_condition = str_replace('${'.$key.'}', $val, $this->callback_condition);
 				foreach($this->callback_condition_args as &$arg){
 					$arg = str_replace('${'.$key.'}', $val, $arg);
 				}
-				foreach($this->callback_args as &$arg){
+				foreach($this->callback_args_exec as &$arg){
 					$arg = str_replace('${'.$key.'}', $val, $arg);
 				}
 			}

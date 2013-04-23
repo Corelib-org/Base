@@ -64,6 +64,7 @@ class ParseFormat implements Converter {
 			}
 			$date = strptime($data, $format);
 			$date = mktime($date['tm_hour'], $date['tm_min'], $date['tm_sec'], ($date['tm_mon'] + 1), $date['tm_mday'], ($date['tm_year']+1900));
+
 			return $date;
 		} else {
 			if(is_null($this->date_format)){

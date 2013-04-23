@@ -30,6 +30,8 @@
 			<a href="corelib/">Access Corelib web administration interface</a><br/>
 			<a href="http://www.corelib.org/documentation">Learn more from the online manual</a><br/>
 		</p>
+
+		<xsl:apply-templates select="test-list" mode="xhtml-list"/>
 	</xsl:template>
 
 </xsl:stylesheet>

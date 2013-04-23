@@ -103,7 +103,7 @@ class Bootstrap {
 				$page = '';
 			}
 		}
-		if(!empty($page) && !$error_handler->hasErrors()){
+		if(!empty($page) && (!isset($error_handler) || !$error_handler->hasErrors())){
 			// If page has content trigger a PageRender Event allowing post processing of the page
 			// $page is passed by reference, and should not be returned.
 			Locator::get('Corelib\Base\Event\Handler')->trigger(new Events\PageRender($page));

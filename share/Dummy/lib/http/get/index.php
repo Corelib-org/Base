@@ -48,7 +48,10 @@ class WebPage extends PageGet {
 	 * @return void
 	 */
 	public function build(){
+		$this->addContent(new TestList());
 		$this->xsl->addTemplate('pages/index.xsl');
 	}
 }
+
+
 ?>

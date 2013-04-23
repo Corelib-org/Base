@@ -38,6 +38,7 @@ class Route {
 	private $expression = false;
 	private $callback_class = false;
 	private $callback_method = false;
+	private $callback_method_exec = false;
 	private $callback_args = array();
 	private $callback_args_exec = array();
 	private $callback_condition = false;
@@ -54,7 +55,7 @@ class Route {
 		$this->include = $this->include_exec = (isset($options['include']) ? $options['include'] : false);
 		$this->expression = (isset($options['expression']) ? $options['expression'] : false);
 		$this->callback_class = (isset($options['callback_class']) ? $options['callback_class'] : 'WebPage');
-		$this->callback_method = (isset($options['callback_method']) ? $options['callback_method'] : 'build');
+		$this->callback_method = $this->callback_method_exec = (isset($options['callback_method']) ? $options['callback_method'] : 'build');
 		$this->callback_args = $this->callback_args_exec = (isset($options['callback_args']) ? $options['callback_args'] : array());
 		// $this->callback_args_base = (isset($options['callback_args_base']) ? $options['callback_args_base'] : array());
 		$this->callback_condition = (isset($options['callback_condition']) ? $options['callback_condition'] : false);
@@ -78,7 +79,7 @@ class Route {
 		return $this->callback_class;
 	}
 	public function getCallbackMethod(){
-		return $this->callback_method;
+		return $this->callback_method_exec;
 	}
 	public function getCallbackArgs(){
 		return $this->callback_args_exec;
@@ -101,7 +102,7 @@ class Route {
 			foreach($macros as $key => $val){
 				$this->include_exec = str_replace('${'.$key.'}', $val, $this->include);
 				$this->callback_class = str_replace('${'.$key.'}', $val, $this->callback_class);
-				$this->callback_method = str_replace('${'.$key.'}', $val, $this->callback_method);
+				$this->callback_method_exec = str_replace('${'.$key.'}', $val, $this->callback_method);
 				$this->callback_condition = str_replace('${'.$key.'}', $val, $this->callback_condition);
 				foreach($this->callback_condition_args as &$arg){
 					$arg = str_replace('${'.$key.'}', $val, $arg);

@@ -1,8 +1,9 @@
 <?php
 namespace Corelib\Base\Input;
 
+use Corelib\Base\ServiceLocator\Exception;
 use Corelib\Base\ServiceLocator\Service, Corelib\Base\ServiceLocator\Autoloadable;
-use Corelib\Base\PageFactory\Output;
+use Corelib\Base\PageFactory\Output, Corelib\Base\Converters\Converter;
 
 /**
  * Session handler.
@@ -291,7 +292,7 @@ class Handler implements Service,Output,Autoloadable {
 	 */
 	public function getPost($item, Converter $converter=null){
 		if(!isset($this->post_valid[$item])){
-			throw new BaseInputHandlerInvalidPostException($item);
+			throw new Exception($item);
 		} else if(!is_null($converter)){
 			return $converter->convert($this->post_valid[$item]);
 		} else {
@@ -583,7 +584,7 @@ class Handler implements Service,Output,Autoloadable {
 	 * @return void
 	 * @internal
 	 */
-	private function _xmlArray(DOMDocument $xml, DOMElement $parentNode, array $array){
+	private function _xmlArray(\DOMDocument $xml, \DOMElement $parentNode, array $array){
 		while(list($key, $val) = each($array)){
 			if(is_array($val)){
 				$XMLItem = $xml->createElement('item');
